@@ -13,7 +13,11 @@
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "docker:deps": "docker compose -f infra/compose/docker-compose.yml up -d",
+    "docker:dev": "docker compose -f infra/compose/docker-compose.yml --profile dev up",
+    "docker:prod": "docker compose -f infra/compose/docker-compose.yml --profile prod up --build",
+    "docker:clean": "docker compose -f infra/compose/docker-compose.yml --profile \"*\" down --volumes --remove-orphans --rmi local"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,json,yml,yaml}": "prettier --write",

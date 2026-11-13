@@ -1,0 +1,89 @@
+# Environnement local de New Start. Depuis la racine du dépôt :
+#   pnpm docker:deps   PostgreSQL + Mailpit
+#   pnpm docker:dev    + web et api avec rechargement automatique
+#   pnpm docker:prod   web et api construits avec les Dockerfiles de production
+# Profils facultatifs : redis, quality (SonarQube, environ 2 Go de RAM).
+name: new-start
+
+x-dev-app: &dev-app
+  image: node:22.20-alpine
+  working_dir: /repo
+  command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm --filter $$APP dev"
+  volumes:
+    - ../..:/repo
+    - node_modules:/repo/node_modules
+    - pnpm_store:/root/.local/share/pnpm/store
+  env_file:
+    - path: ../../.env
+      required: false
+  depends_on:
+    postgres: { condition: service_healthy }
+    mailpit: { condition: service_started }
+  profiles: ['dev']
+  mem_limit: 768m
+
+services:
+  postgres:
+    image: postgres:16.10-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-newstart}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-newstart}
+    ports: ['5432:5432']
+    volumes: [pg:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    mem_limit: 256m
+
+  mailpit:
+    image: axllent/mailpit:v1.27.0
+    ports: ['8025:8025', '1025:1025']
+    mem_limit: 64m
+
+  web:
+    <<: *dev-app
+    environment: { APP: '@newstart/web' }
+    ports: ['3000:3000']
+
+  api:
+    <<: *dev-app
+    environment: { APP: '@newstart/api', RUN_JOBS: inline }
+    ports: ['4000:4000']
+
+  web-prod:
+    build: { context: ../.., dockerfile: infra/docker/web.Dockerfile }
+    ports: ['3000:3000']
+    profiles: ['prod']
+    mem_limit: 256m
+
+  api-prod:
+    build: { context: ../.., dockerfile: infra/docker/api.Dockerfile }
+    environment: { RUN_JOBS: inline }
+    env_file:
+      - path: ../../.env
+        required: false
+    ports: ['4000:3000']
+    depends_on:
+      postgres: { condition: service_healthy }
+    profiles: ['prod']
+    mem_limit: 384m
+
+  redis:
+    image: redis:7.4.5-alpine
+    ports: ['6379:6379']
+    profiles: ['redis']
+    mem_limit: 128m
+
+  sonarqube:
+    image: sonarqube:25.9.0.112764-community
+    ports: ['9002:9000']
+    profiles: ['quality']
+    mem_limit: 2g
+
+volumes:
+  pg: {}
+  node_modules: {}
+  pnpm_store: {}

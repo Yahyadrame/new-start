@@ -36,11 +36,11 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Modèle de module back (`domain`, `application`, `infrastructure`, `interface`) et de fonctionnalité front générés par une commande (`pnpm gen:module`, `pnpm gen:feature`).
 
 ## NS-003 — Environnement local conteneurisé · M
-- [ ] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
-- [ ] Limites de mémoire par conteneur ; mesurer et noter la RAM utilisée avec le profil `dev` (cible : moins de 2 Go).
+- [x] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
+- [ ] Limites de mémoire par conteneur (limites en place, PostgreSQL + Mailpit mesurés à 28 Mo ; reste le profil `dev` après NS-002) ; mesurer et noter la RAM utilisée avec le profil `dev` (cible : moins de 2 Go).
 - [ ] Adaptateurs factices pour l'IA, Brevo et Cloudinary afin de développer sans clé.
-- [ ] Scripts racine : `pnpm docker:dev`, `pnpm docker:prod`, `pnpm docker:clean`.
-- [ ] `README` de démarrage : sur une machine neuve avec seulement Docker, `docker compose --profile dev up` ouvre l'appli sur `http://localhost:3000`.
+- [x] Scripts racine : `pnpm docker:dev`, `pnpm docker:prod`, `pnpm docker:clean`.
+- [ ] `README` de démarrage (section écrite ; le port 3000 attend NS-002) : sur une machine neuve avec seulement Docker, `docker compose --profile dev up` ouvre l'appli sur `http://localhost:3000`.
 - [ ] Le porteur du projet lance la commande sur sa machine et confirme que ça marche avant de clore le ticket.
 
 ## NS-004 — Images Docker · M
