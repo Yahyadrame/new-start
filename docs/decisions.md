@@ -35,3 +35,4 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - **Vercel Hobby** : usage personnel et non commercial. À revoir avant d'activer le paiement.
 
 | 2026-11-13 | Tests unitaires | Obligatoires dans chaque PR pour tout code nouveau ou modifié, sans exception non justifiée ; ajoutés à `CLAUDE.md` (règle 4), au modèle de PR et à la définition de « terminé » | Demande du porteur du projet : ne jamais oublier |
+| 2026-11-13 | Humaniser | Chaque texte rédigé (interface, PR, commits, docs, rapports) passe par le skill `humanizer` avant livraison ; ajouté à `CLAUDE.md` (règle 14) | Demande du porteur du projet : ne pas l'oublier |
