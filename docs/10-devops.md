@@ -57,6 +57,15 @@ Secrets et variables du dépôt pour le déploiement staging (saisis par le port
 | `RENDER_DEPLOY_HOOK_URL` | secret | Hook de déploiement du service Render de l'API. |
 | `STAGING_API_URL` | variable | Adresse publique de l'API, sans barre finale, pour le test de fumée sur `/health/ready`. |
 
+Réglages côté Vercel (intégration Git, sans secret dans GitHub) :
+
+| Réglage | Valeur |
+| --- | --- |
+| Dossier racine | `apps/web` (laisser « Include source files outside of the Root Directory » activé) |
+| `NEXT_PUBLIC_API_URL` | `https://newstart-api-staging.onrender.com`, **pour l'environnement Production seulement** : les aperçus de PR ont une adresse différente à chaque fois, que le CORS de l'API ne connaît pas |
+
+Côté Render, la variable `CORS_ORIGINS` de l'API liste les adresses du site autorisées, séparées par des virgules, sans barre finale (par exemple l'adresse `*.vercel.app` de production).
+
 ### Règles pour que la phase 2 ne demande aucune réécriture
 
 - Le code ne dépend d'aucun hébergeur : configuration par variables d'environnement, accès aux services par des **interfaces** (`Queue`, `Cache`, `Mailer`, `SmsSender`, `MediaStore`) avec un adaptateur par fournisseur.

@@ -21,6 +21,14 @@ describe('parseEnv', () => {
       'redis://localhost:6379',
     );
   });
+  it('lit CORS_ORIGINS en liste, sans espaces ni barre finale, vide par défaut', () => {
+    expect(parseEnv(base).CORS_ORIGINS).toEqual([]);
+    expect(parseEnv({ ...base, CORS_ORIGINS: '' }).CORS_ORIGINS).toEqual([]);
+    expect(
+      parseEnv({ ...base, CORS_ORIGINS: ' https://a.vercel.app/ , http://localhost:3000,' })
+        .CORS_ORIGINS,
+    ).toEqual(['https://a.vercel.app', 'http://localhost:3000']);
+  });
   it('refuse une configuration invalide en nommant les champs, sans afficher leur valeur', () => {
     const message = (() => {
       try {
