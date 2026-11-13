@@ -8,5 +8,16 @@
     "system": "Système",
     "light": "Clair",
     "dark": "Sombre"
+  },
+  "server": {
+    "waiting": {
+      "title": "Connexion au serveur…",
+      "body": "Le serveur se réveille après un moment sans visite. Ça prend environ une minute."
+    },
+    "failed": {
+      "title": "Le serveur ne répond pas",
+      "body": "Vérifie ta connexion, puis réessaie."
+    },
+    "retry": "Réessayer"
   }
 }
