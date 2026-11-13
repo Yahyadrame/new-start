@@ -29,6 +29,9 @@ describe('workflow ci.yml', () => {
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
+  it("vérifie les règles d'architecture après le lint", () => {
+    expect(runs.indexOf('pnpm depcruise')).toBeGreaterThan(runs.indexOf('pnpm lint'));
+  });
   it('ne lance aucune action sans version (tag majeur ou SHA complet)', () => {
     for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@(v\d+|[0-9a-f]{40})$/);
   });

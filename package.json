@@ -17,7 +17,8 @@
     "docker:deps": "docker compose -f infra/compose/docker-compose.yml up -d",
     "docker:dev": "docker compose -f infra/compose/docker-compose.yml --profile dev up",
     "docker:prod": "docker compose -f infra/compose/docker-compose.yml --profile prod up --build",
-    "docker:clean": "docker compose -f infra/compose/docker-compose.yml --profile \"*\" down --volumes --remove-orphans --rmi local"
+    "docker:clean": "docker compose -f infra/compose/docker-compose.yml --profile \"*\" down --volumes --remove-orphans --rmi local",
+    "depcruise": "depcruise packages $(ls -d apps 2>/dev/null) --config .dependency-cruiser.cjs"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,json,yml,yaml}": "prettier --write",
@@ -30,7 +31,9 @@
     "@commitlint/load": "^21.2.4",
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "^5.1.0",
+    "dependency-cruiser": "^18.7.2",
     "eslint": "^10.14.0",
+    "eslint-plugin-boundaries": "^7.4.2",
     "eslint-plugin-security": "^4.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
