@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // Garde-fous des Dockerfiles (NS-004) : multi-étapes, sans root, avec HEALTHCHECK.
-describe.each(['api'])('apps/%s/Dockerfile', (app) => {
+describe.each(['api', 'worker'])('apps/%s/Dockerfile', (app) => {
   const file = readFileSync(`../../apps/${app}/Dockerfile`, 'utf8');
   const lines = file.split('\n');
   const stages = lines.filter((l) => /^FROM /.test(l));
