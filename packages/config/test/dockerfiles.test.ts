@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // Garde-fous des Dockerfiles (NS-004) : multi-étapes, sans root, avec HEALTHCHECK.
-describe.each(['api', 'worker'])('apps/%s/Dockerfile', (app) => {
+describe.each(['api', 'worker', 'web'])('apps/%s/Dockerfile', (app) => {
   const file = readFileSync(`../../apps/${app}/Dockerfile`, 'utf8');
   const lines = file.split('\n');
   const stages = lines.filter((l) => /^FROM /.test(l));
@@ -30,5 +30,13 @@ describe('.dockerignore', () => {
   });
   it('garde .env.example', () => {
     expect(ignore).toContain('!.env.example');
+  });
+});
+
+describe('apps/web/next.config.mjs', () => {
+  const config = readFileSync('../../apps/web/next.config.mjs', 'utf8');
+  it('produit la sortie standalone attendue par le Dockerfile', () => {
+    expect(config).toContain("output: 'standalone'");
+    expect(config).toContain('outputFileTracingRoot');
   });
 });
