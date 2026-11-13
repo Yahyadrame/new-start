@@ -29,12 +29,13 @@ describe('workflow ci.yml', () => {
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
-  it('ne lance aucune action sans version', () => {
-    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@v\d+$/);
+  it('ne lance aucune action sans version (tag majeur ou SHA complet)', () => {
+    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@(v\d+|[0-9a-f]{40})$/);
   });
   it("lance l'analyse SonarQube après les tests, seulement si le jeton existe", () => {
     const i = steps.findIndex((s) => s.uses?.startsWith('SonarSource/sonarqube-scan-action@'));
     expect(i).toBeGreaterThan(steps.findIndex((s) => s.run === 'pnpm test'));
+    expect(steps[i]?.uses).toMatch(/@[0-9a-f]{40}$/);
     expect(steps[i]?.if).toBe("env.SONAR_TOKEN != ''");
     expect(ci.jobs.quality.env.SONAR_TOKEN).toBe('${{ secrets.SONAR_TOKEN }}');
   });
