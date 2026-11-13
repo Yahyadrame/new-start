@@ -13,6 +13,16 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1),
   // Facultatif : /health/ready ne teste Redis que s'il est configuré.
   REDIS_URL: z.preprocess(emptyToUndefined, z.string().optional()),
+  // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
+  CORS_ORIGINS: z
+    .string()
+    .default('')
+    .transform((v) =>
+      v
+        .split(',')
+        .map((o) => o.trim().replace(/\/$/, ''))
+        .filter(Boolean),
+    ),
 });
 
 export type Env = z.infer<typeof schema>;
