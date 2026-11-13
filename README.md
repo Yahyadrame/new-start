@@ -37,6 +37,23 @@ Ce dossier contient tout ce qu'il faut pour réaliser le projet avec Claude Code
 | `data/` | Le noyau : 1 000 mots et 339 expressions orales (CSV) |
 | `design/` | Logo SVG, prototype HTML cliquable, lien des maquettes |
 
+## Lancer en local
+
+Il suffit d'avoir Docker. Copiez `.env.example` en `.env`, puis, depuis la racine du dépôt :
+
+| Commande | Ce qui démarre |
+| --- | --- |
+| `pnpm docker:deps` | PostgreSQL (port 5432) et Mailpit (boîte mail de test sur http://localhost:8025) |
+| `pnpm docker:dev` | Les mêmes, plus `web` (http://localhost:3000) et `api` (http://localhost:4000) avec rechargement automatique |
+| `pnpm docker:prod` | `web` et `api` construits avec les Dockerfiles de production |
+| `pnpm docker:clean` | Arrête tout et supprime les conteneurs, les images locales et les volumes, donc la base locale |
+
+`docker compose --profile redis` ajoute Redis, `--profile quality` ajoute SonarQube (environ 2 Go de RAM, à lancer rarement). Sans Node ni pnpm sur la machine, utilisez `docker compose -f infra/compose/docker-compose.yml` à la place des scripts.
+
+Les profils `dev` et `prod` démarrent `web` et `api` seulement une fois les squelettes (NS-002) et les Dockerfiles (NS-004) livrés. Pour l'instant, `pnpm docker:deps` est la seule commande utilisable.
+
+Mémoire mesurée au repos : PostgreSQL 22 Mo, Mailpit 6 Mo. Chaque conteneur a une limite (`mem_limit`) et le total visé avec le profil `dev` reste sous 2 Go. Cette mesure sera refaite quand `web` et `api` existeront.
+
 ## Liens de référence
 
 - Maquettes complètes (17 écrans, sombre et clair, logo) : <https://claude.ai/artifact/7WBnVmUHi25D7ttJimWESu>
