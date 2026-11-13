@@ -1,0 +1,340 @@
+Rang,Expression,Sens en français,Situation,Registre,Scène-type,Semaine,Fréquence (par million de mots)
+1,You know,tu sais ; tu vois (mot de remplissage),Gérer la conversation,Familier,Coloc & amis,Semaine 1,2485.3
+2,I know,je sais,Réagir,Neutre,Coloc & amis,Semaine 1,1778.7
+3,I mean,je veux dire ; enfin…,Gérer la conversation,Familier,Coloc & amis,Semaine 1,1640.4
+4,All right,"d'accord ; bon, très bien",Accepter / valider,Neutre,Coloc & amis,Semaine 1,1516.1
+5,I think,je pense,Donner son avis,Neutre,Bureau & entretien,Semaine 1,1361.3
+6,I can't,je ne peux pas,Refuser,Neutre,Aventure & danger,Semaine 1,1177.8
+7,I don't know,je ne sais pas,Réagir,Neutre,Rencontre & présentations,Semaine 1,1153.8
+8,A little,un peu,Nuancer,Neutre,Rencontre & présentations,Semaine 1,1004.0
+9,I'm sorry,je suis désolé,S'excuser,Neutre,Dispute & réconciliation,Semaine 1,967.0
+10,I'm not,je ne suis pas,Nier,Neutre,Rencontre & présentations,Semaine 1,963.0
+11,Come on,allez ! ; arrête ! ; sérieux ?,Encourager / protester,Familier,Le rival,Semaine 1,962.8
+12,You guys,"vous (les amis), les gars",Interpeller un groupe,Familier,Fête,Semaine 1,888.7
+13,Oh my god,oh mon Dieu ; c'est pas vrai !,Surprise,Familier,Fête,Semaine 1,825.9
+14,Thank you,merci,Remercier,Neutre,Café & resto,Semaine 1,797.7
+15,I'm gonna,"je vais (futur proche, oral)",Annoncer une action,Familier,Coloc & amis,Semaine 1,676.3
+16,A lot,beaucoup,Nuancer,Neutre,Rencontre & présentations,Semaine 1,590.5
+17,Tell me,dis-moi,Demander,Neutre,Mystère & enquête,Semaine 1,558.8
+18,Let me,laisse-moi ; je vais…,Proposer de faire,Neutre,Café & resto,Semaine 1,510.7
+19,I guess,je suppose ; j'imagine,Donner son avis prudemment,Neutre,Coloc & amis,Semaine 2,510.2
+20,You know what,tu sais quoi ?,Gérer la conversation,Familier,Coloc & amis,Semaine 2,467.6
+21,Of course,bien sûr,Accepter,Neutre,Café & resto,Semaine 1,460.1
+22,Can I,est-ce que je peux… ?,Demander la permission,Neutre,Café & resto,Semaine 1,453.2
+23,Do you think,tu penses que… ?,Demander un avis,Neutre,Bureau & entretien,Semaine 2,378.0
+24,Right now,tout de suite ; en ce moment,Situer dans le temps,Neutre,Aventure & danger,Semaine 2,377.3
+25,I have to,je dois,Exprimer une obligation,Neutre,Bureau & entretien,Semaine 1,373.7
+26,I want to,je veux,Exprimer un désir,Neutre,Café & resto,Semaine 1,327.0
+27,What happened,qu'est-ce qui s'est passé ?,Demander,Neutre,Mystère & enquête,Semaine 2,301.9
+28,Oh no,oh non,Surprise,Neutre,Aventure & danger,Semaine 1,296.0
+29,What are you doing,qu'est-ce que tu fais ?,Demander,Neutre,Coloc & amis,Semaine 1,288.9
+30,I see,je vois ; je comprends,Montrer qu'on suit,Neutre,Bureau & entretien,Semaine 1,274.1
+31,Why don't you,pourquoi tu ne… pas ?,Suggérer,Neutre,Coloc & amis,Semaine 2,273.9
+32,Get out,sors ! dégage !,Se fâcher,Familier,Dispute & réconciliation,Semaine 3,266.9
+33,Excuse me,excusez-moi ; pardon,S'excuser / interpeller,Poli,Voyage,Semaine 1,254.0
+34,Do you know,est-ce que tu sais… ?,Demander,Neutre,Voyage,Semaine 1,253.4
+35,Got it,compris,Confirmer,Familier,Bureau & entretien,Semaine 1,238.1
+36,I love you,je t'aime,Exprimer ses sentiments,Neutre,Romance,Semaine 3,236.5
+37,That's right,"c'est ça, exactement",Approuver,Neutre,Bureau & entretien,Semaine 1,220.8
+38,How much,combien ?,Demander un prix,Neutre,Café & resto,Semaine 1,214.8
+39,Wait a minute,attends une minute,Interrompre,Neutre,Mystère & enquête,Semaine 2,210.1
+40,It's like,c'est genre…,Décrire,Familier,Coloc & amis,Semaine 2,205.9
+41,You're right,tu as raison,Approuver,Neutre,Dispute & réconciliation,Semaine 2,203.0
+42,At least,au moins,Relativiser,Neutre,Dispute & réconciliation,Semaine 2,199.2
+43,That's all,c'est tout,Conclure,Neutre,Café & resto,Semaine 1,190.7
+44,Why not,pourquoi pas,Accepter,Neutre,Coloc & amis,Semaine 1,186.4
+45,So what,et alors ?,Provoquer / minimiser,Familier,Le rival,Semaine 3,186.1
+46,How about,et si… ? ; que dirais-tu de… ?,Proposer,Neutre,Café & resto,Semaine 2,184.3
+47,Could you,pourriez-vous… ?,Demander poliment,Poli,Voyage,Semaine 1,184.1
+48,What if,et si… ?,Imaginer une hypothèse,Neutre,Mystère & enquête,Semaine 3,180.1
+49,Don't worry,ne t'inquiète pas,Rassurer,Neutre,Aventure & danger,Semaine 1,179.3
+50,What is it,qu'est-ce qu'il y a ? ; c'est quoi ?,Demander,Neutre,Mystère & enquête,Semaine 1,177.4
+51,I'm sure,j'en suis sûr,Affirmer,Neutre,Bureau & entretien,Semaine 2,176.0
+52,I hope,j'espère,Espérer,Neutre,Romance,Semaine 2,175.2
+53,That's it,c'est tout ; ça suffit !,Conclure / se fâcher,Neutre,Le rival,Semaine 2,170.5
+54,I told you,je te l'avais dit,Reprocher,Neutre,Dispute & réconciliation,Semaine 3,165.4
+55,It's okay,ce n'est pas grave ; ça va,Rassurer,Neutre,Dispute & réconciliation,Semaine 1,164.4
+56,I was just,j'étais juste en train de…,Se justifier,Neutre,Coloc & amis,Semaine 2,162.7
+57,That's why,c'est pour ça,Expliquer,Neutre,Mystère & enquête,Semaine 2,161.9
+58,Let's go,on y va ! allons-y,Proposer / motiver,Neutre,Aventure & danger,Semaine 1,161.9
+59,What's going on,qu'est-ce qui se passe ?,Demander,Neutre,Mystère & enquête,Semaine 2,161.6
+60,How long,combien de temps ?,Demander une durée,Neutre,Voyage,Semaine 2,152.0
+61,I'd like,je voudrais,Commander / demander,Poli,Café & resto,Semaine 1,146.5
+62,Help me,aide-moi,Demander de l'aide,Neutre,Aventure & danger,Semaine 1,145.3
+63,Or something,ou un truc comme ça,Rester vague,Familier,Coloc & amis,Semaine 2,143.0
+64,Come in,entre,Accueillir,Neutre,Bureau & entretien,Semaine 1,140.7
+65,What do you mean,comment ça ? ; tu veux dire quoi ?,Demander une précision,Neutre,Dispute & réconciliation,Semaine 2,134.9
+66,What do you think,qu'est-ce que tu en penses ?,Demander un avis,Neutre,Bureau & entretien,Semaine 2,134.3
+67,I don't care,je m'en fiche,Exprimer l'indifférence,Familier,Le rival,Semaine 3,134.2
+68,That's great,c'est génial,Réagir positivement,Neutre,Fête,Semaine 1,132.1
+69,Go on,continue ; vas-y,Encourager à parler,Neutre,Mystère & enquête,Semaine 2,130.3
+70,Shut up,tais-toi ; (aussi) sans blague !,Se fâcher / surprise,Familier,Le rival,Semaine 3,128.2
+71,Me too,moi aussi,Réagir,Neutre,Rencontre & présentations,Semaine 1,128.2
+72,No way,pas question ! ; c'est pas vrai !,Refuser / surprise,Familier,Le rival,Semaine 2,125.6
+73,Call me,appelle-moi,Garder contact,Neutre,Romance,Semaine 1,124.6
+74,Come here,viens ici,Appeler qqn,Neutre,Coloc & amis,Semaine 1,123.7
+75,What's wrong,qu'est-ce qui ne va pas ?,S'inquiéter pour qqn,Neutre,Dispute & réconciliation,Semaine 2,120.0
+76,How many,combien (de) ?,Demander une quantité,Neutre,Café & resto,Semaine 1,120.0
+77,I'm in,je suis partant,Accepter de participer,Familier,Aventure & danger,Semaine 2,119.3
+78,By the way,au fait,Changer de sujet,Neutre,Coloc & amis,Semaine 2,114.5
+79,What do you want,qu'est-ce que tu veux ?,Demander,Neutre,Le rival,Semaine 1,109.6
+80,Take care,prends soin de toi,Dire au revoir,Neutre,Rencontre & présentations,Semaine 1,108.8
+81,Believe me,crois-moi,Convaincre,Neutre,Le rival,Semaine 3,108.1
+82,Stop it,arrête !,Se fâcher,Neutre,Dispute & réconciliation,Semaine 2,107.9
+83,How are you,comment vas-tu ?,Saluer,Neutre,Rencontre & présentations,Semaine 1,106.0
+84,What's the matter,qu'est-ce qui ne va pas ?,S'inquiéter pour qqn,Neutre,Dispute & réconciliation,Semaine 2,104.8
+85,Do you want to,tu veux… ?,Proposer,Neutre,Café & resto,Semaine 1,104.4
+86,I understand,je comprends,Montrer qu'on suit,Neutre,Bureau & entretien,Semaine 1,103.0
+87,Hold on,attends ; ne quitte pas,Faire patienter,Neutre,Mystère & enquête,Semaine 2,102.0
+88,What's up,quoi de neuf ? ; ça va ?,Saluer,Familier,Rencontre & présentations,Semaine 1,101.9
+89,Forget it,laisse tomber,Abandonner,Familier,Dispute & réconciliation,Semaine 2,99.0
+90,You too,toi aussi ; pareillement,Renvoyer un vœu,Neutre,Rencontre & présentations,Semaine 1,98.8
+91,What kind of,quel genre de… ?,Demander une précision,Neutre,Café & resto,Semaine 2,97.8
+92,I'm fine,je vais bien,Répondre à « ça va ? »,Neutre,Rencontre & présentations,Semaine 1,97.3
+93,What are you talking about,de quoi tu parles ?,Protester,Familier,Dispute & réconciliation,Semaine 3,96.0
+94,Are you sure,tu es sûr ?,Vérifier,Neutre,Aventure & danger,Semaine 2,95.3
+95,How come,comment ça se fait ?,Demander la raison,Familier,Coloc & amis,Semaine 3,93.9
+96,Sit down,assieds-toi,Inviter,Neutre,Bureau & entretien,Semaine 1,86.2
+97,Good luck,bonne chance,Encourager,Neutre,Bureau & entretien,Semaine 1,85.3
+98,Not really,pas vraiment,Nuancer,Neutre,Rencontre & présentations,Semaine 1,84.0
+99,That's okay,ce n'est pas grave,Rassurer / pardonner,Neutre,Dispute & réconciliation,Semaine 1,83.0
+100,I'm telling you,je te le dis,Insister,Familier,Le rival,Semaine 3,81.9
+101,I swear,je te jure,Insister,Familier,Le rival,Semaine 3,81.6
+102,Are you going to,tu vas… ?,Demander une intention,Neutre,Coloc & amis,Semaine 2,80.8
+103,Go ahead,vas-y ; je t'en prie,Autoriser,Neutre,Bureau & entretien,Semaine 2,79.8
+104,I promise,je te le promets,Promettre,Neutre,Romance,Semaine 2,79.4
+105,Let's see,voyons voir,Réfléchir à voix haute,Neutre,Café & resto,Semaine 2,79.0
+106,I gotta go,faut que j'y aille,Partir,Familier,Coloc & amis,Semaine 2,78.7
+107,Here we go,"c'est parti ! ; et voilà, ça recommence",Démarrer / soupirer,Familier,Aventure & danger,Semaine 2,78.1
+108,I got it,j'ai compris ; je m'en occupe,Comprendre / prendre en charge,Familier,Bureau & entretien,Semaine 2,77.5
+109,I don't think so,je ne crois pas,Refuser / contredire,Neutre,Le rival,Semaine 2,75.8
+110,It's me,c'est moi,"Se présenter (porte, téléphone)",Neutre,Mystère & enquête,Semaine 1,75.0
+111,Think about it,réfléchis-y,Persuader,Neutre,Bureau & entretien,Semaine 3,74.0
+112,Listen to me,écoute-moi,Insister,Neutre,Aventure & danger,Semaine 2,72.4
+113,I used to,"avant, je…",Parler du passé,Neutre,Rencontre & présentations,Semaine 3,68.3
+114,Who are you,qui es-tu ?,Demander,Neutre,Mystère & enquête,Semaine 1,66.3
+115,Good idea,bonne idée,Approuver,Neutre,Coloc & amis,Semaine 1,65.5
+116,No problem,pas de problème,Répondre à un merci,Neutre,Café & resto,Semaine 1,65.0
+117,Good night,bonne nuit,Dire au revoir,Neutre,Coloc & amis,Semaine 1,63.8
+118,I don't understand,je ne comprends pas,Demander de l'aide,Neutre,Voyage,Semaine 1,62.7
+119,Thank god,Dieu merci,Soulagement,Neutre,Aventure & danger,Semaine 2,62.3
+120,There you go,voilà ; tu vois !,Donner / encourager,Familier,Café & resto,Semaine 2,62.1
+121,Check it out,regarde ça !,Montrer qqch,Familier,Fête,Semaine 2,61.3
+122,Are you kidding,tu plaisantes ?,Surprise,Familier,Coloc & amis,Semaine 2,61.2
+123,Are you okay,ça va ? (tu vas bien ?),S'inquiéter pour qqn,Neutre,Aventure & danger,Semaine 1,61.2
+124,I have to go,je dois y aller,Partir,Neutre,Bureau & entretien,Semaine 1,60.7
+125,I'm trying,j'essaie,Se défendre,Neutre,Dispute & réconciliation,Semaine 2,60.3
+126,Too late,trop tard,Regretter,Neutre,Aventure & danger,Semaine 2,60.1
+127,Pretty good,plutôt bien,Évaluer,Familier,Rencontre & présentations,Semaine 1,59.6
+128,Look at that,regarde ça,Montrer qqch,Neutre,Voyage,Semaine 1,57.9
+129,Look at me,regarde-moi,Insister,Neutre,Romance,Semaine 2,56.8
+130,Have you ever,est-ce que tu as déjà… ?,Parler d'expériences,Neutre,Rencontre & présentations,Semaine 3,56.5
+131,That's fine,ça me va,Accepter,Neutre,Café & resto,Semaine 1,56.4
+132,Calm down,calme-toi,Apaiser,Neutre,Dispute & réconciliation,Semaine 2,56.0
+133,I'm not sure,je ne suis pas sûr,Nuancer,Neutre,Bureau & entretien,Semaine 1,56.0
+134,You got it,c'est noté ; compte sur moi,Accepter une demande,Familier,Café & resto,Semaine 2,55.9
+135,Trust me,fais-moi confiance,Convaincre,Neutre,Aventure & danger,Semaine 2,54.8
+136,See ya,à plus,Dire au revoir,Familier,Coloc & amis,Semaine 1,54.1
+137,I forgot,j'ai oublié,S'excuser,Neutre,Coloc & amis,Semaine 1,53.7
+138,Who knows,qui sait ?,Exprimer le doute,Neutre,Voyage,Semaine 2,53.4
+139,Wake up,réveille-toi,Réveiller / secouer qqn,Neutre,Coloc & amis,Semaine 1,53.2
+140,Thank you so much,merci beaucoup,Remercier chaleureusement,Neutre,Café & resto,Semaine 1,53.0
+141,Here you go,tiens ; voilà (en donnant),Donner qqch,Neutre,Café & resto,Semaine 1,52.3
+142,Not yet,pas encore,Répondre,Neutre,Café & resto,Semaine 1,52.0
+143,I can't believe this,je n'arrive pas à y croire,Surprise / indignation,Neutre,Dispute & réconciliation,Semaine 3,50.6
+144,Guess what,devine quoi !,Annoncer une nouvelle,Familier,Fête,Semaine 2,50.0
+145,Anything else,autre chose ?,Demander,Neutre,Café & resto,Semaine 1,48.9
+146,I dunno,j'sais pas,Réagir,Familier,Coloc & amis,Semaine 2,48.8
+147,Go away,va-t'en,Se fâcher,Neutre,Dispute & réconciliation,Semaine 2,48.8
+148,See you later,à plus tard,Dire au revoir,Neutre,Coloc & amis,Semaine 1,48.7
+149,Pretty much,à peu près ; en gros,Nuancer,Familier,Coloc & amis,Semaine 3,47.6
+150,Talk to me,parle-moi,Inviter à se confier,Neutre,Romance,Semaine 2,47.4
+151,I mean it,je suis sincère,Insister,Neutre,Romance,Semaine 3,47.2
+152,Good morning,bonjour (le matin),Saluer,Neutre,Bureau & entretien,Semaine 1,47.2
+153,It doesn't matter,ça n'a pas d'importance,Minimiser,Neutre,Dispute & réconciliation,Semaine 2,47.2
+154,Be careful,fais attention,Mettre en garde,Neutre,Aventure & danger,Semaine 1,46.6
+155,Where are you going,où tu vas ?,Demander,Neutre,Coloc & amis,Semaine 2,43.1
+156,No thanks,non merci,Refuser poliment,Neutre,Café & resto,Semaine 1,42.9
+157,Good for you,tant mieux pour toi ; bravo,Féliciter,Neutre,Coloc & amis,Semaine 2,42.8
+158,Don't tell me,ne me dis pas que…,Anticiper une mauvaise nouvelle,Neutre,Mystère & enquête,Semaine 3,42.0
+159,I don't know why,je ne sais pas pourquoi,Exprimer un doute,Neutre,Romance,Semaine 2,41.5
+160,You're welcome,de rien,Répondre à un merci,Poli,Café & resto,Semaine 1,41.1
+161,Not at all,pas du tout,Nier / rassurer,Neutre,Bureau & entretien,Semaine 2,40.4
+162,I need you,j'ai besoin de toi,Exprimer ses sentiments,Neutre,Romance,Semaine 2,39.8
+163,Nice to meet you,enchanté(e),Se présenter,Poli,Rencontre & présentations,Semaine 1,39.1
+164,That's true,c'est vrai,Approuver,Neutre,Bureau & entretien,Semaine 1,38.8
+165,Hang on,attends un peu,Faire patienter,Familier,Aventure & danger,Semaine 2,38.2
+166,I think so,je pense que oui,Répondre,Neutre,Rencontre & présentations,Semaine 1,38.1
+167,What do you do,tu fais quoi dans la vie ?,Se présenter,Neutre,Rencontre & présentations,Semaine 1,37.6
+168,You're kidding,tu rigoles !,Surprise,Familier,Coloc & amis,Semaine 2,37.6
+169,Oh really,ah bon ? vraiment ?,Montrer de l'intérêt,Neutre,Rencontre & présentations,Semaine 1,37.2
+170,How's it going,comment ça va ?,Saluer,Familier,Rencontre & présentations,Semaine 1,37.2
+171,Of course not,bien sûr que non,Refuser,Neutre,Dispute & réconciliation,Semaine 2,36.9
+172,Come with me,viens avec moi,Inviter,Neutre,Aventure & danger,Semaine 1,36.8
+173,I'm serious,je suis sérieux,Insister,Neutre,Dispute & réconciliation,Semaine 2,36.7
+174,It's all right,ce n'est pas grave,Rassurer,Neutre,Dispute & réconciliation,Semaine 1,36.4
+175,Don't worry about it,t'en fais pas pour ça,Rassurer,Familier,Coloc & amis,Semaine 2,36.3
+176,We'll see,on verra,Rester prudent,Neutre,Bureau & entretien,Semaine 2,36.1
+177,Have fun,amuse-toi bien,Souhaiter,Neutre,Fête,Semaine 1,36.1
+178,I knew it,je le savais !,Triompher,Familier,Mystère & enquête,Semaine 3,34.9
+179,I'd love to,avec plaisir,Accepter une invitation,Neutre,Romance,Semaine 2,34.9
+180,Are you serious,tu es sérieux ?,Surprise,Familier,Coloc & amis,Semaine 2,34.7
+181,Who cares,on s'en fiche,Minimiser,Familier,Le rival,Semaine 3,34.6
+182,No reason,pour rien,Esquiver,Neutre,Romance,Semaine 2,34.5
+183,Forgive me,pardonne-moi,S'excuser sincèrement,Neutre,Romance,Semaine 3,34.1
+184,I like it,ça me plaît,Réagir positivement,Neutre,Café & resto,Semaine 1,34.1
+185,What about you,et toi ?,Relancer la conversation,Neutre,Rencontre & présentations,Semaine 1,34.0
+186,You know what I mean,tu vois ce que je veux dire ?,Vérifier la compréhension,Familier,Coloc & amis,Semaine 2,33.8
+187,Uh huh,"mm-mm (oui, je t'écoute)",Montrer qu'on suit,Familier,Coloc & amis,Semaine 1,33.7
+188,Happy birthday,joyeux anniversaire,Fêter,Neutre,Fête,Semaine 1,33.6
+189,That's not true,ce n'est pas vrai,Contredire,Neutre,Dispute & réconciliation,Semaine 2,32.4
+190,Not bad,pas mal,Évaluer,Neutre,Café & resto,Semaine 1,32.3
+191,I've been thinking,j'ai réfléchi,Introduire une idée,Neutre,Romance,Semaine 3,31.7
+192,From now on,à partir de maintenant,Décider,Neutre,Le rival,Semaine 3,31.6
+193,Let go,lâche ; laisse aller,Ordonner / tourner la page,Neutre,Aventure & danger,Semaine 3,31.5
+194,Not much,pas grand-chose,Répondre à « quoi de neuf ? »,Neutre,Rencontre & présentations,Semaine 1,31.4
+195,First of all,tout d'abord,Structurer son propos,Neutre,Bureau & entretien,Semaine 3,30.8
+196,Where are we,où sommes-nous ?,Se repérer,Neutre,Voyage,Semaine 1,30.8
+197,Just do it,"fais-le, c'est tout",Encourager,Familier,Aventure & danger,Semaine 2,30.7
+198,You bet,et comment ! carrément,Accepter avec enthousiasme,Familier,Coloc & amis,Semaine 3,30.6
+199,You'll see,tu verras,Promettre / défier,Neutre,Le rival,Semaine 3,30.4
+200,You did it,tu l'as fait ! bravo,Féliciter,Neutre,Fête,Semaine 2,30.0
+201,I'm ready,je suis prêt,Annoncer,Neutre,Aventure & danger,Semaine 1,29.2
+202,Not exactly,pas exactement,Nuancer,Neutre,Bureau & entretien,Semaine 2,29.2
+203,I'm looking for,je cherche…,Demander,Neutre,Voyage,Semaine 1,29.1
+204,What's your name,comment tu t'appelles ?,Se présenter,Neutre,Rencontre & présentations,Semaine 1,28.8
+205,I'll be right back,je reviens tout de suite,S'absenter,Neutre,Café & resto,Semaine 2,28.6
+206,It's nothing,ce n'est rien,Minimiser,Neutre,Romance,Semaine 1,28.0
+207,How did you know,comment tu savais ?,Surprise,Neutre,Mystère & enquête,Semaine 2,27.9
+208,I like you,tu me plais ; je t'aime bien,Exprimer ses sentiments,Neutre,Romance,Semaine 2,27.8
+209,Never mind,laisse tomber ; peu importe,Abandonner,Neutre,Coloc & amis,Semaine 2,27.8
+210,I'll try,je vais essayer,Accepter un défi,Neutre,Bureau & entretien,Semaine 1,27.4
+211,What's happening,qu'est-ce qui se passe ?,Demander,Neutre,Aventure & danger,Semaine 1,27.3
+212,I don't get it,je ne comprends pas,Demander une explication,Familier,Coloc & amis,Semaine 2,27.1
+213,I'm just saying,"je dis ça, je dis rien",Adoucir une critique,Familier,Coloc & amis,Semaine 3,27.0
+214,Something like that,un truc comme ça,Rester vague,Familier,Coloc & amis,Semaine 2,26.4
+215,I don't remember,je ne me souviens pas,Répondre,Neutre,Mystère & enquête,Semaine 2,26.1
+216,Take it easy,doucement ; détends-toi,Apaiser,Familier,Coloc & amis,Semaine 2,26.0
+217,You know why,tu sais pourquoi ?,Expliquer,Neutre,Mystère & enquête,Semaine 3,25.3
+218,What am I gonna do,qu'est-ce que je vais faire ?,Inquiétude,Familier,Aventure & danger,Semaine 3,24.5
+219,Me neither,moi non plus,Réagir,Neutre,Coloc & amis,Semaine 2,24.5
+220,I love it,j'adore,Réagir positivement,Neutre,Fête,Semaine 1,24.3
+221,How about you,et toi ?,Relancer la conversation,Neutre,Rencontre & présentations,Semaine 1,24.3
+222,The point is,"le truc, c'est que…",Recentrer,Neutre,Dispute & réconciliation,Semaine 3,24.3
+223,I'll tell you what,"tu sais quoi, voilà ce qu'on va faire",Proposer un marché,Familier,Le rival,Semaine 3,24.3
+224,I'll see you later,à plus tard,Dire au revoir,Neutre,Coloc & amis,Semaine 1,24.2
+225,I have no idea,je n'en ai aucune idée,Ignorer,Neutre,Mystère & enquête,Semaine 2,24.1
+226,Look out,attention !,Alerter,Neutre,Aventure & danger,Semaine 2,23.9
+227,It's too late,c'est trop tard,Regretter,Neutre,Romance,Semaine 3,23.9
+228,You win,tu as gagné,Céder,Neutre,Dispute & réconciliation,Semaine 2,23.7
+229,I'm tired,je suis fatigué,Exprimer un état,Neutre,Coloc & amis,Semaine 1,23.3
+230,Do me a favor,rends-moi service,Demander un service,Neutre,Coloc & amis,Semaine 2,23.0
+231,It's no big deal,ce n'est pas bien grave,Minimiser,Familier,Coloc & amis,Semaine 3,23.0
+232,You look great,tu es superbe,Complimenter,Neutre,Fête,Semaine 2,22.9
+233,Turn around,retourne-toi,Ordonner,Neutre,Aventure & danger,Semaine 2,22.5
+234,Leave me alone,laisse-moi tranquille,Se fâcher,Neutre,Dispute & réconciliation,Semaine 2,22.5
+235,Have a seat,asseyez-vous,Inviter,Poli,Bureau & entretien,Semaine 1,22.5
+236,Keep going,continue,Encourager,Neutre,Aventure & danger,Semaine 2,22.4
+237,Can I help you,je peux vous aider ?,Proposer son aide,Poli,Café & resto,Semaine 1,22.2
+238,Just a minute,une minute,Faire patienter,Neutre,Café & resto,Semaine 1,22.2
+239,What did you say,qu'est-ce que tu as dit ?,Faire répéter,Neutre,Le rival,Semaine 2,22.1
+240,What does that mean,qu'est-ce que ça veut dire ?,Demander une explication,Neutre,Voyage,Semaine 1,21.7
+241,I guess so,je suppose que oui,Accepter sans conviction,Neutre,Coloc & amis,Semaine 2,21.6
+242,Hurry up,dépêche-toi,Presser,Neutre,Aventure & danger,Semaine 1,21.6
+243,How's that,ça te va comme ça ?,Vérifier,Neutre,Café & resto,Semaine 2,21.4
+244,How'd it go,ça s'est passé comment ?,Demander des nouvelles,Familier,Coloc & amis,Semaine 2,21.4
+245,I don't know what to say,je ne sais pas quoi dire,Émotion,Neutre,Romance,Semaine 3,18.5
+246,Where have you been,où étais-tu ?,Reprocher / demander,Neutre,Dispute & réconciliation,Semaine 2,18.0
+247,Thanks a lot,merci beaucoup,Remercier (parfois ironique),Neutre,Coloc & amis,Semaine 1,15.8
+248,Not now,pas maintenant,Refuser,Neutre,Bureau & entretien,Semaine 2,15.2
+249,Don't say that,ne dis pas ça,Contredire avec douceur,Neutre,Dispute & réconciliation,Semaine 2,14.8
+250,That would be great,ce serait génial,Accepter avec enthousiasme,Neutre,Bureau & entretien,Semaine 2,14.8
+251,This is crazy,c'est dingue,Surprise,Familier,Aventure & danger,Semaine 2,14.4
+252,Tell me about it,à qui le dis-tu !,Être d'accord (ironique),Familier,Coloc & amis,Semaine 3,14.2
+253,What time is it,quelle heure est-il ?,Demander,Neutre,Voyage,Semaine 1,13.5
+254,Can I ask you something,je peux te demander un truc ?,Introduire une question,Neutre,Romance,Semaine 2,13.4
+255,As a matter of fact,en fait ; justement,Contredire / préciser,Neutre,Bureau & entretien,Semaine 4,13.3
+256,What's the big deal,c'est quoi le problème ?,Minimiser / provoquer,Familier,Le rival,Semaine 3,12.5
+257,Are you kidding me,tu te moques de moi ?,Indignation,Familier,Le rival,Semaine 3,12.5
+258,Not anymore,plus maintenant,Répondre,Neutre,Romance,Semaine 3,12.3
+259,Just so you know,juste pour que tu saches,Prévenir,Familier,Le rival,Semaine 3,12.0
+260,That's weird,c'est bizarre,Réagir,Familier,Mystère & enquête,Semaine 2,11.9
+261,It's not your fault,ce n'est pas ta faute,Rassurer,Neutre,Dispute & réconciliation,Semaine 3,11.8
+262,So do I,moi aussi,Réagir,Neutre,Romance,Semaine 3,11.8
+263,You're crazy,tu es fou,Réagir,Familier,Coloc & amis,Semaine 2,11.8
+264,How are you doing,comment ça va ?,Saluer,Neutre,Rencontre & présentations,Semaine 1,11.7
+265,That sounds great,ça a l'air génial,Accepter avec enthousiasme,Neutre,Café & resto,Semaine 2,11.3
+266,What were you thinking,qu'est-ce qui t'a pris ?,Reprocher,Familier,Dispute & réconciliation,Semaine 4,11.3
+267,You're wrong,tu as tort,Contredire,Neutre,Le rival,Semaine 2,11.2
+268,No kidding,sans blague !,Surprise / ironie,Familier,Coloc & amis,Semaine 3,11.2
+269,You think so,tu crois ?,Demander confirmation,Neutre,Coloc & amis,Semaine 2,11.2
+270,That's impossible,c'est impossible,Surprise,Neutre,Mystère & enquête,Semaine 2,11.0
+271,I'm kidding,je plaisante,Désamorcer,Familier,Coloc & amis,Semaine 2,10.9
+272,That's too bad,dommage,Compatir,Neutre,Rencontre & présentations,Semaine 2,10.4
+273,How old are you,quel âge as-tu ?,Se présenter,Neutre,Rencontre & présentations,Semaine 1,10.3
+274,Is everything okay,tout va bien ?,S'inquiéter pour qqn,Neutre,Café & resto,Semaine 1,10.3
+275,Yeah right,"c'est ça, oui… (ironique)",Douter,Familier,Le rival,Semaine 3,10.3
+276,Sorry I'm late,"désolé, je suis en retard",S'excuser,Neutre,Bureau & entretien,Semaine 1,10.3
+277,You're the best,tu es le meilleur,Remercier / complimenter,Familier,Coloc & amis,Semaine 2,10.3
+278,I'll be there,j'y serai,Promettre,Neutre,Romance,Semaine 2,10.2
+279,Cut it out,arrête ça !,Se fâcher,Familier,Coloc & amis,Semaine 3,10.2
+280,That's enough,ça suffit,Se fâcher,Neutre,Dispute & réconciliation,Semaine 2,9.9
+281,Let me ask you something,laisse-moi te demander un truc,Introduire une question,Neutre,Mystère & enquête,Semaine 3,9.8
+282,You'll be fine,ça va aller,Rassurer,Neutre,Bureau & entretien,Semaine 2,9.6
+283,No offense,sans vouloir te vexer,Adoucir une critique,Familier,Le rival,Semaine 3,9.6
+284,I need to talk to you,il faut que je te parle,Annoncer une discussion sérieuse,Neutre,Romance,Semaine 3,9.2
+285,It's gonna be okay,ça va aller,Rassurer,Familier,Aventure & danger,Semaine 2,9.0
+286,Wish me luck,souhaite-moi bonne chance,Demander du soutien,Neutre,Bureau & entretien,Semaine 2,9.0
+287,I missed you,tu m'as manqué,Exprimer ses sentiments,Neutre,Romance,Semaine 2,9.0
+288,I didn't know that,je ne savais pas,Réagir à une info,Neutre,Rencontre & présentations,Semaine 2,9.0
+289,Why didn't you tell me,pourquoi tu ne me l'as pas dit ?,Reprocher,Neutre,Dispute & réconciliation,Semaine 3,9.0
+290,Give it to me,donne-le-moi,Demander,Neutre,Le rival,Semaine 2,9.0
+291,What's wrong with you,qu'est-ce qui te prend ?,Reprocher,Familier,Dispute & réconciliation,Semaine 3,9.0
+292,I'm scared,j'ai peur,Exprimer une émotion,Neutre,Aventure & danger,Semaine 2,8.9
+293,For instance,par exemple,Illustrer,Neutre,Bureau & entretien,Semaine 3,8.9
+294,That's terrible,c'est terrible,Compatir,Neutre,Rencontre & présentations,Semaine 2,8.9
+295,Sorry about that,désolé pour ça,S'excuser,Neutre,Café & resto,Semaine 1,8.8
+296,I'm hungry,j'ai faim,Exprimer un besoin,Neutre,Café & resto,Semaine 1,8.8
+297,I can't help it,c'est plus fort que moi,Se justifier,Neutre,Romance,Semaine 4,8.7
+298,No thank you,non merci,Refuser poliment,Poli,Café & resto,Semaine 1,8.6
+299,Slow down,ralentis,Demander de ralentir,Neutre,Voyage,Semaine 1,8.6
+300,Is that right,ah oui ? c'est vrai ?,Montrer de l'intérêt,Neutre,Bureau & entretien,Semaine 2,8.6
+301,You can do it,tu peux le faire,Encourager,Neutre,Aventure & danger,Semaine 1,8.5
+302,Well done,bien joué,Féliciter,Neutre,Bureau & entretien,Semaine 1,8.5
+303,I'll be right there,j'arrive tout de suite,Répondre à un appel,Neutre,Aventure & danger,Semaine 2,8.4
+304,Can I ask you a question,je peux te poser une question ?,Introduire une question,Neutre,Bureau & entretien,Semaine 1,8.4
+305,Oh boy,oh là là,Soupirer,Familier,Coloc & amis,Semaine 3,8.4
+306,What can I say,que veux-tu que je te dise ?,Se résigner,Neutre,Romance,Semaine 3,8.2
+307,The thing is,"le truc, c'est que…",Expliquer un problème,Neutre,Dispute & réconciliation,Semaine 3,8.2
+308,Let me tell you something,laisse-moi te dire un truc,Insister,Neutre,Le rival,Semaine 3,8.2
+309,I don't believe you,je ne te crois pas,Douter,Neutre,Le rival,Semaine 2,8.2
+310,Forget about it,oublie ça,Abandonner,Familier,Coloc & amis,Semaine 2,8.1
+311,I'll take care of it,je m'en occupe,Prendre en charge,Neutre,Bureau & entretien,Semaine 2,8.1
+312,This sucks,c'est nul,Se plaindre,Familier,Coloc & amis,Semaine 3,7.9
+313,Here's the thing,voilà le truc,Expliquer un problème,Familier,Dispute & réconciliation,Semaine 3,7.9
+314,What's the problem,c'est quoi le problème ?,Demander,Neutre,Le rival,Semaine 2,7.7
+315,That's a good idea,c'est une bonne idée,Approuver,Neutre,Bureau & entretien,Semaine 1,7.6
+316,That's cool,c'est cool,Réagir positivement,Familier,Coloc & amis,Semaine 1,7.6
+317,I know what you mean,je vois ce que tu veux dire,Montrer de l'empathie,Neutre,Coloc & amis,Semaine 2,7.6
+318,I have a question,j'ai une question,Introduire une question,Neutre,Bureau & entretien,Semaine 1,7.5
+319,Nice try,bien essayé,Taquiner,Familier,Le rival,Semaine 3,7.4
+320,I'm outta here,je me tire,Partir,Familier,Coloc & amis,Semaine 3,7.4
+321,Fair enough,c'est de bonne guerre ; d'accord,Concéder,Neutre,Bureau & entretien,Semaine 3,7.4
+322,Let's get out of here,sortons d'ici,Proposer de partir,Neutre,Aventure & danger,Semaine 2,7.4
+323,Happy new year,bonne année,Fêter,Neutre,Fête,Semaine 1,7.3
+324,What can I do,qu'est-ce que je peux faire ?,Proposer son aide,Neutre,Aventure & danger,Semaine 2,7.2
+325,Is that okay,ça te va ?,Demander l'accord,Neutre,Café & resto,Semaine 1,7.1
+326,Way to go,bravo !,Féliciter,Familier,Fête,Semaine 3,7.1
+327,Let it go,laisse couler ; passe à autre chose,Apaiser,Neutre,Dispute & réconciliation,Semaine 3,7.1
+328,What's that supposed to mean,"qu'est-ce que ça veut dire, ça ?",Se vexer,Familier,Dispute & réconciliation,Semaine 4,7.1
+329,I'm back,je suis de retour,Annoncer,Neutre,Coloc & amis,Semaine 1,7.0
+330,It worked,ça a marché !,Se réjouir,Neutre,Aventure & danger,Semaine 2,7.0
+331,If you know what I mean,si tu vois ce que je veux dire,Sous-entendre,Familier,Coloc & amis,Semaine 3,6.9
+332,Absolutely not,absolument pas,Refuser fermement,Neutre,Le rival,Semaine 2,6.9
+333,I need your help,j'ai besoin de ton aide,Demander de l'aide,Neutre,Aventure & danger,Semaine 1,6.9
+334,You're doing great,tu t'en sors très bien,Encourager,Neutre,Bureau & entretien,Semaine 2,6.8
+335,I don't know about that,je ne suis pas sûr de ça,Exprimer un doute,Neutre,Bureau & entretien,Semaine 3,6.8
+336,We need to talk,il faut qu'on parle,Annoncer une discussion sérieuse,Neutre,Romance,Semaine 3,6.8
+337,Let's face it,soyons honnêtes,Reconnaître une vérité,Neutre,Dispute & réconciliation,Semaine 4,6.8
+338,Just in case,au cas où,Prévoir,Neutre,Voyage,Semaine 3,6.8
+339,You're late,tu es en retard,Reprocher,Neutre,Bureau & entretien,Semaine 1,6.7
