@@ -1,0 +1,9 @@
+// Le modèle de données arrive avec les premiers tickets de fonctionnalité (docs/07-modele-de-donnees.md).
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
