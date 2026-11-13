@@ -1,0 +1,15 @@
+**/node_modules
+**/dist
+**/.next
+**/coverage
+**/storybook-static
+**/.turbo
+.git
+.env
+.env.*
+!.env.example
+docs
+design
+data
+infra
+backlog
