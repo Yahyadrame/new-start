@@ -1,0 +1,12 @@
+{
+  "home": {
+    "title": "Parle anglais. Pour de vrai.",
+    "logoAlt": "new start"
+  },
+  "theme": {
+    "label": "Thème",
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre"
+  }
+}
