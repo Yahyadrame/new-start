@@ -20,10 +20,10 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] `.env.example` complet, sans valeurs réelles.
 
 ## NS-002 — Squelettes des applications · M
-- [ ] `apps/web` : Next.js 15, Tailwind avec les jetons de `docs/04-design-system.md`, thème Système/Clair/Sombre, page d'accueil avec le logo.
-- [ ] `apps/api` : NestJS 11, Prisma, routes `/health/live` et `/health/ready` (vérifie base et Redis), logs pino JSON, arrêt propre sur `SIGTERM`.
-- [ ] `apps/worker` : NestJS standalone, job de démonstration. Interface `Queue` avec deux adaptateurs : **pg-boss** (phase 1, sur Neon) et BullMQ (phase 2). En phase 1, l'API lance les jobs dans son propre processus (`RUN_JOBS=inline`).
-- [ ] `/health/ready` vérifie la base, et Redis seulement s'il est configuré.
+- [x] `apps/web` : Next.js 15, Tailwind avec les jetons de `docs/04-design-system.md`, thème Système/Clair/Sombre, page d'accueil avec le logo.
+- [x] `apps/api` : NestJS 11, Prisma, routes `/health/live` et `/health/ready` (vérifie base et Redis), logs pino JSON, arrêt propre sur `SIGTERM`.
+- [x] `apps/worker` : NestJS standalone, job de démonstration, interface `Queue` et file en mémoire. Décision du porteur (2026-11-13) : les adaptateurs pg-boss et BullMQ sont reportés aux tickets NS-016 et NS-017 ; `RUN_JOBS=inline` dans l'API attend que la file vive dans un paquet partagé.
+- [x] `/health/ready` vérifie la base, et Redis seulement s'il est configuré.
 
 ## NS-013 — Bibliothèque de composants et Storybook · M
 - [ ] `packages/ui` avec shadcn/ui + Radix, Tailwind, `cva`, Lucide, Sonner, Vaul, Motion (liste de `docs/04-design-system.md`).
@@ -41,12 +41,24 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Le code généré respecte les règles de NS-014 et vient avec son test unitaire.
 - Dépend de NS-002 (dossiers `apps/api` et `apps/web`).
 
+## NS-016 — File de jobs pg-boss (phase 1, sur Neon) · S
+- [ ] Adaptateur `PgBossQueue` derrière le port `Queue` (`modules/jobs/domain/queue.ts`), avec son test unitaire ; la file en mémoire reste l'adaptateur des tests et du local.
+- [ ] Intervalle d'interrogation de 30 s ou plus, pour laisser Neon s'endormir (risque décrit dans `docs/decisions.md`) ; mesurer les CU-heures consommées et alerter le porteur au-delà de 80.
+- [ ] La file vit dans un paquet partagé, pour que l'API (`RUN_JOBS=inline`) et le worker l'utilisent.
+- Dépend de NS-002 et d'une base Neon (NS-008).
+
+## NS-017 — File de jobs BullMQ (phase 2, sur Redis) · S
+- [ ] Adaptateur `BullMqQueue` derrière le port `Queue`, avec son test unitaire ; choisi par variable d'environnement quand `REDIS_URL` est défini.
+- [ ] `RUN_JOBS=separate` : le worker traite les jobs, l'API ne fait que les poser.
+- [ ] `/health/ready` vérifie déjà Redis s'il est configuré (NS-002) ; ajouter la lecture de la longueur de la file.
+- Dépend de NS-016 (paquet partagé) ; phase 2 seulement.
+
 ## NS-003 — Environnement local conteneurisé · M
 - [x] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
-- [ ] Limites de mémoire par conteneur (limites en place, PostgreSQL + Mailpit mesurés à 28 Mo ; reste le profil `dev` après NS-002) ; mesurer et noter la RAM utilisée avec le profil `dev` (cible : moins de 2 Go).
+- [x] Limites de mémoire par conteneur ; RAM du profil `dev` mesurée le 2026-11-13 : environ 860 Mo (cible : moins de 2 Go).
 - [ ] Adaptateurs factices pour l'IA, Brevo et Cloudinary afin de développer sans clé.
 - [x] Scripts racine : `pnpm docker:dev`, `pnpm docker:prod`, `pnpm docker:clean`.
-- [ ] `README` de démarrage (section écrite ; le port 3000 attend NS-002) : sur une machine neuve avec seulement Docker, `docker compose --profile dev up` ouvre l'appli sur `http://localhost:3000`.
+- [x] `README` de démarrage : sur une machine neuve avec seulement Docker, `docker compose --profile dev up` ouvre l'appli sur `http://localhost:3000`.
 - [ ] Le porteur du projet lance la commande sur sa machine et confirme que ça marche avant de clore le ticket.
 
 ## NS-004 — Images Docker · M
