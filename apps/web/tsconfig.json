@@ -1,0 +1,26 @@
+{
+  "extends": "@newstart/config/tsconfig/base.json",
+  "include": [
+    "next-env.d.ts",
+    "postcss.config.mjs",
+    "src",
+    "vitest.config.ts",
+    ".next/types/**/*.ts"
+  ],
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "preserve",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowJs": false,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": ["node"]
+  },
+  "exclude": ["node_modules"]
+}
