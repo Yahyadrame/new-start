@@ -32,8 +32,14 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Storybook publié en ligne (projet Vercel séparé ou GitHub Pages) pour que le porteur du projet voie les composants.
 
 ## NS-014 — Règles d'architecture vérifiées en CI · S
-- [ ] `dependency-cruiser` et `eslint-plugin-boundaries` configurés selon `docs/06-architecture.md` ; un import interdit fait échouer la CI.
-- [ ] Modèle de module back (`domain`, `application`, `infrastructure`, `interface`) et de fonctionnalité front générés par une commande (`pnpm gen:module`, `pnpm gen:feature`).
+- [x] `dependency-cruiser` et `eslint-plugin-boundaries` configurés selon `docs/06-architecture.md` ; un import interdit fait échouer la CI.
+- [ ] Modèle de module back et de fonctionnalité front générés par une commande : reporté au ticket NS-015.
+
+## NS-015 — Générateurs de module et de fonctionnalité · S
+- [ ] `pnpm gen:module <nom>` crée un module back (`domain`, `application`, `infrastructure`, `interface`, `<nom>.module.ts`) dans `apps/api`.
+- [ ] `pnpm gen:feature <nom>` crée une fonctionnalité front (`components/`, `hooks/`, `api/`, `store/`, `index.ts`) dans `apps/web`.
+- [ ] Le code généré respecte les règles de NS-014 et vient avec son test unitaire.
+- Dépend de NS-002 (dossiers `apps/api` et `apps/web`).
 
 ## NS-003 — Environnement local conteneurisé · M
 - [x] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
