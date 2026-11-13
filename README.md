@@ -44,7 +44,7 @@ Il suffit d'avoir Docker. Copiez `.env.example` en `.env`, puis, depuis la racin
 | Commande | Ce qui démarre |
 | --- | --- |
 | `pnpm docker:deps` | PostgreSQL (port 5432) et Mailpit (boîte mail de test sur http://localhost:8025) |
-| `pnpm docker:dev` | Les mêmes, plus `web` (http://localhost:3000) et `api` (http://localhost:4000) avec rechargement automatique |
+| `pnpm docker:dev` | Les mêmes, plus `web` (http://localhost:3000) et `api` (http://localhost:4000) avec rechargement automatique | Mesuré le 2026-11-13 : environ 860 Mo de RAM pour l'ensemble (web 550 Mo, api 250 Mo, Postgres 30 Mo, Mailpit 20 Mo).
 | `pnpm docker:prod` | `web` et `api` construits avec les Dockerfiles de production |
 | `pnpm docker:clean` | Arrête tout et supprime les conteneurs, les images locales et les volumes, donc la base locale |
 

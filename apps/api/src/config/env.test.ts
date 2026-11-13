@@ -6,7 +6,7 @@ const base = { DATABASE_URL: 'postgresql://u:p@localhost:5432/db' };
 describe('parseEnv', () => {
   it('applique les valeurs par défaut', () => {
     expect(parseEnv(base)).toMatchObject({
-      PORT: 3000,
+      PORT: 4000,
       LOG_LEVEL: 'info',
       RUN_JOBS: 'inline',
       NODE_ENV: 'development',
