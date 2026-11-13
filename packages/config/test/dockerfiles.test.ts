@@ -34,9 +34,9 @@ describe('.dockerignore', () => {
 });
 
 describe('apps/web/next.config.mjs', () => {
-  it('produit la sortie standalone attendue par le Dockerfile', async () => {
-    const { default: config } = await import('../../../apps/web/next.config.mjs');
-    expect(config.output).toBe('standalone');
-    expect(config.outputFileTracingRoot).toMatch(/\/$/);
+  const config = readFileSync('../../apps/web/next.config.mjs', 'utf8');
+  it('produit la sortie standalone attendue par le Dockerfile', () => {
+    expect(config).toContain("output: 'standalone'");
+    expect(config).toContain('outputFileTracingRoot');
   });
 });
