@@ -1,2 +1,6 @@
 /** @type {import('next').NextConfig} */
-export default { reactStrictMode: true, poweredByHeader: false };
+export default {
+  transpilePackages: ['@newstart/ui'],
+  reactStrictMode: true,
+  poweredByHeader: false,
+};

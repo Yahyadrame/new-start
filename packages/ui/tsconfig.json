@@ -1,0 +1,12 @@
+{
+  "extends": "@newstart/config/tsconfig/base.json",
+  "include": ["src", ".storybook", "vitest.config.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  }
+}

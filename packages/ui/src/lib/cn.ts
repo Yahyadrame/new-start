@@ -1,0 +1,7 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+/** Assemble des classes Tailwind en résolvant les conflits (la dernière gagne). */
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
+}
