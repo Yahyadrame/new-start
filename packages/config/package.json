@@ -1,0 +1,16 @@
+{
+  "name": "@newstart/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint/index.mjs",
+    "./prettier": "./prettier/index.json",
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./commitlint": "./commitlint.config.mjs"
+  },
+  "scripts": {
+    "test": "vitest run --coverage",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

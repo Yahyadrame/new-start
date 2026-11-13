@@ -1,0 +1,13 @@
+node_modules
+dist
+.next
+coverage
+.turbo
+pnpm-lock.yaml
+data
+design
+docs
+backlog
+*.md
+.github
+.claude
