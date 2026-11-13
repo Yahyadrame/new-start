@@ -106,3 +106,8 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
 - [ ] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
 - [ ] Rédiger `docs/adr/0001-fournisseurs-ia.md` ; implémenter les interfaces dans `packages/ai` avec un adaptateur factice pour les tests.
+
+## NS-018 — Compose dev sans fichiers appartenant à root · S
+- [ ] Les conteneurs du profil `dev` tournent avec l'UID et le GID de l'utilisateur (`user: "${UID}:${GID}"`), pour que `.next` et `apps/api/src/generated` restent à lui.
+- [ ] `README` : comment exporter `UID` et `GID` (ou valeur par défaut 1000).
+- [ ] Vérifié : après `docker compose --profile dev up`, `find apps -user root -not -path "*/node_modules/*"` ne renvoie rien.
