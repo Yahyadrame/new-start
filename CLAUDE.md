@@ -24,15 +24,16 @@ Tu joues tour à tour les rôles ci-dessous, et tu annonces lequel tu prends au 
 1. **Un ticket = une branche = une pull request.** Branche `feat/NS-123-titre-court`, `fix/…`, `chore/…`.
 2. **Pas de code sans ticket.** Si un besoin apparaît, ajoute un ticket dans `backlog/` et signale-le.
 3. **Petits pas.** Une PR fait moins de 400 lignes modifiées hors fichiers générés. Sinon, découpe.
-4. **Les tests passent avant la PR** : `pnpm lint`, `pnpm typecheck`, `pnpm test`, et les tests e2e touchés.
-5. **Le quality gate SonarQube doit être vert** : pas de nouveau bug, pas de vulnérabilité, couverture du nouveau code ≥ 80 %, duplication < 3 %.
-6. **Aucun secret dans le code.** Les clés vont dans les variables d'environnement et les secrets Kubernetes. `.env.example` liste les variables, sans valeurs réelles.
-7. **Migrations compatibles.** Toute migration de base suit le principe « étendre puis contracter » (voir `docs/10-devops.md`) pour ne jamais couper le service.
-8. **Les maquettes font foi** pour l'interface : `docs/05-ecrans.md` et le lien des maquettes. Les deux thèmes (clair et sombre) sont obligatoires.
-9. **Accessibilité** : vrais `<button>`, `<label>`, contrastes 4,5:1, cibles tactiles ≥ 44 px.
-10. **Demande avant** : tout choix entre plusieurs bonnes options, toute dépense, toute action irréversible (suppression de données, changement d'un contrat d'API publique, mise en production). Présente les options, recommande-en une, puis attends le choix. Note la décision dans `docs/decisions.md`.
-11. **Git et GitHub avec accord** : commits et branches locales libres ; pousser, ouvrir une PR, fusionner, créer des issues, changer un réglage ou un secret, créer un tag : demande d'abord (tableau dans `docs/16-delegation-supervision.md`). Regroupe les demandes et respecte les autorisations permanentes notées dans `docs/decisions.md`.
-12. **Tout est testable en ligne** : chaque PR a son environnement d'aperçu, chaque fusion met à jour staging. Donne toujours le lien à tester.
+4. **Tests unitaires obligatoires, toujours** : tout code ajouté ou modifié (service, fonction, hook, composant, schéma Zod, adaptateur) a ses tests unitaires dans la même PR, écrits avec le code (idéalement avant). Une PR sans test unitaire pour son code nouveau n'est jamais proposée, sauf fichier de pur configuration/génération, à justifier dans la PR.
+5. **Les tests passent avant la PR** : `pnpm lint`, `pnpm typecheck`, `pnpm test`, et les tests e2e touchés.
+6. **Le quality gate SonarQube doit être vert** : pas de nouveau bug, pas de vulnérabilité, couverture du nouveau code ≥ 80 %, duplication < 3 %.
+7. **Aucun secret dans le code.** Les clés vont dans les variables d'environnement et les secrets Kubernetes. `.env.example` liste les variables, sans valeurs réelles.
+8. **Migrations compatibles.** Toute migration de base suit le principe « étendre puis contracter » (voir `docs/10-devops.md`) pour ne jamais couper le service.
+9. **Les maquettes font foi** pour l'interface : `docs/05-ecrans.md` et le lien des maquettes. Les deux thèmes (clair et sombre) sont obligatoires.
+10. **Accessibilité** : vrais `<button>`, `<label>`, contrastes 4,5:1, cibles tactiles ≥ 44 px.
+11. **Demande avant** : tout choix entre plusieurs bonnes options, toute dépense, toute action irréversible (suppression de données, changement d'un contrat d'API publique, mise en production). Présente les options, recommande-en une, puis attends le choix. Note la décision dans `docs/decisions.md`.
+12. **Git et GitHub avec accord** : commits et branches locales libres ; pousser, ouvrir une PR, fusionner, créer des issues, changer un réglage ou un secret, créer un tag : demande d'abord (tableau dans `docs/16-delegation-supervision.md`). Regroupe les demandes et respecte les autorisations permanentes notées dans `docs/decisions.md`.
+13. **Tout est testable en ligne** : chaque PR a son environnement d'aperçu, chaque fusion met à jour staging. Donne toujours le lien à tester.
 
 ## Qualité dès le premier jour
 
@@ -59,7 +60,7 @@ Tu joues tour à tour les rôles ci-dessous, et tu annonces lequel tu prends au 
 ## Définition de « terminé »
 
 - Les critères d'acceptation sont vérifiés et cochés dans la PR.
-- Tests ajoutés (unitaires + intégration ; e2e si parcours utilisateur).
+- Tests ajoutés (unitaires **toujours**, + intégration ; e2e si parcours utilisateur).
 - CI verte, quality gate SonarQube vert, image Docker construite et scannée.
 - Documentation mise à jour si l'API, le modèle de données ou l'infrastructure changent.
 - Déployé sur l'environnement de préproduction (staging) et vérifié.

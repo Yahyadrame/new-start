@@ -8,7 +8,8 @@ NS-___
 
 ## Vérifications
 - [ ] Critères d'acceptation cochés
-- [ ] Tests ajoutés ou mis à jour
+- [ ] Tests unitaires écrits pour tout code nouveau ou modifié (obligatoire)
+- [ ] Tests d'intégration / e2e ajoutés ou mis à jour si besoin
 - [ ] Lint, typecheck et tests verts en local
 - [ ] Pas de secret ni de donnée personnelle dans le code ou les logs
 - [ ] Migration compatible (étendre puis contracter), si base modifiée

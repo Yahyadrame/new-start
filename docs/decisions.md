@@ -33,3 +33,5 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 
 - **Neon et API éveillée** : une API toujours allumée qui interroge la base (pg-boss interroge toutes les 2 s par défaut, `/health/ready` teste la base) empêche Neon de s'endormir. 0,25 CU × 730 h = 182 CU-heures, au-dessus des 100 gratuites : la base serait suspendue vers le 16 du mois. Parade prévue en NS-002 : la sonde ne touche que `/health/live` (sans base), intervalle pg-boss long (≥ 30 s) ou file en mémoire en phase 1, mesure des CU-heures consommées. À revalider avec le porteur du projet si la mesure dépasse 80 CU-heures.
 - **Vercel Hobby** : usage personnel et non commercial. À revoir avant d'activer le paiement.
+
+| 2026-11-13 | Tests unitaires | Obligatoires dans chaque PR pour tout code nouveau ou modifié, sans exception non justifiée ; ajoutés à `CLAUDE.md` (règle 4), au modèle de PR et à la définition de « terminé » | Demande du porteur du projet : ne jamais oublier |
