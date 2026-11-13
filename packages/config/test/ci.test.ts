@@ -2,11 +2,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 
-type Step = { uses?: string; run?: string };
+type Step = { uses?: string; run?: string; if?: string };
 const ci = parse(readFileSync('../../.github/workflows/ci.yml', 'utf8')) as {
   on: { pull_request: unknown; push: { branches: string[] } };
   permissions: Record<string, string>;
-  jobs: { quality: { steps: Step[] } };
+  jobs: { quality: { env: Record<string, string>; steps: Step[] } };
 };
 const steps = ci.jobs.quality.steps;
 const runs = steps.map((s) => s.run).filter(Boolean);
@@ -29,7 +29,25 @@ describe('workflow ci.yml', () => {
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
-  it('ne lance aucune action sans version', () => {
-    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@v\d+$/);
+  it('ne lance aucune action sans version (tag majeur ou SHA complet)', () => {
+    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@(v\d+|[0-9a-f]{40})$/);
+  });
+  it("lance l'analyse SonarQube après les tests, seulement si le jeton existe", () => {
+    const i = steps.findIndex((s) => s.uses?.startsWith('SonarSource/sonarqube-scan-action@'));
+    expect(i).toBeGreaterThan(steps.findIndex((s) => s.run === 'pnpm test'));
+    expect(steps[i]?.uses).toMatch(/@[0-9a-f]{40}$/);
+    expect(steps[i]?.if).toBe("env.SONAR_TOKEN != ''");
+    expect(ci.jobs.quality.env.SONAR_TOKEN).toBe('${{ secrets.SONAR_TOKEN }}');
+  });
+});
+
+describe('sonar-project.properties', () => {
+  const props = readFileSync('../../sonar-project.properties', 'utf8');
+  it('attend le quality gate et lit les rapports lcov', () => {
+    expect(props).toContain('sonar.qualitygate.wait=true');
+    expect(props).toContain('sonar.javascript.lcov.reportPaths=');
+  });
+  it('ne contient ni jeton ni clé de projet', () => {
+    expect(props).not.toMatch(/sonar\.(token|login|password|projectKey|organization)/);
   });
 });
