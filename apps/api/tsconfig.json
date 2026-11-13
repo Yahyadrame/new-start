@@ -1,0 +1,5 @@
+{
+  "extends": "@newstart/config/tsconfig/base.json",
+  "include": ["src", "test", "prisma.config.ts", "vitest.config.ts"],
+  "compilerOptions": { "noEmit": true, "experimentalDecorators": true, "types": ["node"] }
+}

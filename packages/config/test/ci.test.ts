@@ -50,6 +50,9 @@ describe('sonar-project.properties', () => {
     expect(props).toContain('sonar.qualitygate.wait=true');
     expect(props).toContain('sonar.javascript.lcov.reportPaths=');
   });
+  it('exclut seulement le point d’entrée main.ts de la couverture', () => {
+    expect(props).toContain('sonar.coverage.exclusions=**/main.ts');
+  });
   it('ne contient ni jeton ni clé de projet', () => {
     expect(props).not.toMatch(/sonar\.(token|login|password|projectKey|organization)/);
   });
