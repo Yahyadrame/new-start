@@ -5,3 +5,5 @@ packages:
 # pnpm 12 bloque les scripts de build par défaut : on autorise seulement esbuild (binaire de tsx/vite).
 allowBuilds:
   esbuild: true
+  prisma: false # le client est généré par `prisma generate` dans les scripts
+  '@prisma/engines': false
