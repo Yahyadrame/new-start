@@ -111,3 +111,8 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Les conteneurs du profil `dev` tournent avec l'UID et le GID de l'utilisateur (`user: "${UID}:${GID}"`), pour que `.next` et `apps/api/src/generated` restent à lui.
 - [ ] `README` : comment exporter `UID` et `GID` (ou valeur par défaut 1000).
 - [ ] Vérifié : après `docker compose --profile dev up`, `find apps -user root -not -path "*/node_modules/*"` ne renvoie rien.
+
+## NS-019 — Actions GitHub épinglées par SHA · S
+- [ ] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.
+- [ ] Le test de `packages/config` exige un SHA, plus seulement un tag majeur.
+- [ ] Mise à jour des SHA par Dependabot (à proposer au porteur).
