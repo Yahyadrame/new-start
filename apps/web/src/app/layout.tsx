@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { ServerGate } from '../features/server-status';
 import { themeInitScript } from '../features/theme';
 import './globals.css';
 
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <ServerGate apiUrl={process.env['NEXT_PUBLIC_API_URL']}>{children}</ServerGate>
+      </body>
     </html>
   );
 }
