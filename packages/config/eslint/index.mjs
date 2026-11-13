@@ -63,13 +63,24 @@ export const architecture = {
 };
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/.next/**', '**/coverage/**', '**/.turbo/**', 'design/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/.next/**',
+      '**/coverage/**',
+      '**/.turbo/**',
+      '**/generated/**',
+      'design/**',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.strict,
   security.configs.recommended,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // Les modules NestJS sont des classes vides portées par un décorateur.
+      '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       '@typescript-eslint/ban-ts-comment': [
         'error',
         { 'ts-ignore': true, 'ts-expect-error': 'allow-with-description' },

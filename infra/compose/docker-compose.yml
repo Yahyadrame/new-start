@@ -50,7 +50,7 @@ services:
 
   api:
     <<: *dev-app
-    environment: { APP: '@newstart/api', RUN_JOBS: inline }
+    environment: { APP: '@newstart/api', RUN_JOBS: inline, PORT: '4000' }
     ports: ['4000:4000']
 
   web-prod:
