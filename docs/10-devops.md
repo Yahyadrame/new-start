@@ -49,6 +49,14 @@ Sources des limites (novembre 2026) : [Render, offre gratuite](https://render.co
 
 Écartés pour la phase 1 : **Koyeb** (empreinte de 29 $ sur la carte depuis février 2026, pas de worker gratuit), **Fly.io** (plus d'offre gratuite pour les nouveaux comptes), **Railway** (5 $ de crédit d'essai puis 1 $ par mois), **Oracle Always Free + k3s** (serveur à administrer soi-même ; réservé à la phase 2 si choisi).
 
+Secrets et variables du dépôt pour le déploiement staging (saisis par le porteur du projet, jamais dans le code). Chaque étape de `cd-staging.yml` est sautée tant que sa valeur manque.
+
+| Nom | Type | Rôle |
+| --- | --- | --- |
+| `STAGING_DATABASE_URL` | secret | URL de connexion à la base Neon `newstart-staging` (Francfort) pour `prisma migrate deploy`. Utiliser l'URL directe, sans pooler, pour les migrations. |
+| `RENDER_DEPLOY_HOOK_URL` | secret | Hook de déploiement du service Render de l'API. |
+| `STAGING_API_URL` | variable | Adresse publique de l'API, sans barre finale, pour le test de fumée sur `/health/ready`. |
+
 ### Règles pour que la phase 2 ne demande aucune réécriture
 
 - Le code ne dépend d'aucun hébergeur : configuration par variables d'environnement, accès aux services par des **interfaces** (`Queue`, `Cache`, `Mailer`, `SmsSender`, `MediaStore`) avec un adaptateur par fournisseur.

@@ -1,7 +1,8 @@
 name: cd-staging
 
 # À chaque fusion sur main : construit les images, les scanne (Trivy), puis les publie sur GHCR (NS-004).
-# Le déploiement sur Render et Vercel s'ajoute dans les PR suivantes de NS-008.
+# Puis migre la base Neon, déclenche le déploiement Render et vérifie /health/ready (NS-008).
+# Chaque étape est sautée tant que son secret ou sa variable n'est pas saisi par le porteur du projet.
 on:
   push:
     branches: [main]
@@ -61,3 +62,37 @@ jobs:
             ${{ env.IMAGE }}:${{ github.sha }}
             ${{ env.IMAGE }}:staging
           cache-from: type=gha,scope=${{ matrix.app }}
+
+  deploy:
+    needs: images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+      DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      API_URL: ${{ vars.STAGING_API_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4 # version lue dans packageManager
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Migrations avant le déploiement : elles suivent « étendre puis contracter » (docs/10-devops.md).
+      - name: Migre la base Neon
+        if: env.DATABASE_URL != ''
+        run: pnpm --filter @newstart/api exec prisma migrate deploy
+      - name: Déclenche le déploiement Render
+        if: env.DEPLOY_HOOK != ''
+        run: curl --fail --silent --show-error --output /dev/null --request POST "$DEPLOY_HOOK"
+      # ponytail: peut répondre avec l'ancienne version avant la fin du déploiement ; comparer un numéro de version si cela gêne.
+      - name: Test de fumée sur /health/ready
+        if: env.API_URL != ''
+        run: |
+          for i in $(seq 1 30); do
+            curl --fail --silent --max-time 10 "$API_URL/health/ready" && exit 0
+            sleep 10
+          done
+          echo "L'API ne répond pas sur /health/ready après 5 minutes" >&2
+          exit 1

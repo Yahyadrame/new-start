@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 
-type Step = { uses?: string; run?: string; with?: Record<string, unknown> };
+type Step = { uses?: string; run?: string; if?: string; with?: Record<string, unknown> };
 const wf = parse(readFileSync('../../.github/workflows/cd-staging.yml', 'utf8')) as {
   on: { push: { branches: string[] } };
   permissions: Record<string, string>;
@@ -12,6 +12,7 @@ const wf = parse(readFileSync('../../.github/workflows/cd-staging.yml', 'utf8'))
       strategy: { matrix: { app: string[] } };
       steps: Step[];
     };
+    deploy: { needs: string; permissions?: unknown; env: Record<string, string>; steps: Step[] };
   };
 };
 const { steps, strategy, permissions } = wf.jobs.images;
@@ -40,5 +41,45 @@ describe('workflow cd-staging.yml', () => {
   });
   it('met le nom de l’image en minuscules', () => {
     expect(steps.some((s) => s.run?.includes('${GITHUB_REPOSITORY_OWNER,,}'))).toBe(true);
+  });
+});
+
+describe('job deploy', () => {
+  const { needs, env, steps: deploySteps, permissions: deployPerms } = wf.jobs.deploy;
+  const find = (text: string) => deploySteps.findIndex((s) => s.run?.includes(text));
+  const guarded = (text: string) => deploySteps[find(text)]?.if;
+
+  it("attend les images et n'écrit rien (droits en lecture seule)", () => {
+    expect(needs).toBe('images');
+    expect(deployPerms).toBeUndefined();
+    expect(wf.permissions).toEqual({ contents: 'read' });
+  });
+  it('lit ses secrets et sa variable depuis le dépôt, sans valeur dans le fichier', () => {
+    expect(env).toEqual({
+      DATABASE_URL: '${{ secrets.STAGING_DATABASE_URL }}',
+      DEPLOY_HOOK: '${{ secrets.RENDER_DEPLOY_HOOK_URL }}',
+      API_URL: '${{ vars.STAGING_API_URL }}',
+    });
+  });
+  it('migre, puis déclenche Render, puis teste /health/ready', () => {
+    const order = ['prisma migrate deploy', '"$DEPLOY_HOOK"', '/health/ready'].map(find);
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+  });
+  it("saute chaque étape tant que son secret ou sa variable n'existe pas", () => {
+    expect(guarded('prisma migrate deploy')).toBe("env.DATABASE_URL != ''");
+    expect(guarded('"$DEPLOY_HOOK"')).toBe("env.DEPLOY_HOOK != ''");
+    expect(guarded('/health/ready')).toBe("env.API_URL != ''");
+  });
+  it("n'affiche jamais le hook dans les logs", () => {
+    const hook = deploySteps[find('"$DEPLOY_HOOK"')]?.run ?? '';
+    expect(hook).toContain('--silent');
+    expect(hook).toContain('--output /dev/null');
+    expect(hook).not.toMatch(/echo|set -x/);
+  });
+  it("échoue si l'API ne répond pas après les essais", () => {
+    const smoke = deploySteps[find('/health/ready')]?.run ?? '';
+    expect(smoke).toContain('--fail');
+    expect(smoke).toContain('exit 1');
   });
 });
