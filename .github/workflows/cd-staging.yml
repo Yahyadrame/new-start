@@ -73,7 +73,7 @@ jobs:
       API_URL: ${{ vars.STAGING_API_URL }}
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4 # version lue dans packageManager
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0, version de pnpm lue dans packageManager
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc

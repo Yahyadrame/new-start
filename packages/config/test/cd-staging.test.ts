@@ -77,6 +77,10 @@ describe('job deploy', () => {
     expect(hook).toContain('--output /dev/null');
     expect(hook).not.toMatch(/echo|set -x/);
   });
+  it('épingle les actions tierces par SHA complet (règle Sonar S7637)', () => {
+    for (const s of deploySteps.filter((x) => x.uses && !x.uses.startsWith('actions/')))
+      expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
+  });
   it("échoue si l'API ne répond pas après les essais", () => {
     const smoke = deploySteps[find('/health/ready')]?.run ?? '';
     expect(smoke).toContain('--fail');
