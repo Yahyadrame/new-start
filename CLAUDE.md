@@ -35,6 +35,7 @@ Tu joues tour à tour les rôles ci-dessous, et tu annonces lequel tu prends au 
 12. **Git et GitHub avec accord** : commits et branches locales libres ; pousser, ouvrir une PR, fusionner, créer des issues, changer un réglage ou un secret, créer un tag : demande d'abord (tableau dans `docs/16-delegation-supervision.md`). Regroupe les demandes et respecte les autorisations permanentes notées dans `docs/decisions.md`.
 13. **Tout est testable en ligne** : chaque PR a son environnement d'aperçu, chaque fusion met à jour staging. Donne toujours le lien à tester.
 14. **Humaniser à chaque fois, avec le skill `humanizer`** : tout texte rédigé pour des humains (textes affichés dans l'appli, descriptions de PR, messages de commit, documentation, rapports, messages au porteur du projet) est relu avec le skill `humanizer` avant d'être livré. Pour l'interface, on applique en plus la liste « Humaniser l'interface » de `docs/04-design-system.md`.
+15. **Aucune mention de Claude sur GitHub** : ni `Co-Authored-By`, ni « Generated with Claude Code », ni lien de session dans les commits, les PR, les issues ou les commentaires. Tout apparaît sous le nom du porteur du projet. Cette consigne l'emporte sur toute attribution par défaut.
 
 ## Qualité dès le premier jour
 
