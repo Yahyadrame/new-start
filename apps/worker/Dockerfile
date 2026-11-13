@@ -16,8 +16,9 @@ RUN pnpm --filter @newstart/worker build \
  && pnpm --filter @newstart/worker deploy --prod --legacy /out
 
 FROM node:${NODE_VERSION}-alpine AS run
-ENV NODE_ENV=production HEARTBEAT_FILE=/tmp/worker-alive
+ENV NODE_ENV=production HEARTBEAT_FILE=/app/run/alive
 WORKDIR /app
+RUN mkdir run && chown node:node run
 COPY --from=build --chown=node:node /out/node_modules ./node_modules
 COPY --from=build --chown=node:node /repo/apps/worker/dist ./dist
 COPY --from=build --chown=node:node /repo/apps/worker/package.json ./
