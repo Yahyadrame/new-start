@@ -1,0 +1,1001 @@
+Rang,Mot,Traduction,Semaine,Fréquence (par million de mots)
+1,the,"le, la, les",Semaine 1,37265.1
+2,you,"tu, vous, toi",Semaine 1,29674.2
+3,I,je,Semaine 1,28877.9
+4,to,"à, vers ; (devant un verbe) de / pour",Semaine 1,24365.2
+5,a,"un, une",Semaine 1,21209.6
+6,and,et,Semaine 1,18493.4
+7,of,de,Semaine 1,15883.7
+8,it,"il, elle, ça",Semaine 1,13958.3
+9,in,"dans, en",Semaine 1,12666.7
+10,that,"que, ce, cela, ça",Semaine 1,12162.7
+11,is,est,Semaine 1,10521.5
+12,for,pour,Semaine 1,8001.6
+13,this,"ce, ceci, cette",Semaine 1,7705.5
+14,what,"quoi, que, quel",Semaine 1,7508.2
+15,me,"moi, me",Semaine 1,7143.5
+16,on,sur,Semaine 1,6972.2
+17,we,"nous, on",Semaine 1,6531.0
+18,was,"était, a été",Semaine 1,6306.7
+19,have,avoir,Semaine 1,6187.6
+20,my,"mon, ma, mes",Semaine 1,6059.8
+21,with,avec,Semaine 1,6006.5
+22,be,être,Semaine 1,5989.8
+23,he,il,Semaine 1,5766.5
+24,not,ne… pas,Semaine 1,5733.5
+25,are,"sont, êtes, es",Semaine 1,5597.3
+26,no,"non, aucun",Semaine 1,5498.8
+27,your,"ton, ta, votre, vos",Semaine 1,5202.2
+28,do,faire ; (auxiliaire des questions),Semaine 1,5150.9
+29,but,mais,Semaine 1,4945.9
+30,so,"donc, alors, tellement",Semaine 1,4814.3
+31,just,"juste, seulement",Semaine 1,4733.2
+32,know,"savoir, connaître",Semaine 1,4619.4
+33,all,"tout, tous",Semaine 1,4493.9
+34,can,pouvoir,Semaine 1,3960.7
+35,at,"à, chez",Semaine 1,3885.8
+36,like,aimer ; comme ; genre (fam.),Semaine 1,3845.3
+37,if,si,Semaine 1,3497.4
+38,they,"ils, elles",Semaine 1,3466.2
+39,get,"obtenir, avoir, devenir, comprendre",Semaine 1,3455.4
+40,about,"à propos de, environ",Semaine 1,3426.2
+41,as,"comme, aussi",Semaine 1,3418.1
+42,out,dehors,Semaine 1,3328.7
+43,I'm,je suis,Semaine 1,3279.6
+44,there,"là, là-bas ; il y a (there is)",Semaine 1,3208.1
+45,up,"en haut, debout",Semaine 1,3153.6
+46,one,"un, une",Semaine 1,3093.3
+47,here,ici,Semaine 1,3071.9
+48,well,bien ; eh bien,Semaine 1,2975.6
+49,right,"droite ; exact, d'accord",Semaine 1,2944.7
+50,don't,ne… pas (do not),Semaine 1,2943.1
+51,she,elle,Semaine 1,2893.1
+52,it's,c'est,Semaine 1,2855.5
+53,from,"de, depuis",Semaine 1,2816.7
+54,go,aller,Semaine 1,2805.2
+55,her,"elle, la, son, sa (à elle)",Semaine 1,2749.4
+56,yeah,ouais,Semaine 1,2693.5
+57,how,comment,Semaine 1,2658.6
+58,him,"lui, le",Semaine 1,2595.5
+59,now,maintenant,Semaine 1,2594.3
+60,his,"son, sa, ses (à lui)",Semaine 1,2421.8
+61,think,"penser, croire",Semaine 1,2421.1
+62,will,(futur) ; volonté,Semaine 1,2405.8
+63,an,"un, une (devant voyelle)",Semaine 1,2402.1
+64,by,"par, près de",Semaine 1,2393.1
+65,or,ou,Semaine 1,2338.3
+66,want,vouloir,Semaine 1,2299.0
+67,got,"eu, obtenu (got = get au passé)",Semaine 1,2266.7
+68,okay,"d'accord, ok",Semaine 1,2234.6
+69,when,quand,Semaine 1,2229.0
+70,who,qui,Semaine 1,2194.1
+71,see,voir,Semaine 1,2158.1
+72,good,"bon, bien",Semaine 1,2087.3
+73,did,a fait (do au passé),Semaine 1,2052.4
+74,come,venir,Semaine 1,2007.4
+75,were,"étaient, étiez",Semaine 1,1990.1
+76,time,"temps, fois, heure",Semaine 1,1985.8
+77,why,pourquoi,Semaine 1,1985.0
+78,would,(conditionnel) -rais,Semaine 1,1949.2
+79,had,"avait, a eu",Semaine 1,1870.5
+80,going,allant ; going to = aller (futur proche),Semaine 1,1830.7
+81,hey,"hé, salut",Semaine 1,1822.9
+82,been,été,Semaine 1,1772.5
+83,really,vraiment,Semaine 1,1769.0
+84,you're,"tu es, vous êtes",Semaine 1,1725.1
+85,look,regarder ; avoir l'air,Semaine 1,1705.3
+86,some,"quelques, du, de la",Semaine 1,1687.6
+87,them,"eux, les",Semaine 1,1677.7
+88,more,plus,Semaine 1,1634.8
+89,back,"retour, dos ; de retour",Semaine 1,1633.4
+90,then,"puis, alors",Semaine 1,1630.4
+91,has,a,Semaine 1,1595.7
+92,yes,oui,Semaine 1,1562.3
+93,that's,c'est,Semaine 1,1541.2
+94,us,nous,Semaine 1,1520.3
+95,could,"pourrait, pouvait",Semaine 1,1491.8
+96,say,dire,Semaine 1,1433.2
+97,where,où,Semaine 1,1415.4
+98,take,prendre,Semaine 1,1413.8
+99,our,"notre, nos",Semaine 1,1411.6
+100,people,gens,Semaine 1,1386.0
+101,tell,"dire, raconter",Semaine 1,1334.2
+102,make,"faire, fabriquer",Semaine 1,1319.4
+103,too,"aussi, trop",Semaine 1,1303.0
+104,mean,vouloir dire ; méchant,Semaine 1,1283.2
+105,let,laisser,Semaine 1,1282.8
+106,way,"chemin, manière",Semaine 1,1275.3
+107,over,"au-dessus, fini",Semaine 1,1243.9
+108,because,parce que,Semaine 1,1238.6
+109,man,"homme, mec",Semaine 1,1234.1
+110,something,quelque chose,Semaine 1,1231.1
+111,never,jamais,Semaine 1,1195.2
+112,only,seulement,Semaine 1,1190.2
+113,need,avoir besoin,Semaine 1,1180.5
+114,their,"leur, leurs",Semaine 1,1170.9
+115,two,deux,Semaine 1,1170.8
+116,said,dit,Semaine 1,1151.0
+117,little,"petit, un peu",Semaine 1,1138.3
+118,very,très,Semaine 1,1134.0
+119,down,en bas,Semaine 1,1121.4
+120,should,devrait,Semaine 1,1115.5
+121,any,"n'importe quel, du tout",Semaine 1,1113.4
+122,new,nouveau,Semaine 1,1070.2
+123,much,beaucoup,Semaine 1,1068.2
+124,first,"premier, d'abord",Semaine 1,1049.3
+125,love,"amour, aimer",Semaine 1,1043.7
+126,off,"éteint, parti, en moins",Semaine 1,1030.8
+127,other,autre,Semaine 1,1028.3
+128,which,"lequel, quel, qui",Semaine 1,1018.9
+129,even,même,Semaine 1,1005.7
+130,into,dans (vers l'intérieur),Semaine 1,995.0
+131,am,suis,Semaine 1,988.2
+132,sorry,désolé,Semaine 1,981.7
+133,can't,ne peux pas,Semaine 1,978.1
+134,great,"super, génial, grand",Semaine 1,977.9
+135,god,Dieu,Semaine 1,977.8
+136,thing,chose,Semaine 1,970.7
+137,these,ces,Semaine 1,966.8
+138,than,que (comparaison),Semaine 1,940.0
+139,sure,"sûr, bien sûr",Semaine 1,914.1
+140,after,après,Semaine 1,904.0
+141,give,donner,Semaine 1,894.3
+142,still,"encore, toujours",Semaine 1,894.1
+143,work,"travail, travailler, marcher",Semaine 1,886.0
+144,please,"s'il te plaît, s'il vous plaît",Semaine 1,854.0
+145,doing,faisant,Semaine 1,849.1
+146,day,"jour, journée",Semaine 1,842.5
+147,before,avant,Semaine 1,825.1
+148,maybe,peut-être,Semaine 1,814.2
+149,didn't,n'a pas (fait),Semaine 1,785.6
+150,life,vie,Semaine 1,777.3
+151,I'll,"je vais, je (futur)",Semaine 1,773.4
+152,he's,il est,Semaine 1,771.5
+153,those,"ces, ceux-là",Semaine 1,764.4
+154,thank,remercier,Semaine 1,757.8
+155,last,dernier,Semaine 1,753.3
+156,guys,"les gars, les amis",Semaine 1,753.0
+157,anything,"quelque chose, n'importe quoi",Semaine 1,740.1
+158,help,"aider, aide",Semaine 1,735.2
+159,years,"ans, années",Semaine 1,732.5
+160,thought,pensé ; pensée,Semaine 1,728.6
+161,again,"encore, de nouveau",Semaine 1,725.3
+162,wait,attendre,Semaine 1,717.1
+163,find,trouver,Semaine 1,715.6
+164,also,aussi,Semaine 1,712.4
+165,better,"meilleur, mieux",Semaine 1,689.3
+166,night,"nuit, soir",Semaine 1,685.8
+167,nothing,rien,Semaine 1,684.5
+168,talk,parler,Semaine 1,681.2
+169,made,"fait, fabriqué",Semaine 1,680.9
+170,long,"long, longtemps",Semaine 1,673.2
+171,call,"appeler, appel",Semaine 1,669.3
+172,I've,j'ai,Semaine 1,668.8
+173,home,"maison, chez soi",Semaine 1,665.8
+174,things,choses,Semaine 1,665.4
+175,guy,"gars, type",Semaine 1,664.8
+176,does,fait (il/elle),Semaine 1,662.6
+177,put,mettre,Semaine 1,660.0
+178,around,autour,Semaine 1,655.7
+179,always,toujours,Semaine 1,651.4
+180,ever,"jamais (dans une question), déjà",Semaine 1,648.7
+181,big,"grand, gros",Semaine 1,640.4
+182,we're,nous sommes,Semaine 1,629.1
+183,being,étant,Semaine 1,628.3
+184,may,pouvoir (permission) ; mai,Semaine 1,622.8
+185,ok,d'accord,Semaine 1,615.8
+186,feel,"ressentir, se sentir",Semaine 1,614.4
+187,told,"dit, raconté",Semaine 1,611.5
+188,hi,salut,Semaine 1,607.2
+189,believe,croire,Semaine 1,606.5
+190,must,devoir,Semaine 1,604.5
+191,its,"son, sa (pour une chose)",Semaine 1,604.2
+192,place,endroit,Semaine 1,602.0
+193,away,"loin, absent",Semaine 1,599.6
+194,stop,arrêter,Semaine 1,587.8
+195,old,"vieux, âgé",Semaine 1,587.4
+196,keep,"garder, continuer",Semaine 1,585.2
+197,through,à travers,Semaine 1,580.5
+198,money,argent,Semaine 1,577.5
+199,most,"le plus, la plupart",Semaine 1,574.6
+200,three,trois,Semaine 1,563.6
+201,name,nom,Semaine 1,557.5
+202,world,monde,Semaine 1,549.4
+203,everything,tout,Semaine 1,547.5
+204,every,chaque,Semaine 1,540.1
+205,lot,beaucoup (a lot),Semaine 1,538.4
+206,best,meilleur,Semaine 1,535.4
+207,what's,"qu'est-ce que c'est, quoi",Semaine 1,531.6
+208,another,un autre,Semaine 1,515.4
+209,someone,quelqu'un,Semaine 1,513.3
+210,many,beaucoup de,Semaine 1,512.6
+211,year,"an, année",Semaine 1,511.3
+212,there's,il y a,Semaine 1,509.1
+213,nice,"sympa, agréable",Semaine 1,506.8
+214,fine,"bien, ça va",Semaine 1,506.8
+215,same,même,Semaine 1,501.6
+216,bad,mauvais,Semaine 1,500.1
+217,sir,monsieur,Semaine 1,497.9
+218,thanks,merci,Semaine 1,497.4
+219,house,maison,Semaine 1,487.7
+220,might,pourrait (peut-être),Semaine 1,482.7
+221,own,propre (à soi),Semaine 1,481.9
+222,left,parti ; gauche,Semaine 1,479.8
+223,while,pendant que,Semaine 1,474.7
+224,getting,"devenant, obtenant",Semaine 1,473.3
+225,done,"fait, fini",Semaine 1,472.4
+226,she's,elle est,Semaine 1,465.8
+227,kind,gentil ; sorte de,Semaine 1,465.7
+228,used,utilisé ; used to = avait l'habitude,Semaine 1,462.8
+229,such,"tel, si",Semaine 1,462.0
+230,next,"prochain, suivant",Semaine 1,460.8
+231,show,"montrer, émission",Semaine 1,458.5
+232,leave,"partir, laisser",Semaine 1,456.0
+233,girl,fille,Semaine 1,455.7
+234,wanted,voulait,Semaine 1,454.3
+235,listen,écouter,Semaine 1,454.3
+236,remember,se souvenir,Semaine 1,452.1
+237,use,utiliser,Semaine 1,445.5
+238,enough,assez,Semaine 1,444.9
+239,actually,en fait,Semaine 1,441.8
+240,course,cours ; of course = bien sûr,Semaine 1,438.8
+241,wrong,"faux, mal",Semaine 1,436.5
+242,care,"prendre soin, s'en soucier",Semaine 1,434.4
+243,found,trouvé,Semaine 1,429.6
+244,both,les deux,Semaine 1,426.6
+245,talking,parlant,Semaine 1,425.9
+246,looking,"regardant, cherchant",Semaine 1,424.4
+247,ask,demander,Semaine 1,423.0
+248,came,est venu,Semaine 1,422.3
+249,went,est allé,Semaine 1,421.3
+250,since,depuis,Semaine 1,418.6
+251,today,aujourd'hui,Semaine 2,417.9
+252,real,"vrai, réel",Semaine 2,417.3
+253,coming,venant,Semaine 2,415.6
+254,else,d'autre,Semaine 2,413.1
+255,baby,"bébé, chéri(e)",Semaine 2,411.2
+256,together,ensemble,Semaine 2,410.9
+257,try,essayer,Semaine 2,410.5
+258,happened,s'est passé,Semaine 2,408.7
+259,job,"travail, boulot",Semaine 2,407.9
+260,hear,entendre,Semaine 2,402.6
+261,part,partie,Semaine 2,401.2
+262,without,sans,Semaine 2,397.8
+263,stay,rester,Semaine 2,397.8
+264,understand,comprendre,Semaine 2,395.2
+265,friend,ami,Semaine 2,392.8
+266,play,jouer,Semaine 2,391.4
+267,room,"pièce, chambre",Semaine 2,388.1
+268,they're,ils sont,Semaine 2,387.1
+269,guess,"deviner, supposer",Semaine 2,386.2
+270,father,père,Semaine 2,385.9
+271,trying,essayant,Semaine 2,380.9
+272,having,ayant,Semaine 2,377.8
+273,called,appelé,Semaine 2,376.0
+274,hello,"bonjour, allô",Semaine 2,376.0
+275,woman,femme,Semaine 2,375.2
+276,school,école,Semaine 2,374.5
+277,live,vivre,Semaine 2,372.7
+278,already,déjà,Semaine 2,371.8
+279,pretty,joli ; assez (pretty good),Semaine 2,371.1
+280,start,commencer,Semaine 2,365.2
+281,mind,esprit ; ça te dérange ?,Semaine 2,364.7
+282,seen,vu,Semaine 2,363.6
+283,family,famille,Semaine 2,362.5
+284,whole,entier,Semaine 2,361.8
+285,doesn't,ne… pas (il/elle),Semaine 2,361.2
+286,car,voiture,Semaine 2,359.5
+287,each,chaque,Semaine 2,358.7
+288,yet,"encore, déjà (question)",Semaine 2,358.3
+289,hard,"dur, difficile",Semaine 2,358.1
+290,end,fin,Semaine 2,357.8
+291,head,tête,Semaine 2,357.7
+292,hell,enfer ; (fam.) bon sang,Semaine 2,351.3
+293,saw,a vu,Semaine 2,350.7
+294,days,jours,Semaine 2,348.6
+295,let's,"allons, faisons (let us)",Semaine 2,344.6
+296,yourself,toi-même,Semaine 2,343.5
+297,once,une fois,Semaine 2,342.4
+298,game,"jeu, match",Semaine 2,342.4
+299,under,sous,Semaine 2,340.4
+300,mother,mère,Semaine 2,336.8
+301,happy,"heureux, content",Semaine 2,336.8
+302,second,"seconde, deuxième",Semaine 2,335.6
+303,took,a pris,Semaine 2,334.5
+304,until,jusqu'à,Semaine 2,332.8
+305,dead,mort,Semaine 2,331.7
+306,I'd,"je voudrais, j'aurais",Semaine 2,331.5
+307,idea,idée,Semaine 2,330.7
+308,high,haut,Semaine 2,330.4
+309,stuff,"trucs, affaires",Semaine 2,329.7
+310,friends,amis,Semaine 2,329.1
+311,kill,tuer,Semaine 2,327.6
+312,dad,papa,Semaine 2,327.3
+313,between,entre,Semaine 2,324.9
+314,morning,matin,Semaine 2,322.5
+315,few,"peu, quelques",Semaine 2,321.4
+316,boy,garçon,Semaine 2,315.8
+317,matter,importer ; question,Semaine 2,315.5
+318,five,cinq,Semaine 2,313.3
+319,run,courir,Semaine 2,312.6
+320,ready,prêt,Semaine 2,312.3
+321,tonight,ce soir,Semaine 2,311.6
+322,says,dit,Semaine 2,310.4
+323,saying,disant,Semaine 2,310.3
+324,men,hommes,Semaine 2,309.2
+325,heard,entendu,Semaine 2,309.1
+326,move,"bouger, déménager",Semaine 2,307.3
+327,business,"affaires, entreprise",Semaine 2,305.3
+328,cause,cause ; parce que (fam.),Semaine 2,304.6
+329,miss,"manquer, rater ; mademoiselle",Semaine 2,303.5
+330,mom,maman,Semaine 2,303.2
+331,problem,problème,Semaine 2,303.0
+332,isn't,n'est pas,Semaine 2,301.9
+333,knew,savait,Semaine 2,301.9
+334,son,fils,Semaine 2,297.9
+335,meet,rencontrer,Semaine 2,296.7
+336,probably,probablement,Semaine 2,296.1
+337,face,visage,Semaine 2,296.0
+338,open,"ouvrir, ouvert",Semaine 2,295.2
+339,four,quatre,Semaine 2,294.7
+340,different,différent,Semaine 2,293.8
+341,everyone,tout le monde,Semaine 2,293.8
+342,myself,moi-même,Semaine 2,293.5
+343,person,personne,Semaine 2,292.0
+344,looks,a l'air,Semaine 2,291.3
+345,ago,il y a (temps),Semaine 2,290.9
+346,later,plus tard,Semaine 2,290.6
+347,number,"numéro, nombre",Semaine 2,289.7
+348,against,contre,Semaine 2,287.0
+349,hope,"espérer, espoir",Semaine 2,285.5
+350,case,"cas, affaire",Semaine 2,284.6
+351,party,fête,Semaine 2,284.3
+352,thinking,pensant,Semaine 2,284.0
+353,won't,ne… pas (futur),Semaine 2,282.0
+354,times,fois,Semaine 2,279.5
+355,point,"point, intérêt",Semaine 2,279.5
+356,you've,"tu as, vous avez",Semaine 2,277.0
+357,making,faisant,Semaine 2,275.6
+358,tomorrow,demain,Semaine 2,275.0
+359,change,changer,Semaine 2,274.6
+360,anyone,"quelqu'un, n'importe qui",Semaine 2,274.1
+361,set,"régler, ensemble",Semaine 2,273.3
+362,phone,téléphone,Semaine 2,273.0
+363,watch,regarder ; montre,Semaine 2,273.0
+364,wants,veut,Semaine 2,272.8
+365,true,vrai,Semaine 2,272.2
+366,wife,"femme, épouse",Semaine 2,271.7
+367,hand,main,Semaine 2,271.6
+368,bit,un peu (a bit),Semaine 2,271.2
+369,week,semaine,Semaine 2,269.7
+370,read,lire,Semaine 2,269.5
+371,fun,amusant,Semaine 2,269.5
+372,hold,tenir,Semaine 2,268.9
+373,bring,apporter,Semaine 2,268.5
+374,makes,fait,Semaine 2,267.0
+375,women,femmes,Semaine 2,266.7
+376,state,état,Semaine 2,266.5
+377,minute,minute,Semaine 2,266.4
+378,lost,perdu,Semaine 2,264.2
+379,deal,"affaire, marché",Semaine 2,262.5
+380,free,"libre, gratuit",Semaine 2,261.5
+381,married,marié,Semaine 2,260.5
+382,working,travaillant,Semaine 2,260.4
+383,water,eau,Semaine 2,255.7
+384,turn,tourner ; tour,Semaine 2,254.1
+385,city,ville,Semaine 2,254.0
+386,alone,seul,Semaine 2,253.2
+387,story,histoire,Semaine 2,253.1
+388,gone,parti,Semaine 2,253.1
+389,though,"pourtant, quand même",Semaine 2,252.0
+390,far,loin,Semaine 2,250.5
+391,late,"tard, en retard",Semaine 2,249.7
+392,means,signifie,Semaine 2,249.1
+393,crazy,fou,Semaine 2,248.8
+394,happen,"arriver, se passer",Semaine 2,248.2
+395,check,vérifier,Semaine 2,247.7
+396,kids,enfants,Semaine 2,247.3
+397,pay,payer,Semaine 2,245.0
+398,team,équipe,Semaine 2,242.7
+399,least,le moins ; at least = au moins,Semaine 2,242.4
+400,taking,prenant,Semaine 2,242.2
+401,important,important,Semaine 2,241.2
+402,killed,tué,Semaine 2,239.4
+403,beautiful,"beau, belle",Semaine 2,239.0
+404,half,moitié,Semaine 2,238.6
+405,soon,bientôt,Semaine 2,238.4
+406,alright,d'accord,Semaine 2,238.3
+407,music,musique,Semaine 2,238.2
+408,minutes,minutes,Semaine 2,238.0
+409,side,côté,Semaine 2,237.5
+410,young,jeune,Semaine 2,237.0
+411,door,porte,Semaine 2,235.8
+412,gave,a donné,Semaine 2,235.6
+413,hit,frapper,Semaine 2,234.6
+414,eat,manger,Semaine 2,232.4
+415,comes,vient,Semaine 2,230.2
+416,forget,oublier,Semaine 2,229.7
+417,during,pendant,Semaine 2,229.4
+418,hours,heures,Semaine 2,229.1
+419,you'll,"tu vas, tu (futur)",Semaine 2,228.1
+420,honey,chéri(e) ; miel,Semaine 2,227.4
+421,brother,frère,Semaine 2,227.3
+422,heart,cœur,Semaine 2,225.3
+423,line,"ligne, file",Semaine 2,225.3
+424,wouldn't,ne… pas (conditionnel),Semaine 2,225.0
+425,close,fermer ; proche,Semaine 2,224.6
+426,easy,facile,Semaine 2,224.2
+427,question,question,Semaine 2,223.9
+428,we'll,nous allons,Semaine 2,223.5
+429,wasn't,n'était pas,Semaine 2,222.8
+430,death,mort,Semaine 2,221.3
+431,full,plein,Semaine 2,220.8
+432,anyway,de toute façon,Semaine 2,220.2
+433,asked,demandé,Semaine 2,220.1
+434,office,bureau,Semaine 2,218.7
+435,started,commencé,Semaine 2,218.5
+436,police,police,Semaine 2,218.2
+437,exactly,exactement,Semaine 2,217.9
+438,chance,"chance, occasion",Semaine 2,216.4
+439,company,"entreprise, compagnie",Semaine 2,216.0
+440,almost,presque,Semaine 2,215.0
+441,die,mourir,Semaine 2,214.7
+442,top,"haut, sommet",Semaine 2,213.8
+443,fact,fait,Semaine 2,213.1
+444,gets,"obtient, devient",Semaine 2,212.8
+445,funny,drôle,Semaine 2,211.9
+446,children,enfants,Semaine 2,211.6
+447,everybody,tout le monde,Semaine 2,211.4
+448,body,corps,Semaine 2,210.9
+449,word,mot,Semaine 2,210.9
+450,worry,s'inquiéter,Semaine 2,210.2
+451,six,six,Semaine 2,210.0
+452,power,"pouvoir, puissance",Semaine 2,209.9
+453,excuse,excuse ; excuse me = pardon,Semaine 2,209.8
+454,knows,sait,Semaine 2,209.8
+455,supposed,censé (supposed to),Semaine 2,209.2
+456,food,nourriture,Semaine 2,209.2
+457,either,l'un ou l'autre ; non plus,Semaine 2,208.5
+458,cut,couper,Semaine 2,208.4
+459,able,capable,Semaine 2,208.2
+460,book,livre ; réserver,Semaine 2,207.3
+461,whatever,peu importe,Semaine 2,206.1
+462,white,blanc,Semaine 2,206.1
+463,news,"nouvelles, infos",Semaine 2,205.7
+464,couple,couple ; quelques,Semaine 2,205.7
+465,kid,gamin,Semaine 2,205.4
+466,reason,raison,Semaine 2,205.1
+467,war,guerre,Semaine 2,205.1
+468,mine,le mien,Semaine 2,204.8
+469,sex,sexe,Semaine 2,203.9
+470,sleep,dormir,Semaine 2,203.7
+471,break,casser ; pause,Semaine 2,203.3
+472,doctor,"médecin, docteur",Semaine 2,202.8
+473,cool,"cool, frais",Semaine 2,202.6
+474,small,petit,Semaine 2,202.2
+475,bye,"au revoir, salut",Semaine 2,201.8
+476,sit,s'asseoir,Semaine 2,201.3
+477,playing,jouant,Semaine 2,201.0
+478,wish,souhaiter,Semaine 2,200.4
+479,damn,"(fam.) zut, bon sang",Semaine 2,200.1
+480,eyes,yeux,Semaine 2,199.7
+481,fire,feu ; virer,Semaine 2,199.5
+482,rest,"repos, reste",Semaine 2,199.4
+483,country,pays,Semaine 2,199.3
+484,order,"commande, ordre",Semaine 2,199.0
+485,buy,acheter,Semaine 2,198.5
+486,somebody,quelqu'un,Semaine 2,197.3
+487,date,"date, rendez-vous",Semaine 2,197.1
+488,black,noir,Semaine 2,195.9
+489,quite,"assez, tout à fait",Semaine 2,195.0
+490,hate,détester,Semaine 2,193.3
+491,along,le long de,Semaine 2,192.8
+492,goes,va,Semaine 2,189.4
+493,stupid,bête,Semaine 2,189.0
+494,pick,"choisir, ramasser",Semaine 2,188.6
+495,anymore,plus (ne… plus),Semaine 2,187.6
+496,hands,mains,Semaine 2,185.8
+497,months,mois,Semaine 2,185.2
+498,sometimes,parfois,Semaine 2,184.9
+499,shot,"tir, coup ; tiré",Semaine 2,184.0
+500,living,vivant ; vie,Semaine 2,182.9
+501,fight,"se battre, combat",Semaine 3,182.4
+502,town,ville,Semaine 3,182.2
+503,behind,derrière,Semaine 3,182.1
+504,inside,dedans,Semaine 3,182.1
+505,moment,moment,Semaine 3,181.8
+506,hot,chaud,Semaine 3,181.0
+507,child,enfant,Semaine 3,180.0
+508,less,moins,Semaine 3,179.6
+509,drink,"boire, verre",Semaine 3,179.2
+510,met,rencontré,Semaine 3,178.6
+511,system,système,Semaine 3,178.6
+512,needs,a besoin,Semaine 3,178.5
+513,girls,filles,Semaine 3,178.2
+514,win,gagner,Semaine 3,177.3
+515,walk,marcher,Semaine 3,177.2
+516,hurt,"blesser, faire mal",Semaine 3,176.8
+517,haven't,"n'ai pas, n'avez pas",Semaine 3,174.6
+518,telling,disant,Semaine 3,174.6
+519,front,devant,Semaine 3,174.3
+520,stand,"se tenir debout, supporter",Semaine 3,173.9
+521,shut,fermer ; shut up = tais-toi,Semaine 3,173.5
+522,seems,semble,Semaine 3,172.0
+523,nobody,personne,Semaine 3,171.5
+524,become,devenir,Semaine 3,171.3
+525,waiting,attendant,Semaine 3,171.2
+526,bed,lit,Semaine 3,169.6
+527,group,groupe,Semaine 3,169.3
+528,control,contrôle,Semaine 3,169.1
+529,public,public,Semaine 3,168.9
+530,special,spécial,Semaine 3,168.8
+531,light,"lumière, léger",Semaine 3,168.7
+532,parents,parents,Semaine 3,168.5
+533,afraid,avoir peur,Semaine 3,167.5
+534,answer,"réponse, répondre",Semaine 3,167.4
+535,tried,essayé,Semaine 3,166.7
+536,sister,sœur,Semaine 3,166.7
+537,outside,dehors,Semaine 3,166.6
+538,died,"mort, décédé",Semaine 3,166.1
+539,plan,"plan, projet",Semaine 3,166.0
+540,government,gouvernement,Semaine 3,165.9
+541,ten,dix,Semaine 3,165.8
+542,brought,apporté,Semaine 3,163.1
+543,serious,sérieux,Semaine 3,162.5
+544,street,rue,Semaine 3,162.2
+545,president,président,Semaine 3,162.1
+546,past,passé,Semaine 3,161.8
+547,couldn't,ne pouvait pas,Semaine 3,161.6
+548,hour,heure,Semaine 3,161.1
+549,known,connu,Semaine 3,161.0
+550,law,loi,Semaine 3,160.6
+551,dog,chien,Semaine 3,160.4
+552,perfect,parfait,Semaine 3,160.1
+553,dinner,dîner,Semaine 3,159.6
+554,trust,faire confiance,Semaine 3,159.6
+555,early,tôt,Semaine 3,159.1
+556,air,air,Semaine 3,159.0
+557,we've,nous avons,Semaine 3,158.7
+558,general,général,Semaine 3,158.5
+559,taken,pris,Semaine 3,158.3
+560,possible,possible,Semaine 3,157.6
+561,truth,vérité,Semaine 3,156.2
+562,million,million,Semaine 3,155.9
+563,clear,clair,Semaine 3,155.9
+564,feeling,sentiment,Semaine 3,155.4
+565,human,humain,Semaine 3,155.1
+566,others,les autres,Semaine 3,154.8
+567,husband,mari,Semaine 3,154.7
+568,red,rouge,Semaine 3,154.0
+569,running,courant,Semaine 3,153.5
+570,however,cependant,Semaine 3,153.4
+571,american,américain,Semaine 3,153.1
+572,who's,qui est,Semaine 3,152.1
+573,class,"classe, cours",Semaine 3,152.0
+574,send,envoyer,Semaine 3,151.5
+575,lives,vies ; vit,Semaine 3,151.5
+576,service,service,Semaine 3,151.4
+577,lady,dame,Semaine 3,151.3
+578,using,utilisant,Semaine 3,150.8
+579,given,donné,Semaine 3,150.4
+580,information,information,Semaine 3,150.4
+581,daughter,fille (enfant),Semaine 3,150.1
+582,hair,cheveux,Semaine 3,149.4
+583,himself,lui-même,Semaine 3,149.0
+584,yours,"le tien, le vôtre",Semaine 3,148.2
+585,you'd,"tu voudrais, tu aurais",Semaine 3,148.1
+586,sound,son ; sembler,Semaine 3,147.6
+587,speak,parler,Semaine 3,147.3
+588,save,"sauver, économiser",Semaine 3,147.3
+589,movie,film,Semaine 3,146.6
+590,blood,sang,Semaine 3,146.6
+591,lose,perdre,Semaine 3,146.5
+592,wedding,mariage (cérémonie),Semaine 3,146.4
+593,support,"soutien, soutenir",Semaine 3,146.3
+594,sounds,"semble, ça a l'air",Semaine 3,146.3
+595,weird,bizarre,Semaine 3,144.8
+596,dear,"cher, chère",Semaine 3,144.0
+597,rather,plutôt,Semaine 3,143.9
+598,sent,envoyé,Semaine 3,143.9
+599,kinda,"un peu, genre (kind of)",Semaine 3,143.5
+600,totally,totalement,Semaine 3,143.4
+601,words,mots,Semaine 3,143.3
+602,area,"zone, quartier",Semaine 3,142.9
+603,sense,sens,Semaine 3,142.9
+604,shall,(futur poli) ; shall we? = on y va ?,Semaine 3,142.6
+605,single,seul ; célibataire,Semaine 3,142.3
+606,trouble,"ennuis, problème",Semaine 3,141.7
+607,future,"futur, avenir",Semaine 3,140.9
+608,picture,"photo, image",Semaine 3,140.9
+609,weeks,semaines,Semaine 3,139.7
+610,states,États,Semaine 3,139.5
+611,welcome,bienvenue,Semaine 3,139.2
+612,anybody,"quelqu'un, n'importe qui",Semaine 3,138.1
+613,works,"marche, fonctionne",Semaine 3,138.0
+614,finally,enfin,Semaine 3,137.9
+615,sweet,"gentil, mignon ; sucré",Semaine 3,137.8
+616,court,tribunal ; terrain,Semaine 3,137.7
+617,boys,garçons,Semaine 3,137.7
+618,king,roi,Semaine 3,137.4
+619,history,histoire (passé),Semaine 3,137.0
+620,cannot,ne peut pas,Semaine 3,136.3
+621,coffee,café,Semaine 3,135.9
+622,seem,sembler,Semaine 3,135.7
+623,fast,"rapide, vite",Semaine 3,135.3
+624,sick,malade,Semaine 3,134.2
+625,gun,"arme, pistolet",Semaine 3,134.2
+626,act,agir ; acte,Semaine 3,134.0
+627,drive,conduire,Semaine 3,134.0
+628,building,bâtiment,Semaine 3,133.2
+629,glad,content,Semaine 3,133.1
+630,sort,sorte ; sort of = en quelque sorte,Semaine 3,133.1
+631,ahead,"devant, en avant",Semaine 3,132.6
+632,amazing,incroyable,Semaine 3,131.7
+633,national,national,Semaine 3,131.5
+634,worked,"travaillé, a marché",Semaine 3,131.0
+635,aren't,ne sont pas,Semaine 3,130.4
+636,giving,donnant,Semaine 3,130.4
+637,song,chanson,Semaine 3,130.0
+638,seeing,voyant,Semaine 3,129.4
+639,leaving,partant,Semaine 3,129.3
+640,moving,"bougeant, déménageant",Semaine 3,129.2
+641,report,rapport,Semaine 3,128.8
+642,within,"dans, à l'intérieur de",Semaine 3,128.8
+643,figure,chiffre ; figure out = comprendre,Semaine 3,128.5
+644,bet,parier,Semaine 3,128.5
+645,age,âge,Semaine 3,128.1
+646,tv,télé,Semaine 3,128.1
+647,based,basé,Semaine 3,127.9
+648,including,y compris,Semaine 3,127.5
+649,luck,chance,Semaine 3,127.3
+650,third,troisième,Semaine 3,127.1
+651,meeting,réunion,Semaine 3,127.1
+652,looked,"a regardé, avait l'air",Semaine 3,127.0
+653,takes,prend,Semaine 3,126.7
+654,felt,ressenti,Semaine 3,126.2
+655,learn,apprendre,Semaine 3,126.0
+656,ain't,"(fam.) n'est pas, n'ai pas",Semaine 3,126.0
+657,month,mois,Semaine 3,125.6
+658,often,souvent,Semaine 3,125.5
+659,perhaps,peut-être,Semaine 3,125.5
+660,safe,en sécurité,Semaine 3,125.2
+661,following,suivant,Semaine 3,125.0
+662,hundred,cent,Semaine 3,124.6
+663,captain,capitaine,Semaine 3,124.3
+664,short,court,Semaine 3,124.1
+665,video,vidéo,Semaine 3,124.0
+666,worth,valoir,Semaine 3,124.0
+667,promise,promettre,Semaine 3,124.0
+668,poor,pauvre,Semaine 3,123.6
+669,asking,demandant,Semaine 3,123.5
+670,seven,sept,Semaine 3,123.4
+671,cold,froid,Semaine 3,123.2
+672,road,route,Semaine 3,123.2
+673,write,écrire,Semaine 3,122.9
+674,absolutely,absolument,Semaine 3,122.7
+675,hospital,hôpital,Semaine 3,122.4
+676,questions,questions,Semaine 3,122.2
+677,list,liste,Semaine 3,122.1
+678,college,"université, fac",Semaine 3,121.4
+679,touch,toucher,Semaine 3,120.9
+680,apartment,appartement,Semaine 3,120.8
+681,near,près,Semaine 3,120.7
+682,games,jeux,Semaine 3,120.7
+683,table,table,Semaine 3,120.6
+684,happens,"arrive, se passe",Semaine 3,120.5
+685,season,saison,Semaine 3,120.4
+686,strong,fort,Semaine 3,120.2
+687,south,sud,Semaine 3,120.2
+688,united,uni,Semaine 3,120.1
+689,across,"à travers, en face",Semaine 3,120.1
+690,fall,tomber ; automne,Semaine 3,119.3
+691,health,santé,Semaine 3,118.8
+692,major,majeur,Semaine 3,118.8
+693,alive,vivant,Semaine 3,118.7
+694,level,niveau,Semaine 3,118.3
+695,follow,suivre,Semaine 3,118.3
+696,instead,à la place,Semaine 3,118.1
+697,straight,"droit, directement",Semaine 3,118.1
+698,lord,seigneur,Semaine 3,118.0
+699,dance,danser,Semaine 3,117.0
+700,post,"poste, publication",Semaine 3,116.9
+701,middle,milieu,Semaine 3,115.9
+702,longer,plus long ; no longer = ne… plus,Semaine 3,115.8
+703,sign,"signe, signer",Semaine 3,115.8
+704,eight,huit,Semaine 3,115.6
+705,hang,accrocher ; hang on = attends,Semaine 3,115.5
+706,piece,morceau,Semaine 3,115.3
+707,local,local,Semaine 3,114.9
+708,land,"terre, atterrir",Semaine 3,114.8
+709,return,retourner,Semaine 3,114.8
+710,needed,"nécessaire, avait besoin",Semaine 3,114.6
+711,whether,si (whether or not),Semaine 3,113.9
+712,calling,appelant,Semaine 3,113.8
+713,dude,mec,Semaine 3,113.7
+714,relationship,relation,Semaine 3,113.7
+715,throw,lancer,Semaine 3,113.6
+716,turned,"tourné, devenu",Semaine 3,113.0
+717,per,par,Semaine 3,112.4
+718,wear,porter (vêtement),Semaine 3,112.1
+719,bill,"facture, addition",Semaine 3,112.1
+720,large,grand,Semaine 3,111.6
+721,mad,fou ; fâché,Semaine 3,111.1
+722,loved,aimé,Semaine 3,111.0
+723,boss,patron,Semaine 3,110.3
+724,step,"pas, étape",Semaine 3,110.1
+725,present,cadeau ; présent,Semaine 3,110.0
+726,lie,mentir ; mensonge,Semaine 3,109.6
+727,kiss,embrasser,Semaine 3,109.5
+728,earth,terre,Semaine 3,109.4
+729,unless,à moins que,Semaine 3,109.1
+730,shoot,tirer,Semaine 3,109.0
+731,except,sauf,Semaine 3,108.9
+732,scared,effrayé,Semaine 3,108.7
+733,eye,œil,Semaine 3,108.7
+734,social,social,Semaine 3,108.7
+735,space,espace,Semaine 3,108.1
+736,green,vert,Semaine 3,107.9
+737,club,club,Semaine 3,107.9
+738,ones,"ceux, celles",Semaine 3,107.8
+739,art,art,Semaine 3,107.7
+740,dream,"rêve, rêver",Semaine 3,107.6
+741,dollars,dollars,Semaine 3,107.5
+742,changed,changé,Semaine 3,107.4
+743,north,nord,Semaine 3,107.1
+744,low,bas,Semaine 3,107.0
+745,blue,bleu,Semaine 3,107.0
+746,watching,regardant,Semaine 3,106.9
+747,meant,voulu dire,Semaine 3,106.3
+748,ring,bague ; sonner,Semaine 3,106.2
+749,personal,personnel,Semaine 3,106.2
+750,catch,attraper,Semaine 3,105.6
+751,pass,passer,Semaine 4,105.5
+752,star,"étoile, star",Semaine 4,105.4
+753,although,bien que,Semaine 4,105.3
+754,decided,décidé,Semaine 4,105.3
+755,voice,voix,Semaine 4,105.3
+756,research,recherche,Semaine 4,105.3
+757,birthday,anniversaire,Semaine 4,105.0
+758,broke,cassé ; fauché,Semaine 4,105.0
+759,paid,payé,Semaine 4,105.0
+760,beat,battre,Semaine 4,104.9
+761,several,plusieurs,Semaine 4,104.9
+762,security,sécurité,Semaine 4,104.8
+763,kidding,plaisanter (you're kidding),Semaine 4,104.7
+764,lucky,chanceux,Semaine 4,104.6
+765,choice,choix,Semaine 4,104.5
+766,secret,secret,Semaine 4,104.2
+767,clean,"propre, nettoyer",Semaine 4,103.9
+768,christmas,Noël,Semaine 4,103.8
+769,record,enregistrer ; record,Semaine 4,103.7
+770,seriously,sérieusement,Semaine 4,103.6
+771,none,aucun,Semaine 4,103.5
+772,experience,expérience,Semaine 4,103.4
+773,wonderful,merveilleux,Semaine 4,103.3
+774,paper,papier,Semaine 4,103.0
+775,due,dû ; prévu pour,Semaine 4,102.7
+776,feet,pieds,Semaine 4,102.7
+777,d'you,est-ce que tu (do you),Semaine 4,102.6
+778,share,partager,Semaine 4,102.4
+779,drop,laisser tomber,Semaine 4,102.4
+780,force,force,Semaine 4,102.4
+781,worse,pire,Semaine 4,102.2
+782,lead,mener,Semaine 4,102.2
+783,test,"test, examen",Semaine 4,102.1
+784,daddy,papa,Semaine 4,101.6
+785,board,"planche, conseil ; à bord",Semaine 4,101.4
+786,film,film,Semaine 4,101.2
+787,problems,problèmes,Semaine 4,101.1
+788,yesterday,hier,Semaine 4,100.9
+789,kept,gardé,Semaine 4,100.8
+790,message,message,Semaine 4,100.8
+791,bank,banque,Semaine 4,100.6
+792,type,type,Semaine 4,100.3
+793,here's,voici,Semaine 4,99.8
+794,park,parc ; se garer,Semaine 4,99.8
+795,entire,entier,Semaine 4,99.6
+796,definitely,"carrément, sans aucun doute",Semaine 4,99.4
+797,certain,certain,Semaine 4,99.4
+798,especially,surtout,Semaine 4,99.2
+799,born,né,Semaine 4,99.2
+800,pull,tirer,Semaine 4,99.0
+801,box,boîte,Semaine 4,99.0
+802,key,clé,Semaine 4,98.9
+803,private,privé,Semaine 4,98.9
+804,card,carte,Semaine 4,98.8
+805,form,"formulaire, forme",Semaine 4,98.8
+806,further,plus loin,Semaine 4,98.6
+807,cute,mignon,Semaine 4,98.6
+808,america,Amérique,Semaine 4,98.5
+809,fair,"juste, équitable",Semaine 4,98.5
+810,wonder,se demander,Semaine 4,98.5
+811,west,ouest,Semaine 4,98.4
+812,till,jusqu'à,Semaine 4,98.3
+813,interesting,intéressant,Semaine 4,98.1
+814,field,"champ, domaine",Semaine 4,98.1
+815,university,université,Semaine 4,98.1
+816,thinks,pense,Semaine 4,97.9
+817,somewhere,quelque part,Semaine 4,97.8
+818,wearing,portant,Semaine 4,97.6
+819,finish,finir,Semaine 4,97.6
+820,quick,rapide,Semaine 4,97.5
+821,department,"service, département",Semaine 4,97.5
+822,played,joué,Semaine 4,97.4
+823,explain,expliquer,Semaine 4,97.4
+824,ball,"balle, ballon",Semaine 4,97.2
+825,situation,situation,Semaine 4,97.1
+826,dark,"sombre, noir",Semaine 4,97.0
+827,enjoy,"profiter, apprécier",Semaine 4,96.4
+828,expect,s'attendre à,Semaine 4,96.3
+829,english,anglais,Semaine 4,96.0
+830,completely,complètement,Semaine 4,96.0
+831,spend,"dépenser, passer (du temps)",Semaine 4,95.8
+832,ice,glace,Semaine 4,95.7
+833,final,final,Semaine 4,95.3
+834,pain,douleur,Semaine 4,95.2
+835,action,action,Semaine 4,95.1
+836,cost,coûter,Semaine 4,95.1
+837,fault,faute,Semaine 4,95.0
+838,chief,chef,Semaine 4,95.0
+839,gold,or,Semaine 4,94.9
+840,certainly,certainement,Semaine 4,94.5
+841,simple,simple,Semaine 4,94.5
+842,ship,navire,Semaine 4,94.5
+843,round,"rond, tour",Semaine 4,94.3
+844,store,magasin,Semaine 4,94.2
+845,sell,vendre,Semaine 4,94.0
+846,thousand,mille,Semaine 4,93.8
+847,missing,"manquant, disparu",Semaine 4,93.6
+848,huge,énorme,Semaine 4,93.6
+849,data,données,Semaine 4,93.6
+850,position,"position, poste",Semaine 4,93.6
+851,attack,attaque,Semaine 4,93.5
+852,according,selon (according to),Semaine 4,93.2
+853,summer,été,Semaine 4,92.8
+854,marriage,mariage,Semaine 4,92.8
+855,hotel,hôtel,Semaine 4,92.5
+856,terrible,terrible,Semaine 4,92.3
+857,ride,"trajet ; monter (vélo, voiture)",Semaine 4,92.3
+858,price,prix,Semaine 4,92.2
+859,ground,sol,Semaine 4,92.0
+860,evening,"soir, soirée",Semaine 4,91.8
+861,twenty,vingt,Semaine 4,91.7
+862,evidence,preuve(s),Semaine 4,91.7
+863,imagine,imaginer,Semaine 4,91.6
+864,hurry,se dépêcher,Semaine 4,91.2
+865,cover,couvrir,Semaine 4,91.0
+866,market,marché,Semaine 4,90.9
+867,community,communauté,Semaine 4,90.9
+868,attention,attention,Semaine 4,90.8
+869,study,étudier,Semaine 4,90.8
+870,officer,"agent, officier",Semaine 4,90.3
+871,murder,meurtre,Semaine 4,90.3
+872,members,membres,Semaine 4,90.1
+873,books,livres,Semaine 4,90.0
+874,bought,acheté,Semaine 4,90.0
+875,floor,"sol, étage",Semaine 4,89.8
+876,cat,chat,Semaine 4,89.8
+877,tired,fatigué,Semaine 4,89.8
+878,church,église,Semaine 4,89.7
+879,usually,d'habitude,Semaine 4,89.6
+880,talked,parlé,Semaine 4,89.6
+881,clothes,vêtements,Semaine 4,89.5
+882,involved,impliqué,Semaine 4,89.3
+883,interested,intéressé,Semaine 4,89.1
+884,caught,attrapé,Semaine 4,88.9
+885,international,international,Semaine 4,88.9
+886,marry,épouser,Semaine 4,88.8
+887,series,série,Semaine 4,88.4
+888,mouth,bouche,Semaine 4,88.3
+889,bag,sac,Semaine 4,88.3
+890,smart,intelligent,Semaine 4,88.3
+891,moved,"bougé, déménagé",Semaine 4,88.2
+892,starting,commençant,Semaine 4,87.9
+893,army,armée,Semaine 4,87.9
+894,wrote,a écrit,Semaine 4,87.8
+895,sitting,assis,Semaine 4,87.8
+896,spent,"dépensé, passé",Semaine 4,87.3
+897,forward,en avant,Semaine 4,87.3
+898,suppose,supposer,Semaine 4,87.1
+899,reading,lisant,Semaine 4,87.0
+900,happening,se passant,Semaine 4,86.9
+901,offer,"offre, proposer",Semaine 4,86.6
+902,rock,"rocher, rock",Semaine 4,86.3
+903,deep,profond,Semaine 4,86.3
+904,french,français,Semaine 4,86.3
+905,program,programme,Semaine 4,85.9
+906,energy,énergie,Semaine 4,85.8
+907,miles,miles,Semaine 4,85.7
+908,charge,responsabilité ; facturer,Semaine 4,85.4
+909,lunch,déjeuner,Semaine 4,85.3
+910,master,maître,Semaine 4,84.8
+911,held,tenu,Semaine 4,84.8
+912,machine,machine,Semaine 4,84.4
+913,trip,voyage,Semaine 4,84.1
+914,cup,tasse,Semaine 4,84.1
+915,respect,respect,Semaine 4,84.1
+916,example,exemple,Semaine 4,84.1
+917,rules,règles,Semaine 4,84.0
+918,press,"presse, appuyer",Semaine 4,83.7
+919,self,soi,Semaine 4,83.5
+920,difficult,difficile,Semaine 4,83.4
+921,common,commun,Semaine 4,83.3
+922,difference,différence,Semaine 4,83.2
+923,available,disponible,Semaine 4,83.1
+924,shows,montre ; émissions,Semaine 4,83.1
+925,main,principal,Semaine 4,83.1
+926,scene,scène,Semaine 4,83.1
+927,dress,"robe, s'habiller",Semaine 4,83.0
+928,mistake,erreur,Semaine 4,83.0
+929,finished,fini,Semaine 4,82.9
+930,uncle,oncle,Semaine 4,82.9
+931,interest,intérêt,Semaine 4,82.9
+932,join,rejoindre,Semaine 4,82.9
+933,ran,a couru,Semaine 4,82.8
+934,account,compte,Semaine 4,82.7
+935,careful,prudent,Semaine 4,82.7
+936,became,est devenu,Semaine 4,82.6
+937,wall,mur,Semaine 4,82.5
+938,normal,normal,Semaine 4,82.4
+939,process,processus,Semaine 4,82.2
+940,missed,"manqué, raté",Semaine 4,82.2
+941,station,"gare, station",Semaine 4,82.1
+942,shouldn't,ne devrait pas,Semaine 4,81.8
+943,surprise,surprise,Semaine 4,81.7
+944,handle,gérer,Semaine 4,81.7
+945,buddy,pote,Semaine 4,81.6
+946,wake,réveiller,Semaine 4,81.6
+947,decision,décision,Semaine 4,81.5
+948,liked,a aimé,Semaine 4,81.5
+949,worried,inquiet,Semaine 4,81.4
+950,whose,"dont, à qui",Semaine 4,81.4
+951,forgot,a oublié,Semaine 4,81.1
+952,political,politique,Semaine 4,81.1
+953,bar,bar,Semaine 4,81.1
+954,total,total,Semaine 4,80.6
+955,peace,paix,Semaine 4,80.4
+956,feels,"ressent, se sent",Semaine 4,80.4
+957,letter,lettre,Semaine 4,80.2
+958,sea,mer,Semaine 4,80.2
+959,themselves,eux-mêmes,Semaine 4,80.0
+960,above,au-dessus,Semaine 4,79.9
+961,services,services,Semaine 4,79.9
+962,radio,radio,Semaine 4,79.8
+963,writing,"écrivant, écriture",Semaine 4,79.8
+964,train,train ; s'entraîner,Semaine 4,79.6
+965,speaking,parlant,Semaine 4,79.5
+966,joke,blague,Semaine 4,79.5
+967,brain,cerveau,Semaine 4,79.4
+968,medical,médical,Semaine 4,79.2
+969,fear,peur,Semaine 4,79.1
+970,quiet,"calme, silencieux",Semaine 4,78.8
+971,calm,calme,Semaine 4,78.7
+972,forever,pour toujours,Semaine 4,78.6
+973,students,étudiants,Semaine 4,78.6
+974,calls,"appels, appelle",Semaine 4,78.5
+975,issue,"problème, sujet",Semaine 4,78.4
+976,stick,"bâton ; coller, rester",Semaine 4,78.4
+977,director,"directeur, réalisateur",Semaine 4,78.3
+978,busy,occupé,Semaine 4,78.3
+979,project,projet,Semaine 4,78.2
+980,boat,bateau,Semaine 4,78.2
+981,girlfriend,petite amie,Semaine 4,78.2
+982,fat,gros,Semaine 4,78.1
+983,points,points,Semaine 4,78.0
+984,gives,donne,Semaine 4,78.0
+985,boyfriend,petit ami,Semaine 4,78.0
+986,realize,se rendre compte,Semaine 4,78.0
+987,lying,mentant ; allongé,Semaine 4,78.0
+988,count,compter,Semaine 4,77.9
+989,fish,poisson,Semaine 4,77.6
+990,tough,"dur, difficile",Semaine 4,77.5
+991,sad,triste,Semaine 4,77.5
+992,plans,projets,Semaine 4,77.4
+993,view,vue,Semaine 4,77.2
+994,nine,neuf,Semaine 4,77.2
+995,sun,soleil,Semaine 4,77.0
+996,visit,"visiter, rendre visite",Semaine 4,76.8
+997,center,centre,Semaine 4,76.8
+998,match,"match, correspondre",Semaine 4,76.7
+999,military,militaire,Semaine 4,76.6
+1000,plane,avion,Semaine 4,76.5
