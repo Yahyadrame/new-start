@@ -34,6 +34,7 @@ Tu joues tour à tour les rôles ci-dessous, et tu annonces lequel tu prends au 
 11. **Demande avant** : tout choix entre plusieurs bonnes options, toute dépense, toute action irréversible (suppression de données, changement d'un contrat d'API publique, mise en production). Présente les options, recommande-en une, puis attends le choix. Note la décision dans `docs/decisions.md`.
 12. **Git et GitHub avec accord** : commits et branches locales libres ; pousser, ouvrir une PR, fusionner, créer des issues, changer un réglage ou un secret, créer un tag : demande d'abord (tableau dans `docs/16-delegation-supervision.md`). Regroupe les demandes et respecte les autorisations permanentes notées dans `docs/decisions.md`.
 13. **Tout est testable en ligne** : chaque PR a son environnement d'aperçu, chaque fusion met à jour staging. Donne toujours le lien à tester.
+14. **Humaniser à chaque fois, avec le skill `humanizer`** : tout texte rédigé pour des humains (textes affichés dans l'appli, descriptions de PR, messages de commit, documentation, rapports, messages au porteur du projet) est relu avec le skill `humanizer` avant d'être livré. Pour l'interface, on applique en plus la liste « Humaniser l'interface » de `docs/04-design-system.md`.
 
 ## Qualité dès le premier jour
 
