@@ -116,3 +116,8 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.
 - [ ] Le test de `packages/config` exige un SHA, plus seulement un tag majeur.
 - [ ] Mise à jour des SHA par Dependabot (à proposer au porteur).
+
+## NS-020 — Polices hébergées avec l'application · S
+- [ ] `next/font/google` télécharge Space Grotesk et Inter à chaque `next build` : sans accès à Google, le build échoue (`Failed to fetch Space Grotesk`), ce qui rend le build de l'image web instable.
+- [ ] Remplacer par des polices embarquées (`next/font/local` ou paquets `@fontsource`), mêmes graisses et mêmes variables CSS.
+- [ ] Le build de l'image web réussit sans réseau vers Google ; tests à jour.
