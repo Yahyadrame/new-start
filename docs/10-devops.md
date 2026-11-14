@@ -62,9 +62,9 @@ Réglages côté Vercel (intégration Git, sans secret dans GitHub) :
 | Réglage | Valeur |
 | --- | --- |
 | Dossier racine | `apps/web` (laisser « Include source files outside of the Root Directory » activé) |
-| `NEXT_PUBLIC_API_URL` | `https://newstart-api-staging.onrender.com`, **pour l'environnement Production seulement** : les aperçus de PR ont une adresse différente à chaque fois, que le CORS de l'API ne connaît pas |
+| `NEXT_PUBLIC_API_URL` | `https://newstart-api-staging.onrender.com`, pour **Production et Preview** : les aperçus de PR appellent l'API de staging (pas d'API d'aperçu, voir `docs/decisions.md`) |
 
-Côté Render, la variable `CORS_ORIGINS` de l'API liste les adresses du site autorisées, séparées par des virgules, sans barre finale (par exemple l'adresse `*.vercel.app` de production).
+Côté Render, la variable `CORS_ORIGINS` de l'API liste les adresses du site autorisées, séparées par des virgules, sans barre finale (l'adresse de production). Un `*` remplace un seul morceau d'adresse, sans point : `https://new-start-*-yhd.vercel.app` couvre les aperçus de PR. L'API n'utilise pas de cookies, donc ce motif ne donne accès à aucune session.
 
 ### Règles pour que la phase 2 ne demande aucune réécriture
 
