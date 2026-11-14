@@ -63,26 +63,39 @@ describe('toWords / toExpressions', () => {
 });
 
 describe('seedNoyau', () => {
-  it('upsert chaque ligne dans une seule transaction et compte le résultat', async () => {
-    const word = { upsert: vi.fn((a: unknown) => a) };
-    const expression = { upsert: vi.fn((a: unknown) => a) };
-    const $transaction = vi.fn(async () => []);
-    const res = await seedNoyau(
-      { word, expression, $transaction },
-      { mots: MOTS, expressions: EXPR },
-    );
+  const fakeDb = () => {
+    const executeRaw = vi.fn(async () => 0);
+    const db = {
+      $executeRaw: executeRaw,
+      $transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) => fn(db)),
+    };
+    return { db, executeRaw };
+  };
+  it('envoie une requête par table, avec une colonne par tableau, dans une transaction', async () => {
+    const { db, executeRaw } = fakeDb();
+    const res = await seedNoyau(db as never, { mots: MOTS, expressions: EXPR });
     expect(res).toEqual({ words: 2, expressions: 1 });
-    expect(word.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { id: 2 } }));
-    expect(expression.upsert).toHaveBeenCalledTimes(1);
-    expect($transaction).toHaveBeenCalledTimes(1);
-    expect(($transaction.mock.calls[0] as unknown[][])[0]).toHaveLength(3);
+    expect(db.$transaction).toHaveBeenCalledTimes(1);
+    expect(executeRaw).toHaveBeenCalledTimes(2);
+    const [wordSql, ...wordArgs] = executeRaw.mock.calls[0] as unknown as [string[], ...unknown[]];
+    expect(wordSql.join('?')).toContain('ON CONFLICT ("id") DO UPDATE');
+    expect(wordArgs).toEqual([
+      [1, 2],
+      ['the', 'you'],
+      ['le, la, les', 'tu, vous'],
+      [1, 2],
+      [37265.1, 29674.2],
+    ]);
+    const exprArgs = (executeRaw.mock.calls[1] as unknown as [string[], ...unknown[]]).slice(1);
+    expect(exprArgs).toHaveLength(8);
+    expect(exprArgs[1]).toEqual(['You know']);
   });
   it('ne touche pas la base si un fichier est invalide', async () => {
-    const $transaction = vi.fn();
-    const db = { word: { upsert: vi.fn() }, expression: { upsert: vi.fn() }, $transaction };
-    await expect(seedNoyau(db, { mots: 'a\n1,x\n', expressions: EXPR })).rejects.toThrow(
+    const { db, executeRaw } = fakeDb();
+    await expect(seedNoyau(db as never, { mots: 'a\n1,x\n', expressions: EXPR })).rejects.toThrow(
       'mots.csv',
     );
-    expect($transaction).not.toHaveBeenCalled();
+    expect(db.$transaction).not.toHaveBeenCalled();
+    expect(executeRaw).not.toHaveBeenCalled();
   });
 });
