@@ -101,9 +101,10 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Le lien de staging est donné au porteur du projet et noté dans le `README`.
 
 ## NS-009 — Supervision · M
-- [ ] Sentry front et back ; sonde UptimeRobot (ou Better Stack) sur `/health/live`.
-- [ ] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
-- [ ] Alerte : taux d'erreur 5xx > 2 % pendant 5 minutes.
+- [x] Sentry côté API et côté navigateur, éteint tant que le DSN est vide, sans donnée personnelle ni contenu de message.
+- [ ] Le porteur du projet crée le compte Sentry et saisit `SENTRY_DSN` (Render) et `NEXT_PUBLIC_SENTRY_DSN` (Vercel) ; Claude vérifie qu'une erreur de test arrive.
+- [ ] Sonde UptimeRobot sur `/health/live` (créée par le porteur du projet).
+- [ ] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
 - [ ] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
@@ -129,3 +130,8 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] `preview.yml` crée une branche Neon à l'ouverture de la PR, applique `prisma migrate deploy`, charge le seed de démonstration, et la supprime à la fermeture (limite gratuite : 10 branches par projet).
 - [ ] Aperçu d'API de la PR quand elle touche `apps/api` ou `packages/`, relié à cette branche ; sinon le front appelle l'API de staging.
 - [ ] Le lien de l'aperçu est commenté dans la PR ; tests à jour.
+
+## NS-022 — OpenTelemetry et alerte d'erreurs · M
+- [ ] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
+- [ ] Alerte : taux d'erreur 5xx > 2 % pendant 5 minutes.
+- [ ] Erreurs serveur de Next.js (`apps/web`) envoyées à Sentry, avec le même nettoyage que le navigateur.
