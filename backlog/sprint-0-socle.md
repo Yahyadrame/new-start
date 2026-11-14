@@ -135,3 +135,10 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
 - [ ] Alerte : taux d'erreur 5xx > 2 % pendant 5 minutes.
 - [ ] Erreurs serveur de Next.js (`apps/web`) envoyées à Sentry, avec le même nettoyage que le navigateur.
+
+## NS-023 — Route de test pour Sentry côté API · S
+Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API : il faudrait attendre une vraie erreur 500.
+- [ ] `GET /health/sentry-test` (module `health`) lève une erreur volontaire, uniquement si la variable `SENTRY_TEST_TOKEN` est définie et que l'en-tête `x-sentry-test-token` la contient ; sinon la route répond 404.
+- [ ] `SENTRY_TEST_TOKEN` est ajoutée à `.env.example` sans valeur ; la valeur est posée sur Render par le porteur du projet.
+- [ ] Vérifié sur staging : l'appel avec le bon jeton fait apparaître l'erreur dans le projet `newstart-api` de Sentry ; sans jeton, la route répond 404 et rien n'est envoyé.
+- [ ] Tests unitaires : route absente sans variable, refus avec un mauvais jeton, erreur levée avec le bon jeton.
