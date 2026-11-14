@@ -28,6 +28,14 @@ describe('parseEnv', () => {
     );
     expect(() => parseEnv({ ...base, SENTRY_DSN: 'pas-une-url' })).toThrow('SENTRY_DSN');
   });
+  it('SENTRY_TEST_TOKEN : absent ou vide = désactivé, trop court = refusé', () => {
+    expect(parseEnv(base).SENTRY_TEST_TOKEN).toBeUndefined();
+    expect(parseEnv({ ...base, SENTRY_TEST_TOKEN: '' }).SENTRY_TEST_TOKEN).toBeUndefined();
+    expect(parseEnv({ ...base, SENTRY_TEST_TOKEN: 'a'.repeat(16) }).SENTRY_TEST_TOKEN).toHaveLength(
+      16,
+    );
+    expect(() => parseEnv({ ...base, SENTRY_TEST_TOKEN: 'court' })).toThrow('SENTRY_TEST_TOKEN');
+  });
   it('lit CORS_ORIGINS en liste, sans espaces ni barre finale, vide par défaut', () => {
     expect(parseEnv(base).CORS_ORIGINS).toEqual([]);
     expect(parseEnv({ ...base, CORS_ORIGINS: '' }).CORS_ORIGINS).toEqual([]);
