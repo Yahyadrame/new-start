@@ -90,7 +90,8 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Phase 2 seulement : Argo CD ApplicationSet avec générateur Pull Request.
 
 ## NS-012 — Données de démonstration · S
-- [ ] Seed de démonstration (comptes de test, conversations, épisodes) chargé sur staging et sur les aperçus ; SMS et paiements en mode test.
+- [x] Mécanisme de seed (`prisma db seed`, idempotent) et noyau d’anglais (mots et expressions) chargé sur staging par `cd-staging`.
+- [ ] Comptes de test, conversations et épisodes : ajoutés au seed par chaque ticket qui crée sa table ; SMS et paiements en mode test.
 
 ## NS-008 — Staging en ligne · M
 - [ ] Projet Vercel `newstart-web` relié au dépôt (avec l'accord du porteur du projet pour installer l'application GitHub de Vercel).

@@ -50,6 +50,8 @@ Il suffit d'avoir Docker. Copiez `.env.example` en `.env`, puis, depuis la racin
 
 `docker compose --profile redis` ajoute Redis, `--profile quality` ajoute SonarQube (environ 2 Go de RAM, à lancer rarement). Sans Node ni pnpm sur la machine, utilisez `docker compose -f infra/compose/docker-compose.yml` à la place des scripts.
 
+Pour charger le noyau d'anglais (1 000 mots, 339 expressions) dans la base locale : `pnpm --filter @newstart/api exec prisma migrate deploy`, puis `pnpm --filter @newstart/api db:seed`. On peut le relancer sans risque. `cd-staging` le fait sur Neon à chaque fusion.
+
 Les profils `dev` et `prod` démarrent `web` et `api` seulement une fois les squelettes (NS-002) et les Dockerfiles (NS-004) livrés. Pour l'instant, `pnpm docker:deps` est la seule commande utilisable.
 
 Mémoire mesurée au repos : PostgreSQL 22 Mo, Mailpit 6 Mo. Chaque conteneur a une limite (`mem_limit`) et le total visé avec le profil `dev` reste sous 2 Go. Cette mesure sera refaite quand `web` et `api` existeront.

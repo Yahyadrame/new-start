@@ -1,4 +1,4 @@
-// Le modèle de données arrive avec les premiers tickets de fonctionnalité (docs/07-modele-de-donnees.md).
+// Le reste du modèle arrive avec les tickets de fonctionnalité (docs/07-modele-de-donnees.md).
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -6,4 +6,24 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// Le noyau d'anglais parlé, chargé depuis data/*.csv par `pnpm --filter @newstart/api db:seed`.
+model Expression {
+  id        Int    @id // rang dans data/expressions.csv
+  text      String @unique
+  meaningFr String
+  situation String
+  register  String // Familier | Neutre | Poli
+  sceneType String
+  week      Int
+  frequency Float
+}
+
+model Word {
+  id          Int    @id // rang dans data/mots.csv
+  text        String @unique
+  translation String
+  week        Int
+  frequency   Float
 }
