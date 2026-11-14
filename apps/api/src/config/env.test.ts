@@ -21,6 +21,13 @@ describe('parseEnv', () => {
       'redis://localhost:6379',
     );
   });
+  it('traite SENTRY_DSN vide comme absent et refuse une valeur non URL', () => {
+    expect(parseEnv({ ...base, SENTRY_DSN: '' }).SENTRY_DSN).toBeUndefined();
+    expect(parseEnv({ ...base, SENTRY_DSN: 'https://k@o1.ingest.sentry.io/2' }).SENTRY_DSN).toBe(
+      'https://k@o1.ingest.sentry.io/2',
+    );
+    expect(() => parseEnv({ ...base, SENTRY_DSN: 'pas-une-url' })).toThrow('SENTRY_DSN');
+  });
   it('lit CORS_ORIGINS en liste, sans espaces ni barre finale, vide par défaut', () => {
     expect(parseEnv(base).CORS_ORIGINS).toEqual([]);
     expect(parseEnv({ ...base, CORS_ORIGINS: '' }).CORS_ORIGINS).toEqual([]);

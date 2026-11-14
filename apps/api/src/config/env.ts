@@ -13,6 +13,8 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1),
   // Facultatif : /health/ready ne teste Redis que s'il est configuré.
   REDIS_URL: z.preprocess(emptyToUndefined, z.string().optional()),
+  // Facultatif : sans DSN, Sentry reste éteint et rien ne part.
+  SENTRY_DSN: z.preprocess(emptyToUndefined, z.string().url().optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z
     .string()
