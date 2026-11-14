@@ -81,20 +81,32 @@ export function toExpressions(csv: string): ExpressionRow[] {
 
 // Sous-ensemble du client Prisma dont le seed a besoin (permet de le tester sans base).
 export type NoyauDb = {
-  word: { upsert(args: { where: { id: number }; create: WordRow; update: WordRow }): unknown };
-  expression: {
-    upsert(args: { where: { id: number }; create: ExpressionRow; update: ExpressionRow }): unknown;
-  };
-  $transaction(ops: unknown[]): Promise<unknown>;
+  $executeRaw(strings: TemplateStringsArray, ...values: unknown[]): PromiseLike<unknown>;
+  $transaction<T>(fn: (tx: NoyauDb) => Promise<T>): Promise<T>;
 };
 
-// Idempotent : relancer le seed met à jour les lignes existantes au lieu d'échouer.
+// Une requête par table au lieu d'un upsert par ligne : sur Neon, 1 339 allers-retours dépassent
+// le délai de 5 s des transactions Prisma. Idempotent : relancer met à jour sans doublon.
 export async function seedNoyau(db: NoyauDb, files: { mots: string; expressions: string }) {
   const words = toWords(files.mots);
   const expressions = toExpressions(files.expressions);
-  await db.$transaction([
-    ...words.map((w) => db.word.upsert({ where: { id: w.id }, create: w, update: w })),
-    ...expressions.map((e) => db.expression.upsert({ where: { id: e.id }, create: e, update: e })),
-  ]);
+  const col = <T, K extends keyof T>(rows: T[], key: K) => rows.map((r) => r[key]);
+  await db.$transaction(async (tx) => {
+    await tx.$executeRaw`
+      INSERT INTO "Word" ("id", "text", "translation", "week", "frequency")
+      SELECT * FROM unnest(${col(words, 'id')}::int[], ${col(words, 'text')}::text[],
+        ${col(words, 'translation')}::text[], ${col(words, 'week')}::int[], ${col(words, 'frequency')}::float8[])
+      ON CONFLICT ("id") DO UPDATE SET "text" = EXCLUDED."text", "translation" = EXCLUDED."translation",
+        "week" = EXCLUDED."week", "frequency" = EXCLUDED."frequency"`;
+    await tx.$executeRaw`
+      INSERT INTO "Expression" ("id", "text", "meaningFr", "situation", "register", "sceneType", "week", "frequency")
+      SELECT * FROM unnest(${col(expressions, 'id')}::int[], ${col(expressions, 'text')}::text[],
+        ${col(expressions, 'meaningFr')}::text[], ${col(expressions, 'situation')}::text[],
+        ${col(expressions, 'register')}::text[], ${col(expressions, 'sceneType')}::text[],
+        ${col(expressions, 'week')}::int[], ${col(expressions, 'frequency')}::float8[])
+      ON CONFLICT ("id") DO UPDATE SET "text" = EXCLUDED."text", "meaningFr" = EXCLUDED."meaningFr",
+        "situation" = EXCLUDED."situation", "register" = EXCLUDED."register", "sceneType" = EXCLUDED."sceneType",
+        "week" = EXCLUDED."week", "frequency" = EXCLUDED."frequency"`;
+  });
   return { words: words.length, expressions: expressions.length };
 }
