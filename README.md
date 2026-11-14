@@ -56,7 +56,9 @@ Mémoire mesurée au repos : PostgreSQL 22 Mo, Mailpit 6 Mo. Chaque conteneur a 
 
 ## Tester en ligne
 
-L'API de staging est déployée à chaque fusion sur `main` : <https://newstart-api-staging.onrender.com/health/ready>. Sur l'offre gratuite de Render, elle s'endort après 15 minutes sans appel et met environ une minute à se réveiller. L'adresse du site web sur Vercel s'ajoutera ici une fois le projet importé.
+Le site web de staging est sur Vercel : <https://new-start-eta.vercel.app>. Il se met à jour à chaque fusion sur `main`.
+
+L'API de staging est déployée à chaque fusion sur `main` : <https://newstart-api-staging.onrender.com/health/ready>. Sur l'offre gratuite de Render, elle s'endort après 15 minutes sans appel et met environ une minute à se réveiller. Le site affiche alors « Connexion au serveur… » le temps qu'elle revienne.
 
 ## Liens de référence
 
