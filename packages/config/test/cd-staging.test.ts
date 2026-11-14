@@ -66,6 +66,10 @@ describe('job deploy', () => {
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
+  it('charge le noyau juste après la migration, avec la même garde', () => {
+    expect(find('db:seed')).toBe(find('prisma migrate deploy') + 1);
+    expect(guarded('db:seed')).toBe("env.DATABASE_URL != ''");
+  });
   it("saute chaque étape tant que son secret ou sa variable n'existe pas", () => {
     expect(guarded('prisma migrate deploy')).toBe("env.DATABASE_URL != ''");
     expect(guarded('"$DEPLOY_HOOK"')).toBe("env.DEPLOY_HOOK != ''");

@@ -83,6 +83,10 @@ jobs:
       - name: Migre la base Neon
         if: env.DATABASE_URL != ''
         run: pnpm --filter @newstart/api exec prisma migrate deploy
+      # Le noyau (mots et expressions) est une donnée de référence : le seed la met à jour sans doublon.
+      - name: Charge le noyau d'anglais
+        if: env.DATABASE_URL != ''
+        run: pnpm --filter @newstart/api db:seed
       - name: Déclenche le déploiement Render
         if: env.DEPLOY_HOOK != ''
         run: curl --fail --silent --show-error --output /dev/null --request POST "$DEPLOY_HOOK"
