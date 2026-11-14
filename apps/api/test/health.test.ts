@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 process.env['DATABASE_URL'] = 'postgresql://u:p@127.0.0.1:1/db';
 process.env['LOG_LEVEL'] = 'silent';
 delete process.env['REDIS_URL'];
-process.env['CORS_ORIGINS'] = 'https://web.example.test';
+process.env['CORS_ORIGINS'] = 'https://web.example.test,https://web-*-team.example.test';
 const { createApp } = await import('../src/app.js');
 
 let app: INestApplication;
@@ -40,6 +40,12 @@ describe('CORS', () => {
       .get('/health/live')
       .set('Origin', 'https://web.example.test');
     expect(res.headers['access-control-allow-origin']).toBe('https://web.example.test');
+  });
+  it("autorise une origine d'aperçu qui correspond au motif", async () => {
+    const res = await request(app.getHttpServer())
+      .get('/health/live')
+      .set('Origin', 'https://web-abc123-team.example.test');
+    expect(res.headers['access-control-allow-origin']).toBe('https://web-abc123-team.example.test');
   });
   it('ne répond pas aux autres origines', async () => {
     const res = await request(app.getHttpServer())
