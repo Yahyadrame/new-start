@@ -82,11 +82,12 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Ingress NGINX + cert-manager ; secrets via External Secrets ou Sealed Secrets (manifestes seulement).
 
 ## NS-011 — Environnements d'aperçu par PR · M
-- [ ] Front : aperçu Vercel automatique de chaque PR.
-- [ ] Base : branche Neon par PR créée par `preview.yml`, migrée et chargée avec la démo, supprimée à la fermeture.
-- [ ] API : aperçu Render de la PR quand elle touche `apps/api` ou `packages/`, sinon le front de l'aperçu appelle l'API de staging.
+Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md`), donc l'aperçu d'une PR est un front Vercel qui appelle l'API de staging.
+- [x] Front : aperçu Vercel automatique de chaque PR (intégration Git du projet `new-start`), avec `NEXT_PUBLIC_API_URL` définie aussi pour Preview.
+- [x] CORS : `CORS_ORIGINS` accepte un motif avec `*` (`https://new-start-*-yhd.vercel.app`), ce qui couvre les URL d'aperçu.
+- [x] Le lien d'aperçu est commenté dans la PR par Vercel.
+- [ ] Reporté au ticket NS-021 : branche Neon par PR et aperçu d'API.
 - [ ] Phase 2 seulement : Argo CD ApplicationSet avec générateur Pull Request.
-- [ ] Le lien est commenté automatiquement dans la PR.
 
 ## NS-012 — Données de démonstration · S
 - [ ] Seed de démonstration (comptes de test, conversations, épisodes) chargé sur staging et sur les aperçus ; SMS et paiements en mode test.
@@ -121,3 +122,9 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] `next/font/google` télécharge Space Grotesk et Inter à chaque `next build` : sans accès à Google, le build échoue (`Failed to fetch Space Grotesk`), ce qui rend le build de l'image web instable.
 - [ ] Remplacer par des polices embarquées (`next/font/local` ou paquets `@fontsource`), mêmes graisses et mêmes variables CSS.
 - [ ] Le build de l'image web réussit sans réseau vers Google ; tests à jour.
+
+## NS-021 — Branche Neon et API d'aperçu par PR · M
+À reprendre quand une API d'aperçu existera (offre Render payante ou autre hébergeur) et que le seed de NS-012 sera livré. Avant, une branche Neon par PR ne servirait à rien : l'aperçu front appelle l'API de staging.
+- [ ] `preview.yml` crée une branche Neon à l'ouverture de la PR, applique `prisma migrate deploy`, charge le seed de démonstration, et la supprime à la fermeture (limite gratuite : 10 branches par projet).
+- [ ] Aperçu d'API de la PR quand elle touche `apps/api` ou `packages/`, relié à cette branche ; sinon le front appelle l'API de staging.
+- [ ] Le lien de l'aperçu est commenté dans la PR ; tests à jour.

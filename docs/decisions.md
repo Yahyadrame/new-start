@@ -28,6 +28,7 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 | 2026-11-13 | Budget IA | 0 €/mois : crédits d'essai seulement ; plafond codé, bascule sur l'adaptateur factice à l'épuisement | Choix du porteur du projet |
 | 2026-11-13 | Autorisation permanente | Claude Code **pousse les branches et ouvre les PR sans demander**. Il demande toujours pour fusionner, créer un tag ou une release, créer le dépôt, changer un réglage, une protection ou un secret, créer des issues | Choix du porteur du projet |
 | 2026-11-13 | Limites gratuites revérifiées (NS-000) | Render : 750 h/espace, veille 15 min, 512 Mo, 1 instance, SMTP sortant bloqué. Neon : 100 CU-heures/projet/mois, 10 branches/projet, suspension de la base à l'épuisement (données conservées), stockage 1 Go selon neon.com (certains comparatifs disent 0,5 Go : à mesurer). Vercel Hobby : usage non commercial, 100 déploiements/jour, 1 build à la fois, 45 min de build. SonarQube Cloud Free : privé jusqu'à 50 000 lignes, public illimité | Sources officielles consultées le 2026-11-13 |
+| 2026-11-14 | Aperçus par PR (NS-011) | Front Vercel seulement, qui appelle l'API de staging. `CORS_ORIGINS` accepte un motif `*` pour les URL d'aperçu ; `NEXT_PUBLIC_API_URL` définie en Production et en Preview. Branche Neon par PR et aperçu d'API reportés au ticket NS-021 | Option A du porteur du projet : cohérent avec l'API gardée éveillée |
 
 ## Risques ouverts
 
