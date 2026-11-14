@@ -70,6 +70,10 @@ describe('job deploy', () => {
     expect(find('db:seed')).toBe(find('prisma migrate deploy') + 1);
     expect(guarded('db:seed')).toBe("env.DATABASE_URL != ''");
   });
+  it('génère le client Prisma avant le seed, sinon le client est absent sur le runner', () => {
+    const pkg = JSON.parse(readFileSync('../../apps/api/package.json', 'utf8'));
+    expect(pkg.scripts['db:seed']).toMatch(/^prisma generate && prisma db seed$/);
+  });
   it("saute chaque étape tant que son secret ou sa variable n'existe pas", () => {
     expect(guarded('prisma migrate deploy')).toBe("env.DATABASE_URL != ''");
     expect(guarded('"$DEPLOY_HOOK"')).toBe("env.DEPLOY_HOOK != ''");
