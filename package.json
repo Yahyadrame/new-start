@@ -20,6 +20,7 @@
     "docker:clean": "docker compose -f infra/compose/docker-compose.yml --profile \"*\" down --volumes --remove-orphans --rmi local",
     "depcruise": "depcruise packages $(ls -d apps 2>/dev/null) --config .dependency-cruiser.cjs",
     "gen:module": "node packages/config/generators/generate.mjs module",
+    "gen:feature": "node packages/config/generators/generate.mjs feature",
     "helm:check": "sh infra/helm/check.sh"
   },
   "lint-staged": {

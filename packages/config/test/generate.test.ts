@@ -1,8 +1,8 @@
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { main, moduleFiles, names, run } from '../generators/generate.mjs';
+import { featureFiles, main, moduleFiles, names, run } from '../generators/generate.mjs';
 
 const dirs: string[] = [];
 const sandbox = () => {
@@ -37,6 +37,21 @@ describe('fichiers générés', () => {
       if (!p.endsWith('.test.ts')) expect(paths).toContain(p.replace(/\.ts$/, '.test.ts'));
     }
   });
+  it('la fonctionnalité a ses dossiers, un index.ts et un test par fichier de code', () => {
+    const paths = Object.keys(featureFiles('quiz'));
+    for (const dir of ['components', 'hooks', 'api', 'store']) {
+      expect(paths.some((p) => p.startsWith(`${dir}/`))).toBe(true);
+    }
+    expect(paths).toContain('index.ts');
+    for (const p of paths.filter((f) => f !== 'index.ts' && !/\.test\.tsx?$/.test(f))) {
+      expect(paths).toContain(p.replace(/\.tsx?$/, (e) => `.test${e}`));
+    }
+  });
+  it("l'index n'exporte que le composant public", () => {
+    expect(featureFiles('quiz-game')['index.ts']).toBe(
+      "export { QuizGamePanel } from './components/quiz-game-panel';\n",
+    );
+  });
 });
 
 describe('run', () => {
@@ -47,13 +62,19 @@ describe('run', () => {
     expect(readFileSync(written[0] as string, 'utf8')).toContain('QuizRepository');
     expect(hint).toContain('QuizModule');
   });
+  it('écrit une fonctionnalité dans apps/web', () => {
+    const root = sandbox();
+    const { written } = run('feature', 'quiz', root);
+    expect(existsSync(join(root, 'apps/web/src/features/quiz/index.ts'))).toBe(true);
+    expect(written.length).toBeGreaterThan(5);
+  });
   it('refuse d’écraser un dossier existant', () => {
     const root = sandbox();
     run('module', 'quiz', root);
     expect(() => run('module', 'quiz', root)).toThrow('existe déjà');
   });
   it('refuse un type inconnu', () => {
-    expect(() => run('feature', 'quiz', sandbox())).toThrow('module');
+    expect(() => run('page', 'quiz', sandbox())).toThrow('module ou feature');
   });
 });
 
