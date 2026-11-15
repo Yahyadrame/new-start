@@ -108,7 +108,8 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
 - [ ] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
-- [ ] Rédiger `docs/adr/0001-fournisseurs-ia.md` ; implémenter les interfaces dans `packages/ai` avec un adaptateur factice pour les tests.
+- [ ] Rédiger `docs/adr/0001-fournisseurs-ia.md`.
+- [x] Interfaces `LlmProvider`, `SttProvider`, `TtsProvider` dans `packages/ai`, avec un adaptateur factice et ses tests.
 
 ## NS-018 — Compose dev sans fichiers appartenant à root · S
 - [ ] Les conteneurs du profil `dev` tournent avec l'UID et le GID de l'utilisateur (`user: "${UID}:${GID}"`), pour que `.next` et `apps/api/src/generated` restent à lui.
@@ -138,7 +139,7 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 
 ## NS-023 — Route de test pour Sentry côté API · S
 Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API : il faudrait attendre une vraie erreur 500.
-- [ ] `GET /health/sentry-test` (module `health`) lève une erreur volontaire, uniquement si la variable `SENTRY_TEST_TOKEN` est définie et que l'en-tête `x-sentry-test-token` la contient ; sinon la route répond 404.
-- [ ] `SENTRY_TEST_TOKEN` est ajoutée à `.env.example` sans valeur ; la valeur est posée sur Render par le porteur du projet.
-- [ ] Vérifié sur staging : l'appel avec le bon jeton fait apparaître l'erreur dans le projet `newstart-api` de Sentry ; sans jeton, la route répond 404 et rien n'est envoyé.
-- [ ] Tests unitaires : route absente sans variable, refus avec un mauvais jeton, erreur levée avec le bon jeton.
+- [x] `GET /health/sentry-test` (module `health`) lève une erreur volontaire, uniquement si la variable `SENTRY_TEST_TOKEN` est définie et que l'en-tête `x-sentry-test-token` la contient ; sinon la route répond 404.
+- [x] `SENTRY_TEST_TOKEN` est ajoutée à `.env.example` sans valeur ; la valeur est posée sur Render par le porteur du projet.
+- [x] Vérifié sur staging : l'appel avec le bon jeton fait apparaître l'erreur dans le projet `newstart-api` de Sentry ; sans jeton, la route répond 404 et rien n'est envoyé.
+- [x] Tests unitaires : route absente sans variable, refus avec un mauvais jeton, erreur levée avec le bon jeton.

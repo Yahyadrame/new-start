@@ -1,0 +1,10 @@
+{
+  "extends": "@newstart/config/tsconfig/base.json",
+  "include": ["src", "vitest.config.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  }
+}
