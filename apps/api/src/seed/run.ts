@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client.js';
 import { parseEnv } from '../config/env.js';
+import { seedCatalogue } from './catalogue.js';
 import { seedNoyau } from './noyau.js';
 
 const read = (name: string) =>
@@ -12,6 +13,8 @@ const db = new PrismaClient({
 try {
   const n = await seedNoyau(db, { mots: read('mots.csv'), expressions: read('expressions.csv') });
   console.log(`Noyau chargé : ${n.words} mots, ${n.expressions} expressions`);
+  const c = await seedCatalogue(db);
+  console.log(`Catalogue chargé : ${c.topics} thèmes, ${c.agents} contacts`);
 } finally {
   await db.$disconnect();
 }
