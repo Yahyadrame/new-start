@@ -1,0 +1,6 @@
+apiVersion: v2
+name: new-start
+description: New Start (web, api, worker). Écrit et vérifié en CI, déployé seulement en phase 2 (NS-007).
+type: application
+version: 0.1.0
+appVersion: '0.1.0'

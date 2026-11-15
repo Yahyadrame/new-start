@@ -12,3 +12,4 @@ backlog
 .github
 .claude
 generated
+infra/helm/**/templates

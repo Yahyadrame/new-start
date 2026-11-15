@@ -18,7 +18,8 @@
     "docker:dev": "docker compose -f infra/compose/docker-compose.yml --profile dev up",
     "docker:prod": "docker compose -f infra/compose/docker-compose.yml --profile prod up --build",
     "docker:clean": "docker compose -f infra/compose/docker-compose.yml --profile \"*\" down --volumes --remove-orphans --rmi local",
-    "depcruise": "depcruise packages $(ls -d apps 2>/dev/null) --config .dependency-cruiser.cjs"
+    "depcruise": "depcruise packages $(ls -d apps 2>/dev/null) --config .dependency-cruiser.cjs",
+    "helm:check": "sh infra/helm/check.sh"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,json,yml,yaml}": "prettier --write",

@@ -1,0 +1,58 @@
+{{- $app := dict "root" . "app" "api" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels: {{- include "ns.labels" $app | nindent 4 }}
+spec:
+  replicas: {{ .Values.api.replicas }}
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # aucun pod retiré avant que le nouveau soit prêt
+      maxSurge: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: api }
+  template:
+    metadata:
+      labels: {{- include "ns.labels" $app | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 40
+      securityContext: {{- include "ns.securityContext" . | nindent 8 }}
+      containers:
+        - name: api
+          image: {{ include "ns.image" $app }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - { name: http, containerPort: {{ .Values.api.port }} }
+          envFrom:
+            - configMapRef: { name: {{ .Release.Name }}-config }
+            - secretRef: { name: {{ .Values.secretName }} }
+          securityContext: {{- include "ns.containerSecurityContext" . | nindent 12 }}
+          resources: {{- toYaml .Values.api.resources | nindent 12 }}
+          readinessProbe:
+            httpGet: { path: /health/ready, port: http }
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: { path: /health/live, port: http }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          lifecycle:
+            preStop: { exec: { command: ["sh", "-c", "sleep 10"] } } # laisse l'Ingress retirer le pod
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector: { matchLabels: { app.kubernetes.io/name: api } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels: {{- include "ns.labels" $app | nindent 4 }}
+spec:
+  selector: { app.kubernetes.io/name: api }
+  ports:
+    - { name: http, port: 80, targetPort: http }

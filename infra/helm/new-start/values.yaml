@@ -1,0 +1,41 @@
+# Valeurs par défaut. Les cibles (VPS, AWS) les surchargent dans values-vps.yaml et values-aws.yaml.
+image:
+  registry: ghcr.io/yahyadrame
+  # Vide : on prend appVersion du chart. En déploiement, Argo CD pose le SHA du commit.
+  tag: ''
+  pullPolicy: IfNotPresent
+
+# Nom du Secret Kubernetes qui porte DATABASE_URL, JWT_SECRET, GROQ_API_KEY, etc.
+# Il est créé par External Secrets (NS-007, PR 3), jamais écrit dans Git.
+secretName: new-start-secrets
+
+# Variables non secrètes de l'API et du worker.
+config:
+  NODE_ENV: production
+  LOG_LEVEL: info
+  RUN_JOBS: separate
+  CORS_ORIGINS: ''
+  LLM_PROVIDER: groq
+  STT_PROVIDER: groq
+  TTS_PROVIDER: gemini
+  AI_MAX_CALLS_PER_MONTH: '2000'
+
+api:
+  replicas: 3
+  port: 4000
+  resources:
+    requests: { cpu: 250m, memory: 384Mi }
+    limits: { memory: 768Mi }
+
+web:
+  replicas: 2
+  port: 3000
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { memory: 512Mi }
+
+worker:
+  replicas: 1
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { memory: 512Mi }
