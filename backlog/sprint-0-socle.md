@@ -76,10 +76,12 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Quality gate « New Start » : 0 bug, 0 vulnérabilité, points sensibles revus, couverture ≥ 80 %, duplication ≤ 3 %, maintenabilité A.
 
 ## NS-007 — Fichiers Kubernetes et Helm prêts pour la phase 2 · M
-- [ ] Rien n'est déployé : les fichiers sont écrits et vérifiés en CI (`helm lint`, `helm template` + `kubeconform`) pour que la phase 2 (VPS ou AWS) ne demande aucune réécriture.
+- [x] (PR 1) Rien n'est déployé : les fichiers sont écrits et vérifiés en CI (`helm lint`, `helm template` + `kubeconform`) pour que la phase 2 (VPS ou AWS) ne demande aucune réécriture.
 - [ ] Valeurs par cible : `values-vps.yaml` (k3s) et `values-aws.yaml` (EC2 + k3s, ou EKS).
-- [ ] Chart Helm `new-start` : déploiements web/api/worker, `RollingUpdate maxUnavailable: 0`, sondes, PDB, HPA, NetworkPolicies, ressources.
-- [ ] Ingress NGINX + cert-manager ; secrets via External Secrets ou Sealed Secrets (manifestes seulement).
+- [x] (PR 1) Chart Helm `new-start` : déploiements web/api/worker, `RollingUpdate maxUnavailable: 0`, sondes, ressources.
+- [ ] (PR 2) PDB, HPA, NetworkPolicies.
+- [ ] (PR 2) Ingress NGINX + cert-manager.
+- [ ] (PR 3) Secrets via Sealed Secrets (manifestes seulement ; External Secrets si AWS).
 
 ## NS-011 — Environnements d'aperçu par PR · M
 Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md`), donc l'aperçu d'une PR est un front Vercel qui appelle l'API de staging.

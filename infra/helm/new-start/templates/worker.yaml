@@ -1,0 +1,44 @@
+{{- $app := dict "root" . "app" "worker" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels: {{- include "ns.labels" $app | nindent 4 }}
+spec:
+  replicas: {{ .Values.worker.replicas }}
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # le nouveau worker démarre avant que l'ancien s'arrête
+      maxSurge: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: worker }
+  template:
+    metadata:
+      labels: {{- include "ns.labels" $app | nindent 8 }}
+    spec:
+      automountServiceAccountToken: false # l'appli n'appelle pas l'API Kubernetes
+      terminationGracePeriodSeconds: 60 # le temps de finir le job en cours
+      securityContext: {{- include "ns.securityContext" . | nindent 8 }}
+      containers:
+        - name: worker
+          image: {{ include "ns.image" $app }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef: { name: {{ .Release.Name }}-config }
+            - secretRef: { name: {{ .Values.secretName }} }
+          env:
+            - { name: HEARTBEAT_FILE, value: /tmp/worker-alive }
+          securityContext: {{- include "ns.containerSecurityContext" . | nindent 12 }}
+          resources: {{- toYaml .Values.worker.resources | nindent 12 }}
+          # Le worker n'écoute aucun port : il écrit un fichier de pouls, relu comme dans le Dockerfile.
+          livenessProbe:
+            exec:
+              command:
+                - node
+                - -e
+                - process.exit(Date.now()-require('fs').statSync(process.env.HEARTBEAT_FILE).mtimeMs<60000?0:1)
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            timeoutSeconds: 5

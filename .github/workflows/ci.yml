@@ -31,6 +31,7 @@ jobs:
       - run: pnpm exec prettier --check .
       - run: pnpm lint
       - run: pnpm depcruise
+      - run: pnpm helm:check # chart Helm : lint, rendu, kubeconform (NS-007)
       - run: pnpm typecheck
       - run: pnpm test
       # Jeton et variables saisis par le porteur (NS-006). Sans jeton (PR venant d'un fork), l'analyse est sautée.
