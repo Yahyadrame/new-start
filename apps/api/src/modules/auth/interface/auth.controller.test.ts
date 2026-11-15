@@ -4,8 +4,9 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ENV } from '../../../config/env.js';
 import { RequestOtp } from '../application/request-otp.js';
+import { SessionService } from '../application/session.js';
 import { VerifyOtp } from '../application/verify-otp.js';
-import { AuthController } from './auth.controller.js';
+import { AuthController, readCookie } from './auth.controller.js';
 
 const execute = vi.fn().mockResolvedValue({ expiresInSeconds: 300 });
 const verify = vi.fn().mockResolvedValue({
@@ -14,6 +15,15 @@ const verify = vi.fn().mockResolvedValue({
   refreshToken: 'opaque',
   user: { id: 'u1', firstName: 'Awa', goal: 'WORK', level: 'A1' },
 });
+const sessions = {
+  refresh: vi.fn().mockResolvedValue({
+    accessToken: 'jwt2',
+    expiresInSeconds: 900,
+    refreshToken: 'opaque2',
+    user: { id: 'u1' },
+  }),
+  logout: vi.fn().mockResolvedValue(undefined),
+};
 const env = { NODE_ENV: 'production' };
 let app: INestApplication;
 beforeAll(async () => {
@@ -22,6 +32,7 @@ beforeAll(async () => {
     providers: [
       { provide: RequestOtp, useValue: { execute } },
       { provide: VerifyOtp, useValue: { execute: verify } },
+      { provide: SessionService, useValue: sessions },
       { provide: ENV, useValue: env },
     ],
   }).compile();
@@ -99,7 +110,7 @@ describe('POST /auth/otp/verify', () => {
     expect(cookie).toMatch(/HttpOnly/);
     expect(cookie).toMatch(/Secure/);
     expect(cookie).toMatch(/SameSite=Lax/);
-    expect(cookie).toContain('Path=/auth');
+    expect(cookie).toContain('Path=/api/auth');
     expect(cookie).toContain('Max-Age=2592000');
   });
   it.each(['12345', 'abcdef', '1234567', ''])('refuse le code %j', async (code) => {
@@ -108,5 +119,46 @@ describe('POST /auth/otp/verify', () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(verify).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /auth/refresh et /auth/logout', () => {
+  const call = (path: string, cookie?: string) => {
+    const r = request(app.getHttpServer()).post(path);
+    return cookie ? r.set('Cookie', cookie) : r;
+  };
+
+  it('renouvelle la session depuis le cookie et en pose un nouveau', async () => {
+    const res = await call('/auth/refresh', 'autre=1; ns_refresh=opaque; x=2');
+    expect(res.status).toBe(200);
+    expect(sessions.refresh).toHaveBeenLastCalledWith('opaque');
+    expect(res.body).toEqual({ accessToken: 'jwt2', expiresInSeconds: 900, user: { id: 'u1' } });
+    expect(String(res.headers['set-cookie'])).toContain('ns_refresh=opaque2');
+  });
+  it('répond 401 sans cookie', async () => {
+    sessions.refresh.mockClear();
+    const res = await call('/auth/refresh');
+    expect(res.status).toBe(401);
+    expect(res.body.code).toBe('INVALID_REFRESH_TOKEN');
+    expect(sessions.refresh).not.toHaveBeenCalled();
+  });
+  it('déconnecte : révoque et efface le cookie', async () => {
+    const res = await call('/auth/logout', 'ns_refresh=opaque');
+    expect(res.status).toBe(204);
+    expect(sessions.logout).toHaveBeenLastCalledWith('opaque');
+    expect(String(res.headers['set-cookie'])).toMatch(/ns_refresh=;.*Path=\/api\/auth/);
+  });
+  it("déconnecte sans erreur quand il n'y a pas de cookie", async () => {
+    sessions.logout.mockClear();
+    expect((await call('/auth/logout')).status).toBe(204);
+    expect(sessions.logout).not.toHaveBeenCalled();
+  });
+});
+
+describe('readCookie', () => {
+  it('trouve, décode ou ignore', () => {
+    expect(readCookie('a=1; b=x%20y', 'b')).toBe('x y');
+    expect(readCookie('a=1', 'b')).toBeUndefined();
+    expect(readCookie(undefined, 'b')).toBeUndefined();
   });
 });

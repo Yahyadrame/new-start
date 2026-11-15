@@ -19,6 +19,8 @@ import {
   VerifyOtp,
   type AccountStore,
 } from './application/verify-otp.js';
+import { PrismaSessionStore } from './infrastructure/prisma-session.store.js';
+import { SESSION_STORE, SessionService, type SessionStore } from './application/session.js';
 import { PrismaOtpStore } from './infrastructure/prisma-otp.store.js';
 import { AuthController } from './interface/auth.controller.js';
 
@@ -44,6 +46,12 @@ import { AuthController } from './interface/auth.controller.js';
       inject: [ACCOUNT_STORE, ACCESS_SIGNER, OTP_KEY],
       useFactory: (store: AccountStore, signer: AccessSigner, key: string) =>
         new VerifyOtp(store, signer, key),
+    },
+    { provide: SESSION_STORE, useClass: PrismaSessionStore },
+    {
+      provide: SessionService,
+      inject: [SESSION_STORE, ACCESS_SIGNER],
+      useFactory: (store: SessionStore, signer: AccessSigner) => new SessionService(store, signer),
     },
     { provide: SMS_ENABLED, inject: [ENV], useFactory: (e: Env) => e.SMS_ENABLED },
     {
