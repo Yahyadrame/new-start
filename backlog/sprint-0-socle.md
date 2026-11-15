@@ -137,7 +137,7 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 ## NS-022 — OpenTelemetry et alerte d'erreurs · M
 - [x] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
 - [x] Alerte : taux d'échec > 2 % pendant 5 minutes (monitor Sentry « Failure Rate », traces à 10 % sur staging). Sentry compte aussi les 404 comme échecs.
-- [ ] Erreurs serveur de Next.js (`apps/web`) envoyées à Sentry, avec le même nettoyage que le navigateur.
+- [x] Erreurs serveur de Next.js (`apps/web`) envoyées à Sentry, avec le même nettoyage que le navigateur (vérifié sur staging le 2026-11-15, NEWSTART-WEB-2, sans en-tête ni jeton).
 
 ## NS-023 — Route de test pour Sentry côté API · S
 Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API : il faudrait attendre une vraie erreur 500.
@@ -167,4 +167,5 @@ Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas, puis un wo
 Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case de NS-022 ne peut pas être vérifiée.
 - [x] `GET /api/sentry-test` (apps/web) lève une erreur volontaire, uniquement si `SENTRY_TEST_TOKEN` est défini sur Vercel et que l'en-tête `x-sentry-test-token` le contient ; sinon elle répond 404.
 - [x] Tests unitaires : 404 sans jeton configuré, sans en-tête ou avec un mauvais jeton ; erreur avec le bon.
-- [ ] Vérifié sur staging : l'erreur apparaît dans Sentry (projet `newstart-web`) ; case « erreurs serveur de Next.js » de NS-022 cochée ; `SENTRY_TEST_TOKEN` retiré de Vercel.
+- [x] Vérifié sur staging : l'erreur apparaît dans Sentry (projet `newstart-web`, NEWSTART-WEB-2) ; case « erreurs serveur de Next.js » de NS-022 cochée.
+- [x] `SENTRY_TEST_TOKEN` retiré de Vercel le 2026-11-15 (le jeton a été écrit dans la conversation : ne pas le réutiliser). Le déploiement en cours le garde jusqu'au prochain déploiement.
