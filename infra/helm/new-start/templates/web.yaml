@@ -5,7 +5,9 @@ metadata:
   name: web
   labels: {{- include "ns.labels" $app | nindent 4 }}
 spec:
+  {{- if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.web.replicas }}
+  {{- end }}
   revisionHistoryLimit: 5
   strategy:
     type: RollingUpdate

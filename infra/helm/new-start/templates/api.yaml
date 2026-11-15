@@ -5,7 +5,9 @@ metadata:
   name: api
   labels: {{- include "ns.labels" $app | nindent 4 }}
 spec:
+  {{- if not .Values.api.autoscaling.enabled }}
   replicas: {{ .Values.api.replicas }}
+  {{- end }}
   revisionHistoryLimit: 5
   strategy:
     type: RollingUpdate
