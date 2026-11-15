@@ -1,6 +1,6 @@
 {
   "extends": "@newstart/config/tsconfig/base.json",
-  "include": ["src", "scripts", "vitest.config.ts"],
+  "include": ["src", "vitest.config.ts"],
   "compilerOptions": {
     "noEmit": true,
     "module": "ESNext",
