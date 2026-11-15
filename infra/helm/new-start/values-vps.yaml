@@ -1,0 +1,11 @@
+# VPS avec k3s, un seul nœud : moins de pods, secrets scellés (gratuit). Les domaines sont à poser avec le vrai nom (NS-007, phase 2).
+api:
+  replicas: 2
+  pdb: { minAvailable: 1 }
+  autoscaling: { enabled: true, minReplicas: 2, maxReplicas: 4, cpuUtilization: 65 }
+web:
+  replicas: 1
+  pdb: { minAvailable: 1 }
+  autoscaling: { enabled: true, minReplicas: 1, maxReplicas: 3, cpuUtilization: 65 }
+sealedSecret:
+  enabled: true
