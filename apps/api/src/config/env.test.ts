@@ -28,6 +28,18 @@ describe('parseEnv', () => {
     );
     expect(() => parseEnv({ ...base, SENTRY_DSN: 'pas-une-url' })).toThrow('SENTRY_DSN');
   });
+  it('OTEL_EXPORTER_OTLP_ENDPOINT : vide = éteint, barre finale retirée, non URL refusée', () => {
+    expect(
+      parseEnv({ ...base, OTEL_EXPORTER_OTLP_ENDPOINT: '' }).OTEL_EXPORTER_OTLP_ENDPOINT,
+    ).toBeUndefined();
+    expect(
+      parseEnv({ ...base, OTEL_EXPORTER_OTLP_ENDPOINT: 'https://otlp.example.net/otlp/' })
+        .OTEL_EXPORTER_OTLP_ENDPOINT,
+    ).toBe('https://otlp.example.net/otlp');
+    expect(() => parseEnv({ ...base, OTEL_EXPORTER_OTLP_ENDPOINT: 'nope' })).toThrow(
+      'OTEL_EXPORTER_OTLP_ENDPOINT',
+    );
+  });
   it('SENTRY_TEST_TOKEN : absent ou vide = désactivé, trop court = refusé', () => {
     expect(parseEnv(base).SENTRY_TEST_TOKEN).toBeUndefined();
     expect(parseEnv({ ...base, SENTRY_TEST_TOKEN: '' }).SENTRY_TEST_TOKEN).toBeUndefined();
