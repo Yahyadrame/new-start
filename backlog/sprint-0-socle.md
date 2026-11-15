@@ -162,3 +162,9 @@ Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas, puis un wo
 - [x] La sonde n'appelle pas la base : Neon peut s'endormir.
 - [x] Vérifié : l'API répond en moins d'une seconde après une pause (0,17 s).
 - [x] `.github/workflows/uptime.yml` supprimé : GitHub ne lançait aucune exécution planifiée (aucune en plus de 2 heures malgré les minutes décalées).
+
+## NS-026 — Route de test pour Sentry côté web · S
+Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case de NS-022 ne peut pas être vérifiée.
+- [x] `GET /api/sentry-test` (apps/web) lève une erreur volontaire, uniquement si `SENTRY_TEST_TOKEN` est défini sur Vercel et que l'en-tête `x-sentry-test-token` le contient ; sinon elle répond 404.
+- [x] Tests unitaires : 404 sans jeton configuré, sans en-tête ou avec un mauvais jeton ; erreur avec le bon.
+- [ ] Vérifié sur staging : l'erreur apparaît dans Sentry (projet `newstart-web`) ; case « erreurs serveur de Next.js » de NS-022 cochée ; `SENTRY_TEST_TOKEN` retiré de Vercel.
