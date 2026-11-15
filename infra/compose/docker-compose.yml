@@ -7,16 +7,25 @@ name: new-start
 
 x-dev-app: &dev-app
   image: node:22.20-alpine
+  # Même UID:GID que l'utilisateur de la machine, pour que .next et apps/api/src/generated ne
+  # deviennent pas la propriété de root. Exporter UID et GID (voir le README), sinon 1000.
+  user: '${UID:-1000}:${GID:-1000}'
   working_dir: /repo
+  environment: &dev-env
+    HOME: /tmp/home
+    NPM_CONFIG_PREFIX: /tmp/npm-global
+    PATH: /tmp/npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    npm_config_store_dir: /pnpm-store
   command: sh -c "npm i -g $$(node -p \"require('./package.json').packageManager.split('+')[0]\") && pnpm install --frozen-lockfile && pnpm --filter $$APP dev"
   volumes:
     - ../..:/repo
     - node_modules:/repo/node_modules
-    - pnpm_store:/root/.local/share/pnpm/store
+    - pnpm_store:/pnpm-store
   env_file:
     - path: ../../.env
       required: false
   depends_on:
+    init-perms: { condition: service_completed_successfully }
     postgres: { condition: service_healthy }
     mailpit: { condition: service_started }
   profiles: ['dev']
@@ -43,14 +52,26 @@ services:
     ports: ['8025:8025', '1025:1025']
     mem_limit: 64m
 
+  # Les volumes nommés naissent propriété de root : on les remet à l'utilisateur avant le démarrage.
+  init-perms:
+    image: node:22.20-alpine
+    user: '0:0'
+    command: sh -c 'for d in /vol/node_modules /vol/pnpm_store; do [ "$$(stat -c %u $$d)" = "${UID:-1000}" ] || chown -R ${UID:-1000}:${GID:-1000} $$d; done'
+    volumes:
+      - node_modules:/vol/node_modules
+      - pnpm_store:/vol/pnpm_store
+    profiles: ['dev']
+    mem_limit: 64m
+
   web:
     <<: *dev-app
-    environment: { APP: '@newstart/web' }
+    environment: { <<: *dev-env, APP: '@newstart/web' }
     ports: ['3000:3000']
 
   api:
     <<: *dev-app
     environment:
+      <<: *dev-env
       APP: '@newstart/api'
       RUN_JOBS: inline
       DATABASE_URL: postgresql://${POSTGRES_USER:-newstart}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-newstart}
