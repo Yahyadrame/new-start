@@ -8,16 +8,16 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [x] Poser au porteur du projet, en une seule fois, les choix de départ avec options et coûts : nom et visibilité du dépôt, confirmation de la pile gratuite de la phase 1 de `docs/10-devops.md` après revérification des limites du moment (Vercel Hobby, Render Free, Neon, pg-boss, Upstash facultatif, SonarQube Cloud, Sentry, Brevo, Cloudinary, UptimeRobot), région (Render : Francfort conseillé pour la latence depuis Dakar, à confirmer), garder ou non l'API éveillée par une sonde, sous-domaines gratuits, dépôt public ou privé (impact sur les minutes GitHub Actions et sur SonarQube Cloud), budget mensuel maximum pour l'IA.
 - [ ] Ouvrir avec le porteur du projet les comptes gratuits, tous connectables avec son compte GitHub quand c'est possible (Vercel, Render, Neon, SonarQube Cloud, Sentry, Brevo, Cloudinary, UptimeRobot ; Upstash et Grafana Cloud plus tard si besoin) ; il saisit lui-même les clés dans les secrets. Aucun compte payant, aucune carte bancaire.
 - [x] Consigner les réponses dans `docs/decisions.md`.
-- [ ] Avec l'accord du porteur du projet : créer le dépôt, pousser ce dossier comme premier commit, configurer la protection de `main` (PR, CI, quality gate, approbation du porteur du projet).
+- [x] Avec l'accord du porteur du projet : créer le dépôt, pousser ce dossier comme premier commit, configurer la protection de `main` (PR, CI, quality gate, approbation du porteur du projet).
 - [ ] Avec son accord : créer les issues depuis `backlog/` (`gh issue create`), étiquettes par épopée et sprint, tableau GitHub Projects.
 - [x] Lui demander s'il accorde des autorisations permanentes (par exemple pousser et ouvrir les PR sans demander) et les noter dans `docs/decisions.md`.
 - [ ] Lister les accès à fournir (jetons, comptes fournisseurs) sans jamais demander de valeur secrète dans la conversation : expliquer où la saisir (secrets GitHub, coffre de l'hébergeur).
 
 ## NS-001 — Monorepo et outils · M
-- [ ] pnpm + Turborepo, Node 22, TypeScript strict, structure de `docs/06-architecture.md`.
-- [ ] `packages/config` : ESLint, Prettier, tsconfig partagés ; Husky, lint-staged, Commitlint.
-- [ ] Scripts racine : `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`.
-- [ ] `.env.example` complet, sans valeurs réelles.
+- [x] pnpm + Turborepo, Node 22, TypeScript strict, structure de `docs/06-architecture.md`.
+- [x] `packages/config` : ESLint, Prettier, tsconfig partagés ; Husky, lint-staged, Commitlint.
+- [x] Scripts racine : `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`.
+- [x] `.env.example` complet, sans valeurs réelles.
 
 ## NS-002 — Squelettes des applications · M
 - [x] `apps/web` : Next.js 15, Tailwind avec les jetons de `docs/04-design-system.md`, thème Système/Clair/Sombre, page d'accueil avec le logo.
@@ -26,10 +26,10 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [x] `/health/ready` vérifie la base, et Redis seulement s'il est configuré.
 
 ## NS-013 — Bibliothèque de composants et Storybook · M
-- [ ] `packages/ui` avec shadcn/ui + Radix, Tailwind, `cva`, Lucide, Sonner, Vaul, Motion (liste de `docs/04-design-system.md`).
-- [ ] Jetons de couleur clair et sombre, typographie, rayons, espacements.
-- [ ] Primitives : Button, Input, Dialog, Sheet, Avatar, Badge, Tabs, Switch, Skeleton, Toast ; chacune avec story clair et sombre et test d'accessibilité.
-- [ ] Storybook publié en ligne (projet Vercel séparé ou GitHub Pages) pour que le porteur du projet voie les composants.
+- [x] `packages/ui` avec shadcn/ui + Radix, Tailwind, `cva`, Lucide, Sonner, Vaul, Motion (liste de `docs/04-design-system.md`).
+- [x] Jetons de couleur clair et sombre, typographie, rayons, espacements.
+- [x] Primitives : Button, Input, Dialog, Sheet, Avatar, Badge, Tabs, Switch, Skeleton, Toast ; chacune avec story clair et sombre et test d'accessibilité.
+- [x] Storybook publié en ligne (projet Vercel séparé ou GitHub Pages) pour que le porteur du projet voie les composants.
 
 ## NS-014 — Règles d'architecture vérifiées en CI · S
 - [x] `dependency-cruiser` et `eslint-plugin-boundaries` configurés selon `docs/06-architecture.md` ; un import interdit fait échouer la CI.
@@ -62,7 +62,7 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Le porteur du projet lance la commande sur sa machine et confirme que ça marche avant de clore le ticket.
 
 ## NS-004 — Images Docker · M
-- [ ] Dockerfiles multi-étapes pour web, api, worker, exécution non root, `HEALTHCHECK`.
+- [x] Dockerfiles multi-étapes pour web, api, worker, exécution non root, `HEALTHCHECK`.
 - [ ] Taille cible : < 250 Mo par image.
 
 ## NS-005 — CI GitHub Actions · M
@@ -72,8 +72,8 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Renovate configuré.
 
 ## NS-006 — SonarQube · S
-- [ ] Organisation et projet `newstart` sur SonarQube Cloud (offre Free), `sonar-project.properties`, analyse des PR avec commentaire.
-- [ ] Quality gate « New Start » : 0 bug, 0 vulnérabilité, points sensibles revus, couverture ≥ 80 %, duplication ≤ 3 %, maintenabilité A.
+- [x] Organisation et projet `newstart` sur SonarQube Cloud (offre Free), `sonar-project.properties`, analyse des PR avec commentaire.
+- [x] Quality gate « New Start » : 0 bug, 0 vulnérabilité, points sensibles revus, couverture ≥ 80 %, duplication ≤ 3 %, maintenabilité A.
 
 ## NS-007 — Fichiers Kubernetes et Helm prêts pour la phase 2 · M
 - [x] (PR 1) Rien n'est déployé : les fichiers sont écrits et vérifiés en CI (`helm lint`, `helm template` + `kubeconform`) pour que la phase 2 (VPS ou AWS) ne demande aucune réécriture.
@@ -96,15 +96,15 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Comptes de test, conversations et épisodes : ajoutés au seed par chaque ticket qui crée sa table ; SMS et paiements en mode test.
 
 ## NS-008 — Staging en ligne · M
-- [ ] Projet Vercel `newstart-web` relié au dépôt (avec l'accord du porteur du projet pour installer l'application GitHub de Vercel).
-- [ ] Service Render `newstart-api` (offre Free) déployé depuis l'image GHCR construite par la CI, avec `RUN_JOBS=inline` ; variables d'environnement saisies par le porteur du projet.
-- [ ] `cd-staging.yml` : migration Prisma sur Neon (`prisma migrate deploy`) puis appel du deploy hook Render, puis tests de fumée sur `/health/ready` (avec attente du réveil).
-- [ ] Écran « Connexion au serveur… » côté front pendant le réveil de l'API.
-- [ ] Le lien de staging est donné au porteur du projet et noté dans le `README`.
+- [x] Projet Vercel `newstart-web` relié au dépôt (avec l'accord du porteur du projet pour installer l'application GitHub de Vercel).
+- [x] Service Render `newstart-api` (offre Free) déployé depuis l'image GHCR construite par la CI, avec `RUN_JOBS=inline` ; variables d'environnement saisies par le porteur du projet.
+- [x] `cd-staging.yml` : migration Prisma sur Neon (`prisma migrate deploy`) puis appel du deploy hook Render, puis tests de fumée sur `/health/ready` (avec attente du réveil).
+- [x] Écran « Connexion au serveur… » côté front pendant le réveil de l'API.
+- [x] Le lien de staging est donné au porteur du projet et noté dans le `README`.
 
 ## NS-009 — Supervision · M
 - [x] Sentry côté API et côté navigateur, éteint tant que le DSN est vide, sans donnée personnelle ni contenu de message.
-- [ ] Le porteur du projet crée le compte Sentry et saisit `SENTRY_DSN` (Render) et `NEXT_PUBLIC_SENTRY_DSN` (Vercel) ; Claude vérifie qu'une erreur de test arrive.
+- [x] Le porteur du projet crée le compte Sentry et saisit `SENTRY_DSN` (Render) et `NEXT_PUBLIC_SENTRY_DSN` (Vercel) ; Claude vérifie qu'une erreur de test arrive.
 - [x] Sonde sur `/health/live` : UptimeRobot refuse d'ouvrir le formulaire de création, remplacée par un workflow GitHub Actions (NS-025).
 - [ ] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
 
