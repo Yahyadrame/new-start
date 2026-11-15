@@ -168,4 +168,4 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] `GET /api/sentry-test` (apps/web) lève une erreur volontaire, uniquement si `SENTRY_TEST_TOKEN` est défini sur Vercel et que l'en-tête `x-sentry-test-token` le contient ; sinon elle répond 404.
 - [x] Tests unitaires : 404 sans jeton configuré, sans en-tête ou avec un mauvais jeton ; erreur avec le bon.
 - [x] Vérifié sur staging : l'erreur apparaît dans Sentry (projet `newstart-web`, NEWSTART-WEB-2) ; case « erreurs serveur de Next.js » de NS-022 cochée.
-- [ ] `SENTRY_TEST_TOKEN` retiré de Vercel (le jeton a été écrit dans la conversation : ne pas le réutiliser).
+- [x] `SENTRY_TEST_TOKEN` retiré de Vercel le 2026-11-15 (le jeton a été écrit dans la conversation : ne pas le réutiliser). Le déploiement en cours le garde jusqu'au prochain déploiement.
