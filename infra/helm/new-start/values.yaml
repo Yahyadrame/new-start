@@ -24,18 +24,18 @@ api:
   replicas: 3
   port: 4000
   resources:
-    requests: { cpu: 250m, memory: 384Mi }
+    requests: { cpu: 250m, memory: 384Mi, ephemeral-storage: 256Mi }
     limits: { memory: 768Mi }
 
 web:
   replicas: 2
   port: 3000
   resources:
-    requests: { cpu: 100m, memory: 256Mi }
+    requests: { cpu: 100m, memory: 256Mi, ephemeral-storage: 256Mi }
     limits: { memory: 512Mi }
 
 worker:
   replicas: 1
   resources:
-    requests: { cpu: 100m, memory: 256Mi }
+    requests: { cpu: 100m, memory: 256Mi, ephemeral-storage: 256Mi }
     limits: { memory: 512Mi }

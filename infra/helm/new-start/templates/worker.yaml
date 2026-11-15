@@ -18,6 +18,7 @@ spec:
     metadata:
       labels: {{- include "ns.labels" $app | nindent 8 }}
     spec:
+      automountServiceAccountToken: false # l'appli n'appelle pas l'API Kubernetes
       terminationGracePeriodSeconds: 60 # le temps de finir le job en cours
       securityContext: {{- include "ns.securityContext" . | nindent 8 }}
       containers:
