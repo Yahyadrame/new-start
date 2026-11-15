@@ -8,3 +8,4 @@ export * from './retry.js';
 export * from './agent.js';
 export * from './fallback.js';
 export * from './factory.js';
+export * from './compare.js';

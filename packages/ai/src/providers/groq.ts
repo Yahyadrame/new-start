@@ -10,6 +10,12 @@ import { post, requireKey, type ProviderOptions } from './http.js';
 
 const BASE = 'https://api.groq.com/openai/v1';
 
+/** Groq reconnaît le format par l'extension du nom de fichier, pas par le type MIME : `audio/webm;codecs=opus` donne `audio.webm`. */
+export function fileName(mimeType: string): string {
+  const subtype = mimeType.split(';')[0]?.split('/')[1]?.trim() ?? '';
+  return `audio.${subtype === 'mpeg' ? 'mp3' : subtype || 'wav'}`;
+}
+
 export class GroqLlm implements LlmProvider {
   readonly name: string;
   private readonly o: Required<Omit<ProviderOptions, 'model'>> & { model: string };
@@ -72,7 +78,11 @@ export class GroqStt implements SttProvider {
     form.set('language', request.language ?? 'en');
     form.set('response_format', 'verbose_json');
     form.append('timestamp_granularities[]', 'word');
-    form.set('file', new Blob([request.audio], { type: request.mimeType }), 'audio');
+    form.set(
+      'file',
+      new Blob([request.audio], { type: request.mimeType }),
+      fileName(request.mimeType),
+    );
     const res = await post({
       provider: 'groq',
       url: `${BASE}/audio/transcriptions`,

@@ -150,8 +150,8 @@ Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
 - [x] Validation Zod du JSON `{ reply, fix }` avec une nouvelle tentative, puis `reply` brut et `fix = null` (`docs/09-ia-agents.md`).
 - [x] Plafond d'usage codé et repli sur l'adaptateur factice quand le quota est épuisé (décision budget du 2026-11-13) ; réessai sur les erreurs 429 et 5xx, et sur l'erreur 400 « texte au lieu d'audio » de Gemini TTS.
 - [x] Choix du fournisseur par variable d'environnement ; `.env.example` à jour.
-- [ ] `pnpm --filter @newstart/ai compare` relance la comparaison avec ces adaptateurs ; la logique de notation vit dans `src/` avec ses tests.
-- [ ] Tests unitaires avec `fetch` simulé pour chaque adaptateur, couverture ≥ 80 %.
+- [x] `pnpm --filter @newstart/ai compare` relance la comparaison avec ces adaptateurs ; la logique de notation vit dans `src/` avec ses tests.
+- [x] Tests unitaires avec `fetch` simulé pour chaque adaptateur, couverture ≥ 80 %.
 
 ## NS-025 — Sonde de disponibilité par GitHub Actions · S
 Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas (décision du porteur du projet, 2026-11-15).
