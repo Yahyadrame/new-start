@@ -6,3 +6,5 @@ export * from './providers/groq.js';
 export { ProviderError, type FetchLike, type ProviderOptions } from './providers/http.js';
 export * from './retry.js';
 export * from './agent.js';
+export * from './fallback.js';
+export * from './factory.js';
