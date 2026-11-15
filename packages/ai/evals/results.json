@@ -1,0 +1,1120 @@
+{
+  "date": "2026-11-15",
+  "llm": [
+    {
+      "provider": "gemini/gemini-3.5-flash-lite",
+      "calls": 50,
+      "errors": 13,
+      "validJson": 37,
+      "exactCorrections": 34,
+      "falseAlarms": 0,
+      "missed": 0,
+      "p50ms": 739,
+      "p95ms": 1858
+    },
+    {
+      "provider": "groq/openai/gpt-oss-20b",
+      "calls": 50,
+      "errors": 0,
+      "validJson": 47,
+      "exactCorrections": 45,
+      "falseAlarms": 0,
+      "missed": 3,
+      "p50ms": 460,
+      "p95ms": 663
+    }
+  ],
+  "llmRows": {
+    "gemini": [
+      {
+        "level": "A1",
+        "text": "I am agree with you.",
+        "expected": "I agree with you.",
+        "ms": 1992,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I agree with you.",
+        "reply": "I'm glad we see eye to eye! What else do you think about this topic?"
+      },
+      {
+        "level": "A1",
+        "text": "She have two brothers.",
+        "expected": "She has two brothers.",
+        "ms": 732,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She has two brothers.",
+        "reply": "Ah, nice! Do you have any brothers or sisters yourself?"
+      },
+      {
+        "level": "A1",
+        "text": "I have 20 years old.",
+        "expected": "I am 20 years old.",
+        "ms": 840,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I am 20 years old.",
+        "reply": "Happy belated birthday! What do you like to do in your free time?"
+      },
+      {
+        "level": "A1",
+        "text": "He go to school every day.",
+        "expected": "He goes to school every day.",
+        "ms": 1057,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He goes to school every day.",
+        "reply": "Yes, he does! What time does he usually wake up for school?"
+      },
+      {
+        "level": "A1",
+        "text": "Where is the toilets?",
+        "expected": "Where are the toilets?",
+        "ms": 1858,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Where are the toilets?",
+        "reply": "They are just down the hall on the left! Need anything else?"
+      },
+      {
+        "level": "A1",
+        "text": "I like very much football.",
+        "expected": "I like football very much.",
+        "ms": 1315,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I like football very much.",
+        "reply": "That's cool! Who is your favorite team?"
+      },
+      {
+        "level": "A1",
+        "text": "My name is Awa and I live in Dakar.",
+        "expected": null,
+        "ms": 804,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "Nice to meet you, Awa! Dakar is a beautiful city; how do you like living there?"
+      },
+      {
+        "level": "A1",
+        "text": "I am living in Dakar since two years.",
+        "expected": "I have been living in Dakar for two years.",
+        "ms": 679,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I have been living in Dakar for two years.",
+        "reply": "Dakar is a wonderful city! What do you like most about living there?"
+      },
+      {
+        "level": "A1",
+        "text": "We is happy today.",
+        "expected": "We are happy today.",
+        "ms": 665,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "We are happy today.",
+        "reply": "That's awesome! Why are you guys so happy today?"
+      },
+      {
+        "level": "A1",
+        "text": "Can you speak slowly, please?",
+        "expected": null,
+        "ms": 652,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "Of course! I will speak nice and slowly for you. What would you like to talk about today?"
+      },
+      {
+        "level": "A2",
+        "text": "Yesterday I go to the market with my mother.",
+        "expected": "Yesterday I went to the market with my mother.",
+        "ms": 658,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Yesterday I went to the market with my mother.",
+        "reply": "That sounds lovely! What did you and your mother buy at the market?"
+      },
+      {
+        "level": "A2",
+        "text": "I don't have nothing to do tonight.",
+        "expected": "I don't have anything to do tonight.",
+        "ms": 634,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I don't have anything to do tonight.",
+        "reply": "That's nice! Are you going to relax or watch a movie?"
+      },
+      {
+        "level": "A2",
+        "text": "She is more tall than her sister.",
+        "expected": "She is taller than her sister.",
+        "ms": 739,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She is taller than her sister.",
+        "reply": "Actually, it's 'taller' instead of 'more tall' for short adjectives! How are you doing today?"
+      },
+      {
+        "level": "A2",
+        "text": "I want that you come to my house.",
+        "expected": "I want you to come to my house.",
+        "ms": 1106,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I want you to come to my house.",
+        "reply": "I would love to come over! When are you thinking?"
+      },
+      {
+        "level": "A2",
+        "text": "He explained me the problem.",
+        "expected": "He explained the problem to me.",
+        "ms": 618,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "A2",
+        "text": "I am here since Monday.",
+        "expected": "I have been here since Monday.",
+        "ms": 684,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I have been here since Monday.",
+        "reply": "That's great! What have you been up to since you got here?"
+      },
+      {
+        "level": "A2",
+        "text": "Do you have some informations about the bus?",
+        "expected": "Do you have any information about the bus?",
+        "ms": 736,
+        "validJson": true,
+        "fixed": true,
+        "exact": false,
+        "better": "Do you have some information about the bus?",
+        "reply": "Yes, I do! What would you like to know about the bus schedule or routes?"
+      },
+      {
+        "level": "A2",
+        "text": "My sister works in a bank near the station.",
+        "expected": null,
+        "ms": 1113,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "That's cool! Does she like her job there?"
+      },
+      {
+        "level": "A2",
+        "text": "I must to finish my homework before dinner.",
+        "expected": "I must finish my homework before dinner.",
+        "ms": 219,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "A2",
+        "text": "We went at the beach last Sunday.",
+        "expected": "We went to the beach last Sunday.",
+        "ms": 540,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "If I would have more money, I would travel to Canada.",
+        "expected": "If I had more money, I would travel to Canada.",
+        "ms": 1016,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "If I had more money, I would travel to Canada.",
+        "reply": "Canada is amazing! Where would you go first if you visited?"
+      },
+      {
+        "level": "B1",
+        "text": "I am interesting by learning English for my job.",
+        "expected": "I am interested in learning English for my job.",
+        "ms": 195,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "She told me that she will come tomorrow.",
+        "expected": "She told me that she would come tomorrow.",
+        "ms": 196,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "I look forward to see you next week.",
+        "expected": "I look forward to seeing you next week.",
+        "ms": 638,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I look forward to seeing you next week.",
+        "reply": "Me too! I'm really excited about catching up. What day works best for you?"
+      },
+      {
+        "level": "B1",
+        "text": "The people is waiting outside the building.",
+        "expected": "The people are waiting outside the building.",
+        "ms": 215,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "I have visited Paris last summer.",
+        "expected": "I visited Paris last summer.",
+        "ms": 189,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "He asked me to not be late.",
+        "expected": "He asked me not to be late.",
+        "ms": 812,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He asked me not to be late.",
+        "reply": "That's a good reminder! Did you manage to arrive on time?"
+      },
+      {
+        "level": "B1",
+        "text": "Actually the situation is better than before.",
+        "expected": null,
+        "ms": 572,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "That's great to hear! What changed to make things better?"
+      },
+      {
+        "level": "B1",
+        "text": "I suggest you to take a taxi.",
+        "expected": "I suggest you take a taxi.",
+        "ms": 895,
+        "validJson": true,
+        "fixed": true,
+        "exact": false,
+        "better": "I suggest that you take a taxi.",
+        "reply": "That's a good idea, it's much faster than the bus! How is your day going so far?"
+      },
+      {
+        "level": "B1",
+        "text": "We discussed about the new project during the meeting.",
+        "expected": "We discussed the new project during the meeting.",
+        "ms": 637,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "We discussed the new project during the meeting.",
+        "reply": "That's great! Did your team like your ideas?"
+      },
+      {
+        "level": "B2",
+        "text": "Despite of the rain, we decided to go out.",
+        "expected": "Despite the rain, we decided to go out.",
+        "ms": 729,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Despite the rain, we decided to go out.",
+        "reply": "That's the spirit! What did you end up doing outside?"
+      },
+      {
+        "level": "B2",
+        "text": "I wish I can speak English like a native.",
+        "expected": "I wish I could speak English like a native.",
+        "ms": 932,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I wish I could speak English like a native.",
+        "reply": "You're doing great already! With a bit of practice every day, you'll get closer to that goal."
+      },
+      {
+        "level": "B2",
+        "text": "He made me to realise that I was wrong.",
+        "expected": "He made me realise that I was wrong.",
+        "ms": 612,
+        "validJson": true,
+        "fixed": true,
+        "exact": false,
+        "better": "He made me realize that I was wrong.",
+        "reply": "That's a very important lesson to learn sometimes! How did he help you see that?"
+      },
+      {
+        "level": "B2",
+        "text": "The company has been founded in 1998 by two engineers.",
+        "expected": "The company was founded in 1998 by two engineers.",
+        "ms": 862,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "The company was founded in 1998 by two engineers.",
+        "reply": "That's cool! What kind of engineering do they do?"
+      },
+      {
+        "level": "B2",
+        "text": "I would like to know if could you send me the report.",
+        "expected": "I would like to know if you could send me the report.",
+        "ms": 583,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I would like to know if you could send me the report.",
+        "reply": "Sure thing! I'll send that over to you right away."
+      },
+      {
+        "level": "B2",
+        "text": "Although he was tired, but he kept working.",
+        "expected": "Although he was tired, he kept working.",
+        "ms": 732,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Although he was tired, he kept working.",
+        "reply": "That's a very common mistake! In English, we don't use 'although' and 'but' in the same sentence."
+      },
+      {
+        "level": "B2",
+        "text": "She is used to wake up early.",
+        "expected": "She is used to waking up early.",
+        "ms": 1707,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She is used to waking up early.",
+        "reply": "That's a great habit! What time does she usually start her day?"
+      },
+      {
+        "level": "B2",
+        "text": "The results were not as good as we expected them.",
+        "expected": "The results were not as good as we expected.",
+        "ms": 915,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "The results were not as good as we expected.",
+        "reply": "Ah, that happens sometimes! What do you think caused the lower results?"
+      },
+      {
+        "level": "B2",
+        "text": "Nobody can say what will happen if the market collapses.",
+        "expected": null,
+        "ms": 543,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "That's very true, it's totally unpredictable! Are you worried about your investments?"
+      },
+      {
+        "level": "B2",
+        "text": "I am agree that we should reduce the costs, but not at any price.",
+        "expected": "I agree that we should reduce the costs, but not at any price.",
+        "ms": 1390,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I agree that we should reduce the costs, but not at any price.",
+        "reply": "I totally agree with you! Quality and safety should never be compromised to save money."
+      },
+      {
+        "level": "A2",
+        "text": "I am boring in this class.",
+        "expected": "I am bored in this class.",
+        "ms": 701,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I am bored in this class.",
+        "reply": "Oh no, why is it so boring? Maybe we can talk about something more fun!"
+      },
+      {
+        "level": "A2",
+        "text": "She listens music every evening.",
+        "expected": "She listens to music every evening.",
+        "ms": 767,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She listens to music every evening.",
+        "reply": "That's a nice relaxing routine! What kind of music does she like to listen to?"
+      },
+      {
+        "level": "A1",
+        "text": "I have hunger.",
+        "expected": "I am hungry.",
+        "ms": 275,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "He is married with a doctor.",
+        "expected": "He is married to a doctor.",
+        "ms": 836,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He is married to a doctor.",
+        "reply": "That's cool! What kind of doctor is his spouse?"
+      },
+      {
+        "level": "B1",
+        "text": "I have lost my keys, so I can't to open the door.",
+        "expected": "I have lost my keys, so I can't open the door.",
+        "ms": 261,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B2",
+        "text": "It depends of the weather.",
+        "expected": "It depends on the weather.",
+        "ms": 720,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "It depends on the weather.",
+        "reply": "True! Do you like sunny days or do you prefer rainy days?"
+      },
+      {
+        "level": "A2",
+        "text": "My friend is living in Senegal since 2020.",
+        "expected": "My friend has been living in Senegal since 2020.",
+        "ms": 195,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B1",
+        "text": "Please give me an advice about my CV.",
+        "expected": "Please give me some advice about my CV.",
+        "ms": 237,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "B2",
+        "text": "The film, which I watched last night, was surprisingly good.",
+        "expected": null,
+        "ms": 572,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      },
+      {
+        "level": "A1",
+        "text": "Thank you for your help, it was really useful.",
+        "expected": null,
+        "ms": 941,
+        "error": "HTTP 429 {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing deta"
+      }
+    ],
+    "groq": [
+      {
+        "level": "A1",
+        "text": "I am agree with you.",
+        "expected": "I agree with you.",
+        "ms": 619,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I agree with you.",
+        "reply": "I agree with you."
+      },
+      {
+        "level": "A1",
+        "text": "She have two brothers.",
+        "expected": "She has two brothers.",
+        "ms": 867,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She has two brothers.",
+        "reply": "She has two brothers."
+      },
+      {
+        "level": "A1",
+        "text": "I have 20 years old.",
+        "expected": "I am 20 years old.",
+        "ms": 355,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I am 20 years old.",
+        "reply": "I am 20 years old."
+      },
+      {
+        "level": "A1",
+        "text": "He go to school every day.",
+        "expected": "He goes to school every day.",
+        "ms": 240,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He goes to school every day.",
+        "reply": "He goes to school every day."
+      },
+      {
+        "level": "A1",
+        "text": "Where is the toilets?",
+        "expected": "Where are the toilets?",
+        "ms": 563,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Where are the toilets?",
+        "reply": "Where are the toilets?"
+      },
+      {
+        "level": "A1",
+        "text": "I like very much football.",
+        "expected": "I like football very much.",
+        "ms": 280,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I like football very much.",
+        "reply": "I like football very much."
+      },
+      {
+        "level": "A1",
+        "text": "My name is Awa and I live in Dakar.",
+        "expected": null,
+        "ms": 309,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "Nice to meet you, Awa! How long have you lived in Dakar?"
+      },
+      {
+        "level": "A1",
+        "text": "I am living in Dakar since two years.",
+        "expected": "I have been living in Dakar for two years.",
+        "ms": 663,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I have been living in Dakar for two years.",
+        "reply": "I have been living in Dakar for two years."
+      },
+      {
+        "level": "A1",
+        "text": "We is happy today.",
+        "expected": "We are happy today.",
+        "ms": 307,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "We are happy today.",
+        "reply": "We are happy today."
+      },
+      {
+        "level": "A1",
+        "text": "Can you speak slowly, please?",
+        "expected": null,
+        "ms": 418,
+        "validJson": false,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": null
+      },
+      {
+        "level": "A2",
+        "text": "Yesterday I go to the market with my mother.",
+        "expected": "Yesterday I went to the market with my mother.",
+        "ms": 303,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Yesterday I went to the market with my mother.",
+        "reply": "Great! I hope you found everything you needed."
+      },
+      {
+        "level": "A2",
+        "text": "I don't have nothing to do tonight.",
+        "expected": "I don't have anything to do tonight.",
+        "ms": 426,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I don't have anything to do tonight.",
+        "reply": "It sounds like you’re free tonight. Maybe you could try a movie or read a book?"
+      },
+      {
+        "level": "A2",
+        "text": "She is more tall than her sister.",
+        "expected": "She is taller than her sister.",
+        "ms": 460,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She is taller than her sister.",
+        "reply": "She is taller than her sister."
+      },
+      {
+        "level": "A2",
+        "text": "I want that you come to my house.",
+        "expected": "I want you to come to my house.",
+        "ms": 484,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I want you to come to my house.",
+        "reply": "I want you to come to my house."
+      },
+      {
+        "level": "A2",
+        "text": "He explained me the problem.",
+        "expected": "He explained the problem to me.",
+        "ms": 236,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He explained the problem to me.",
+        "reply": "He explained the problem to me."
+      },
+      {
+        "level": "A2",
+        "text": "I am here since Monday.",
+        "expected": "I have been here since Monday.",
+        "ms": 243,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I have been here since Monday.",
+        "reply": "I have been here since Monday."
+      },
+      {
+        "level": "A2",
+        "text": "Do you have some informations about the bus?",
+        "expected": "Do you have any information about the bus?",
+        "ms": 526,
+        "validJson": true,
+        "fixed": true,
+        "exact": false,
+        "better": "Do you have some information about the bus?",
+        "reply": "Sure, I can give you the bus details. Which bus route are you interested in?"
+      },
+      {
+        "level": "A2",
+        "text": "My sister works in a bank near the station.",
+        "expected": null,
+        "ms": 387,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "That’s great! Does she work there often?"
+      },
+      {
+        "level": "A2",
+        "text": "I must to finish my homework before dinner.",
+        "expected": "I must finish my homework before dinner.",
+        "ms": 415,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I must finish my homework before dinner.",
+        "reply": "You should finish your homework before dinner. Good luck!"
+      },
+      {
+        "level": "A2",
+        "text": "We went at the beach last Sunday.",
+        "expected": "We went to the beach last Sunday.",
+        "ms": 216,
+        "validJson": false,
+        "fixed": false,
+        "exact": false,
+        "better": null,
+        "reply": null
+      },
+      {
+        "level": "B1",
+        "text": "If I would have more money, I would travel to Canada.",
+        "expected": "If I had more money, I would travel to Canada.",
+        "ms": 345,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "If I had more money, I would travel to Canada.",
+        "reply": "You can say, 'If I had more money, I would travel to Canada.'"
+      },
+      {
+        "level": "B1",
+        "text": "I am interesting by learning English for my job.",
+        "expected": "I am interested in learning English for my job.",
+        "ms": 278,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I am interested in learning English for my job.",
+        "reply": "That's great! Learning English can open many career opportunities."
+      },
+      {
+        "level": "B1",
+        "text": "She told me that she will come tomorrow.",
+        "expected": "She told me that she would come tomorrow.",
+        "ms": 596,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She told me that she would come tomorrow.",
+        "reply": "You should use \"would\" in reported speech: \"She told me that she would come tomorrow.\""
+      },
+      {
+        "level": "B1",
+        "text": "I look forward to see you next week.",
+        "expected": "I look forward to seeing you next week.",
+        "ms": 534,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I look forward to seeing you next week.",
+        "reply": "I look forward to seeing you next week."
+      },
+      {
+        "level": "B1",
+        "text": "The people is waiting outside the building.",
+        "expected": "The people are waiting outside the building.",
+        "ms": 480,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "The people are waiting outside the building.",
+        "reply": "The people are waiting outside the building."
+      },
+      {
+        "level": "B1",
+        "text": "I have visited Paris last summer.",
+        "expected": "I visited Paris last summer.",
+        "ms": 490,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I visited Paris last summer.",
+        "reply": "I visited Paris last summer."
+      },
+      {
+        "level": "B1",
+        "text": "He asked me to not be late.",
+        "expected": "He asked me not to be late.",
+        "ms": 241,
+        "validJson": true,
+        "fixed": false,
+        "exact": false,
+        "better": null,
+        "reply": "He asked me not to be late."
+      },
+      {
+        "level": "B1",
+        "text": "Actually the situation is better than before.",
+        "expected": null,
+        "ms": 561,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "Glad to hear that! Keep up the good work."
+      },
+      {
+        "level": "B1",
+        "text": "I suggest you to take a taxi.",
+        "expected": "I suggest you take a taxi.",
+        "ms": 303,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I suggest you take a taxi.",
+        "reply": "Sure, taking a taxi is a good idea. Let me know if you need a driver."
+      },
+      {
+        "level": "B1",
+        "text": "We discussed about the new project during the meeting.",
+        "expected": "We discussed the new project during the meeting.",
+        "ms": 460,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "We discussed the new project during the meeting.",
+        "reply": "You said it well, but there's a small correction."
+      },
+      {
+        "level": "B2",
+        "text": "Despite of the rain, we decided to go out.",
+        "expected": "Despite the rain, we decided to go out.",
+        "ms": 347,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Despite the rain, we decided to go out.",
+        "reply": "We decided to go out despite the rain."
+      },
+      {
+        "level": "B2",
+        "text": "I wish I can speak English like a native.",
+        "expected": "I wish I could speak English like a native.",
+        "ms": 423,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I wish I could speak English like a native.",
+        "reply": "I wish I could speak English like a native."
+      },
+      {
+        "level": "B2",
+        "text": "He made me to realise that I was wrong.",
+        "expected": "He made me realise that I was wrong.",
+        "ms": 540,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He made me realise that I was wrong.",
+        "reply": "He made me realize I was wrong."
+      },
+      {
+        "level": "B2",
+        "text": "The company has been founded in 1998 by two engineers.",
+        "expected": "The company was founded in 1998 by two engineers.",
+        "ms": 498,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "The company was founded in 1998 by two engineers.",
+        "reply": "The company was founded in 1998 by two engineers."
+      },
+      {
+        "level": "B2",
+        "text": "I would like to know if could you send me the report.",
+        "expected": "I would like to know if you could send me the report.",
+        "ms": 479,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I would like to know if you could send me the report.",
+        "reply": "Sure, I can send you the report. When would you like it?"
+      },
+      {
+        "level": "B2",
+        "text": "Although he was tired, but he kept working.",
+        "expected": "Although he was tired, he kept working.",
+        "ms": 354,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "Although he was tired, he kept working.",
+        "reply": "Your sentence is almost correct. Remove 'but'."
+      },
+      {
+        "level": "B2",
+        "text": "She is used to wake up early.",
+        "expected": "She is used to waking up early.",
+        "ms": 694,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She is used to waking up early.",
+        "reply": "She is used to waking up early."
+      },
+      {
+        "level": "B2",
+        "text": "The results were not as good as we expected them.",
+        "expected": "The results were not as good as we expected.",
+        "ms": 483,
+        "validJson": true,
+        "fixed": true,
+        "exact": false,
+        "better": "The results weren’t as good as we expected.",
+        "reply": "The results weren’t as good as we expected."
+      },
+      {
+        "level": "B2",
+        "text": "Nobody can say what will happen if the market collapses.",
+        "expected": null,
+        "ms": 547,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "You're right, it's hard to predict what will happen if the market collapses."
+      },
+      {
+        "level": "B2",
+        "text": "I am agree that we should reduce the costs, but not at any price.",
+        "expected": "I agree that we should reduce the costs, but not at any price.",
+        "ms": 509,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I agree that we should reduce the costs, but not at any price.",
+        "reply": "I agree that we should reduce the costs, but not at any price."
+      },
+      {
+        "level": "A2",
+        "text": "I am boring in this class.",
+        "expected": "I am bored in this class.",
+        "ms": 461,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I am bored in this class.",
+        "reply": "I understand. Maybe try asking a question or sharing an idea?"
+      },
+      {
+        "level": "A2",
+        "text": "She listens music every evening.",
+        "expected": "She listens to music every evening.",
+        "ms": 592,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "She listens to music every evening.",
+        "reply": "She listens to music every evening."
+      },
+      {
+        "level": "A1",
+        "text": "I have hunger.",
+        "expected": "I am hungry.",
+        "ms": 418,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I am hungry.",
+        "reply": "I feel hungry."
+      },
+      {
+        "level": "B1",
+        "text": "He is married with a doctor.",
+        "expected": "He is married to a doctor.",
+        "ms": 553,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "He is married to a doctor.",
+        "reply": "He is married to a doctor."
+      },
+      {
+        "level": "B1",
+        "text": "I have lost my keys, so I can't to open the door.",
+        "expected": "I have lost my keys, so I can't open the door.",
+        "ms": 453,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "I have lost my keys, so I can't open the door.",
+        "reply": "I'm sorry to hear that. Have you checked the usual places or called a locksmith?"
+      },
+      {
+        "level": "B2",
+        "text": "It depends of the weather.",
+        "expected": "It depends on the weather.",
+        "ms": 522,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "It depends on the weather.",
+        "reply": "It depends on the weather."
+      },
+      {
+        "level": "A2",
+        "text": "My friend is living in Senegal since 2020.",
+        "expected": "My friend has been living in Senegal since 2020.",
+        "ms": 410,
+        "validJson": true,
+        "fixed": true,
+        "exact": true,
+        "better": "My friend has been living in Senegal since 2020.",
+        "reply": "Your sentence is understandable, but use 'has been' for a continuous action."
+      },
+      {
+        "level": "B1",
+        "text": "Please give me an advice about my CV.",
+        "expected": "Please give me some advice about my CV.",
+        "ms": 429,
+        "validJson": true,
+        "fixed": false,
+        "exact": false,
+        "better": null,
+        "reply": "Sure! Highlight your achievements, keep it concise, and tailor it to the job you’re applying for."
+      },
+      {
+        "level": "B2",
+        "text": "The film, which I watched last night, was surprisingly good.",
+        "expected": null,
+        "ms": 524,
+        "validJson": false,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": null
+      },
+      {
+        "level": "A1",
+        "text": "Thank you for your help, it was really useful.",
+        "expected": null,
+        "ms": 569,
+        "validJson": true,
+        "fixed": false,
+        "exact": true,
+        "better": null,
+        "reply": "You're welcome! Glad to hear it helped."
+      }
+    ]
+  },
+  "tts": {
+    "gemini/gemini-2.5-flash-preview-tts": {
+      "calls": 15,
+      "errors": 4,
+      "p50ms": 2632,
+      "p95ms": 3341,
+      "firstError": "HTTP 400 {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Model tried to generate text, but it should only be used for TTS. Make s"
+    },
+    "groq/canopylabs/orpheus-v1-english": {
+      "calls": 15,
+      "errors": 15,
+      "p50ms": 0,
+      "p95ms": 0,
+      "firstError": "HTTP 400 {\"error\":{\"message\":\"The model `canopylabs/orpheus-v1-english` requires terms acceptance. Please have the org admin acce"
+    }
+  },
+  "stt": {
+    "groq/whisper-large-v3-turbo": {
+      "calls": 11,
+      "errors": 0,
+      "p50ms": 590,
+      "p95ms": 682,
+      "meanWer": 0.01
+    },
+    "groq/whisper-large-v3": {
+      "calls": 11,
+      "errors": 0,
+      "p50ms": 522,
+      "p95ms": 637,
+      "meanWer": 0
+    },
+    "gemini/gemini-3.5-flash-lite": {
+      "calls": 11,
+      "errors": 0,
+      "p50ms": 1542,
+      "p95ms": 2177,
+      "meanWer": 0.01
+    }
+  }
+}
