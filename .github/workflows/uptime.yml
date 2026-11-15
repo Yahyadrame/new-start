@@ -1,0 +1,29 @@
+name: uptime
+
+# Sonde de disponibilité de l'API de staging (NS-025). Elle appelle /health/live toutes les 10 minutes :
+# l'API gratuite de Render s'endort après 15 minutes sans requête, la sonde la garde donc éveillée.
+# /health/live ne touche pas la base, donc Neon peut continuer à s'endormir.
+# Si l'API ne répond pas 200 après trois essais, l'exécution échoue et GitHub envoie un e-mail.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      API_URL: ${{ vars.STAGING_API_URL }}
+    steps:
+      - name: Appelle /health/live
+        run: |
+          if [ -z "$API_URL" ]; then
+            echo "STAGING_API_URL n'est pas défini : sonde sautée."
+            exit 0
+          fi
+          # Un réveil de Render peut durer plus de 50 secondes : délai large et deux nouveaux essais.
+          curl --fail --silent --show-error --max-time 90 --retry 2 --retry-delay 10 --retry-all-errors \
+            "$API_URL/health/live"

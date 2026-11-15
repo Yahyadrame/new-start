@@ -103,7 +103,7 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 ## NS-009 — Supervision · M
 - [x] Sentry côté API et côté navigateur, éteint tant que le DSN est vide, sans donnée personnelle ni contenu de message.
 - [ ] Le porteur du projet crée le compte Sentry et saisit `SENTRY_DSN` (Render) et `NEXT_PUBLIC_SENTRY_DSN` (Vercel) ; Claude vérifie qu'une erreur de test arrive.
-- [ ] Sonde UptimeRobot sur `/health/live` (créée par le porteur du projet).
+- [x] Sonde sur `/health/live` : UptimeRobot refuse d'ouvrir le formulaire de création, remplacée par un workflow GitHub Actions (NS-025).
 - [ ] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
@@ -152,3 +152,11 @@ Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
 - [ ] Choix du fournisseur par variable d'environnement ; `.env.example` à jour.
 - [ ] `pnpm --filter @newstart/ai compare` relance la comparaison avec ces adaptateurs ; la logique de notation vit dans `src/` avec ses tests.
 - [ ] Tests unitaires avec `fetch` simulé pour chaque adaptateur, couverture ≥ 80 %.
+
+## NS-025 — Sonde de disponibilité par GitHub Actions · S
+Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas (décision du porteur du projet, 2026-11-15).
+- [ ] `.github/workflows/uptime.yml` appelle `/health/live` toutes les 10 minutes, avec délai large pour le réveil de Render et deux nouveaux essais.
+- [ ] L'exécution échoue quand l'API ne répond pas 200 ; GitHub prévient le porteur du projet par e-mail.
+- [ ] La sonde n'appelle pas la base (Neon peut s'endormir) et saute proprement si `STAGING_API_URL` est vide.
+- [ ] Lancement manuel vérifié après la fusion, puis une exécution planifiée vue verte.
+
