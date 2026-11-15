@@ -28,8 +28,7 @@ describe('workflow cd-staging.yml', () => {
     expect(permissions).toEqual({ contents: 'read', packages: 'write' });
   });
   it('épingle les actions tierces par SHA complet', () => {
-    for (const s of steps.filter((x) => x.uses && !x.uses.startsWith('actions/')))
-      expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
+    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
   });
   it('scanne avec Trivy, en échec sur CRITICAL, avant de se connecter et de publier', () => {
     const trivy = steps[index('aquasecurity/trivy-action@')];
@@ -86,8 +85,7 @@ describe('job deploy', () => {
     expect(hook).not.toMatch(/echo|set -x/);
   });
   it('épingle les actions tierces par SHA complet (règle Sonar S7637)', () => {
-    for (const s of deploySteps.filter((x) => x.uses && !x.uses.startsWith('actions/')))
-      expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
+    for (const s of deploySteps.filter((x) => x.uses)) expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
   });
   it("échoue si l'API ne répond pas après les essais", () => {
     const smoke = deploySteps[find('/health/ready')]?.run ?? '';

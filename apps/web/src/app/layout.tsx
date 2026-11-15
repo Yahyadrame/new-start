@@ -1,14 +1,21 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
 import { ServerGate } from '../features/server-status';
 import { themeInitScript } from '../features/theme';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: '700',
+// Polices embarquées (paquets @fontsource-variable) : le build ne dépend plus de Google (NS-020).
+const inter = localFont({
+  src: '../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2',
+  weight: '100 900',
+  display: 'swap',
+  variable: '--font-inter',
+});
+const spaceGrotesk = localFont({
+  src: '../../node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2',
+  weight: '300 700',
+  display: 'swap',
   variable: '--font-space-grotesk',
 });
 

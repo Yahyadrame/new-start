@@ -25,6 +25,6 @@ describe('workflow storybook.yml', () => {
   });
   it('ne lance aucune action sans version', () => {
     const steps = [...(wf.jobs.build.steps ?? []), ...(wf.jobs.deploy.steps ?? [])];
-    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@(v\d+|[0-9a-f]{40})$/);
+    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
   });
 });
