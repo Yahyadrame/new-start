@@ -147,7 +147,7 @@ Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API 
 ## NS-024 — Adaptateurs IA réels et banc de comparaison · M
 Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
 - [ ] `GroqLlm` (`openai/gpt-oss-20b`) et `GeminiLlm` (`gemini-3.5-flash-lite`, secours) implémentent `LlmProvider` ; `GroqStt` (`whisper-large-v3-turbo`) implémente `SttProvider` ; `GeminiTts` implémente `TtsProvider`. `fetch` injecté, délai maximal, clé lue dans l'environnement, jamais journalisée.
-- [ ] Validation Zod du JSON `{ reply, fix }` avec une nouvelle tentative, puis `reply` brut et `fix = null` (`docs/09-ia-agents.md`).
+- [x] Validation Zod du JSON `{ reply, fix }` avec une nouvelle tentative, puis `reply` brut et `fix = null` (`docs/09-ia-agents.md`).
 - [ ] Plafond d'usage codé et repli sur l'adaptateur factice quand le quota est épuisé (décision budget du 2026-11-13) ; réessai sur les erreurs 429 et 5xx, et sur l'erreur 400 « texte au lieu d'audio » de Gemini TTS.
 - [ ] Choix du fournisseur par variable d'environnement ; `.env.example` à jour.
 - [ ] `pnpm --filter @newstart/ai compare` relance la comparaison avec ces adaptateurs ; la logique de notation vit dans `src/` avec ses tests.
