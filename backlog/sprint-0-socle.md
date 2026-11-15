@@ -159,4 +159,4 @@ Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas (décision 
 - [ ] L'exécution échoue quand l'API ne répond pas 200 ; GitHub prévient le porteur du projet par e-mail.
 - [ ] La sonde n'appelle pas la base (Neon peut s'endormir) et saute proprement si `STAGING_API_URL` est vide.
 - [ ] Lancement manuel vérifié après la fusion, puis une exécution planifiée vue verte.
-
+- [ ] Aucune exécution planifiée n'a démarré pendant 2 heures avec `*/10` : minutes décalées (4, 14, 24...). Si toujours rien après 1 heure, passer à Better Stack.
