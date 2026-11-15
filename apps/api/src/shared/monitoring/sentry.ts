@@ -12,15 +12,30 @@ export function scrub(event: ErrorEvent): ErrorEvent {
   return event;
 }
 
+export type TransactionEvent = Parameters<
+  NonNullable<Sentry.NodeOptions['beforeSendTransaction']>
+>[0];
+
+// Une trace garde la méthode, la route et le statut : l'adresse perd sa requête, le reste est retiré.
+export function scrubTransaction(event: TransactionEvent): TransactionEvent {
+  scrub(event as unknown as ErrorEvent);
+  if (event.request?.url) event.request.url = event.request.url.split(/[?#]/)[0] ?? '';
+  delete event.contexts?.['trace']?.data?.['http.query'];
+  return event;
+}
+
 // Retourne false (et ne touche à rien) tant que SENTRY_DSN n'est pas défini.
-export function initSentry(env: Pick<Env, 'SENTRY_DSN' | 'NODE_ENV'>): boolean {
+export function initSentry(
+  env: Pick<Env, 'SENTRY_DSN' | 'NODE_ENV'> & Partial<Pick<Env, 'SENTRY_TRACES_SAMPLE_RATE'>>,
+): boolean {
   if (!env.SENTRY_DSN) return false;
   Sentry.init({
     dsn: env.SENTRY_DSN,
     environment: process.env['SENTRY_ENVIRONMENT'] ?? env.NODE_ENV,
     release: process.env['RENDER_GIT_COMMIT'],
-    tracesSampleRate: 0, // ponytail: erreurs seulement ; les traces viennent avec OpenTelemetry.
+    tracesSampleRate: env.SENTRY_TRACES_SAMPLE_RATE ?? 0,
     beforeSend: scrub,
+    beforeSendTransaction: scrubTransaction,
   });
   return true;
 }
