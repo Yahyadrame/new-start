@@ -5,12 +5,11 @@ import HomePage from './page';
 afterEach(cleanup);
 
 describe('HomePage', () => {
-  it('affiche le titre, les deux logos et le choix du thème', () => {
+  it("affiche l'écran Bienvenue", () => {
     render(<HomePage />);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
       'Parle anglais. Pour de vrai.',
     );
-    expect(screen.getAllByAltText('new start')).toHaveLength(2);
-    expect(screen.getByRole('group', { name: 'Thème' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Commencer gratuitement' })).toBeTruthy();
   });
 });

@@ -1,8 +1,4 @@
 {
-  "home": {
-    "title": "Parle anglais. Pour de vrai.",
-    "logoAlt": "new start"
-  },
   "theme": {
     "label": "Thème",
     "system": "Système",
@@ -19,5 +15,21 @@
       "body": "Vérifie ta connexion, puis réessaie."
     },
     "retry": "Réessayer"
+  },
+  "welcome": {
+    "brand": "new start",
+    "logoAlt": "Logo new start",
+    "title": ["Parle anglais.", "Pour de vrai."],
+    "subtitle": "Discute avec des personnages, suis une série dont tu es le héros. 15 minutes par jour suffisent.",
+    "start": "Commencer gratuitement",
+    "login": "J'ai déjà un compte",
+    "note": "Gratuit pour commencer. Interface en français.",
+    "bubblesLabel": "Exemple de conversation en anglais",
+    "bubbles": {
+      "first": "Hey! You must be the new roommate.",
+      "second": "Good morning! Can I help you?",
+      "me": "Hi! Nice to meet you.",
+      "meLabel": "Toi"
+    }
   }
 }
