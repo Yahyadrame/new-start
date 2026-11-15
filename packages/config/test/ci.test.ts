@@ -32,8 +32,8 @@ describe('workflow ci.yml', () => {
   it("vérifie les règles d'architecture après le lint", () => {
     expect(runs.indexOf('pnpm depcruise')).toBeGreaterThan(runs.indexOf('pnpm lint'));
   });
-  it('ne lance aucune action sans version (tag majeur ou SHA complet)', () => {
-    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@(v\d+|[0-9a-f]{40})$/);
+  it('épingle chaque action par SHA complet', () => {
+    for (const s of steps.filter((x) => x.uses)) expect(s.uses).toMatch(/@[0-9a-f]{40}$/);
   });
   it("lance l'analyse SonarQube après les tests, seulement si le jeton existe", () => {
     const i = steps.findIndex((s) => s.uses?.startsWith('SonarSource/sonarqube-scan-action@'));
