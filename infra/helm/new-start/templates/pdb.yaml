@@ -1,0 +1,12 @@
+{{- range $app := list "api" "web" }}
+{{- $conf := index $.Values $app }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ $app }}
+spec:
+  minAvailable: {{ $conf.pdb.minAvailable }}
+  selector:
+    matchLabels: { app.kubernetes.io/name: {{ $app }} }
+{{- end }}
