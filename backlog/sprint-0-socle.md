@@ -119,8 +119,8 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Vérifié : après `docker compose --profile dev up`, `find apps -user root -not -path "*/node_modules/*"` ne renvoie rien.
 
 ## NS-019 — Actions GitHub épinglées par SHA · S
-- [ ] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.
-- [ ] Le test de `packages/config` exige un SHA, plus seulement un tag majeur.
+- [x] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.
+- [x] Le test de `packages/config` exige un SHA, plus seulement un tag majeur (les trois workflows).
 - [ ] Mise à jour des SHA par Dependabot (à proposer au porteur).
 
 ## NS-020 — Polices hébergées avec l'application · S
