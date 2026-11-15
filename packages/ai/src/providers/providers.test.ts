@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { GeminiLlm, GeminiTts } from './gemini.js';
-import { GroqLlm, GroqStt } from './groq.js';
+import { fileName, GroqLlm, GroqStt } from './groq.js';
 import { ProviderError } from './http.js';
 
 const KEY = 'secret-key-123';
@@ -100,6 +100,7 @@ describe('GroqStt', () => {
     expect(form.get('model')).toBe('whisper-large-v3-turbo');
     expect(form.get('language')).toBe('en');
     expect(form.get('file')).toBeInstanceOf(Blob);
+    expect((form.get('file') as File).name).toBe('audio.wav');
   });
 
   it('accepte une réponse sans mots et une autre langue', async () => {
@@ -177,5 +178,18 @@ describe('GeminiTts', () => {
   it("échoue quand la réponse ne contient pas d'audio", async () => {
     const tts = new GeminiTts({ apiKey: KEY, fetch: mockFetch(reply({ candidates: [] })) });
     await expect(tts.synthesize({ text: 'hi' })).rejects.toBeInstanceOf(ProviderError);
+  });
+});
+
+describe('fileName', () => {
+  it.each([
+    ['audio/wav', 'audio.wav'],
+    ['audio/webm;codecs=opus', 'audio.webm'],
+    ['audio/mpeg', 'audio.mp3'],
+    ['audio/ogg', 'audio.ogg'],
+    ['audio', 'audio.wav'],
+    ['', 'audio.wav'],
+  ])('%s donne %s', (mime, name) => {
+    expect(fileName(mime)).toBe(name);
   });
 });
