@@ -2,7 +2,7 @@
 
 ## NS-101 — Modèle de données initial · M
 - [x] Schéma Prisma de `docs/07-modele-de-donnees.md` pour User, AuthIdentity, RefreshToken, Topic, Agent, Conversation, Message, Correction, Expression, Word.
-- [ ] Seed : import de `data/expressions.csv`, `data/mots.csv`, des thèmes et des 12 agents de `docs/03-contenu-pedagogique.md`.
+- [x] Seed : import de `data/expressions.csv`, `data/mots.csv`, des thèmes et des 12 agents de `docs/03-contenu-pedagogique.md`.
 
 ## NS-102 — Connexion par code à usage unique · L
 - [ ] `POST /auth/otp/request` et `/verify`, canal e-mail via **Brevo** (gratuit) au lancement ; canal SMS via Brevo prêt mais désactivé tant que le porteur du projet n'a pas accordé de budget. À l'activation, un job propose aux utilisateurs existants de vérifier leur numéro. Interfaces `Mailer` et `SmsSender`, adaptateur factice en local.
