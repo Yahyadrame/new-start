@@ -20,6 +20,15 @@ const schema = z.object({
     emptyToUndefined,
     z.coerce.number().min(0).max(1).default(0),
   ),
+  // Facultatif : sans adresse, OpenTelemetry reste éteint. Sans « / » final, ex. https://otlp-gateway-xxx.grafana.net/otlp.
+  OTEL_EXPORTER_OTLP_ENDPOINT: z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .url()
+      .transform((v) => v.replace(/\/+$/, ''))
+      .optional(),
+  ),
   // Facultatif : sans jeton, /health/sentry-test répond 404. Sert à vérifier que Sentry reçoit bien les erreurs.
   SENTRY_TEST_TOKEN: z.preprocess(emptyToUndefined, z.string().min(16).optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.

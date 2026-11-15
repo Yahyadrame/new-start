@@ -135,8 +135,8 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Le lien de l'aperçu est commenté dans la PR ; tests à jour.
 
 ## NS-022 — OpenTelemetry et alerte d'erreurs · M
-- [ ] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
-- [ ] Alerte : taux d'erreur 5xx > 2 % pendant 5 minutes.
+- [x] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
+- [x] Alerte : taux d'échec > 2 % pendant 5 minutes (monitor Sentry « Failure Rate », traces à 10 % sur staging). Sentry compte aussi les 404 comme échecs.
 - [ ] Erreurs serveur de Next.js (`apps/web`) envoyées à Sentry, avec le même nettoyage que le navigateur.
 
 ## NS-023 — Route de test pour Sentry côté API · S
