@@ -153,10 +153,10 @@ Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
 - [x] `pnpm --filter @newstart/ai compare` relance la comparaison avec ces adaptateurs ; la logique de notation vit dans `src/` avec ses tests.
 - [x] Tests unitaires avec `fetch` simulé pour chaque adaptateur, couverture ≥ 80 %.
 
-## NS-025 — Sonde de disponibilité par GitHub Actions · S
-Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas (décision du porteur du projet, 2026-11-15).
-- [ ] `.github/workflows/uptime.yml` appelle `/health/live` toutes les 10 minutes, avec délai large pour le réveil de Render et deux nouveaux essais.
-- [ ] L'exécution échoue quand l'API ne répond pas 200 ; GitHub prévient le porteur du projet par e-mail.
-- [ ] La sonde n'appelle pas la base (Neon peut s'endormir) et saute proprement si `STAGING_API_URL` est vide.
-- [ ] Lancement manuel vérifié après la fusion, puis une exécution planifiée vue verte.
-- [ ] Aucune exécution planifiée n'a démarré pendant 2 heures avec `*/10` : minutes décalées (4, 14, 24...). Si toujours rien après 1 heure, passer à Better Stack.
+## NS-025 — Sonde de disponibilité par Better Stack · S
+Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas, puis un workflow GitHub Actions que GitHub n'a jamais déclenché (décisions du porteur du projet, 2026-11-15).
+- [x] Monitor Better Stack (offre gratuite) sur `https://newstart-api-staging.onrender.com/health/live`, vérifié toutes les 3 minutes.
+- [x] Alertes par e-mail à l'adresse du compte.
+- [x] La sonde n'appelle pas la base : Neon peut s'endormir.
+- [x] Vérifié : l'API répond en moins d'une seconde après une pause (0,17 s).
+- [x] `.github/workflows/uptime.yml` supprimé : GitHub ne lançait aucune exécution planifiée (aucune en plus de 2 heures malgré les minutes décalées).
