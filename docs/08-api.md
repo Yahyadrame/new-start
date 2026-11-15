@@ -11,7 +11,7 @@
 | Méthode | Route | Rôle |
 | --- | --- | --- |
 | POST | `/auth/otp/request` | Envoie un code `{ channel: "email" \| "sms", destination, signup? }` via Brevo (`signup` : profil d'inscription gardé avec le code, le compte n'est créé qu'à la vérification ; réponse `{ expiresInSeconds }`, identique que le compte existe ou non) (SMS désactivé au lancement ; limité : 3 / 10 min / destination) |
-| POST | `/auth/otp/verify` | Vérifie `{ destination, code }`, renvoie les jetons |
+| POST | `/auth/otp/verify` | Vérifie `{ channel, destination, code }`. Crée le compte à la première vérification (avec le `signup` gardé). Renvoie `{ accessToken, expiresInSeconds, user }` ; le jeton de rafraîchissement part dans le cookie `ns_refresh`, jamais dans le corps |
 | POST | `/auth/google` | Échange un `idToken` Google contre les jetons |
 | POST | `/auth/refresh` | Nouveau jeton d'accès (rotation du jeton de rafraîchissement) |
 | POST | `/auth/logout` | Révoque le jeton de rafraîchissement |
@@ -69,6 +69,9 @@ Connexion authentifiée par le jeton d'accès. Chaque utilisateur rejoint la sal
 | `CONFLICT` | 409 | Doublon (ex. `clientId` déjà reçu) |
 | `QUOTA_EXCEEDED` | 429 | Limite de l'offre atteinte (`details.resetAt`) |
 | `RATE_LIMITED` | 429 | Trop de requêtes (et plus de 3 codes demandés en 10 minutes pour une destination) |
+| `INVALID_CODE` | 400 | Code faux, expiré, déjà utilisé ou verrouillé après 5 essais (même réponse dans tous les cas) |
+| `ACCOUNT_NOT_FOUND` | 404 | Code juste, mais aucun compte et aucun profil d'inscription |
+| `ACCOUNT_CONFLICT` | 409 | Numéro ou adresse déjà utilisé par un autre compte |
 | `CHANNEL_UNAVAILABLE` | 400 | Canal d'envoi éteint (SMS tant que le budget n'est pas accordé) |
 | `DELIVERY_FAILED` | 503 | Le code n'a pas pu être envoyé, réessayer |
 | `AI_UNAVAILABLE` | 503 | Fournisseur IA indisponible, réessayer |

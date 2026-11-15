@@ -49,6 +49,8 @@ const schema = z.object({
   ),
   // Clé qui protège les codes de connexion (HMAC). Sans elle, une clé est tirée à chaque démarrage.
   OTP_SECRET: z.preprocess(emptyToUndefined, z.string().min(32).optional()),
+  // Clé privée ES256 (PEM PKCS8, retours à la ligne écrits \n) qui signe les jetons d'accès. Vide : clé tirée au démarrage.
+  JWT_PRIVATE_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z
     .string()
