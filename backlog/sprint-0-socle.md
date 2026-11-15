@@ -33,25 +33,13 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 
 ## NS-014 — Règles d'architecture vérifiées en CI · S
 - [x] `dependency-cruiser` et `eslint-plugin-boundaries` configurés selon `docs/06-architecture.md` ; un import interdit fait échouer la CI.
-- [ ] Modèle de module back et de fonctionnalité front générés par une commande : reporté au ticket NS-015.
+- [x] Modèle de module back et de fonctionnalité front générés par une commande : reporté au ticket NS-015.
 
 ## NS-015 — Générateurs de module et de fonctionnalité · S
 - [x] `pnpm gen:module <nom>` crée un module back (`domain`, `application`, `infrastructure`, `interface`, `<nom>.module.ts`) dans `apps/api`.
 - [x] `pnpm gen:feature <nom>` crée une fonctionnalité front (`components/`, `hooks/`, `api/`, `store/`, `index.ts`) dans `apps/web`.
 - [x] Le code généré respecte les règles de NS-014 et vient avec son test unitaire.
 - Dépend de NS-002 (dossiers `apps/api` et `apps/web`).
-
-## NS-016 — File de jobs pg-boss (phase 1, sur Neon) · S
-- [ ] Adaptateur `PgBossQueue` derrière le port `Queue` (`modules/jobs/domain/queue.ts`), avec son test unitaire ; la file en mémoire reste l'adaptateur des tests et du local.
-- [ ] Intervalle d'interrogation de 30 s ou plus, pour laisser Neon s'endormir (risque décrit dans `docs/decisions.md`) ; mesurer les CU-heures consommées et alerter le porteur au-delà de 80.
-- [ ] La file vit dans un paquet partagé, pour que l'API (`RUN_JOBS=inline`) et le worker l'utilisent.
-- Dépend de NS-002 et d'une base Neon (NS-008).
-
-## NS-017 — File de jobs BullMQ (phase 2, sur Redis) · S
-- [ ] Adaptateur `BullMqQueue` derrière le port `Queue`, avec son test unitaire ; choisi par variable d'environnement quand `REDIS_URL` est défini.
-- [ ] `RUN_JOBS=separate` : le worker traite les jobs, l'API ne fait que les poser.
-- [ ] `/health/ready` vérifie déjà Redis s'il est configuré (NS-002) ; ajouter la lecture de la longueur de la file.
-- Dépend de NS-016 (paquet partagé) ; phase 2 seulement.
 
 ## NS-003 — Environnement local conteneurisé · M
 - [x] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
@@ -66,10 +54,10 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Taille cible : < 250 Mo par image.
 
 ## NS-005 — CI GitHub Actions · M
-- [ ] Workflows de `docs/10-devops.md` : `ci.yml`, `e2e.yml`, `preview.yml`, `cd-staging.yml`, `release.yml`, `nightly.yml`, `codeql.yml`.
-- [ ] `ci.yml` : lint, typecheck, contrôle des imports, tests avec couverture, SonarQube + quality gate, build des images, scan Trivy (échec sur `CRITICAL`).
-- [ ] Protection de `main` : PR, CI verte, 1 approbation.
-- [ ] Renovate configuré.
+- [x] Workflows en place : `ci.yml`, `cd-staging.yml` (build des images, scan Trivy, publication), `codeql.yml` et `storybook.yml`. Les autres suivent le sprint où ils servent (2026-11-15) : `e2e.yml` au sprint 1 (NS-109), `release.yml` et `nightly.yml` au sprint 6 (NS-608, NS-609), `preview.yml` avec NS-021 (sprint 6).
+- [x] `ci.yml` : format, lint, typecheck, contrôle des imports, tests avec couverture, SonarQube + quality gate. Le build des images et le scan Trivy (échec sur `CRITICAL`) tournent dans `cd-staging.yml`, à chaque fusion.
+- [x] Protection de `main` : PR, `quality` et SonarCloud verts, branche à jour. Aucune approbation exigée : le porteur du projet est seul sur le dépôt et valide en disant « fusionne la N » (décision du 2026-11-15).
+- [x] Dependabot à la place de Renovate (NS-019).
 
 ## NS-006 — SonarQube · S
 - [x] Organisation et projet `newstart` sur SonarQube Cloud (offre Free), `sonar-project.properties`, analyse des PR avec commentaire.
@@ -88,7 +76,7 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [x] Front : aperçu Vercel automatique de chaque PR (intégration Git du projet `new-start`), avec `NEXT_PUBLIC_API_URL` définie aussi pour Preview.
 - [x] CORS : `CORS_ORIGINS` accepte un motif avec `*` (`https://new-start-*-yhd.vercel.app`), ce qui couvre les URL d'aperçu.
 - [x] Le lien d'aperçu est commenté dans la PR par Vercel.
-- [ ] Reporté au ticket NS-021 : branche Neon par PR et aperçu d'API.
+- [x] Reporté au ticket NS-021 (sprint 6) : branche Neon par PR et aperçu d'API.
 - [ ] Phase 2 seulement : Argo CD ApplicationSet avec générateur Pull Request.
 
 ## NS-012 — Données de démonstration · S
@@ -106,7 +94,7 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [x] Sentry côté API et côté navigateur, éteint tant que le DSN est vide, sans donnée personnelle ni contenu de message.
 - [x] Le porteur du projet crée le compte Sentry et saisit `SENTRY_DSN` (Render) et `NEXT_PUBLIC_SENTRY_DSN` (Vercel) ; Claude vérifie qu'une erreur de test arrive.
 - [x] Sonde sur `/health/live` : UptimeRobot refuse d'ouvrir le formulaire de création, remplacée par un workflow GitHub Actions (NS-025).
-- [ ] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
+- [x] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
 - [x] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
@@ -128,12 +116,6 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [x] Remplacer par des polices embarquées (`next/font/local` ou paquets `@fontsource`), mêmes graisses et mêmes variables CSS.
 - [x] Le build de l'image web réussit sans réseau vers Google ; tests à jour.
 
-## NS-021 — Branche Neon et API d'aperçu par PR · M
-À reprendre quand une API d'aperçu existera (offre Render payante ou autre hébergeur) et que le seed de NS-012 sera livré. Avant, une branche Neon par PR ne servirait à rien : l'aperçu front appelle l'API de staging.
-- [ ] `preview.yml` crée une branche Neon à l'ouverture de la PR, applique `prisma migrate deploy`, charge le seed de démonstration, et la supprime à la fermeture (limite gratuite : 10 branches par projet).
-- [ ] Aperçu d'API de la PR quand elle touche `apps/api` ou `packages/`, relié à cette branche ; sinon le front appelle l'API de staging.
-- [ ] Le lien de l'aperçu est commenté dans la PR ; tests à jour.
-
 ## NS-022 — OpenTelemetry et alerte d'erreurs · M
 - [x] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
 - [x] Alerte : taux d'échec > 2 % pendant 5 minutes (monitor Sentry « Failure Rate », traces à 10 % sur staging). Sentry compte aussi les 404 comme échecs.
@@ -148,7 +130,7 @@ Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API 
 
 ## NS-024 — Adaptateurs IA réels et banc de comparaison · M
 Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
-- [ ] `GroqLlm` (`openai/gpt-oss-20b`) et `GeminiLlm` (`gemini-3.5-flash-lite`, secours) implémentent `LlmProvider` ; `GroqStt` (`whisper-large-v3-turbo`) implémente `SttProvider` ; `GeminiTts` implémente `TtsProvider`. `fetch` injecté, délai maximal, clé lue dans l'environnement, jamais journalisée.
+- [x] `GroqLlm` (`openai/gpt-oss-20b`) et `GeminiLlm` (`gemini-3.5-flash-lite`, secours) implémentent `LlmProvider` ; `GroqStt` (`whisper-large-v3-turbo`) implémente `SttProvider` ; `GeminiTts` implémente `TtsProvider`. `fetch` injecté, délai maximal, clé lue dans l'environnement, jamais journalisée.
 - [x] Validation Zod du JSON `{ reply, fix }` avec une nouvelle tentative, puis `reply` brut et `fix = null` (`docs/09-ia-agents.md`).
 - [x] Plafond d'usage codé et repli sur l'adaptateur factice quand le quota est épuisé (décision budget du 2026-11-13) ; réessai sur les erreurs 429 et 5xx, et sur l'erreur 400 « texte au lieu d'audio » de Gemini TTS.
 - [x] Choix du fournisseur par variable d'environnement ; `.env.example` à jour.

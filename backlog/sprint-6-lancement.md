@@ -23,3 +23,27 @@
 ## NS-607 — Mise en production · M
 - [ ] Environnement `production` protégé, domaine, sondes externes, procédure de `docs/10-devops.md` déroulée une première fois.
 - [ ] Ouverture de la bêta fermée (liste d'attente).
+
+## NS-017 — File de jobs BullMQ (phase 2, sur Redis) · S
+*Déplacé du sprint 0 le 2026-11-15 : il sert ici, pas avant.*
+Phase 2 seulement : quand l'API quitte l'hébergement gratuit et que Redis existe.
+- [ ] Adaptateur `BullMqQueue` derrière le port `Queue`, avec son test unitaire ; choisi par variable d'environnement quand `REDIS_URL` est défini.
+- [ ] `RUN_JOBS=separate` : le worker traite les jobs, l'API ne fait que les poser.
+- [ ] `/health/ready` vérifie déjà Redis s'il est configuré (NS-002) ; ajouter la lecture de la longueur de la file.
+- Dépend de NS-016 (paquet partagé) ; phase 2 seulement.
+
+## NS-021 — Branche Neon et API d'aperçu par PR · M
+*Déplacé du sprint 0 le 2026-11-15 : il sert ici, pas avant.*
+Il faut une API d'aperçu, donc l'hébergement de production décidé avec le porteur du projet.
+À reprendre quand une API d'aperçu existera (offre Render payante ou autre hébergeur) et que le seed de NS-012 sera livré. Avant, une branche Neon par PR ne servirait à rien : l'aperçu front appelle l'API de staging.
+- [ ] `preview.yml` crée une branche Neon à l'ouverture de la PR, applique `prisma migrate deploy`, charge le seed de démonstration, et la supprime à la fermeture (limite gratuite : 10 branches par projet).
+- [ ] Aperçu d'API de la PR quand elle touche `apps/api` ou `packages/`, relié à cette branche ; sinon le front appelle l'API de staging.
+- [ ] Le lien de l'aperçu est commenté dans la PR ; tests à jour.
+
+## NS-608 — Workflow de version `release.yml` · S
+*Ajouté le 2026-11-15, venu du sprint 0.*
+- [ ] Un tag `vX.Y.Z` crée les notes de version, puis déploie en production après l'accord du porteur du projet (avec NS-607).
+
+## NS-609 — Workflow de nuit `nightly.yml` · M
+*Ajouté le 2026-11-15, venu du sprint 0.*
+- [ ] Chaque nuit : tests e2e complets sur staging, évaluations IA, audit des dépendances, scan OWASP ZAP.
