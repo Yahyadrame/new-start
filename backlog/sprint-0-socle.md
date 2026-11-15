@@ -56,7 +56,7 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 ## NS-003 — Environnement local conteneurisé · M
 - [x] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
 - [x] Limites de mémoire par conteneur ; RAM du profil `dev` mesurée le 2026-11-13 : environ 860 Mo (cible : moins de 2 Go).
-- [ ] Adaptateurs factices pour l'IA, Brevo et Cloudinary afin de développer sans clé.
+- [x] Adaptateurs factices pour l'IA (`packages/ai`), Brevo (`Mailer`) et Cloudinary (`MediaStore`) dans `apps/api/src/shared`, afin de développer sans clé. Les vrais adaptateurs Brevo et Cloudinary viennent avec le premier ticket qui s'en sert (code de connexion par e-mail, sprint 1 ; avatars et audio).
 - [x] Scripts racine : `pnpm docker:dev`, `pnpm docker:prod`, `pnpm docker:clean`.
 - [x] `README` de démarrage : sur une machine neuve avec seulement Docker, `docker compose --profile dev up` ouvre l'appli sur `http://localhost:3000`.
 - [ ] Le porteur du projet lance la commande sur sa machine et confirme que ça marche avant de clore le ticket.
