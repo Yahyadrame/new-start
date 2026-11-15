@@ -1,7 +1,7 @@
 # Sprint 1 — Compte et premier contact (E1)
 
 ## NS-101 — Modèle de données initial · M
-- [ ] Schéma Prisma de `docs/07-modele-de-donnees.md` pour User, AuthIdentity, RefreshToken, Topic, Agent, Conversation, Message, Correction, Expression, Word.
+- [x] Schéma Prisma de `docs/07-modele-de-donnees.md` pour User, AuthIdentity, RefreshToken, Topic, Agent, Conversation, Message, Correction, Expression, Word.
 - [ ] Seed : import de `data/expressions.csv`, `data/mots.csv`, des thèmes et des 12 agents de `docs/03-contenu-pedagogique.md`.
 
 ## NS-102 — Connexion par code à usage unique · L
