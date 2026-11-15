@@ -1,0 +1,196 @@
+[
+  { "level": "A1", "text": "I am agree with you.", "expected": "I agree with you." },
+  { "level": "A1", "text": "She have two brothers.", "expected": "She has two brothers." },
+  { "level": "A1", "text": "I have 20 years old.", "expected": "I am 20 years old." },
+  {
+    "level": "A1",
+    "text": "He go to school every day.",
+    "expected": "He goes to school every day."
+  },
+  { "level": "A1", "text": "Where is the toilets?", "expected": "Where are the toilets?" },
+  { "level": "A1", "text": "I like very much football.", "expected": "I like football very much." },
+  { "level": "A1", "text": "My name is Awa and I live in Dakar.", "expected": null },
+  {
+    "level": "A1",
+    "text": "I am living in Dakar since two years.",
+    "expected": "I have been living in Dakar for two years."
+  },
+  { "level": "A1", "text": "We is happy today.", "expected": "We are happy today." },
+  { "level": "A1", "text": "Can you speak slowly, please?", "expected": null },
+  {
+    "level": "A2",
+    "text": "Yesterday I go to the market with my mother.",
+    "expected": "Yesterday I went to the market with my mother."
+  },
+  {
+    "level": "A2",
+    "text": "I don't have nothing to do tonight.",
+    "expected": "I don't have anything to do tonight."
+  },
+  {
+    "level": "A2",
+    "text": "She is more tall than her sister.",
+    "expected": "She is taller than her sister."
+  },
+  {
+    "level": "A2",
+    "text": "I want that you come to my house.",
+    "expected": "I want you to come to my house."
+  },
+  {
+    "level": "A2",
+    "text": "He explained me the problem.",
+    "expected": "He explained the problem to me."
+  },
+  {
+    "level": "A2",
+    "text": "I am here since Monday.",
+    "expected": "I have been here since Monday."
+  },
+  {
+    "level": "A2",
+    "text": "Do you have some informations about the bus?",
+    "expected": "Do you have any information about the bus?"
+  },
+  { "level": "A2", "text": "My sister works in a bank near the station.", "expected": null },
+  {
+    "level": "A2",
+    "text": "I must to finish my homework before dinner.",
+    "expected": "I must finish my homework before dinner."
+  },
+  {
+    "level": "A2",
+    "text": "We went at the beach last Sunday.",
+    "expected": "We went to the beach last Sunday."
+  },
+  {
+    "level": "B1",
+    "text": "If I would have more money, I would travel to Canada.",
+    "expected": "If I had more money, I would travel to Canada."
+  },
+  {
+    "level": "B1",
+    "text": "I am interesting by learning English for my job.",
+    "expected": "I am interested in learning English for my job."
+  },
+  {
+    "level": "B1",
+    "text": "She told me that she will come tomorrow.",
+    "expected": "She told me that she would come tomorrow."
+  },
+  {
+    "level": "B1",
+    "text": "I look forward to see you next week.",
+    "expected": "I look forward to seeing you next week."
+  },
+  {
+    "level": "B1",
+    "text": "The people is waiting outside the building.",
+    "expected": "The people are waiting outside the building."
+  },
+  {
+    "level": "B1",
+    "text": "I have visited Paris last summer.",
+    "expected": "I visited Paris last summer."
+  },
+  {
+    "level": "B1",
+    "text": "He asked me to not be late.",
+    "expected": "He asked me not to be late."
+  },
+  { "level": "B1", "text": "Actually the situation is better than before.", "expected": null },
+  {
+    "level": "B1",
+    "text": "I suggest you to take a taxi.",
+    "expected": "I suggest you take a taxi."
+  },
+  {
+    "level": "B1",
+    "text": "We discussed about the new project during the meeting.",
+    "expected": "We discussed the new project during the meeting."
+  },
+  {
+    "level": "B2",
+    "text": "Despite of the rain, we decided to go out.",
+    "expected": "Despite the rain, we decided to go out."
+  },
+  {
+    "level": "B2",
+    "text": "I wish I can speak English like a native.",
+    "expected": "I wish I could speak English like a native."
+  },
+  {
+    "level": "B2",
+    "text": "He made me to realise that I was wrong.",
+    "expected": "He made me realise that I was wrong."
+  },
+  {
+    "level": "B2",
+    "text": "The company has been founded in 1998 by two engineers.",
+    "expected": "The company was founded in 1998 by two engineers."
+  },
+  {
+    "level": "B2",
+    "text": "I would like to know if could you send me the report.",
+    "expected": "I would like to know if you could send me the report."
+  },
+  {
+    "level": "B2",
+    "text": "Although he was tired, but he kept working.",
+    "expected": "Although he was tired, he kept working."
+  },
+  {
+    "level": "B2",
+    "text": "She is used to wake up early.",
+    "expected": "She is used to waking up early."
+  },
+  {
+    "level": "B2",
+    "text": "The results were not as good as we expected them.",
+    "expected": "The results were not as good as we expected."
+  },
+  {
+    "level": "B2",
+    "text": "Nobody can say what will happen if the market collapses.",
+    "expected": null
+  },
+  {
+    "level": "B2",
+    "text": "I am agree that we should reduce the costs, but not at any price.",
+    "expected": "I agree that we should reduce the costs, but not at any price."
+  },
+  { "level": "A2", "text": "I am boring in this class.", "expected": "I am bored in this class." },
+  {
+    "level": "A2",
+    "text": "She listens music every evening.",
+    "expected": "She listens to music every evening."
+  },
+  { "level": "A1", "text": "I have hunger.", "expected": "I am hungry." },
+  {
+    "level": "B1",
+    "text": "He is married with a doctor.",
+    "expected": "He is married to a doctor."
+  },
+  {
+    "level": "B1",
+    "text": "I have lost my keys, so I can't to open the door.",
+    "expected": "I have lost my keys, so I can't open the door."
+  },
+  { "level": "B2", "text": "It depends of the weather.", "expected": "It depends on the weather." },
+  {
+    "level": "A2",
+    "text": "My friend is living in Senegal since 2020.",
+    "expected": "My friend has been living in Senegal since 2020."
+  },
+  {
+    "level": "B1",
+    "text": "Please give me an advice about my CV.",
+    "expected": "Please give me some advice about my CV."
+  },
+  {
+    "level": "B2",
+    "text": "The film, which I watched last night, was surprisingly good.",
+    "expected": null
+  },
+  { "level": "A1", "text": "Thank you for your help, it was really useful.", "expected": null }
+]
