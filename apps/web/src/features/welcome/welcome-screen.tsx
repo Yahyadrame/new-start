@@ -30,7 +30,7 @@ export function WelcomeScreen() {
 
       <div className="flex flex-col gap-3">
         <h1 className="font-display text-[44px] leading-[1.02] font-bold tracking-[-0.03em]">
-          {t.title}
+          <span className="block">{t.title[0]}</span> <span className="block">{t.title[1]}</span>
         </h1>
         <p className="text-base leading-normal text-text-muted">{t.subtitle}</p>
       </div>

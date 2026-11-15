@@ -19,7 +19,7 @@
   "welcome": {
     "brand": "new start",
     "logoAlt": "Logo new start",
-    "title": "Parle anglais. Pour de vrai.",
+    "title": ["Parle anglais.", "Pour de vrai."],
     "subtitle": "Discute avec des personnages, suis une série dont tu es le héros. 15 minutes par jour suffisent.",
     "start": "Commencer gratuitement",
     "login": "J'ai déjà un compte",
