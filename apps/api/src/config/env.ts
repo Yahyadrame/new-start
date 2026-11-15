@@ -15,6 +15,11 @@ const schema = z.object({
   REDIS_URL: z.preprocess(emptyToUndefined, z.string().optional()),
   // Facultatif : sans DSN, Sentry reste éteint et rien ne part.
   SENTRY_DSN: z.preprocess(emptyToUndefined, z.string().url().optional()),
+  // Part des requêtes tracées par Sentry (0 à 1), pour l'alerte de taux d'erreur. 0 = aucune trace.
+  SENTRY_TRACES_SAMPLE_RATE: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().min(0).max(1).default(0),
+  ),
   // Facultatif : sans jeton, /health/sentry-test répond 404. Sert à vérifier que Sentry reçoit bien les erreurs.
   SENTRY_TEST_TOKEN: z.preprocess(emptyToUndefined, z.string().min(16).optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
