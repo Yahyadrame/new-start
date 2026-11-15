@@ -31,6 +31,22 @@ const schema = z.object({
   ),
   // Facultatif : sans jeton, /health/sentry-test répond 404. Sert à vérifier que Sentry reçoit bien les erreurs.
   SENTRY_TEST_TOKEN: z.preprocess(emptyToUndefined, z.string().min(16).optional()),
+  // Brevo : sans clé ou sans MAIL_FROM, les e-mails restent en mémoire (adaptateur factice).
+  BREVO_API_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
+  MAIL_FROM: z.preprocess(emptyToUndefined, z.string().email().optional()),
+  MAIL_FROM_NAME: z.preprocess(emptyToUndefined, z.string().min(1).default('New Start')),
+  // SMS éteints au lancement : le porteur doit d'abord accorder un budget.
+  SMS_ENABLED: z
+    .preprocess(emptyToUndefined, z.enum(['true', 'false']).default('false'))
+    .transform((v) => v === 'true'),
+  // Expéditeur SMS : 3 à 11 caractères alphanumériques.
+  SMS_SENDER: z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .regex(/^[A-Za-z0-9]{3,11}$/)
+      .default('NewStart'),
+  ),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z
     .string()

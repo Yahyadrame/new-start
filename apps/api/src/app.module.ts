@@ -5,6 +5,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule } from './config/config.module.js';
 import { ENV, type Env } from './config/env.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { MessagingModule } from './shared/brevo/messaging.module.js';
 import { REDACT_PATHS } from './shared/logging/redact.js';
 import { PrismaModule } from './shared/prisma/prisma.module.js';
 
@@ -21,6 +22,7 @@ import { PrismaModule } from './shared/prisma/prisma.module.js';
       }),
     }),
     PrismaModule,
+    MessagingModule,
     HealthModule,
   ],
   // Sans Sentry.init, le filtre renvoie les erreurs comme Nest le fait déjà : rien n'est envoyé.
