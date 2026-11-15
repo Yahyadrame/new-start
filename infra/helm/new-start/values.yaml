@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 # Nom du Secret Kubernetes qui porte DATABASE_URL, JWT_SECRET, GROQ_API_KEY, etc.
-# Il est créé par External Secrets (NS-007, PR 3), jamais écrit dans Git.
+# Il est créé par Sealed Secrets (NS-007, PR 3), jamais écrit dans Git.
 secretName: new-start-secrets
 
 # Variables non secrètes de l'API et du worker.

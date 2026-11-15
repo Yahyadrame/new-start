@@ -81,7 +81,7 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [x] (PR 1) Chart Helm `new-start` : déploiements web/api/worker, `RollingUpdate maxUnavailable: 0`, sondes, ressources.
 - [ ] (PR 2) PDB, HPA, NetworkPolicies.
 - [ ] (PR 2) Ingress NGINX + cert-manager.
-- [ ] (PR 3) Secrets via External Secrets (manifestes seulement).
+- [ ] (PR 3) Secrets via Sealed Secrets (manifestes seulement ; External Secrets si AWS).
 
 ## NS-011 — Environnements d'aperçu par PR · M
 Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md`), donc l'aperçu d'une PR est un front Vercel qui appelle l'API de staging.
