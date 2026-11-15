@@ -124,9 +124,9 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Mise à jour des SHA par Dependabot (à proposer au porteur).
 
 ## NS-020 — Polices hébergées avec l'application · S
-- [ ] `next/font/google` télécharge Space Grotesk et Inter à chaque `next build` : sans accès à Google, le build échoue (`Failed to fetch Space Grotesk`), ce qui rend le build de l'image web instable.
-- [ ] Remplacer par des polices embarquées (`next/font/local` ou paquets `@fontsource`), mêmes graisses et mêmes variables CSS.
-- [ ] Le build de l'image web réussit sans réseau vers Google ; tests à jour.
+- [x] `next/font/google` télécharge Space Grotesk et Inter à chaque `next build` : sans accès à Google, le build échoue (`Failed to fetch Space Grotesk`), ce qui rend le build de l'image web instable.
+- [x] Remplacer par des polices embarquées (`next/font/local` ou paquets `@fontsource`), mêmes graisses et mêmes variables CSS.
+- [x] Le build de l'image web réussit sans réseau vers Google ; tests à jour.
 
 ## NS-021 — Branche Neon et API d'aperçu par PR · M
 À reprendre quand une API d'aperçu existera (offre Render payante ou autre hébergeur) et que le seed de NS-012 sera livré. Avant, une branche Neon par PR ne servirait à rien : l'aperçu front appelle l'API de staging.
