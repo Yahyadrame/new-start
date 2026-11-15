@@ -47,6 +47,8 @@ const schema = z.object({
       .regex(/^[A-Za-z0-9]{3,11}$/)
       .default('NewStart'),
   ),
+  // Clé qui protège les codes de connexion (HMAC). Sans elle, une clé est tirée à chaque démarrage.
+  OTP_SECRET: z.preprocess(emptyToUndefined, z.string().min(32).optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z
     .string()

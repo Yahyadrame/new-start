@@ -10,7 +10,7 @@
 
 | Méthode | Route | Rôle |
 | --- | --- | --- |
-| POST | `/auth/otp/request` | Envoie un code `{ channel: "email" \| "sms", destination }` via Brevo (SMS désactivé au lancement ; limité : 3 / 10 min / destination) |
+| POST | `/auth/otp/request` | Envoie un code `{ channel: "email" \| "sms", destination, signup? }` via Brevo (`signup` : profil d'inscription gardé avec le code, le compte n'est créé qu'à la vérification ; réponse `{ expiresInSeconds }`, identique que le compte existe ou non) (SMS désactivé au lancement ; limité : 3 / 10 min / destination) |
 | POST | `/auth/otp/verify` | Vérifie `{ destination, code }`, renvoie les jetons |
 | POST | `/auth/google` | Échange un `idToken` Google contre les jetons |
 | POST | `/auth/refresh` | Nouveau jeton d'accès (rotation du jeton de rafraîchissement) |
@@ -68,7 +68,9 @@ Connexion authentifiée par le jeton d'accès. Chaque utilisateur rejoint la sal
 | `NOT_FOUND` | 404 | Ressource inconnue |
 | `CONFLICT` | 409 | Doublon (ex. `clientId` déjà reçu) |
 | `QUOTA_EXCEEDED` | 429 | Limite de l'offre atteinte (`details.resetAt`) |
-| `RATE_LIMITED` | 429 | Trop de requêtes |
+| `RATE_LIMITED` | 429 | Trop de requêtes (et plus de 3 codes demandés en 10 minutes pour une destination) |
+| `CHANNEL_UNAVAILABLE` | 400 | Canal d'envoi éteint (SMS tant que le budget n'est pas accordé) |
+| `DELIVERY_FAILED` | 503 | Le code n'a pas pu être envoyé, réessayer |
 | `AI_UNAVAILABLE` | 503 | Fournisseur IA indisponible, réessayer |
 | `PAYMENT_FAILED` | 402 | Paiement refusé |
 

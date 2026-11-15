@@ -200,3 +200,21 @@ model Word {
   week        Int
   frequency   Float
 }
+
+// Code à usage unique envoyé par e-mail ou SMS. Seul son hachage (HMAC) est stocké.
+// `signup` garde le profil d'inscription jusqu'à la vérification : le compte n'existe qu'ensuite.
+model OtpCode {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  channel     String // "email" | "sms"
+  destination String // e-mail en minuscules ou numéro E.164
+  codeHash    String
+  attempts    Int       @default(0)
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  signup      Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([destination, createdAt])
+  @@index([expiresAt])
+}
