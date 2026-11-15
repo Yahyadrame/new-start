@@ -121,7 +121,7 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 ## NS-019 — Actions GitHub épinglées par SHA · S
 - [x] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.
 - [x] Le test de `packages/config` exige un SHA, plus seulement un tag majeur (les trois workflows).
-- [ ] Mise à jour des SHA par Dependabot (à proposer au porteur).
+- [x] Mise à jour des SHA par Dependabot (choix du porteur : `.github/dependabot.yml`, actions GitHub, chaque semaine, regroupées).
 
 ## NS-020 — Polices hébergées avec l'application · S
 - [x] `next/font/google` télécharge Space Grotesk et Inter à chaque `next build` : sans accès à Google, le build échoue (`Failed to fetch Space Grotesk`), ce qui rend le build de l'image web instable.
