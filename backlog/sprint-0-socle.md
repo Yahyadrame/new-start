@@ -169,3 +169,10 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] Tests unitaires : 404 sans jeton configuré, sans en-tête ou avec un mauvais jeton ; erreur avec le bon.
 - [x] Vérifié sur staging : l'erreur apparaît dans Sentry (projet `newstart-web`, NEWSTART-WEB-2) ; case « erreurs serveur de Next.js » de NS-022 cochée.
 - [x] `SENTRY_TEST_TOKEN` retiré de Vercel le 2026-11-15 (le jeton a été écrit dans la conversation : ne pas le réutiliser). Le déploiement en cours le garde jusqu'au prochain déploiement.
+
+## NS-027 — Le site web ne démarre pas en mode dev · S
+`pnpm dev` dans `apps/web` répond 500 : `instrumentation.ts` importe Sentry Node en statique, et le mode dev compile aussi ce fichier pour l'edge, qui ne connaît pas `node:child_process`. Staging n'est pas touché.
+- [x] Sentry serveur chargé par import dynamique dans un `if` sur `NEXT_RUNTIME === 'nodejs'`, pour `register()` et `onRequestError()`.
+- [x] Tests unitaires mis à jour : runtime Node et hors Node pour les deux fonctions.
+- [x] `GET /` répond 200 en local avec `pnpm dev`.
+- [ ] Vérifié sur staging : une erreur serveur arrive toujours dans Sentry (après fusion).

@@ -10,28 +10,35 @@ afterEach(() => {
 });
 
 describe('register', () => {
-  it('ne fait rien hors du runtime Node', () => {
+  it('ne fait rien hors du runtime Node', async () => {
     vi.stubEnv('NEXT_RUNTIME', 'edge');
-    register();
+    await register();
     expect(server.initSentryServer).not.toHaveBeenCalled();
   });
-  it('utilise SENTRY_DSN, sinon le DSN public', () => {
+  it('utilise SENTRY_DSN, sinon le DSN public', async () => {
     vi.stubEnv('NEXT_RUNTIME', 'nodejs');
     vi.stubEnv('SENTRY_DSN', 'https://a@o1.ingest.sentry.io/1');
     vi.stubEnv('NEXT_PUBLIC_SENTRY_DSN', 'https://b@o1.ingest.sentry.io/2');
-    register();
+    await register();
     expect(server.initSentryServer).toHaveBeenLastCalledWith('https://a@o1.ingest.sentry.io/1');
     vi.stubEnv('SENTRY_DSN', '');
     vi.stubEnv('NEXT_PUBLIC_SENTRY_DSN', 'https://b@o1.ingest.sentry.io/2');
-    register();
+    await register();
     expect(server.initSentryServer).toHaveBeenCalledTimes(2);
   });
 });
 
 describe('onRequestError', () => {
-  it("transmet l'erreur", () => {
+  it("transmet l'erreur sur le runtime Node", async () => {
+    vi.stubEnv('NEXT_RUNTIME', 'nodejs');
     const err = new Error('x');
-    onRequestError(err);
+    await onRequestError(err);
     expect(server.captureServerError).toHaveBeenCalledWith(err);
+  });
+  it('ignore l’erreur hors du runtime Node', async () => {
+    vi.stubEnv('NEXT_RUNTIME', 'edge');
+    server.captureServerError.mockClear();
+    await onRequestError(new Error('x'));
+    expect(server.captureServerError).not.toHaveBeenCalled();
   });
 });
