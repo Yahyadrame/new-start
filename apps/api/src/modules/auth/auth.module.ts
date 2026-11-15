@@ -11,6 +11,14 @@ import {
   SMS_ENABLED,
   type OtpStore,
 } from './application/request-otp.js';
+import { PrismaAccountStore } from './infrastructure/prisma-account.store.js';
+import { createAccessSigner, type AccessSigner } from './domain/tokens.js';
+import {
+  ACCESS_SIGNER,
+  ACCOUNT_STORE,
+  VerifyOtp,
+  type AccountStore,
+} from './application/verify-otp.js';
 import { PrismaOtpStore } from './infrastructure/prisma-otp.store.js';
 import { AuthController } from './interface/auth.controller.js';
 
@@ -24,6 +32,18 @@ import { AuthController } from './interface/auth.controller.js';
       provide: OTP_KEY,
       inject: [ENV],
       useFactory: (e: Env) => e.OTP_SECRET ?? randomBytes(32).toString('hex'),
+    },
+    { provide: ACCOUNT_STORE, useClass: PrismaAccountStore },
+    {
+      provide: ACCESS_SIGNER,
+      inject: [ENV],
+      useFactory: (e: Env) => createAccessSigner(e.JWT_PRIVATE_KEY),
+    },
+    {
+      provide: VerifyOtp,
+      inject: [ACCOUNT_STORE, ACCESS_SIGNER, OTP_KEY],
+      useFactory: (store: AccountStore, signer: AccessSigner, key: string) =>
+        new VerifyOtp(store, signer, key),
     },
     { provide: SMS_ENABLED, inject: [ENV], useFactory: (e: Env) => e.SMS_ENABLED },
     {

@@ -5,7 +5,7 @@ image:
   tag: ''
   pullPolicy: IfNotPresent
 
-# Nom du Secret Kubernetes qui porte DATABASE_URL, JWT_SECRET, GROQ_API_KEY, etc.
+# Nom du Secret Kubernetes qui porte DATABASE_URL, JWT_PRIVATE_KEY, GROQ_API_KEY, etc.
 # Jamais écrit en clair dans Git : sur VPS il vient d'un SealedSecret, sur AWS d'un ExternalSecret.
 secretName: new-start-secrets
 
@@ -22,7 +22,7 @@ externalSecrets:
   keys:
     - DATABASE_URL
     - REDIS_URL
-    - JWT_SECRET
+    - JWT_PRIVATE_KEY
     - GROQ_API_KEY
     - GEMINI_API_KEY
     - GOOGLE_CLIENT_SECRET
