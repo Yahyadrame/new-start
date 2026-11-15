@@ -114,9 +114,9 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [x] Interfaces `LlmProvider`, `SttProvider`, `TtsProvider` dans `packages/ai`, avec un adaptateur factice et ses tests.
 
 ## NS-018 — Compose dev sans fichiers appartenant à root · S
-- [ ] Les conteneurs du profil `dev` tournent avec l'UID et le GID de l'utilisateur (`user: "${UID}:${GID}"`), pour que `.next` et `apps/api/src/generated` restent à lui.
-- [ ] `README` : comment exporter `UID` et `GID` (ou valeur par défaut 1000).
-- [ ] Vérifié : après `docker compose --profile dev up`, `find apps -user root -not -path "*/node_modules/*"` ne renvoie rien.
+- [x] Les conteneurs du profil `dev` tournent avec l'UID et le GID de l'utilisateur (`user: "${UID}:${GID}"`), pour que `.next` et `apps/api/src/generated` restent à lui.
+- [x] `README` : comment exporter `UID` et `GID` (ou valeur par défaut 1000).
+- [x] Vérifié : après `docker compose --profile dev up`, `find apps -user root -not -path "*/node_modules/*"` ne renvoie rien.
 
 ## NS-019 — Actions GitHub épinglées par SHA · S
 - [x] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.

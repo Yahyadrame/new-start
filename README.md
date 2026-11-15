@@ -48,6 +48,8 @@ Il suffit d'avoir Docker. Copiez `.env.example` en `.env`, puis, depuis la racin
 | `pnpm docker:prod` | `web` et `api` construits avec les Dockerfiles de production |
 | `pnpm docker:clean` | Arrête tout et supprime les conteneurs, les images locales et les volumes, donc la base locale |
 
+Avant `pnpm docker:dev`, exportez votre UID et votre GID : `export UID GID=$(id -g)` (dans bash, `UID` existe déjà). Les conteneurs web et api écrivent alors `.next` et `apps/api/src/generated` en votre nom, pas en root. Sans cet export, la valeur par défaut est 1000. Si d'anciens volumes appartiennent à root, le conteneur `init-perms` les remet à votre nom au démarrage.
+
 `docker compose --profile redis` ajoute Redis, `--profile quality` ajoute SonarQube (environ 2 Go de RAM, à lancer rarement). Sans Node ni pnpm sur la machine, utilisez `docker compose -f infra/compose/docker-compose.yml` à la place des scripts.
 
 Pour charger le noyau d'anglais (1 000 mots, 339 expressions) dans la base locale : `pnpm --filter @newstart/api exec prisma migrate deploy`, puis `pnpm --filter @newstart/api db:seed`. On peut le relancer sans risque. `cd-staging` le fait sur Neon à chaque fusion.
