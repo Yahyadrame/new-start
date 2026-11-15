@@ -13,7 +13,7 @@ const db = new PrismaClient({
 try {
   const n = await seedNoyau(db, { mots: read('mots.csv'), expressions: read('expressions.csv') });
   console.log(`Noyau chargé : ${n.words} mots, ${n.expressions} expressions`);
-  const c = await seedCatalogue(db);
+  const c = await seedCatalogue(db, read('catalogue.json'));
   console.log(`Catalogue chargé : ${c.topics} thèmes, ${c.agents} contacts`);
 } finally {
   await db.$disconnect();
