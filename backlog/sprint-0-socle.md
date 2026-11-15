@@ -107,8 +107,8 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
-- [ ] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
-- [ ] Rédiger `docs/adr/0001-fournisseurs-ia.md`.
+- [x] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
+- [x] Rédiger `docs/adr/0001-fournisseurs-ia.md` (accepté ; STT sur voix réelles et choix du TTS restent à faire, voir l'ADR).
 - [x] Interfaces `LlmProvider`, `SttProvider`, `TtsProvider` dans `packages/ai`, avec un adaptateur factice et ses tests.
 
 ## NS-018 — Compose dev sans fichiers appartenant à root · S
@@ -143,3 +143,12 @@ Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API 
 - [x] `SENTRY_TEST_TOKEN` est ajoutée à `.env.example` sans valeur ; la valeur est posée sur Render par le porteur du projet.
 - [x] Vérifié sur staging : l'appel avec le bon jeton fait apparaître l'erreur dans le projet `newstart-api` de Sentry ; sans jeton, la route répond 404 et rien n'est envoyé.
 - [x] Tests unitaires : route absente sans variable, refus avec un mauvais jeton, erreur levée avec le bon jeton.
+
+## NS-024 — Adaptateurs IA réels et banc de comparaison · M
+Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
+- [ ] `GroqLlm` (`openai/gpt-oss-20b`) et `GeminiLlm` (`gemini-3.5-flash-lite`, secours) implémentent `LlmProvider` ; `GroqStt` (`whisper-large-v3-turbo`) implémente `SttProvider` ; `GeminiTts` implémente `TtsProvider`. `fetch` injecté, délai maximal, clé lue dans l'environnement, jamais journalisée.
+- [ ] Validation Zod du JSON `{ reply, fix }` avec une nouvelle tentative, puis `reply` brut et `fix = null` (`docs/09-ia-agents.md`).
+- [ ] Plafond d'usage codé et repli sur l'adaptateur factice quand le quota est épuisé (décision budget du 2026-11-13) ; réessai sur les erreurs 429 et 5xx, et sur l'erreur 400 « texte au lieu d'audio » de Gemini TTS.
+- [ ] Choix du fournisseur par variable d'environnement ; `.env.example` à jour.
+- [ ] `pnpm --filter @newstart/ai compare` relance la comparaison avec ces adaptateurs ; la logique de notation vit dans `src/` avec ses tests.
+- [ ] Tests unitaires avec `fetch` simulé pour chaque adaptateur, couverture ≥ 80 %.
