@@ -1,0 +1,3 @@
+# AWS (EKS) : valeurs par défaut du chart, secrets lus dans AWS Secrets Manager par External Secrets.
+externalSecrets:
+  enabled: true

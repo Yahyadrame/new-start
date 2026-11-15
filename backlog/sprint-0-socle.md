@@ -77,11 +77,11 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 
 ## NS-007 — Fichiers Kubernetes et Helm prêts pour la phase 2 · M
 - [x] (PR 1) Rien n'est déployé : les fichiers sont écrits et vérifiés en CI (`helm lint`, `helm template` + `kubeconform`) pour que la phase 2 (VPS ou AWS) ne demande aucune réécriture.
-- [ ] Valeurs par cible : `values-vps.yaml` (k3s) et `values-aws.yaml` (EC2 + k3s, ou EKS).
+- [x] (PR 3) Valeurs par cible : `values-vps.yaml` (k3s) et `values-aws.yaml` (EC2 + k3s, ou EKS).
 - [x] (PR 1) Chart Helm `new-start` : déploiements web/api/worker, `RollingUpdate maxUnavailable: 0`, sondes, ressources.
 - [x] (PR 2) PDB, HPA, NetworkPolicies.
 - [x] (PR 2) Ingress NGINX + cert-manager.
-- [ ] (PR 3) Secrets via Sealed Secrets (manifestes seulement ; External Secrets si AWS).
+- [x] (PR 3) Secrets via Sealed Secrets (manifestes seulement ; External Secrets si AWS).
 
 ## NS-011 — Environnements d'aperçu par PR · M
 Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md`), donc l'aperçu d'une PR est un front Vercel qui appelle l'API de staging.

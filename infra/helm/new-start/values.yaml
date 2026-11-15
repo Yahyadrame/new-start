@@ -6,8 +6,29 @@ image:
   pullPolicy: IfNotPresent
 
 # Nom du Secret Kubernetes qui porte DATABASE_URL, JWT_SECRET, GROQ_API_KEY, etc.
-# Il est créé par Sealed Secrets (NS-007, PR 3), jamais écrit dans Git.
+# Jamais écrit en clair dans Git : sur VPS il vient d'un SealedSecret, sur AWS d'un ExternalSecret.
 secretName: new-start-secrets
+
+# Sealed Secrets (VPS). `encryptedData` se remplit avec kubeseal, une fois le contrôleur installé (phase 2).
+sealedSecret:
+  enabled: false
+  encryptedData: {}
+
+# External Secrets (AWS). Le SecretStore pointe vers AWS Secrets Manager ; chaque clé y vit sous `<prefix>/<NOM>`.
+externalSecrets:
+  enabled: false
+  storeName: aws-secrets-manager
+  keyPrefix: new-start
+  keys:
+    - DATABASE_URL
+    - REDIS_URL
+    - JWT_SECRET
+    - GROQ_API_KEY
+    - GEMINI_API_KEY
+    - GOOGLE_CLIENT_SECRET
+    - BREVO_API_KEY
+    - CLOUDINARY_URL
+    - SENTRY_DSN
 
 # Variables non secrètes de l'API et du worker.
 config:

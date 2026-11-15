@@ -279,7 +279,7 @@ Points obligatoires :
 - **WebSocket** : adaptateur Redis de Socket.IO pour que n'importe quel réplica puisse joindre n'importe quel utilisateur ; le client se reconnecte automatiquement.
 - **Worker** : mise à l'échelle sur la longueur de la file avec **KEDA** (déclencheur Redis/BullMQ).
 - **Ingress NGINX** + **cert-manager** (certificats Let's Encrypt), HTTP/2, compression, en-têtes de sécurité.
-- **Secrets** : jamais dans Git en clair. External Secrets Operator (relié au coffre de l'hébergeur) ou Sealed Secrets.
+- **Secrets** : jamais dans Git en clair. Sur VPS, **Sealed Secrets** (gratuit) : `kubeseal` chiffre chaque valeur avec le certificat du cluster, le résultat va dans `sealedSecret.encryptedData` de `values-vps.yaml`. **Sauvegarder la clé du contrôleur hors du cluster** (sans elle, les secrets scellés sont perdus). Sur AWS, **External Secrets Operator** lit AWS Secrets Manager (`values-aws.yaml`). Choix du 2026-11-15, voir `docs/decisions.md`.
 - **NetworkPolicies** : seuls `api` et `worker` joignent la base et Redis.
 
 ### Migrations de base sans coupure
