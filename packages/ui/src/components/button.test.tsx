@@ -35,6 +35,10 @@ describe('Button', () => {
     expect(className).toContain('px-2');
     expect(className).not.toContain('px-6');
   });
+  it('a une variante contour pour les actions secondaires', () => {
+    render(<Button variant="outline">J'ai déjà un compte</Button>);
+    expect(screen.getByRole('button').className).toContain('border-line');
+  });
   it('rend un lien avec les styles du bouton avec asChild', () => {
     render(
       <Button asChild>

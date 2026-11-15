@@ -5,9 +5,9 @@
 - [x] Seed : import de `data/expressions.csv`, `data/mots.csv`, des thèmes et des 12 agents de `docs/03-contenu-pedagogique.md`.
 
 ## NS-102 — Connexion par code à usage unique · L
-- [ ] `POST /auth/otp/request` et `/verify`, canal e-mail via **Brevo** (gratuit) au lancement ; canal SMS via Brevo prêt mais désactivé tant que le porteur du projet n'a pas accordé de budget. À l'activation, un job propose aux utilisateurs existants de vérifier leur numéro. Interfaces `Mailer` et `SmsSender`, adaptateur factice en local.
-- [ ] Limites : 3 demandes / 10 min / numéro, 5 essais par code, code valable 5 minutes.
-- [ ] Jetons : accès 15 min, rafraîchissement 30 jours en cookie HttpOnly, rotation et détection de réutilisation.
+- [x] `POST /auth/otp/request` et `/verify`, canal e-mail via **Brevo** (gratuit) au lancement ; canal SMS via Brevo prêt mais désactivé tant que le porteur du projet n'a pas accordé de budget. À l'activation, un job propose aux utilisateurs existants de vérifier leur numéro. Interfaces `Mailer` et `SmsSender`, adaptateur factice en local.
+- [x] Limites : 3 demandes / 10 min / numéro, 5 essais par code, code valable 5 minutes.
+- [x] Jetons : accès 15 min, rafraîchissement 30 jours en cookie HttpOnly, rotation et détection de réutilisation.
 
 ## NS-103 — Connexion Google · M
 - [ ] `POST /auth/google` (vérification de l'idToken), rattachement à un compte existant si même e-mail vérifié.
