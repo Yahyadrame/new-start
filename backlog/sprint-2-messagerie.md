@@ -34,3 +34,11 @@
 
 ## NS-208 — Limites d'usage · M
 - [ ] Compteurs Redis par jour et par clé ; consolidation dans `UsageCounter` ; événement `quota.update`.
+
+## NS-016 — File de jobs pg-boss (phase 1, sur Neon) · S
+*Déplacé du sprint 0 le 2026-11-15 : il sert ici, pas avant.*
+Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-205, NS-206).
+- [ ] Adaptateur `PgBossQueue` derrière le port `Queue` (`modules/jobs/domain/queue.ts`), avec son test unitaire ; la file en mémoire reste l'adaptateur des tests et du local.
+- [ ] Intervalle d'interrogation de 30 s ou plus, pour laisser Neon s'endormir (risque décrit dans `docs/decisions.md`) ; mesurer les CU-heures consommées et alerter le porteur au-delà de 80.
+- [ ] La file vit dans un paquet partagé, pour que l'API (`RUN_JOBS=inline`) et le worker l'utilisent.
+- Dépend de NS-002 et d'une base Neon (NS-008).
