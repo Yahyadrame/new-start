@@ -37,8 +37,8 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 
 ## NS-015 — Générateurs de module et de fonctionnalité · S
 - [x] `pnpm gen:module <nom>` crée un module back (`domain`, `application`, `infrastructure`, `interface`, `<nom>.module.ts`) dans `apps/api`.
-- [ ] `pnpm gen:feature <nom>` crée une fonctionnalité front (`components/`, `hooks/`, `api/`, `store/`, `index.ts`) dans `apps/web`.
-- [ ] Le code généré respecte les règles de NS-014 et vient avec son test unitaire (fait pour `gen:module`, reste `gen:feature`).
+- [x] `pnpm gen:feature <nom>` crée une fonctionnalité front (`components/`, `hooks/`, `api/`, `store/`, `index.ts`) dans `apps/web`.
+- [x] Le code généré respecte les règles de NS-014 et vient avec son test unitaire.
 - Dépend de NS-002 (dossiers `apps/api` et `apps/web`).
 
 ## NS-016 — File de jobs pg-boss (phase 1, sur Neon) · S

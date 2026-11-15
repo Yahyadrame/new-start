@@ -1,4 +1,4 @@
-// Générateur : `pnpm gen:module <nom>` (apps/api).
+// Générateurs : `pnpm gen:module <nom>` (apps/api) et `pnpm gen:feature <nom>` (apps/web).
 /* eslint-disable security/detect-non-literal-fs-filename -- les chemins viennent d'un nom validé en kebab-case */
 // Le nom est en kebab-case. Le code produit respecte les règles d'import de .dependency-cruiser.cjs
 // et vient avec ses tests unitaires.
@@ -159,6 +159,162 @@ export class ${P}Module {}
   };
 }
 
+/** Fichiers d'une fonctionnalité front : chemin relatif à apps/web/src/features/<nom>. */
+export function featureFiles(name) {
+  const { kebab: k, pascal: P, camel: c } = names(name);
+  return {
+    [`api/${k}.ts`]: `export type ${P} = { id: string };
+
+/** Appelle l'API ; l'URL vient de NEXT_PUBLIC_API_URL. */
+export async function fetch${P}(id: string): Promise<${P}> {
+  const base = process.env.NEXT_PUBLIC_API_URL ?? '';
+  const res = await fetch(\`\${base}/${k}/\${encodeURIComponent(id)}\`);
+  if (!res.ok) throw new Error(\`${k}: \${res.status}\`);
+  return (await res.json()) as ${P};
+}
+`,
+    [`api/${k}.test.ts`]: `import { afterEach, describe, expect, it, vi } from 'vitest';
+import { fetch${P} } from './${k}';
+
+afterEach(() => vi.unstubAllGlobals());
+
+describe('fetch${P}', () => {
+  it("renvoie l'élément de l'API", async () => {
+    const fetchMock = vi.fn(async () => Response.json({ id: 'a b' }));
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await fetch${P}('a b')).toEqual({ id: 'a b' });
+    expect(fetchMock).toHaveBeenCalledWith('/${k}/a%20b');
+  });
+  it('lève une erreur si l\\'API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 404 })));
+    await expect(fetch${P}('x')).rejects.toThrow('${k}: 404');
+  });
+});
+`,
+    [`store/${k}-store.ts`]: `import type { ${P} } from '../api/${k}';
+
+export type ${P}State = { status: 'idle' | 'loading' | 'ready' | 'error'; item: ${P} | null };
+
+export type ${P}Action =
+  | { type: 'load' }
+  | { type: 'loaded'; item: ${P} }
+  | { type: 'failed' };
+
+export const initial${P}State: ${P}State = { status: 'idle', item: null };
+
+export function ${c}Reducer(state: ${P}State, action: ${P}Action): ${P}State {
+  switch (action.type) {
+    case 'load':
+      return { ...state, status: 'loading' };
+    case 'loaded':
+      return { status: 'ready', item: action.item };
+    case 'failed':
+      return { ...state, status: 'error' };
+  }
+}
+`,
+    [`store/${k}-store.test.ts`]: `import { describe, expect, it } from 'vitest';
+import { initial${P}State, ${c}Reducer } from './${k}-store';
+
+describe('${c}Reducer', () => {
+  it('passe de idle à loading puis ready', () => {
+    const loading = ${c}Reducer(initial${P}State, { type: 'load' });
+    expect(loading.status).toBe('loading');
+    expect(${c}Reducer(loading, { type: 'loaded', item: { id: '1' } })).toEqual({
+      status: 'ready',
+      item: { id: '1' },
+    });
+  });
+  it('passe en error sans perdre l\\'élément déjà chargé', () => {
+    const ready = { status: 'ready' as const, item: { id: '1' } };
+    expect(${c}Reducer(ready, { type: 'failed' })).toEqual({ status: 'error', item: { id: '1' } });
+  });
+});
+`,
+    [`hooks/use-${k}.ts`]: `'use client';
+import { useEffect, useReducer } from 'react';
+import { fetch${P} } from '../api/${k}';
+import { initial${P}State, ${c}Reducer } from '../store/${k}-store';
+
+export function use${P}(id: string) {
+  const [state, dispatch] = useReducer(${c}Reducer, initial${P}State);
+  useEffect(() => {
+    let cancelled = false;
+    dispatch({ type: 'load' });
+    fetch${P}(id)
+      .then((item) => !cancelled && dispatch({ type: 'loaded', item }))
+      .catch(() => !cancelled && dispatch({ type: 'failed' }));
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+  return state;
+}
+`,
+    [`hooks/use-${k}.test.ts`]: `import { renderHook, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { use${P} } from './use-${k}';
+
+afterEach(() => vi.unstubAllGlobals());
+
+describe('use${P}', () => {
+  it("charge l'élément", async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ id: '1' })));
+    const { result } = renderHook(() => use${P}('1'));
+    await waitFor(() => expect(result.current.status).toBe('ready'));
+    expect(result.current.item).toEqual({ id: '1' });
+  });
+  it('passe en error si l\\'API échoue', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 500 })));
+    const { result } = renderHook(() => use${P}('1'));
+    await waitFor(() => expect(result.current.status).toBe('error'));
+  });
+});
+`,
+    [`components/${k}-panel.tsx`]: `'use client';
+import { use${P} } from '../hooks/use-${k}';
+
+type Props = { id: string; label: string; errorMessage: string };
+
+/** Les textes viennent des fichiers de traduction, jamais écrits en dur ici. */
+export function ${P}Panel({ id, label, errorMessage }: Props) {
+  const { status, item } = use${P}(id);
+  return (
+    <section aria-label={label}>
+      {status === 'error' ? <p role="alert">{errorMessage}</p> : null}
+      {item ? <p>{item.id}</p> : null}
+    </section>
+  );
+}
+`,
+    [`components/${k}-panel.test.tsx`]: `import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ${P}Panel } from './${k}-panel';
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+describe('${P}Panel', () => {
+  it("affiche l'élément chargé", async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ id: 'abc' })));
+    render(<${P}Panel id="abc" label="Exemple" errorMessage="Erreur" />);
+    expect(await screen.findByText('abc')).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Exemple' })).toBeTruthy();
+  });
+  it("annonce l'erreur", async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 500 })));
+    render(<${P}Panel id="abc" label="Exemple" errorMessage="Erreur" />);
+    expect((await screen.findByRole('alert')).textContent).toBe('Erreur');
+  });
+});
+`,
+    ['index.ts']: `export { ${P}Panel } from './components/${k}-panel';
+`,
+  };
+}
+
 /** Écrit les fichiers sous `dir`. Refuse d'écraser un dossier existant. */
 export function write(dir, files) {
   if (existsSync(dir)) throw new Error(`${dir} existe déjà, rien n'a été écrit.`);
@@ -176,7 +332,14 @@ export function run(kind, name, root = process.cwd()) {
     const { pascal } = names(name);
     return { written, hint: `Ajoute ${pascal}Module aux imports de apps/api/src/app.module.ts.` };
   }
-  throw new Error(`Type inconnu « ${kind} » : module.`);
+  if (kind === 'feature') {
+    const written = write(join(root, 'apps/web/src/features', name), featureFiles(name));
+    return {
+      written,
+      hint: `Importe depuis '@/features/${name}' (index.ts), jamais depuis un sous-dossier.`,
+    };
+  }
+  throw new Error(`Type inconnu « ${kind} » : module ou feature.`);
 }
 
 /** Point d'entrée de la ligne de commande : renvoie le code de sortie et le texte à afficher. */
