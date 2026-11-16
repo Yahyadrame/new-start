@@ -40,6 +40,6 @@
 
 ## NS-110 — L'API utilise `packages/shared` · M
 *Ajouté le 2026-11-16 : le schéma d'inscription existe en double (`apps/api/.../signup-profile.ts` et `packages/shared`), choix B de la décision du jour.*
-- [ ] `packages/shared` est compilé (sortie `dist`, `exports` vers la sortie) et l'API l'importe à la place de `signup-profile.ts`, qui disparaît avec son test.
-- [ ] Dockerfile de l'API, `pnpm deploy --prod` et déploiement Render vérifiés sur staging (même santé, même image dans la limite de taille).
+- [x] `packages/shared` est compilé (sortie `dist`, `exports` vers la sortie) et l'API l'importe à la place de `signup-profile.ts`, qui disparaît avec son test.
+- [x] Dockerfile de l'API, `pnpm deploy --prod` et déploiement Render vérifiés sur staging (même santé, même image dans la limite de taille).
 - [ ] Les schémas de réponse (session, utilisateur) rejoignent `packages/shared`.

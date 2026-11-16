@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Prisma } from '../../../generated/prisma/client.js';
 import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
-import type { SignupProfile } from '../domain/signup-profile.js';
+import type { SignupProfile } from '@newstart/shared';
 import { PrismaAccountStore } from './prisma-account.store.js';
 
 const profile: SignupProfile = {

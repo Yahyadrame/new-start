@@ -6,7 +6,7 @@ import { REFRESH_TTL_MS } from '../domain/tokens.js';
 import { SessionService } from '../application/session.js';
 import { VerifyOtp } from '../application/verify-otp.js';
 import { RequestOtp } from '../application/request-otp.js';
-import { PhoneE164, SignupProfile } from '../domain/signup-profile.js';
+import { PhoneE164, SignupProfile } from '@newstart/shared';
 
 const Destination = z.discriminatedUnion('channel', [
   z.object({

@@ -2,7 +2,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 import { HttpException } from '@nestjs/common';
 import { hashCode, OTP_MAX_ATTEMPTS, type OtpChannel } from '../domain/otp.js';
-import type { SignupProfile } from '../domain/signup-profile.js';
+import type { SignupProfile } from '@newstart/shared';
 import {
   ACCESS_TTL_SECONDS,
   hashRefreshToken,

@@ -9,10 +9,13 @@ RUN npm i -g "$(node -p "require('./package.json').packageManager.split('+')[0]"
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json apps/api/
 COPY packages/config/package.json packages/config/
+COPY packages/shared/package.json packages/shared/
 RUN pnpm install --frozen-lockfile --filter @newstart/api...
 COPY packages/config packages/config
+COPY packages/shared packages/shared
 COPY apps/api apps/api
-RUN pnpm --filter @newstart/api build \
+RUN pnpm --filter @newstart/shared build \
+ && pnpm --filter @newstart/api build \
  && pnpm --filter @newstart/api deploy --prod --legacy /out
 
 FROM node:${NODE_VERSION}-alpine AS run
