@@ -9,7 +9,7 @@ import {
   OTP_TTL_MS,
   type OtpChannel,
 } from '../domain/otp.js';
-import type { SignupProfile } from '../domain/signup-profile.js';
+import type { SignupProfile } from '@newstart/shared';
 
 export const OTP_STORE = Symbol('OTP_STORE');
 export const OTP_KEY = Symbol('OTP_KEY');

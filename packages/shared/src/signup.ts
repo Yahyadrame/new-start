@@ -1,6 +1,10 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js/max';
 import { z } from 'zod';
 
+/** Objectifs proposés à l'inscription, dans l'ordre d'affichage (écran 11). */
+export const SIGNUP_GOALS = ['SCHOLARSHIP', 'WORK', 'TRAVEL', 'FRIENDS'] as const;
+export type SignupGoal = (typeof SIGNUP_GOALS)[number];
+
 /** Numéro validé et ramené au format E.164 ; sans indicatif, on suppose le Sénégal (+221). */
 export const PhoneE164 = z.string().transform((value, ctx) => {
   const phone = parsePhoneNumberFromString(value, 'SN');
@@ -15,7 +19,7 @@ export const PhoneE164 = z.string().transform((value, ctx) => {
 export const SignupProfile = z.strictObject({
   firstName: z.string().trim().min(2).max(30),
   phone: PhoneE164,
-  goal: z.enum(['SCHOLARSHIP', 'WORK', 'TRAVEL', 'FRIENDS']),
+  goal: z.enum(SIGNUP_GOALS),
   birthYear: z.number().int().min(1900).max(new Date().getFullYear()),
   acceptTerms: z.literal(true),
   smsOptIn: z.boolean().default(false),

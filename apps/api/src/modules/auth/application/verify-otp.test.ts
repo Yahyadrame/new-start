@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { hashCode } from '../domain/otp.js';
-import type { SignupProfile } from '../domain/signup-profile.js';
+import type { SignupProfile } from '@newstart/shared';
 import { createAccessSigner, hashRefreshToken } from '../domain/tokens.js';
 import { VerifyOtp, type AccountStore, type UserSummary } from './verify-otp.js';
 

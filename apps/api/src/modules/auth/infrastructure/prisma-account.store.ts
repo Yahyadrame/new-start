@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '../../../generated/prisma/client.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { AccountStore } from '../application/verify-otp.js';
-import type { SignupProfile } from '../domain/signup-profile.js';
+import type { SignupProfile } from '@newstart/shared';
 
 const summary = { id: true, firstName: true, goal: true, level: true } as const;
 

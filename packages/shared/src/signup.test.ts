@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PhoneE164, SignupProfile } from './signup-profile.js';
+import { PhoneE164, SIGNUP_GOALS, SignupProfile } from './signup.js';
 
 const valid = {
   firstName: 'Awa',
@@ -44,5 +44,16 @@ describe('SignupProfile', () => {
     expect(SignupProfile.safeParse({ ...valid, birthYear: 1800 }).success).toBe(false);
     expect(SignupProfile.safeParse({ ...valid, birthYear: 2999 }).success).toBe(false);
     expect(SignupProfile.safeParse({ ...valid, admin: true }).success).toBe(false);
+  });
+});
+
+describe('SIGNUP_GOALS', () => {
+  it('liste les quatre objectifs de la maquette dans l\u2019ordre', () => {
+    expect([...SIGNUP_GOALS]).toEqual(['SCHOLARSHIP', 'WORK', 'TRAVEL', 'FRIENDS']);
+  });
+  it('accepte chacun d\u2019eux dans le profil', () => {
+    for (const goal of SIGNUP_GOALS) {
+      expect(SignupProfile.safeParse({ ...valid, goal }).success).toBe(true);
+    }
   });
 });
