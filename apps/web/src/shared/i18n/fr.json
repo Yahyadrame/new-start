@@ -31,5 +31,49 @@
       "me": "Hi! Nice to meet you.",
       "meLabel": "Toi"
     }
+  },
+  "signup": {
+    "back": "Retour",
+    "stepLabel": "Étape 1 sur 3",
+    "title": "Comment tes contacts vont-ils t'appeler ?",
+    "firstName": "Prénom",
+    "phone": "Numéro de téléphone",
+    "phoneHint": "Sans indicatif, on suppose le Sénégal (+221).",
+    "birthYear": "Année de naissance",
+    "email": "Adresse e-mail",
+    "emailHint": "On t'y envoie un code pour confirmer ton compte.",
+    "goal": "Ton objectif principal",
+    "goals": {
+      "SCHOLARSHIP": {
+        "label": "Bourse d'études",
+        "hint": "Entretiens, IELTS, TOEFL"
+      },
+      "WORK": {
+        "label": "Travail",
+        "hint": "Entretiens, réunions, e-mails"
+      },
+      "TRAVEL": {
+        "label": "Voyager",
+        "hint": "Aéroport, hôtel, rencontres"
+      },
+      "FRIENDS": {
+        "label": "Me faire des amis",
+        "hint": "Discuter, plaisanter, sortir"
+      }
+    },
+    "acceptTerms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
+    "smsOptIn": "Je veux recevoir des rappels par SMS.",
+    "voiceConsent": "J'accepte que mes enregistrements vocaux soient conservés pour corriger ma prononciation.",
+    "submit": "Recevoir mon code",
+    "sending": "Envoi du code…",
+    "errors": {
+      "firstName": "Entre un prénom de 2 à 30 caractères.",
+      "phone": "Ce numéro n'est pas valide.",
+      "birthYear": "Entre une année de naissance valide.",
+      "email": "Cette adresse e-mail n'est pas valide.",
+      "goal": "Choisis un objectif.",
+      "acceptTerms": "Il faut accepter les conditions pour continuer.",
+      "server": "On n'a pas pu envoyer le code. Vérifie ta connexion, puis réessaie."
+    }
   }
 }
