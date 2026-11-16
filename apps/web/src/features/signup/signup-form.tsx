@@ -23,7 +23,7 @@ const TEXT_FIELDS: { name: TextField; type: string; autoComplete: string; hint?:
 ];
 const CONSENTS: Consent[] = ['acceptTerms', 'smsOptIn', 'voiceConsent'];
 
-function Error({ id, children }: { id: string; children?: ReactNode }) {
+function FieldError({ id, children }: { id: string; children?: ReactNode }) {
   return children ? (
     <p id={id} role="alert" className="text-[13px] text-danger">
       {children}
@@ -71,7 +71,7 @@ export function SignupForm() {
             {...register(name)}
           />
           {hint && !errors[name] && <p className="text-[13px] text-text-muted">{hint}</p>}
-          <Error id={`${name}-note`}>{errors[name] && t.errors[name]}</Error>
+          <FieldError id={`${name}-note`}>{errors[name] && t.errors[name]}</FieldError>
         </div>
       ))}
 
@@ -88,7 +88,7 @@ export function SignupForm() {
             </label>
           ))}
         </div>
-        <Error id="goal-note">{errors.goal && t.errors.goal}</Error>
+        <FieldError id="goal-note">{errors.goal && t.errors.goal}</FieldError>
       </fieldset>
 
       <div className="flex flex-col gap-1">
@@ -98,10 +98,10 @@ export function SignupForm() {
             <span>{t[name]}</span>
           </label>
         ))}
-        <Error id="terms-note">{errors.acceptTerms && t.errors.acceptTerms}</Error>
+        <FieldError id="terms-note">{errors.acceptTerms && t.errors.acceptTerms}</FieldError>
       </div>
 
-      <Error id="server-note">{failed && t.errors.server}</Error>
+      <FieldError id="server-note">{failed && t.errors.server}</FieldError>
       <Button type="submit" size="lg" disabled={isSubmitting}>
         {isSubmitting ? t.sending : t.submit}
       </Button>
