@@ -13,7 +13,7 @@
 - [ ] `POST /auth/google` (vérification de l'idToken), rattachement à un compte existant si même e-mail vérifié.
 
 ## NS-104 — Écran Bienvenue (1) · S
-- [ ] Conforme aux maquettes, clair et sombre, logo bulle N.
+- [x] Conforme aux maquettes, clair et sombre, logo bulle N.
 
 ## NS-105 — Écran Inscription (11) · M
 - [ ] Prénom (obligatoire, 2 à 30 caractères), numéro de téléphone (obligatoire, validé avec `libphonenumber-js`, enregistré en E.164, indicatif +221 par défaut, unique par compte), objectif, année de naissance, puis Google ou code par e-mail.
@@ -37,3 +37,9 @@
 - [ ] `e2e.yml` : chaque PR qui touche l'interface lance Playwright (mobile et ordinateur, thème clair et sombre) avec l'accessibilité axe, contre l'aperçu Vercel de la PR.
 - [ ] Un premier parcours : Bienvenue puis Inscription (NS-104, NS-105).
 - [ ] `pnpm test:e2e` en local avec un seul navigateur ; test unitaire de la configuration.
+
+## NS-110 — L'API utilise `packages/shared` · M
+*Ajouté le 2026-11-16 : le schéma d'inscription existe en double (`apps/api/.../signup-profile.ts` et `packages/shared`), choix B de la décision du jour.*
+- [ ] `packages/shared` est compilé (sortie `dist`, `exports` vers la sortie) et l'API l'importe à la place de `signup-profile.ts`, qui disparaît avec son test.
+- [ ] Dockerfile de l'API, `pnpm deploy --prod` et déploiement Render vérifiés sur staging (même santé, même image dans la limite de taille).
+- [ ] Les schémas de réponse (session, utilisateur) rejoignent `packages/shared`.
