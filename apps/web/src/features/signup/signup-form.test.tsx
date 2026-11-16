@@ -6,7 +6,8 @@ const push = vi.hoisted(() => vi.fn());
 const requestCode = vi.hoisted(() => vi.fn());
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 vi.mock('./request-code', () => ({ requestCode }));
-const { SignupForm, PENDING_EMAIL_KEY } = await import('./signup-form');
+const { SignupForm } = await import('./signup-form');
+const { loadPendingSignup } = await import('./pending-signup');
 const t = fr.signup;
 
 function fill(label: string, value: string) {
@@ -50,7 +51,7 @@ describe('SignupForm', () => {
     fillAll();
     submit();
     await waitFor(() => expect(push).toHaveBeenCalledWith('/signup/code'));
-    expect(sessionStorage.getItem(PENDING_EMAIL_KEY)).toBe('awa@example.com');
+    expect(loadPendingSignup()?.email).toBe('awa@example.com');
     expect(requestCode).toHaveBeenCalledWith(
       expect.objectContaining({ phone: '+221771234567', birthYear: 2000, goal: 'WORK' }),
     );
@@ -62,7 +63,7 @@ describe('SignupForm', () => {
     submit();
     expect(await screen.findByText(t.errors.server)).toBeTruthy();
     expect(push).not.toHaveBeenCalled();
-    expect(sessionStorage.getItem(PENDING_EMAIL_KEY)).toBeNull();
+    expect(loadPendingSignup()).toBeNull();
     expect((screen.getByLabelText(t.firstName) as HTMLInputElement).value).toBe('Awa');
   });
 });

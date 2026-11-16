@@ -7,10 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import fr from '../../shared/i18n/fr.json';
+import { savePendingSignup } from './pending-signup';
 import { requestCode } from './request-code';
 import { SignupFormSchema, type SignupFormInput, type SignupFormValues } from './signup-schema';
 
-export const PENDING_EMAIL_KEY = 'ns_pending_email';
 const t = fr.signup;
 type TextField = 'firstName' | 'phone' | 'birthYear' | 'email';
 type Consent = 'acceptTerms' | 'smsOptIn' | 'voiceConsent';
@@ -47,8 +47,7 @@ export function SignupForm() {
     setFailed(false);
     try {
       await requestCode(values);
-      // L'écran du code lit l'adresse ici : jamais dans l'URL.
-      sessionStorage.setItem(PENDING_EMAIL_KEY, values.email);
+      savePendingSignup(values);
       router.push('/signup/code');
     } catch {
       setFailed(true);
