@@ -43,3 +43,9 @@
 - [x] `packages/shared` est compilé (sortie `dist`, `exports` vers la sortie) et l'API l'importe à la place de `signup-profile.ts`, qui disparaît avec son test.
 - [x] Dockerfile de l'API, `pnpm deploy --prod` et déploiement Render vérifiés sur staging (même santé, même image dans la limite de taille).
 - [ ] Les schémas de réponse (session, utilisateur) rejoignent `packages/shared`.
+
+## NS-111 — Écran du code de vérification · M
+*Ajouté le 2026-11-16 : NS-105 envoie le code puis renvoie vers `/signup/code`, qui n'existe pas encore.*
+- [ ] `/signup/code` : six chiffres, renvoi du code après un délai, retour à l'inscription ; l'e-mail vient d'un stockage de session, jamais de l'adresse.
+- [ ] Appel de `/api/auth/otp/verify`, puis ouverture de la session (jeton en mémoire, cookie de rafraîchissement) et passage au test de niveau (NS-106).
+- [ ] Erreurs lisibles : code faux, expiré, trop d'essais ; accessibilité clavier et lecteur d'écran.
