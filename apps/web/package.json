@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "next build",
+    "dev": "pnpm --filter @newstart/shared build && next dev -p 3000",
+    "build": "pnpm --filter @newstart/shared build && next build",
     "start": "next start -p 3000",
     "test": "vitest run --coverage",
     "typecheck": "tsc --noEmit -p tsconfig.json"
@@ -12,12 +12,16 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@hookform/resolvers": "^7.0.6",
+    "@newstart/shared": "workspace:*",
     "@newstart/ui": "workspace:*",
     "@sentry/browser": "^11.12.0",
     "@sentry/node": "^11.12.0",
     "next": "15.5.29",
     "react": "19.1.10",
-    "react-dom": "19.1.10"
+    "react-dom": "19.1.10",
+    "react-hook-form": "^7.92.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@newstart/config": "workspace:*",
