@@ -46,6 +46,6 @@
 
 ## NS-111 — Écran du code de vérification · M
 *Ajouté le 2026-11-16 : NS-105 envoie le code puis renvoie vers `/signup/code`, qui n'existe pas encore.*
-- [ ] `/signup/code` : six chiffres, renvoi du code après un délai, retour à l'inscription ; l'e-mail vient d'un stockage de session, jamais de l'adresse.
-- [ ] Appel de `/api/auth/otp/verify`, puis ouverture de la session (jeton en mémoire, cookie de rafraîchissement) et passage au test de niveau (NS-106).
-- [ ] Erreurs lisibles : code faux, expiré, trop d'essais ; accessibilité clavier et lecteur d'écran.
+- [x] `/signup/code` : six chiffres, renvoi du code après un délai, retour à l'inscription ; l'e-mail vient d'un stockage de session, jamais de l'adresse.
+- [ ] Appel de `/api/auth/otp/verify`, puis ouverture de la session (jeton en mémoire, cookie de rafraîchissement) et passage au test de niveau (NS-106). *Fait sauf le passage : l'écran renvoie vers `/` tant que NS-106 n'existe pas.*
+- [x] Erreurs lisibles : code faux, expiré, trop d'essais ; accessibilité clavier et lecteur d'écran.

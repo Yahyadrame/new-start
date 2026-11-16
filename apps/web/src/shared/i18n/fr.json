@@ -75,5 +75,24 @@
       "acceptTerms": "Il faut accepter les conditions pour continuer.",
       "server": "On n'a pas pu envoyer le code. Vérifie ta connexion, puis réessaie."
     }
+  },
+  "code": {
+    "back": "Retour",
+    "stepLabel": "Étape 2 sur 3",
+    "title": "Entre le code reçu par e-mail",
+    "sentTo": "On l'a envoyé à {email}.",
+    "label": "Code à 6 chiffres",
+    "submit": "Valider",
+    "verifying": "Vérification…",
+    "resend": "Renvoyer le code",
+    "resendIn": "Renvoyer le code dans {seconds} s",
+    "resent": "Un nouveau code est parti.",
+    "errors": {
+      "format": "Le code a 6 chiffres.",
+      "invalid": "Ce code n'est pas valable. Vérifie-le ou demande-en un nouveau.",
+      "conflict": "Ce numéro ou cette adresse est déjà utilisé. Reviens en arrière pour les changer.",
+      "server": "On n'a pas pu vérifier le code. Vérifie ta connexion, puis réessaie.",
+      "resend": "Le nouveau code n'est pas parti. Réessaie dans un instant."
+    }
   }
 }
