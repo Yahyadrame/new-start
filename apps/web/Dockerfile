@@ -11,6 +11,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json apps/web/
 COPY packages/ui/package.json packages/ui/
 COPY packages/config/package.json packages/config/
+COPY packages/shared/package.json packages/shared/
 RUN pnpm install --frozen-lockfile --filter @newstart/web...
 COPY packages packages
 COPY apps/web apps/web
