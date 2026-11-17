@@ -1,5 +1,5 @@
 import { generateKeyPairSync } from 'node:crypto';
-import { jwtVerify } from 'jose';
+import { jwtVerify, SignJWT } from 'jose';
 import { describe, expect, it } from 'vitest';
 import { createAccessSigner, hashRefreshToken, newRefreshToken } from './tokens.js';
 
@@ -25,6 +25,35 @@ describe('createAccessSigner', () => {
   it('refuse un jeton signé par une autre clé', async () => {
     const [a, b] = [createAccessSigner(), createAccessSigner()];
     await expect(jwtVerify(await a.sign('u'), b.publicKey)).rejects.toThrow();
+  });
+});
+
+describe('AccessSigner.verify', () => {
+  it('rend l’identifiant du compte pour un jeton valide', async () => {
+    const signer = createAccessSigner();
+    await expect(signer.verify(await signer.sign('u-1'))).resolves.toBe('u-1');
+  });
+  it('rend null pour un jeton signé par une autre clé, du texte libre ou un jeton vide', async () => {
+    const [a, b] = [createAccessSigner(), createAccessSigner()];
+    await expect(b.verify(await a.sign('u'))).resolves.toBeNull();
+    await expect(a.verify('pas-un-jeton')).resolves.toBeNull();
+    await expect(a.verify('')).resolves.toBeNull();
+  });
+  it('rend null pour un jeton expiré ou d’un autre émetteur', async () => {
+    const { privateKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' });
+    const pem = String(privateKey.export({ type: 'pkcs8', format: 'pem' }));
+    const signer = createAccessSigner(pem);
+    const make = (iss: string, exp: string) =>
+      new SignJWT({})
+        .setProtectedHeader({ alg: 'ES256' })
+        .setSubject('u')
+        .setIssuer(iss)
+        .setIssuedAt()
+        .setExpirationTime(exp)
+        .sign(privateKey);
+    await expect(signer.verify(await make('new-start', '10 minutes'))).resolves.toBe('u');
+    await expect(signer.verify(await make('autre', '10 minutes'))).resolves.toBeNull();
+    await expect(signer.verify(await make('new-start', '-1 minutes'))).resolves.toBeNull();
   });
 });
 
