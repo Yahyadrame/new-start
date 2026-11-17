@@ -51,6 +51,13 @@ const schema = z.object({
   OTP_SECRET: z.preprocess(emptyToUndefined, z.string().min(32).optional()),
   // Clé privée ES256 (PEM PKCS8, retours à la ligne écrits \n) qui signe les jetons d'accès. Vide : clé tirée au démarrage.
   JWT_PRIVATE_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
+  // IA : fournisseur par brique (groq, gemini) et clés. Vide, inconnu ou clé manquante : adaptateur factice.
+  LLM_PROVIDER: z.preprocess(emptyToUndefined, z.string().optional()),
+  STT_PROVIDER: z.preprocess(emptyToUndefined, z.string().optional()),
+  TTS_PROVIDER: z.preprocess(emptyToUndefined, z.string().optional()),
+  GROQ_API_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
+  GEMINI_API_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
+  AI_MAX_CALLS_PER_MONTH: z.preprocess(emptyToUndefined, z.string().optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z
     .string()
