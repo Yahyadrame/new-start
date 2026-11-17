@@ -9,12 +9,15 @@ RUN npm i -g "$(node -p "require('./package.json').packageManager.split('+')[0]"
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json apps/api/
 COPY packages/config/package.json packages/config/
+COPY packages/ai/package.json packages/ai/
 COPY packages/shared/package.json packages/shared/
 RUN pnpm install --frozen-lockfile --filter @newstart/api...
 COPY packages/config packages/config
+COPY packages/ai packages/ai
 COPY packages/shared packages/shared
 COPY apps/api apps/api
 RUN pnpm --filter @newstart/shared build \
+ && pnpm --filter @newstart/ai build \
  && pnpm --filter @newstart/api build \
  && pnpm --filter @newstart/api deploy --prod --legacy /out
 
