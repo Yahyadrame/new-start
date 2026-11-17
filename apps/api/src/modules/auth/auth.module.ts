@@ -22,10 +22,12 @@ import {
 import { PrismaSessionStore } from './infrastructure/prisma-session.store.js';
 import { SESSION_STORE, SessionService, type SessionStore } from './application/session.js';
 import { PrismaOtpStore } from './infrastructure/prisma-otp.store.js';
+import { AccessGuard } from './interface/access.guard.js';
 import { AuthController } from './interface/auth.controller.js';
 
 @Module({
   controllers: [AuthController],
+  exports: [ACCESS_SIGNER, AccessGuard],
   providers: [
     { provide: OTP_STORE, useClass: PrismaOtpStore },
     // ponytail: sans OTP_SECRET, clé tirée au démarrage (les codes en attente tombent au redémarrage,
@@ -47,6 +49,7 @@ import { AuthController } from './interface/auth.controller.js';
       useFactory: (store: AccountStore, signer: AccessSigner, key: string) =>
         new VerifyOtp(store, signer, key),
     },
+    AccessGuard,
     { provide: SESSION_STORE, useClass: PrismaSessionStore },
     {
       provide: SessionService,
