@@ -49,3 +49,15 @@
 - [x] `/signup/code` : six chiffres, renvoi du code après un délai, retour à l'inscription ; l'e-mail vient d'un stockage de session, jamais de l'adresse.
 - [ ] Appel de `/api/auth/otp/verify`, puis ouverture de la session (jeton en mémoire, cookie de rafraîchissement) et passage au test de niveau (NS-106). *Fait sauf le passage : l'écran renvoie vers `/` tant que NS-106 n'existe pas.*
 - [x] Erreurs lisibles : code faux, expiré, trop d'essais ; accessibilité clavier et lecteur d'écran.
+
+## NS-112 — Formulaire d'inscription : indicatif téléphonique et année de naissance · M
+*Ajouté le 2026-11-17 : le porteur veut choisir au lieu de taper (retour du test réel d'inscription). Choix A validé : `Command` shadcn/Radix + liste de pays de `libphonenumber-js`.*
+- [ ] Champ téléphone : sélecteur de pays (drapeau en image, nom, indicatif), recherche par nom ou indicatif, Sénégal (+221) par défaut ; le numéro saisi reste validé en E.164 par le schéma partagé.
+- [ ] Année de naissance : liste à choisir (de l'année courante moins 100 ans à l'année courante moins 13 ans), plus de saisie libre.
+- [ ] Clavier, lecteur d'écran, cibles ≥ 44 px, thèmes clair et sombre ; textes via `fr.json`. *(thème sombre vu à l’écran ; clair à vérifier sur l’aperçu)*
+- [ ] Tests unitaires du formulaire et du sélecteur.
+
+## NS-113 — Journaliser la cause d'un échec d'envoi du code · S
+*Ajouté le 2026-11-17 : `POST /auth/otp/request` renvoie 503 sans cause dans les logs (le blocage d'IP de Brevo est resté invisible).*
+- [ ] `RequestOtp` journalise (pino) le canal et le statut renvoyé par Brevo quand l'envoi échoue, sans adresse e-mail, sans numéro et sans code.
+- [ ] Test unitaire : l'erreur est journalisée et le 503 `DELIVERY_FAILED` reste inchangé.
