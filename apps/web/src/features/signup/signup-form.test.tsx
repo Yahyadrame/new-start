@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
 const push = vi.hoisted(() => vi.fn());
@@ -27,6 +27,14 @@ beforeEach(() => {
   sessionStorage.clear();
   requestCode.mockReset();
   push.mockReset();
+});
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.scrollIntoView ??= () => {};
 });
 afterEach(cleanup);
 
@@ -65,5 +73,22 @@ describe('SignupForm', () => {
     expect(push).not.toHaveBeenCalled();
     expect(loadPendingSignup()).toBeNull();
     expect((screen.getByLabelText(t.firstName) as HTMLInputElement).value).toBe('Awa');
+  });
+});
+
+describe('SignupForm : choix guidés', () => {
+  it('propose l’année de naissance en liste, de 13 à 100 ans', () => {
+    render(<SignupForm />);
+    const options = Array.from(
+      (screen.getByLabelText(t.birthYear) as HTMLSelectElement).options,
+    ).slice(1);
+    const year = new Date().getFullYear();
+    expect(options[0]?.value).toBe(String(year - 13));
+    expect(options.at(-1)?.value).toBe(String(year - 100));
+  });
+  it('refuse l’envoi tant qu’aucune année n’est choisie', async () => {
+    render(<SignupForm />);
+    submit();
+    expect(await screen.findByText(t.errors.birthYear)).toBeTruthy();
   });
 });

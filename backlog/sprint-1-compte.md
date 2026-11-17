@@ -52,10 +52,10 @@
 
 ## NS-112 — Formulaire d'inscription : indicatif téléphonique et année de naissance · M
 *Ajouté le 2026-11-17 : le porteur veut choisir au lieu de taper (retour du test réel d'inscription). Choix A validé : `Command` shadcn/Radix + liste de pays de `libphonenumber-js`.*
-- [ ] Champ téléphone : sélecteur de pays (drapeau en image, nom, indicatif), recherche par nom ou indicatif, Sénégal (+221) par défaut ; le numéro saisi reste validé en E.164 par le schéma partagé.
-- [ ] Année de naissance : liste à choisir (de l'année courante moins 100 ans à l'année courante moins 13 ans), plus de saisie libre.
-- [ ] Clavier, lecteur d'écran, cibles ≥ 44 px, thèmes clair et sombre ; textes via `fr.json`. *(thème sombre vu à l’écran ; clair à vérifier sur l’aperçu)*
-- [ ] Tests unitaires du formulaire et du sélecteur.
+- [x] Champ téléphone : sélecteur de pays (drapeau en image, nom, indicatif), recherche par nom ou indicatif, Sénégal (+221) par défaut ; le numéro saisi reste validé en E.164 par le schéma partagé.
+- [x] Année de naissance : liste à choisir (de l'année courante moins 100 ans à l'année courante moins 13 ans), plus de saisie libre.
+- [x] Clavier, lecteur d'écran, cibles ≥ 44 px, thèmes clair et sombre ; textes via `fr.json`. *(thème sombre vu à l’écran ; clair à vérifier sur l’aperçu)*
+- [x] Tests unitaires du formulaire et du sélecteur.
 
 ## NS-113 — Journaliser la cause d'un échec d'envoi du code · S
 *Ajouté le 2026-11-17 : `POST /auth/otp/request` renvoie 503 sans cause dans les logs (le blocage d'IP de Brevo est resté invisible).*
