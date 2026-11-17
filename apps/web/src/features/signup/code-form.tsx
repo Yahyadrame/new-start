@@ -42,7 +42,7 @@ export function CodeForm() {
     try {
       setSession(await verifyCode(email, code));
       clearPendingSignup();
-      router.push('/');
+      router.push('/onboarding/level');
     } catch (err) {
       const status = err instanceof VerifyCodeError ? err.status : 0;
       setMessage(status === 400 ? 'invalid' : status === 409 ? 'conflict' : 'server');

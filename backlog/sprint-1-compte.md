@@ -22,9 +22,9 @@
 
 ## NS-106 — Test de niveau (2) · L
 *Découpé le 2026-11-17 en quatre PR : (1) garde d'accès aux routes protégées, (2) API du test (questions fixes, estimation par le LLM, `User.level`), (3) écrans à l'écrit, (4) voix (micro et transcription).*
-- [ ] 5 questions posées par Jade, réponses à l'oral (STT) ou à l'écrit. *API faite (PR 2) ; écrans (PR 3) et voix (PR 4) à venir.*
+- [ ] 5 questions posées par Jade, réponses à l'oral (STT) ou à l'écrit. *API faite (PR 2), écrans à l'écrit faits (PR 3) ; voix (micro, « Écrire plutôt ») à venir (PR 4).*
 - [x] Le LLM estime le niveau CECR avec une justification courte ; résultat enregistré sur `User.level`. *Fait côté API (PR 2). Le modèle « plus puissant » n'est pas encore choisissable : `LlmRequest` n'a pas de champ modèle, le modèle par défaut du fournisseur est utilisé.*
-- [ ] Écran de résultat : niveau, 3 points forts, 3 points à travailler, bouton « Commencer ».
+- [x] Écran de résultat : niveau, 3 points forts, 3 points à travailler, bouton « Commencer ». *« Commencer » renvoie à `/` tant que Discussions (NS-108) n'existe pas.*
 
 ## NS-107 — Profil et réglages (16) · M
 - [ ] `GET/PATCH /me` ; thème Système/Clair/Sombre appliqué immédiatement ; rappel, objectif quotidien, accent, économie de données, mode pause.
@@ -48,7 +48,7 @@
 ## NS-111 — Écran du code de vérification · M
 *Ajouté le 2026-11-16 : NS-105 envoie le code puis renvoie vers `/signup/code`, qui n'existe pas encore.*
 - [x] `/signup/code` : six chiffres, renvoi du code après un délai, retour à l'inscription ; l'e-mail vient d'un stockage de session, jamais de l'adresse.
-- [ ] Appel de `/api/auth/otp/verify`, puis ouverture de la session (jeton en mémoire, cookie de rafraîchissement) et passage au test de niveau (NS-106). *Fait sauf le passage : l'écran renvoie vers `/` tant que NS-106 n'existe pas.*
+- [x] Appel de `/api/auth/otp/verify`, puis ouverture de la session (jeton en mémoire, cookie de rafraîchissement) et passage au test de niveau (NS-106).
 - [x] Erreurs lisibles : code faux, expiré, trop d'essais ; accessibilité clavier et lecteur d'écran.
 
 ## NS-112 — Formulaire d'inscription : indicatif téléphonique et année de naissance · M
@@ -62,3 +62,8 @@
 *Ajouté le 2026-11-17 : `POST /auth/otp/request` renvoie 503 sans cause dans les logs (le blocage d'IP de Brevo est resté invisible).*
 - [x] `RequestOtp` journalise (pino) le canal et le statut renvoyé par Brevo quand l'envoi échoue, sans adresse e-mail, sans numéro et sans code.
 - [x] Test unitaire : l'erreur est journalisée et le 503 `DELIVERY_FAILED` reste inchangé.
+
+## NS-114 — Retrouver la session au rechargement · M
+*Ajouté le 2026-11-17 : le jeton d'accès vit en mémoire ; recharger `/onboarding/level` renvoie vers `/signup`, où le même e-mail donne un conflit.*
+- [ ] Au chargement, `POST /api/auth/refresh` (cookie) rouvre la session avant de décider d'une redirection ; test unitaire.
+- [ ] Sans cookie valable, renvoi vers l'accueil ; le renouvellement du jeton avant ses 15 minutes est traité dans la même PR.

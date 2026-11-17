@@ -49,13 +49,13 @@ describe('CodeForm', () => {
     expect(alertText()).toBe(t.errors.format);
     expect(api.verifyCode).not.toHaveBeenCalled();
   });
-  it('ouvre la session, vide le profil en attente et quitte la page', async () => {
+  it('ouvre la session, vide le profil en attente et passe au test de niveau', async () => {
     const session = { accessToken: 'a', expiresInSeconds: 900, user: { id: 'u1' } };
     api.verifyCode.mockResolvedValue(session);
     render(<CodeForm />);
     type('123456');
     submit();
-    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/'));
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/onboarding/level'));
     expect(api.verifyCode).toHaveBeenCalledWith('awa@example.com', '123456');
     expect(getSession()).toBe(session);
     expect(sessionStorage.getItem('ns_pending_signup')).toBeNull();
