@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, Logger } from '@nestjs/common';
 import type { Mailer } from '../../../shared/mailer/mailer.js';
 import type { SmsSender } from '../../../shared/sms/sms.js';
 import {
@@ -34,8 +34,12 @@ export type RequestOtpInput = {
   signup?: SignupProfile | undefined;
 };
 
+const log = new Logger('RequestOtp');
+
 const fail = (status: number, code: string, message: string) =>
   new HttpException({ code, message }, status);
+
+const reason = (err: unknown) => (err instanceof Error ? err.message : 'erreur inconnue');
 
 export class RequestOtp {
   constructor(
@@ -74,7 +78,9 @@ export class RequestOtp {
     });
     try {
       await this.deliver(channel, destination, code);
-    } catch {
+    } catch (err) {
+      // Le message d'erreur de l'adaptateur ne porte que le statut du fournisseur : ni adresse, ni numéro, ni code.
+      log.error(`Envoi du code (${channel}) impossible : ${reason(err)}`);
       await this.store.remove(id);
       throw fail(503, 'DELIVERY_FAILED', "Le code n'a pas pu partir. Réessaie dans un instant.");
     }

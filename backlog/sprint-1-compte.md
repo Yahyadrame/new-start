@@ -59,5 +59,5 @@
 
 ## NS-113 — Journaliser la cause d'un échec d'envoi du code · S
 *Ajouté le 2026-11-17 : `POST /auth/otp/request` renvoie 503 sans cause dans les logs (le blocage d'IP de Brevo est resté invisible).*
-- [ ] `RequestOtp` journalise (pino) le canal et le statut renvoyé par Brevo quand l'envoi échoue, sans adresse e-mail, sans numéro et sans code.
-- [ ] Test unitaire : l'erreur est journalisée et le 503 `DELIVERY_FAILED` reste inchangé.
+- [x] `RequestOtp` journalise (pino) le canal et le statut renvoyé par Brevo quand l'envoi échoue, sans adresse e-mail, sans numéro et sans code.
+- [x] Test unitaire : l'erreur est journalisée et le 503 `DELIVERY_FAILED` reste inchangé.

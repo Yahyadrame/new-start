@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
 import { FakeMailer, type Mailer } from '../../../shared/mailer/mailer.js';
 import { FakeSmsSender } from '../../../shared/sms/sms.js';
@@ -107,5 +108,30 @@ describe('RequestOtp', () => {
       },
     );
     expect(rows).toHaveLength(0);
+  });
+  it('journalise la cause de l’échec sans l’adresse ni le code', async () => {
+    const error = vi.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+    const mailer: Mailer = {
+      send: vi.fn().mockRejectedValue(new Error('Brevo /smtp/email : réponse 403')),
+    };
+    const { uc } = setup({ mailer });
+    await expect(
+      uc.execute({ channel: 'email', destination: 'secret@test.dev' }),
+    ).rejects.toMatchObject({ status: 503 });
+    expect(error).toHaveBeenCalledTimes(1);
+    const line = String(error.mock.calls[0]?.[0]);
+    expect(line).toContain('réponse 403');
+    expect(line).not.toContain('secret@test.dev');
+    error.mockRestore();
+  });
+  it('journalise « erreur inconnue » quand l’échec n’est pas une Error', async () => {
+    const error = vi.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+    const mailer: Mailer = { send: vi.fn().mockRejectedValue('boum') };
+    const { uc } = setup({ mailer });
+    await expect(uc.execute({ channel: 'email', destination: 'a@test.dev' })).rejects.toMatchObject(
+      { status: 503 },
+    );
+    expect(String(error.mock.calls[0]?.[0])).toContain('erreur inconnue');
+    error.mockRestore();
   });
 });
