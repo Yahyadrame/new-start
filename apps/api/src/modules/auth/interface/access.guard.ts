@@ -18,8 +18,9 @@ export class AccessGuard implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = ctx.switchToHttp().getRequest<AuthedRequest>();
-    const token = /^Bearer (\S+)$/.exec(req.headers.authorization ?? '')?.[1];
-    const userId = token ? await this.signer.verify(token) : null;
+    // Pas de branche sur l'en-tête : `verify` rend null pour un jeton vide ou faux.
+    const token = /^Bearer (\S+)$/.exec(req.headers.authorization ?? '')?.[1] ?? '';
+    const userId = await this.signer.verify(token);
     if (!userId) {
       throw new HttpException(
         { code: 'UNAUTHENTICATED', message: 'Connecte-toi pour continuer.' },
