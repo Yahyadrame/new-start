@@ -2,25 +2,27 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SIGNUP_GOALS } from '@newstart/shared';
-import { Button, Input } from '@newstart/ui';
+import { Button, Input, Select } from '@newstart/ui';
 import { useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import fr from '../../shared/i18n/fr.json';
+import { PhoneField } from './phone-field';
 import { savePendingSignup } from './pending-signup';
 import { requestCode } from './request-code';
 import { SignupFormSchema, type SignupFormInput, type SignupFormValues } from './signup-schema';
 
 const t = fr.signup;
-type TextField = 'firstName' | 'phone' | 'birthYear' | 'email';
+type TextField = 'firstName' | 'email';
 type Consent = 'acceptTerms' | 'smsOptIn' | 'voiceConsent';
 
 const TEXT_FIELDS: { name: TextField; type: string; autoComplete: string; hint?: string }[] = [
   { name: 'firstName', type: 'text', autoComplete: 'given-name' },
-  { name: 'phone', type: 'tel', autoComplete: 'tel', hint: t.phoneHint },
-  { name: 'birthYear', type: 'text', autoComplete: 'bday-year' },
   { name: 'email', type: 'email', autoComplete: 'email', hint: t.emailHint },
 ];
+const THIS_YEAR = new Date().getFullYear();
+// De 13 à 100 ans : la liste remplace la saisie libre.
+const BIRTH_YEARS = Array.from({ length: 88 }, (_, i) => THIS_YEAR - 13 - i);
 const CONSENTS: Consent[] = ['acceptTerms', 'smsOptIn', 'voiceConsent'];
 
 function FieldError({ id, children }: { id: string; children?: ReactNode }) {
@@ -36,11 +38,12 @@ export function SignupForm() {
   const [failed, setFailed] = useState(false);
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormInput, unknown, SignupFormValues>({
     resolver: zodResolver(SignupFormSchema),
-    defaultValues: { smsOptIn: false, voiceConsent: false },
+    defaultValues: { phone: '', smsOptIn: false, voiceConsent: false },
   });
 
   async function onSubmit(values: SignupFormValues) {
@@ -54,25 +57,74 @@ export function SignupForm() {
     }
   }
 
+  const renderTextField = ({ name, type, autoComplete, hint }: (typeof TEXT_FIELDS)[number]) => (
+    <div key={name} className="flex flex-col gap-1.5">
+      <label htmlFor={name} className="text-[15px] font-semibold">
+        {t[name]}
+      </label>
+      <Input
+        id={name}
+        type={type}
+        autoComplete={autoComplete}
+        aria-invalid={errors[name] ? true : undefined}
+        aria-describedby={`${name}-note`}
+        {...register(name)}
+      />
+      {hint && !errors[name] && <p className="text-[13px] text-text-muted">{hint}</p>}
+      <FieldError id={`${name}-note`}>{errors[name] && t.errors[name]}</FieldError>
+    </div>
+  );
+
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-      {TEXT_FIELDS.map(({ name, type, autoComplete, hint }) => (
-        <div key={name} className="flex flex-col gap-1.5">
-          <label htmlFor={name} className="text-[15px] font-semibold">
-            {t[name]}
-          </label>
-          <Input
-            id={name}
-            type={type}
-            autoComplete={autoComplete}
-            aria-invalid={errors[name] ? true : undefined}
-            aria-describedby={`${name}-note`}
-            {...register(name)}
-          />
-          {hint && !errors[name] && <p className="text-[13px] text-text-muted">{hint}</p>}
-          <FieldError id={`${name}-note`}>{errors[name] && t.errors[name]}</FieldError>
-        </div>
-      ))}
+      {TEXT_FIELDS.slice(0, 1).map(renderTextField)}
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="phone" className="text-[15px] font-semibold">
+          {t.phone}
+        </label>
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field }) => (
+            <PhoneField
+              id="phone"
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              invalid={!!errors.phone}
+              describedBy="phone-note"
+            />
+          )}
+        />
+        {!errors.phone && <p className="text-[13px] text-text-muted">{t.phoneHint}</p>}
+        <FieldError id="phone-note">{errors.phone && t.errors.phone}</FieldError>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="birthYear" className="text-[15px] font-semibold">
+          {t.birthYear}
+        </label>
+        <Select
+          id="birthYear"
+          autoComplete="bday-year"
+          defaultValue=""
+          aria-invalid={errors.birthYear ? true : undefined}
+          aria-describedby="birthYear-note"
+          {...register('birthYear')}
+        >
+          <option value="" disabled>
+            {t.birthYearPlaceholder}
+          </option>
+          {BIRTH_YEARS.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </Select>
+        <FieldError id="birthYear-note">{errors.birthYear && t.errors.birthYear}</FieldError>
+      </div>
+
+      {TEXT_FIELDS.slice(1).map(renderTextField)}
 
       <fieldset className="flex flex-col gap-2.5">
         <legend className="mb-2 text-[15px] font-semibold">{t.goal}</legend>
