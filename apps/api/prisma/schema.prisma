@@ -42,31 +42,32 @@ enum MessageKind {
 }
 
 model User {
-  id              String         @id @default(uuid(7)) @db.Uuid
+  id              String            @id @default(uuid(7)) @db.Uuid
   firstName       String
   goal            Goal
-  level           Cefr           @default(A1)
+  level           Cefr              @default(A1)
   birthYear       Int? // pour restreindre les thèmes réservés aux majeurs
-  phoneE164       String?        @unique // format international (+221…), demandé à l'inscription
+  phoneE164       String?           @unique // format international (+221…), demandé à l'inscription
   phoneVerifiedAt DateTime? // rempli quand la vérification par SMS sera activée
-  smsOptIn        Boolean        @default(false) // consentement séparé aux SMS
-  locale          String         @default("fr")
+  smsOptIn        Boolean           @default(false) // consentement séparé aux SMS
+  locale          String            @default("fr")
   countryCode     String? // ISO 3166-1 alpha-2, pour la devise
-  theme           ThemePref      @default(SYSTEM)
+  theme           ThemePref         @default(SYSTEM)
   reminderTime    String? // "19:00"
-  timezone        String         @default("Africa/Dakar")
-  dailyGoalMin    Int            @default(15)
-  preferredAccent String         @default("en-US")
-  dataSaver       Boolean        @default(false)
+  timezone        String            @default("Africa/Dakar")
+  dailyGoalMin    Int               @default(15)
+  preferredAccent String            @default("en-US")
+  dataSaver       Boolean           @default(false)
   pausedUntil     DateTime?
-  xp              Int            @default(0)
-  streakDays      Int            @default(0)
-  lastActiveDay   DateTime?      @db.Date
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  xp              Int               @default(0)
+  streakDays      Int               @default(0)
+  lastActiveDay   DateTime?         @db.Date
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   identities      AuthIdentity[]
   refreshTokens   RefreshToken[]
   conversations   Conversation[]
+  levelAnswers    LevelTestAnswer[]
 }
 
 model AuthIdentity {
@@ -98,6 +99,19 @@ model RefreshToken {
 
   @@index([userId])
   @@index([familyId])
+}
+
+// Réponse à l'une des 5 questions du test de niveau. Refaire le test réécrit les mêmes lignes.
+model LevelTestAnswer {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  userId    String   @db.Uuid
+  position  Int // 1 à 5, voir LEVEL_QUESTIONS dans packages/shared
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, position])
 }
 
 model Topic {

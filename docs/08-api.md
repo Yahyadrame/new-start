@@ -18,7 +18,7 @@
 | GET / PATCH | `/me` | Profil et réglages |
 | DELETE | `/me` | Supprime le compte et toutes ses données |
 | GET | `/me/export` | Export des données personnelles (JSON) |
-| POST | `/onboarding/level-test/answer` | Envoie une réponse du test ; la dernière renvoie le niveau |
+| POST | `/onboarding/level-test/answer` | Jeton d'accès exigé. Envoie `{ position, text }` (position 1 à 5, texte de 1 à 1000 caractères ; les 5 questions fixes sont dans `packages/shared`). Réponses 1 à 4 : `{ done: false, next }`. Réponse 5 : le LLM estime le niveau, qui est enregistré sur `User.level`, et la réponse est `{ done: true, level, justification, strengths[3], weaknesses[3] }` (textes en français). Refaire le test réécrit les réponses |
 | GET | `/topics` | Thèmes et nombre de contacts |
 | GET | `/agents?topic=&category=&q=` | Catalogue des contacts |
 | GET | `/conversations` | Liste triée par dernier message, avec non lus |
@@ -76,6 +76,7 @@ Connexion authentifiée par le jeton d'accès. Chaque utilisateur rejoint la sal
 | `CHANNEL_UNAVAILABLE` | 400 | Canal d'envoi éteint (SMS tant que le budget n'est pas accordé) |
 | `DELIVERY_FAILED` | 503 | Le code n'a pas pu être envoyé, réessayer |
 | `AI_UNAVAILABLE` | 503 | Fournisseur IA indisponible, réessayer |
+| `LEVEL_TEST_INCOMPLETE` | 409 | Cinquième réponse envoyée alors qu'une des quatre premières manque |
 | `PAYMENT_FAILED` | 402 | Paiement refusé |
 
 ## Limites de débit

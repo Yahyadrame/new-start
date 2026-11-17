@@ -28,6 +28,23 @@ describe('parseEnv', () => {
     );
     expect(() => parseEnv({ ...base, SENTRY_DSN: 'pas-une-url' })).toThrow('SENTRY_DSN');
   });
+  it('variables IA : vides = absentes, valeurs gardées', () => {
+    const base = { DATABASE_URL: 'x' };
+    const off = parseEnv({ ...base, LLM_PROVIDER: '', GROQ_API_KEY: '' });
+    expect(off.LLM_PROVIDER).toBeUndefined();
+    expect(off.GROQ_API_KEY).toBeUndefined();
+    const on = parseEnv({
+      ...base,
+      LLM_PROVIDER: 'groq',
+      GROQ_API_KEY: 'k',
+      AI_MAX_CALLS_PER_MONTH: '10',
+    });
+    expect(on).toMatchObject({
+      LLM_PROVIDER: 'groq',
+      GROQ_API_KEY: 'k',
+      AI_MAX_CALLS_PER_MONTH: '10',
+    });
+  });
   it('OTEL_EXPORTER_OTLP_ENDPOINT : vide = éteint, barre finale retirée, non URL refusée', () => {
     expect(
       parseEnv({ ...base, OTEL_EXPORTER_OTLP_ENDPOINT: '' }).OTEL_EXPORTER_OTLP_ENDPOINT,

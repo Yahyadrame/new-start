@@ -22,8 +22,8 @@
 
 ## NS-106 — Test de niveau (2) · L
 *Découpé le 2026-11-17 en quatre PR : (1) garde d'accès aux routes protégées, (2) API du test (questions fixes, estimation par le LLM, `User.level`), (3) écrans à l'écrit, (4) voix (micro et transcription).*
-- [ ] 5 questions posées par Jade, réponses à l'oral (STT) ou à l'écrit.
-- [ ] Le LLM (modèle « évaluation ») estime le niveau CECR avec une justification courte ; résultat enregistré sur `User.level`.
+- [ ] 5 questions posées par Jade, réponses à l'oral (STT) ou à l'écrit. *API faite (PR 2) ; écrans (PR 3) et voix (PR 4) à venir.*
+- [x] Le LLM estime le niveau CECR avec une justification courte ; résultat enregistré sur `User.level`. *Fait côté API (PR 2). Le modèle « plus puissant » n'est pas encore choisissable : `LlmRequest` n'a pas de champ modèle, le modèle par défaut du fournisseur est utilisé.*
 - [ ] Écran de résultat : niveau, 3 points forts, 3 points à travailler, bouton « Commencer ».
 
 ## NS-107 — Profil et réglages (16) · M

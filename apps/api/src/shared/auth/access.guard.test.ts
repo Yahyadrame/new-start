@@ -1,6 +1,6 @@
 import type { ExecutionContext } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
-import { createAccessSigner } from '../domain/tokens.js';
+import { createAccessSigner } from '../../modules/auth/domain/tokens.js';
 import { AccessGuard, type AuthedRequest } from './access.guard.js';
 
 function context(authorization?: string) {
