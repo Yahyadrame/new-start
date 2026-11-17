@@ -98,5 +98,29 @@
       "server": "On n'a pas pu vérifier le code. Vérifie ta connexion, puis réessaie.",
       "resend": "Le nouveau code n'est pas parti. Réessaie dans un instant."
     }
+  },
+  "level": {
+    "stepLabel": "Étape 3 sur 3",
+    "title": "Un petit test avec Jade",
+    "intro": "Cinq questions pour savoir par où commencer. Réponds en anglais, comme tu peux.",
+    "chatLabel": "Conversation avec Jade",
+    "jade": "Jade",
+    "me": "Toi",
+    "progress": "Question {n} sur {total}",
+    "answerLabel": "Ta réponse en anglais",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "evaluating": "Jade lit tes réponses…",
+    "errors": {
+      "unavailable": "Jade n'arrive pas à évaluer ton niveau pour le moment. Réessaie dans un instant.",
+      "incomplete": "Il manque une réponse. Recharge la page et reprends le test.",
+      "server": "Ta réponse n'est pas partie. Vérifie ta connexion, puis réessaie."
+    },
+    "result": {
+      "levelLabel": "Ton niveau estimé",
+      "strengths": "Ce que tu fais déjà bien",
+      "weaknesses": "Ce qu'on va travailler",
+      "start": "Commencer"
+    }
   }
 }
