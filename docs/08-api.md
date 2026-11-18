@@ -15,7 +15,7 @@
 | POST | `/auth/google` | Échange un `idToken` Google contre les jetons |
 | POST | `/auth/refresh` | Lit le cookie `ns_refresh`, renvoie `{ accessToken, expiresInSeconds, user }` et pose un nouveau cookie (rotation). Un jeton déjà utilisé révoque toute la famille |
 | POST | `/auth/logout` | Révoque la famille du jeton, efface le cookie, répond 204 |
-| GET / PATCH | `/me` | Profil et réglages |
+| GET / PATCH | `/me` | Jeton d'accès exigé. `GET` renvoie `{ id, firstName, goal, level, theme, reminderTime, timezone, dailyGoalMin, preferredAccent, dataSaver, pausedUntil }`. `PATCH` prend une ou plusieurs de ces clés (sauf `id`, `level` et `timezone`) : `firstName` (2 à 30 caractères), `goal`, `theme` (`SYSTEM`, `LIGHT`, `DARK`), `reminderTime` (`HH:MM` ou `null`), `dailyGoalMin` (5 à 120), `preferredAccent` (`en-US`, `en-GB`, `en-NG`), `dataSaver`, `pausedUntil` (date ISO future ou `null`). Renvoie le profil à jour. Corps vide ou clé inconnue : 400 `VALIDATION_FAILED` ; compte disparu : 404 `ACCOUNT_NOT_FOUND` |
 | DELETE | `/me` | Supprime le compte et toutes ses données |
 | GET | `/me/export` | Export des données personnelles (JSON) |
 | POST | `/onboarding/level-test/answer` | Jeton d'accès exigé. Envoie `{ position, text }` (position 1 à 5, texte de 1 à 1000 caractères ; les 5 questions fixes sont dans `packages/shared`). Réponses 1 à 4 : `{ done: false, next }`. Réponse 5 : le LLM estime le niveau, qui est enregistré sur `User.level` ; la conversation avec Jade est créée avec son premier message (une seule fois), et la réponse est `{ done: true, level, justification, strengths[3], weaknesses[3] }` (textes en français). Refaire le test réécrit les réponses |
