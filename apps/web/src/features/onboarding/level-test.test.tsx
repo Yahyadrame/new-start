@@ -33,6 +33,10 @@ beforeEach(() => {
   setSession(session);
 });
 afterEach(cleanup);
+const open = async () => {
+  render(<LevelTest />);
+  await screen.findByLabelText(fr.level.answerLabel);
+};
 
 const field = () => screen.getByLabelText(t.answerLabel) as HTMLTextAreaElement;
 const write = (value: string) => fireEvent.change(field(), { target: { value } });
@@ -40,15 +44,27 @@ const send = () => fireEvent.click(screen.getByRole('button', { name: t.send }))
 const progress = (n: number) => `Question ${n} sur 5`;
 
 describe('LevelTest', () => {
-  it("renvoie vers l'inscription sans session", () => {
+  it("renvoie vers l'inscription sans session ni cookie valable", async () => {
     setSession(null);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
     const { container } = render(<LevelTest />);
+    await waitFor(() => expect(nav.replace).toHaveBeenCalledWith('/signup'));
     expect(container.textContent).toBe('');
-    expect(nav.replace).toHaveBeenCalledWith('/signup');
+    vi.unstubAllGlobals();
   });
 
-  it('pose la première question et bloque l’envoi tant que la réponse est vide', () => {
-    render(<LevelTest />);
+  it('rouvre la session avec le cookie après un rechargement', async () => {
+    setSession(null);
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => session });
+    vi.stubGlobal('fetch', fetchMock);
+    await open();
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/refresh', { method: 'POST' });
+    expect(nav.replace).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('pose la première question et bloque l’envoi tant que la réponse est vide', async () => {
+    await open();
     expect(screen.getByText(LEVEL_QUESTIONS[0].text, { exact: false })).toBeTruthy();
     expect(screen.getByText(progress(1))).toBeTruthy();
     expect((screen.getByRole('button', { name: t.send }) as HTMLButtonElement).disabled).toBe(true);
@@ -58,7 +74,7 @@ describe('LevelTest', () => {
 
   it('envoie la réponse, l’affiche puis pose la question suivante', async () => {
     api.sendLevelAnswer.mockResolvedValue({ done: false, next: 2 });
-    render(<LevelTest />);
+    await open();
     write('  I am Awa  ');
     send();
     await waitFor(() => expect(screen.getByText(progress(2))).toBeTruthy());
@@ -70,7 +86,7 @@ describe('LevelTest', () => {
 
   it('envoie avec Entrée mais pas avec Maj+Entrée', async () => {
     api.sendLevelAnswer.mockResolvedValue({ done: false, next: 2 });
-    render(<LevelTest />);
+    await open();
     write('Hello');
     fireEvent.keyDown(field(), { key: 'Enter', shiftKey: true });
     fireEvent.keyDown(field(), { key: 'a' });
@@ -83,7 +99,7 @@ describe('LevelTest', () => {
     api.sendLevelAnswer
       .mockResolvedValueOnce({ done: false, next: 5 })
       .mockResolvedValueOnce(result);
-    render(<LevelTest />);
+    await open();
     write('one');
     send();
     await waitFor(() => expect(screen.getByText(progress(5))).toBeTruthy());
@@ -100,7 +116,7 @@ describe('LevelTest', () => {
     api.sendLevelAnswer
       .mockResolvedValueOnce({ done: false, next: 5 })
       .mockReturnValueOnce(new Promise((r) => (finish = r)));
-    render(<LevelTest />);
+    await open();
     write('one');
     send();
     await waitFor(() => expect(screen.getByText(progress(5))).toBeTruthy());
@@ -116,7 +132,7 @@ describe('LevelTest', () => {
     [500, t.errors.server],
   ])('statut %i : message lisible, réponse conservée pour réessayer', async (status, message) => {
     api.sendLevelAnswer.mockRejectedValue(new LevelAnswerError(status));
-    render(<LevelTest />);
+    await open();
     write('Hello');
     send();
     await waitFor(() => expect(screen.getByRole('alert').textContent).toBe(message));
@@ -126,7 +142,7 @@ describe('LevelTest', () => {
 
   it('traite une erreur réseau comme une erreur serveur', async () => {
     api.sendLevelAnswer.mockRejectedValue(new TypeError('fetch failed'));
-    render(<LevelTest />);
+    await open();
     write('Hello');
     send();
     await waitFor(() => expect(screen.getByRole('alert').textContent).toBe(t.errors.server));
@@ -134,7 +150,7 @@ describe('LevelTest', () => {
 
   it("renvoie vers l'inscription quand le jeton est refusé", async () => {
     api.sendLevelAnswer.mockRejectedValue(new LevelAnswerError(401));
-    render(<LevelTest />);
+    await open();
     write('Hello');
     send();
     await waitFor(() => expect(nav.replace).toHaveBeenCalledWith('/signup'));

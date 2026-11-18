@@ -65,5 +65,5 @@
 
 ## NS-114 — Retrouver la session au rechargement · M
 *Ajouté le 2026-11-17 : le jeton d'accès vit en mémoire ; recharger `/onboarding/level` renvoie vers `/signup`, où le même e-mail donne un conflit.*
-- [ ] Au chargement, `POST /api/auth/refresh` (cookie) rouvre la session avant de décider d'une redirection ; test unitaire.
-- [ ] Sans cookie valable, renvoi vers l'accueil ; le renouvellement du jeton avant ses 15 minutes est traité dans la même PR.
+- [x] Au chargement, `POST /api/auth/refresh` (cookie) rouvre la session avant de décider d'une redirection ; test unitaire.
+- [x] Sans cookie valable, renvoi vers l'accueil ; le renouvellement du jeton avant ses 15 minutes est traité dans la même PR.

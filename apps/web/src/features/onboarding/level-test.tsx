@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, Button } from '@newstart/ui';
 import { Mic, SendHorizontal, Square } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { getSession, setSession } from '../../shared/auth/session';
+import { ensureSession, getSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { LevelResult } from './level-result';
 import { LevelAnswerError, sendLevelAnswer } from './send-level-answer';
@@ -24,7 +24,7 @@ const question = (position: number): Turn => ({
 /** Écran 2 des maquettes : cinq questions de Jade, réponses écrites, puis le niveau estimé. */
 export function LevelTest() {
   const router = useRouter();
-  const [token, setToken] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const [position, setPosition] = useState(1);
   const [turns, setTurns] = useState<Turn[]>([question(1)]);
   const [draft, setDraft] = useState('');
@@ -38,9 +38,11 @@ export function LevelTest() {
   const end = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const session = getSession();
-    if (session) setToken(session.accessToken);
-    else router.replace('/signup');
+    // Après un rechargement la mémoire est vide : le cookie rouvre la session avant de renvoyer à l'inscription.
+    void ensureSession().then((session) => {
+      if (session) setReady(true);
+      else router.replace('/signup');
+    });
     setMicOn(canRecord());
   }, [router]);
 
@@ -51,10 +53,12 @@ export function LevelTest() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     const text = draft.trim();
-    if (!token || !text || busy) return;
+    if (!text || busy) return;
     setBusy(true);
     setError(null);
     try {
+      const token = await accessToken();
+      if (!token) return;
       const step = await sendLevelAnswer(token, { position, text });
       setDraft('');
       if (step.done) {
@@ -80,19 +84,25 @@ export function LevelTest() {
     }
   }
 
+  /** Jeton encore valable, renouvelé au besoin ; sans session, retour à l'inscription. */
+  async function accessToken() {
+    const session = await ensureSession();
+    if (!session) router.replace('/signup');
+    return session?.accessToken ?? null;
+  }
+
   async function record() {
-    if (!token) return;
     setError(null);
     if (!(await recorder.start())) return setError(t.voice.errors.denied);
   }
 
   async function onMic() {
-    if (!token) return;
     if (recorder.recording) {
       setListening(true);
       try {
+        const token = await accessToken();
         const audio = await recorder.stop();
-        const text = audio ? (await transcribeAnswer(token, audio)).trim() : '';
+        const text = audio && token ? (await transcribeAnswer(token, audio)).trim() : '';
         if (text) setDraft((d) => (d ? `${d} ${text}` : text));
         else setError(t.voice.errors.empty);
       } catch {
@@ -103,6 +113,8 @@ export function LevelTest() {
       return;
     }
     try {
+      const token = await accessToken();
+      if (!token) return;
       if (await getVoiceConsent(token)) return record();
       setAsking(true);
     } catch {
@@ -112,8 +124,10 @@ export function LevelTest() {
 
   async function onConsent(accepted: boolean) {
     setAsking(false);
-    if (!token || !accepted) return;
+    if (!accepted) return;
     try {
+      const token = await accessToken();
+      if (!token) return;
       await setVoiceConsent(token, true);
       await record();
     } catch {
@@ -127,7 +141,7 @@ export function LevelTest() {
     e.currentTarget.form?.requestSubmit();
   }
 
-  if (!token) return null;
+  if (!ready) return null;
   // ponytail: l'écran Discussions (NS-108) n'existe pas encore ; « Commencer » renvoie à l'accueil en attendant.
   if (result) return <LevelResult result={result} onStart={() => router.push('/')} />;
 
