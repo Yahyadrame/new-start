@@ -8,7 +8,7 @@ vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), replace: 
 const { default: LevelPage } = await import('./page');
 
 describe('/onboarding/level', () => {
-  it("affiche l'étape 3 et le test", () => {
+  it("affiche l'étape 3 et le test", async () => {
     setSession({
       accessToken: 'a',
       expiresInSeconds: 900,
@@ -16,6 +16,6 @@ describe('/onboarding/level', () => {
     });
     render(<LevelPage />);
     expect(screen.getByRole('img', { name: fr.level.stepLabel })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(fr.level.title);
+    expect((await screen.findByRole('heading', { level: 1 })).textContent).toBe(fr.level.title);
   });
 });

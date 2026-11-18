@@ -38,20 +38,24 @@ beforeEach(() => {
   });
 });
 afterEach(cleanup);
+const open = async () => {
+  render(<LevelTest />);
+  await screen.findByLabelText(fr.level.answerLabel);
+};
 
 const mic = () => screen.getByRole('button', { name: /Répondre à voix haute|Arrêter/ });
 const draft = () => (screen.getByLabelText(t.answerLabel) as HTMLTextAreaElement).value;
 const alert = () => screen.getByRole('alert').textContent;
 
 describe('LevelTest, réponse à la voix', () => {
-  it('cache le micro quand le navigateur ne sait pas enregistrer', () => {
+  it('cache le micro quand le navigateur ne sait pas enregistrer', async () => {
     mocks.canRecord = false;
-    render(<LevelTest />);
+    await open();
     expect(screen.queryByRole('button', { name: t.voice.start })).toBeNull();
   });
 
   it('démarre directement quand le consentement est déjà donné', async () => {
-    render(<LevelTest />);
+    await open();
     fireEvent.click(mic());
     await waitFor(() => expect(mocks.start).toHaveBeenCalled());
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -59,7 +63,7 @@ describe('LevelTest, réponse à la voix', () => {
 
   it('demande le consentement, l’enregistre puis démarre', async () => {
     mocks.getVoiceConsent.mockResolvedValue(false);
-    render(<LevelTest />);
+    await open();
     fireEvent.click(mic());
     fireEvent.click(await screen.findByRole('button', { name: t.voice.consent.accept }));
     await waitFor(() => expect(mocks.start).toHaveBeenCalled());
@@ -68,7 +72,7 @@ describe('LevelTest, réponse à la voix', () => {
 
   it('« Écrire plutôt » ferme la feuille sans rien enregistrer', async () => {
     mocks.getVoiceConsent.mockResolvedValue(false);
-    render(<LevelTest />);
+    await open();
     fireEvent.click(mic());
     fireEvent.click(await screen.findByRole('button', { name: t.voice.consent.decline }));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
@@ -78,14 +82,14 @@ describe('LevelTest, réponse à la voix', () => {
 
   it('signale un micro refusé', async () => {
     mocks.start.mockResolvedValue(false);
-    render(<LevelTest />);
+    await open();
     fireEvent.click(mic());
     await waitFor(() => expect(alert()).toBe(t.voice.errors.denied));
   });
 
   it('signale une erreur quand le consentement ne peut pas être lu ou enregistré', async () => {
     mocks.getVoiceConsent.mockRejectedValueOnce(new Error('x'));
-    render(<LevelTest />);
+    await open();
     fireEvent.click(mic());
     await waitFor(() => expect(alert()).toBe(t.voice.errors.transcribe));
     mocks.getVoiceConsent.mockResolvedValue(false);
@@ -100,7 +104,7 @@ describe('LevelTest, réponse à la voix', () => {
     mocks.recording = true;
     mocks.stop.mockResolvedValue(new Blob(['x']));
     mocks.transcribeAnswer.mockResolvedValue(' I like tea ');
-    render(<LevelTest />);
+    await open();
     await act(async () => fireEvent.click(mic()));
     await waitFor(() => expect(draft()).toBe('I like tea'));
     expect(mocks.transcribeAnswer).toHaveBeenCalledWith('tok', expect.any(Blob));
@@ -110,7 +114,7 @@ describe('LevelTest, réponse à la voix', () => {
     mocks.recording = true;
     mocks.stop.mockResolvedValue(new Blob(['x']));
     mocks.transcribeAnswer.mockResolvedValue('and coffee');
-    render(<LevelTest />);
+    await open();
     fireEvent.change(screen.getByLabelText(t.answerLabel), { target: { value: 'I like tea' } });
     await act(async () => fireEvent.click(mic()));
     await waitFor(() => expect(draft()).toBe('I like tea and coffee'));
@@ -120,7 +124,7 @@ describe('LevelTest, réponse à la voix', () => {
     mocks.recording = true;
     mocks.stop.mockResolvedValue(new Blob(['x']));
     mocks.transcribeAnswer.mockRejectedValueOnce(new Error('503'));
-    render(<LevelTest />);
+    await open();
     await act(async () => fireEvent.click(mic()));
     await waitFor(() => expect(alert()).toBe(t.voice.errors.transcribe));
     mocks.transcribeAnswer.mockResolvedValueOnce('  ');
@@ -131,9 +135,9 @@ describe('LevelTest, réponse à la voix', () => {
     await waitFor(() => expect(alert()).toBe(t.voice.errors.empty));
   });
 
-  it('annonce l’écoute en cours', () => {
+  it('annonce l’écoute en cours', async () => {
     mocks.recording = true;
-    render(<LevelTest />);
+    await open();
     expect(screen.getByRole('status').textContent).toBe(t.voice.recording);
     expect(mic().getAttribute('aria-pressed')).toBe('true');
   });
