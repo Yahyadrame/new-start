@@ -9,3 +9,6 @@ coverage/
 .turbo/
 .claude/settings.local.json
 .worker-alive
+
+playwright-report/
+test-results/

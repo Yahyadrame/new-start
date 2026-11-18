@@ -308,7 +308,7 @@ Les pipelines sont livrés au **sprint 0, avant toute ligne de code métier** : 
 | Workflow | Déclencheur | Ce qu'il fait |
 | --- | --- | --- |
 | `ci.yml` | Chaque PR et chaque push | Lint, typecheck, contrôle des imports entre couches, tests unitaires et d'intégration, couverture, SonarQube + quality gate, build des images, scan Trivy |
-| `e2e.yml` | Chaque PR touchant l'interface | Tests Playwright (mobile et ordinateur, clair et sombre), accessibilité axe, captures comparées |
+| `e2e.yml` | Chaque PR touchant l'interface | Tests Playwright (mobile et ordinateur, clair et sombre) contre un build lancé sur le runner, accessibilité axe ; captures comparées à venir |
 | `preview.yml` | Ouverture et mise à jour d'une PR | Phase 1 : crée la branche Neon de la PR, migre et charge la démo ; Vercel déploie le front de la PR, Render l'aperçu de l'API si la PR la touche ; commente les liens dans la PR ; supprime la branche Neon à la fermeture. Phase 2 : aperçu `pr-<n>` dans le cluster |
 | `cd-staging.yml` | Fusion sur `main` | Publie les images ; phase 1 : migration Prisma sur Neon, appel du « deploy hook » Render avec la nouvelle image, déploiement Vercel ; phase 2 : Argo CD. Puis tests de fumée |
 | `release.yml` | Tag `vX.Y.Z` | Notes de version, puis production après approbation du porteur du projet (phase 2) |

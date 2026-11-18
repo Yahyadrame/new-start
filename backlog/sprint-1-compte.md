@@ -35,9 +35,9 @@
 
 ## NS-109 — Tests e2e Playwright dans la CI · M
 *Ajouté le 2026-11-15 : `e2e.yml` était prévu au sprint 0, mais il n'y avait aucun parcours à tester.*
-- [ ] `e2e.yml` : chaque PR qui touche l'interface lance Playwright (mobile et ordinateur, thème clair et sombre) avec l'accessibilité axe, contre l'aperçu Vercel de la PR.
-- [ ] Un premier parcours : Bienvenue puis Inscription (NS-104, NS-105).
-- [ ] `pnpm test:e2e` en local avec un seul navigateur ; test unitaire de la configuration.
+- [x] `e2e.yml` : chaque PR qui touche l'interface lance Playwright (mobile et ordinateur, thème clair et sombre) avec l'accessibilité axe. *Contre un build lancé sur le runner, pas contre l'aperçu Vercel (protégé par la connexion Vercel) : décision du 2026-11-18.*
+- [x] Un premier parcours : Bienvenue puis Inscription (NS-104, NS-105).
+- [x] `pnpm test:e2e` en local avec un seul navigateur ; test unitaire de la configuration.
 
 ## NS-110 — L'API utilise `packages/shared` · M
 *Ajouté le 2026-11-16 : le schéma d'inscription existe en double (`apps/api/.../signup-profile.ts` et `packages/shared`), choix B de la décision du jour.*
