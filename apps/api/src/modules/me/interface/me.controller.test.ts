@@ -8,13 +8,15 @@ import { MeController } from './me.controller.js';
 
 const get = vi.fn().mockResolvedValue({ id: 'u1', theme: 'SYSTEM' });
 const update = vi.fn().mockResolvedValue({ id: 'u1', theme: 'DARK' });
+const exportData = vi.fn().mockResolvedValue({ firstName: 'Awa' });
+const remove = vi.fn().mockResolvedValue(undefined);
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 let app: INestApplication;
 beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [MeController],
     providers: [
-      { provide: MeService, useValue: { get, update } },
+      { provide: MeService, useValue: { get, update, export: exportData, remove } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -56,5 +58,24 @@ describe('/me', () => {
       expect(res.body.code).toBe('VALIDATION_FAILED');
     }
     expect(update).not.toHaveBeenCalled();
+  });
+
+  it("GET /me/export renvoie l'export du compte du jeton", async () => {
+    const res = await request(app.getHttpServer()).get('/me/export').set(auth);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ firstName: 'Awa' });
+    expect(exportData).toHaveBeenCalledWith('u1');
+  });
+
+  it('DELETE /me supprime le compte du jeton (204)', async () => {
+    const res = await request(app.getHttpServer()).delete('/me').set(auth);
+    expect(res.status).toBe(204);
+    expect(remove).toHaveBeenCalledWith('u1');
+  });
+
+  it('refuse export et suppression sans jeton (401)', async () => {
+    expect((await request(app.getHttpServer()).get('/me/export')).status).toBe(401);
+    expect((await request(app.getHttpServer()).delete('/me')).status).toBe(401);
+    expect(remove).not.toHaveBeenCalled();
   });
 });

@@ -7,6 +7,10 @@ export interface MeStore {
   find(userId: string): Promise<Me | null>;
   /** Applique les modifications et renvoie le profil à jour, ou null si le compte n'existe plus. */
   update(userId: string, patch: MePatch): Promise<Me | null>;
+  /** Toutes les données personnelles du compte, ou null si le compte n'existe plus. */
+  exportData(userId: string): Promise<Record<string, unknown> | null>;
+  /** Supprime le compte et tout ce qui s'y rattache ; false si le compte n'existait plus. */
+  remove(userId: string): Promise<boolean>;
 }
 
 const notFound = () =>
@@ -21,5 +25,14 @@ export class MeService {
 
   async update(userId: string, patch: MePatch) {
     return (await this.store.update(userId, patch)) ?? Promise.reject(notFound());
+  }
+
+  async export(userId: string) {
+    const data = (await this.store.exportData(userId)) ?? (await Promise.reject(notFound()));
+    return { exportedAt: new Date().toISOString(), ...data };
+  }
+
+  async remove(userId: string) {
+    if (!(await this.store.remove(userId))) throw notFound();
   }
 }
