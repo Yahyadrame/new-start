@@ -27,7 +27,8 @@
 - [x] Écran de résultat : niveau, 3 points forts, 3 points à travailler, bouton « Commencer ». *« Commencer » renvoie à `/` tant que Discussions (NS-108) n'existe pas.*
 
 ## NS-107 — Profil et réglages (16) · M
-- [ ] `GET/PATCH /me` ; thème Système/Clair/Sombre appliqué immédiatement ; rappel, objectif quotidien, accent, économie de données, mode pause.
+*Découpé le 2026-11-18 en quatre PR : (1) API `GET/PATCH /me`, (2) API export et suppression, (3) écran des réglages, (4) export et suppression dans l'écran. « Abonnement » attend le sprint paiements.*
+- [ ] `GET/PATCH /me` ; thème Système/Clair/Sombre appliqué immédiatement ; rappel, objectif quotidien, accent, économie de données, mode pause. *API faite (PR 1) ; écran à faire (PR 3).*
 - [ ] Export et suppression du compte.
 
 ## NS-108 — Premier message de Jade · S
