@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
 import { ServerGate } from '../features/server-status';
-import { themeInitScript } from '../features/theme';
+import { themeInitScript } from '../shared/theme';
 import './globals.css';
 
 // Polices embarquées (paquets @fontsource-variable) : le build ne dépend plus de Google (NS-020).
