@@ -143,7 +143,7 @@ export function LevelTest() {
 
   if (!ready) return null;
   // ponytail: l'écran Discussions (NS-108) n'existe pas encore ; « Commencer » renvoie à l'accueil en attendant.
-  if (result) return <LevelResult result={result} onStart={() => router.push('/')} />;
+  if (result) return <LevelResult result={result} onStart={() => router.push('/chats')} />;
 
   const label = busy && position === LEVEL_TEST_LENGTH ? t.evaluating : t.sending;
   return (

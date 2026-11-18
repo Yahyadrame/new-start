@@ -2,9 +2,9 @@
 
 ## NS-201 — Liste des discussions (3) · M
 *Découpé le 2026-11-18 en deux PR : (1) API `GET /conversations`, (2) écran `/chats` (statuts en constante partagée, décision du jour). « Commencer » du test de niveau renverra vers `/chats`.*
-- [ ] Tri par dernier message, badges non lus, rôle en capitales, point « en ligne », filtres Tous / Non lus / Quotidien / Pro / Business / Voyage.
-- [ ] Badge « IA » à côté de chaque nom.
-- [ ] Statuts affichés en lecture seule (contenu fixe par agent au MVP).
+- [x] Tri par dernier message, badges non lus, rôle en capitales, point « en ligne », filtres Tous / Non lus / Quotidien / Pro / Business / Voyage. *API (PR 1) et écran `/chats` (PR 2) faits.*
+- [x] Badge « IA » à côté de chaque nom.
+- [x] Statuts affichés en lecture seule (contenu fixe par agent au MVP). *Constante `AGENT_STATUSES` dans `packages/shared`. Barre d'onglets du bas, `/explore` et `/chats/[agentSlug]` restent à faire : les lignes et le « + » pointent déjà vers eux.*
 
 ## NS-202 — Passerelle temps réel · L
 - [ ] Socket.IO espace `/rt`, authentification par jeton, adaptateur Redis, salles `user:<id>`.
