@@ -6,11 +6,14 @@ const replace = vi.fn();
 const ensureSession = vi.fn();
 const getMe = vi.fn();
 const patchMe = vi.fn();
+const exportMe = vi.fn();
+const deleteMe = vi.fn();
+const setSession = vi.fn();
 // Un objet stable, comme le routeur de Next : sinon l'effet de chargement repart à chaque rendu.
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
-vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./profile-api', () => ({ getMe, patchMe }));
+vi.mock('../../shared/auth/session', () => ({ ensureSession, setSession }));
+vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe }));
 const { ProfileScreen } = await import('./profile-screen');
 
 const t = fr.profile;
@@ -153,5 +156,60 @@ describe('ProfileScreen', () => {
     getMe.mockResolvedValue({ ...me, dailyGoalMin: 25 });
     await open();
     expect((screen.getByLabelText(t.learning.dailyGoal) as HTMLSelectElement).value).toBe('25');
+  });
+
+  describe('export et suppression', () => {
+    const createObjectURL = vi.fn(() => 'blob:export');
+    const revokeObjectURL = vi.fn();
+    beforeEach(() => {
+      Object.assign(URL, { createObjectURL, revokeObjectURL });
+      exportMe.mockResolvedValue(new Blob(['{}']));
+      deleteMe.mockResolvedValue(undefined);
+    });
+
+    it('télécharge le fichier d’export', async () => {
+      const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+      await open();
+      fireEvent.click(screen.getByRole('button', { name: t.data.export }));
+      await waitFor(() => expect(click).toHaveBeenCalled());
+      expect(exportMe).toHaveBeenCalledWith('tok');
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:export');
+      click.mockRestore();
+    });
+
+    it('prévient quand l’export échoue', async () => {
+      exportMe.mockRejectedValue(new Error('500'));
+      await open();
+      fireEvent.click(screen.getByRole('button', { name: t.data.export }));
+      expect((await screen.findByRole('alert')).textContent).toBe(t.errors.export);
+    });
+
+    it('demande confirmation, supprime, ferme la session et renvoie à l’accueil', async () => {
+      await open();
+      fireEvent.click(screen.getByRole('button', { name: t.data.delete }));
+      expect(deleteMe).not.toHaveBeenCalled();
+      fireEvent.click(await screen.findByRole('button', { name: t.deleteDialog.confirm }));
+      await waitFor(() => expect(deleteMe).toHaveBeenCalledWith('tok'));
+      expect(setSession).toHaveBeenCalledWith(null);
+      expect(replace).toHaveBeenCalledWith('/');
+    });
+
+    it('garder le compte referme la confirmation sans rien supprimer', async () => {
+      await open();
+      fireEvent.click(screen.getByRole('button', { name: t.data.delete }));
+      fireEvent.click(await screen.findByRole('button', { name: t.deleteDialog.cancel }));
+      await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+      expect(deleteMe).not.toHaveBeenCalled();
+    });
+
+    it('garde la session et prévient quand la suppression échoue', async () => {
+      deleteMe.mockRejectedValue(new Error('500'));
+      await open();
+      fireEvent.click(screen.getByRole('button', { name: t.data.delete }));
+      fireEvent.click(await screen.findByRole('button', { name: t.deleteDialog.confirm }));
+      await waitFor(() => expect(screen.getByRole('alert').textContent).toBe(t.errors.delete));
+      expect(setSession).not.toHaveBeenCalled();
+      expect(replace).not.toHaveBeenCalled();
+    });
   });
 });

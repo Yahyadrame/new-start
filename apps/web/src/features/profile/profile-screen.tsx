@@ -1,13 +1,14 @@
 'use client';
 
 import { ACCENTS, type Me, type MePatch } from '@newstart/shared';
-import { Avatar, AvatarFallback, Badge, Input, Select, Switch } from '@newstart/ui';
+import { Avatar, AvatarFallback, Badge, Button, Input, Select, Switch } from '@newstart/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState, type ReactNode } from 'react';
-import { ensureSession } from '../../shared/auth/session';
+import { ensureSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
-import { getMe, patchMe } from './profile-api';
+import { DeleteAccountDialog } from './delete-account-dialog';
+import { deleteMe, exportMe, getMe, patchMe } from './profile-api';
 
 const t = fr.profile;
 const GOALS = [5, 10, 15, 20, 30, 45, 60, 90, 120];
@@ -28,6 +29,8 @@ export function ProfileScreen() {
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     void (async () => {
@@ -62,6 +65,40 @@ export function ProfileScreen() {
     } catch {
       setMe(before);
       setError(t.errors.save);
+    }
+  }
+
+  /** Télécharge le JSON de l'export sous un nom daté. */
+  async function exportData() {
+    setError(null);
+    try {
+      const session = await ensureSession();
+      if (!session) return router.replace('/');
+      const url = URL.createObjectURL(await exportMe(session.accessToken));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `new-start-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError(t.errors.export);
+    }
+  }
+
+  /** Après la suppression, la session locale n'a plus de compte derrière elle : retour à l'accueil. */
+  async function deleteAccount() {
+    setDeleting(true);
+    setError(null);
+    try {
+      const session = await ensureSession();
+      if (!session) return router.replace('/');
+      await deleteMe(session.accessToken);
+      setSession(null);
+      router.replace('/');
+    } catch {
+      setDeleting(false);
+      setConfirmingDelete(false);
+      setError(t.errors.delete);
     }
   }
 
@@ -200,7 +237,27 @@ export function ProfileScreen() {
                 />
               )}
             </Row>
+            <Row label={t.data.export} hint={t.data.exportHint}>
+              {(id) => (
+                <Button id={id} variant="outline" onClick={exportData}>
+                  {t.data.exportAction}
+                </Button>
+              )}
+            </Row>
+            <Row label={t.data.delete} hint={t.data.deleteHint}>
+              {(id) => (
+                <Button id={id} variant="danger" onClick={() => setConfirmingDelete(true)}>
+                  {t.data.deleteAction}
+                </Button>
+              )}
+            </Row>
           </Group>
+          <DeleteAccountDialog
+            open={confirmingDelete}
+            busy={deleting}
+            onConfirm={deleteAccount}
+            onCancel={() => setConfirmingDelete(false)}
+          />
         </>
       ) : (
         !error && <p className="text-text-muted">{t.loading}</p>
