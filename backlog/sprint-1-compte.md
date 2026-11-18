@@ -29,7 +29,7 @@
 ## NS-107 — Profil et réglages (16) · M
 *Découpé le 2026-11-18 en quatre PR : (1) API `GET/PATCH /me`, (2) API export et suppression, (3) écran des réglages, (4) export et suppression dans l'écran. « Abonnement » attend le sprint paiements.*
 - [ ] `GET/PATCH /me` ; thème Système/Clair/Sombre appliqué immédiatement ; rappel, objectif quotidien, accent, économie de données, mode pause. *API faite (PR 1) ; écran `/profile` fait (PR 3) : thème, rappel, objectif quotidien, accent, économie de données et mode pause, enregistrés à chaque changement. « Abonnement » attend le sprint paiements.*
-- [ ] Export et suppression du compte.
+- [ ] Export et suppression du compte. *API faite (PR 2) ; boutons dans l'écran à faire (PR 4).*
 
 ## NS-108 — Premier message de Jade · S
 - [x] À la fin de l'inscription, la conversation avec Jade est créée avec son premier message, visible dans Discussions. *Créée côté API à la fin du test de niveau (une seule fois, message non lu) ; l'écran Discussions reste à faire (sprint 2).*

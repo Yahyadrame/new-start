@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Inject, Patch, UseGuards } from '@nestjs/common';
 import { MePatch } from '@newstart/shared';
 import { AccessGuard, CurrentUserId } from '../../../shared/auth/access.guard.js';
 import { parseBody } from '../../../shared/http/validate.js';
@@ -17,5 +17,16 @@ export class MeController {
   @Patch()
   update(@CurrentUserId() userId: string, @Body() body: unknown) {
     return this.me.update(userId, parseBody(MePatch, body));
+  }
+
+  @Get('export')
+  export(@CurrentUserId() userId: string) {
+    return this.me.export(userId);
+  }
+
+  @Delete()
+  @HttpCode(204)
+  async remove(@CurrentUserId() userId: string) {
+    await this.me.remove(userId);
   }
 }
