@@ -16,6 +16,7 @@ function setup(saved: number[] = [1, 2, 3, 4, 5], llmText = JSON.stringify(resul
       .fn()
       .mockResolvedValue(saved.map((position) => ({ position, text: `r${position}` }))),
     saveLevel: vi.fn().mockResolvedValue(undefined),
+    openFirstChat: vi.fn().mockResolvedValue(undefined),
   };
   const complete = vi.fn().mockResolvedValue({ text: llmText });
   const service = new LevelTest(store, { name: 't', complete } as LlmProvider);
@@ -32,6 +33,7 @@ describe('LevelTest.answer', () => {
     expect(store.saveAnswer).toHaveBeenCalledWith('u', 2, 'hello');
     expect(complete).not.toHaveBeenCalled();
     expect(store.saveLevel).not.toHaveBeenCalled();
+    expect(store.openFirstChat).not.toHaveBeenCalled();
   });
 
   it('évalue après la 5e réponse et enregistre le niveau', async () => {
@@ -42,6 +44,7 @@ describe('LevelTest.answer', () => {
     });
     expect(complete).toHaveBeenCalledTimes(1);
     expect(store.saveLevel).toHaveBeenCalledWith('u', 'B2');
+    expect(store.openFirstChat).toHaveBeenCalledWith('u');
   });
 
   it('répond 409 si une réponse précédente manque', async () => {

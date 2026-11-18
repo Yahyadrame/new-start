@@ -10,6 +10,8 @@ export interface LevelStore {
   saveAnswer(userId: string, position: number, text: string): Promise<void>;
   listAnswers(userId: string): Promise<{ position: number; text: string }[]>;
   saveLevel(userId: string, level: LevelResult['level']): Promise<void>;
+  /** Crée la conversation avec Jade et son premier message ; sans effet si elle existe déjà. */
+  openFirstChat(userId: string): Promise<void>;
 }
 
 /** Après une réponse : la question suivante, ou le résultat après la dernière. */
@@ -34,6 +36,7 @@ export class LevelTest {
       );
     const result = await evaluateLevel(this.llm, answers as string[]);
     await this.store.saveLevel(userId, result.level);
+    await this.store.openFirstChat(userId);
     return { done: true, ...result };
   }
 }
