@@ -121,6 +121,24 @@
       "strengths": "Ce que tu fais déjà bien",
       "weaknesses": "Ce qu'on va travailler",
       "start": "Commencer"
+    },
+    "voice": {
+      "start": "Répondre à voix haute",
+      "stop": "Arrêter l'enregistrement",
+      "recording": "Je t'écoute…",
+      "transcribing": "Je note ce que tu as dit…",
+      "writeInstead": "Écrire plutôt",
+      "consent": {
+        "title": "Répondre à voix haute ?",
+        "body": "Ton micro enregistre ta réponse le temps de la dire. Le son est envoyé à notre service de transcription, qui le transforme en texte, puis il n'est pas gardé. Tu relis le texte avant de l'envoyer, et tu peux toujours écrire. Tu peux retirer ton accord quand tu veux.",
+        "accept": "J'accepte, activer le micro",
+        "decline": "Écrire plutôt"
+      },
+      "errors": {
+        "denied": "Le micro est bloqué. Autorise-le dans ton navigateur, ou écris ta réponse.",
+        "transcribe": "Je n'ai pas pu t'écouter. Réessaie, ou écris ta réponse.",
+        "empty": "Je n'ai rien entendu. Réessaie, ou écris ta réponse."
+      }
     }
   }
 }
