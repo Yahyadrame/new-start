@@ -31,7 +31,7 @@
 - [ ] Export et suppression du compte.
 
 ## NS-108 — Premier message de Jade · S
-- [ ] À la fin de l'inscription, la conversation avec Jade est créée avec son premier message, visible dans Discussions.
+- [x] À la fin de l'inscription, la conversation avec Jade est créée avec son premier message, visible dans Discussions. *Créée côté API à la fin du test de niveau (une seule fois, message non lu) ; l'écran Discussions reste à faire (sprint 2).*
 
 ## NS-109 — Tests e2e Playwright dans la CI · M
 *Ajouté le 2026-11-15 : `e2e.yml` était prévu au sprint 0, mais il n'y avait aucun parcours à tester.*

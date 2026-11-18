@@ -24,4 +24,20 @@ export class PrismaLevelStore implements LevelStore {
   async saveLevel(userId: string, level: Parameters<LevelStore['saveLevel']>[1]) {
     await this.db.user.update({ where: { id: userId }, data: { level } });
   }
+
+  async openFirstChat(userId: string) {
+    const jade = await this.db.agent.findUnique({ where: { slug: 'jade' } });
+    // Sans seed, pas de Jade : le résultat du test ne doit pas en pâtir.
+    if (!jade) return;
+    await this.db.conversation.upsert({
+      where: { userId_agentId: { userId, agentId: jade.id } },
+      create: {
+        userId,
+        agentId: jade.id,
+        unreadCount: 1,
+        messages: { create: { author: 'AGENT', text: jade.firstMessage } },
+      },
+      update: {},
+    });
+  }
 }
