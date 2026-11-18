@@ -13,3 +13,5 @@ backlog
 .claude
 generated
 infra/helm/**/templates
+playwright-report
+test-results

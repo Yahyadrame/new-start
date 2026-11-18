@@ -4,6 +4,8 @@
     "next-env.d.ts",
     "postcss.config.mjs",
     "src",
+    "e2e",
+    "playwright.config.ts",
     "vitest.config.ts",
     ".next/types/**/*.ts"
   ],
