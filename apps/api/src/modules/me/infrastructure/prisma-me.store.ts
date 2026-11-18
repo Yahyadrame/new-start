@@ -50,4 +50,52 @@ export class PrismaMeStore implements MeStore {
     const { count } = await this.db.user.updateMany({ where: { id: userId }, data });
     return count === 0 ? null : this.find(userId);
   }
+
+  async exportData(userId: string) {
+    const user = await this.db.user.findUnique({
+      where: { id: userId },
+      // Pas de jetons ni d'empreintes : seulement ce que la personne a donné ou produit.
+      omit: { id: true, updatedAt: true },
+      include: {
+        identities: { select: { provider: true, subject: true, verifiedAt: true } },
+        levelAnswers: {
+          select: { position: true, text: true, createdAt: true },
+          orderBy: { position: 'asc' },
+        },
+        conversations: {
+          select: {
+            createdAt: true,
+            agent: { select: { slug: true } },
+            messages: {
+              select: {
+                author: true,
+                kind: true,
+                text: true,
+                translationFr: true,
+                createdAt: true,
+                correction: { select: { better: true, whyFr: true } },
+              },
+              orderBy: { createdAt: 'asc' },
+            },
+          },
+        },
+      },
+    });
+    return user;
+  }
+
+  async remove(userId: string) {
+    return this.db.$transaction(async (tx) => {
+      const identities = await tx.authIdentity.findMany({
+        where: { userId },
+        select: { provider: true, subject: true },
+      });
+      // Les codes à usage unique sont rattachés à l'adresse, pas au compte : on les efface aussi.
+      const destinations = identities.filter((i) => i.provider !== 'google').map((i) => i.subject);
+      await tx.otpCode.deleteMany({ where: { destination: { in: destinations } } });
+      // Le reste (identités, jetons, réponses du test, conversations, messages) part en cascade.
+      const { count } = await tx.user.deleteMany({ where: { id: userId } });
+      return count > 0;
+    });
+  }
 }

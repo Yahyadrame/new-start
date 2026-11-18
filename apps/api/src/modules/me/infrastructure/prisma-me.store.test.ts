@@ -17,8 +17,16 @@ const row = {
 };
 
 function fake() {
-  const db = { user: { findUnique: vi.fn(), updateMany: vi.fn() } };
-  return { db, store: new PrismaMeStore(db as unknown as PrismaService) };
+  const tx = {
+    authIdentity: { findMany: vi.fn() },
+    otpCode: { deleteMany: vi.fn() },
+    user: { deleteMany: vi.fn() },
+  };
+  const db = {
+    user: { findUnique: vi.fn(), updateMany: vi.fn() },
+    $transaction: vi.fn((fn: (t: typeof tx) => unknown) => fn(tx)),
+  };
+  return { db, tx, store: new PrismaMeStore(db as unknown as PrismaService) };
 }
 
 describe('PrismaMeStore', () => {
@@ -54,5 +62,43 @@ describe('PrismaMeStore', () => {
     expect(await store.update('u', { theme: 'DARK' })).toBeNull();
     expect(db.user.updateMany.mock.calls[0]?.[0].data).toEqual({ theme: 'DARK' });
     expect(db.user.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("lit les données à exporter sans id ni jeton, et rend null si le compte n'existe pas", async () => {
+    const { db, store } = fake();
+    db.user.findUnique.mockResolvedValue({ firstName: 'Awa', conversations: [] });
+    expect(await store.exportData('u')).toEqual({ firstName: 'Awa', conversations: [] });
+    const args = db.user.findUnique.mock.calls[0]?.[0];
+    expect(args.where).toEqual({ id: 'u' });
+    expect(args.omit).toEqual({ id: true, updatedAt: true });
+    expect(Object.keys(args.include).sort()).toEqual([
+      'conversations',
+      'identities',
+      'levelAnswers',
+    ]);
+    db.user.findUnique.mockResolvedValue(null);
+    expect(await store.exportData('u')).toBeNull();
+  });
+
+  it("supprime le compte et les codes liés à ses adresses, mais pas l'identifiant Google", async () => {
+    const { tx, store } = fake();
+    tx.authIdentity.findMany.mockResolvedValue([
+      { provider: 'email', subject: 'awa@example.com' },
+      { provider: 'phone', subject: '+221771234567' },
+      { provider: 'google', subject: 'g-123' },
+    ]);
+    tx.user.deleteMany.mockResolvedValue({ count: 1 });
+    expect(await store.remove('u')).toBe(true);
+    expect(tx.otpCode.deleteMany).toHaveBeenCalledWith({
+      where: { destination: { in: ['awa@example.com', '+221771234567'] } },
+    });
+    expect(tx.user.deleteMany).toHaveBeenCalledWith({ where: { id: 'u' } });
+  });
+
+  it("rend false quand le compte n'existe plus", async () => {
+    const { tx, store } = fake();
+    tx.authIdentity.findMany.mockResolvedValue([]);
+    tx.user.deleteMany.mockResolvedValue({ count: 0 });
+    expect(await store.remove('u')).toBe(false);
   });
 });
