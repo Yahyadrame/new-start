@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { THEME_KEY, applyTheme, isTheme, readTheme, themeInitScript } from './theme';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { THEME_KEY, applyTheme, isTheme, readTheme, storeTheme, themeInitScript } from './theme';
 
 beforeEach(() => document.documentElement.removeAttribute('data-theme'));
 
@@ -41,5 +41,19 @@ describe('theme', () => {
     new Function(themeInitScript)();
     expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
     window.localStorage.clear();
+  });
+
+  it('garde le thème choisi, sans erreur si le stockage est bloqué', () => {
+    const setItem = vi.fn();
+    storeTheme('dark', { setItem });
+    expect(setItem).toHaveBeenCalledWith(THEME_KEY, 'dark');
+    expect(() =>
+      storeTheme('light', {
+        setItem: () => {
+          throw new Error('bloqué');
+        },
+      }),
+    ).not.toThrow();
+    expect(() => storeTheme('light', undefined)).not.toThrow();
   });
 });

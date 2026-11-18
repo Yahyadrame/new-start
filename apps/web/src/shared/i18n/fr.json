@@ -140,5 +140,41 @@
         "empty": "Je n'ai rien entendu. Réessaie, ou écris ta réponse."
       }
     }
+  },
+  "profile": {
+    "title": "Profil et réglages",
+    "levelBadge": "Niveau {level}",
+    "loading": "Chargement de tes réglages…",
+    "errors": {
+      "load": "Tes réglages ne se chargent pas. Recharge la page dans un instant.",
+      "save": "Ce changement n'a pas été enregistré. Réessaie."
+    },
+    "appearance": {
+      "title": "Apparence"
+    },
+    "learning": {
+      "title": "Apprentissage",
+      "dailyGoal": "Objectif quotidien",
+      "dailyGoalOption": "{n} min par jour",
+      "accent": "Accent préféré",
+      "accents": {
+        "en-US": "Américain",
+        "en-GB": "Britannique",
+        "en-NG": "Nigérian"
+      }
+    },
+    "reminders": {
+      "title": "Rappels",
+      "reminder": "Rappel quotidien",
+      "reminderTime": "Heure du rappel",
+      "pause": "Mode pause",
+      "pauseHint": "Ta série est gardée pendant que tu es absent.",
+      "pauseUntil": "Reprise le"
+    },
+    "data": {
+      "title": "Données",
+      "saver": "Économie de données",
+      "saverHint": "Images plus légères, audio compressé, pas de préchargement."
+    }
   }
 }

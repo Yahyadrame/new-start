@@ -47,4 +47,11 @@ describe('ThemeSwitcher', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clair' }));
     expect(document.documentElement.dataset['theme']).toBe('light');
   });
+
+  it('prévient l’écran du profil du thème choisi', () => {
+    const onChange = vi.fn();
+    render(<ThemeSwitcher onChange={onChange} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Clair' }));
+    expect(onChange).toHaveBeenCalledWith('light');
+  });
 });

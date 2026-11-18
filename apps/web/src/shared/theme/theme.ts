@@ -20,5 +20,14 @@ export function readTheme(storage: Pick<Storage, 'getItem'> | undefined): Theme 
   }
 }
 
+/** Garde le choix pour les prochaines visites ; sans stockage (navigation privée), il vaut pour celle-ci. */
+export function storeTheme(theme: Theme, storage: Pick<Storage, 'setItem'> | undefined): void {
+  try {
+    storage?.setItem(THEME_KEY, theme);
+  } catch {
+    // Stockage indisponible : rien à garder.
+  }
+}
+
 /** Script exécuté avant l'affichage, pour éviter un flash de mauvais thème. */
 export const themeInitScript = `try{var t=localStorage.getItem('${THEME_KEY}');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}`;

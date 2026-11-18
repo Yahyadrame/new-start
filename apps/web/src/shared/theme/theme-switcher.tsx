@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import fr from '../../shared/i18n/fr.json';
-import { THEME_KEY, type Theme, applyTheme, readTheme } from './theme';
+import fr from '../i18n/fr.json';
+import { type Theme, applyTheme, readTheme, storeTheme } from './theme';
 
 const options: Theme[] = ['system', 'light', 'dark'];
 
-export function ThemeSwitcher() {
+/** `onChange` prévient l'écran du profil, qui enregistre aussi le choix sur le compte. */
+export function ThemeSwitcher({ onChange }: { onChange?: (theme: Theme) => void }) {
   const [theme, setTheme] = useState<Theme>('system');
 
   useEffect(() => setTheme(readTheme(window.localStorage)), []);
@@ -14,11 +15,8 @@ export function ThemeSwitcher() {
   function choose(next: Theme) {
     setTheme(next);
     applyTheme(next);
-    try {
-      window.localStorage.setItem(THEME_KEY, next);
-    } catch {
-      // Stockage indisponible (navigation privée) : le choix vaut pour cette visite seulement.
-    }
+    storeTheme(next, window.localStorage);
+    onChange?.(next);
   }
 
   return (
