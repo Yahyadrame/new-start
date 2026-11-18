@@ -21,8 +21,8 @@
 - [ ] Consentement aux conditions ; consentement séparé pour les enregistrements vocaux.
 
 ## NS-106 — Test de niveau (2) · L
-*Découpé le 2026-11-17 en quatre PR : (1) garde d'accès aux routes protégées, (2) API du test (questions fixes, estimation par le LLM, `User.level`), (3) écrans à l'écrit, (4) voix (micro et transcription).*
-- [ ] 5 questions posées par Jade, réponses à l'oral (STT) ou à l'écrit. *API faite (PR 2), écrans à l'écrit faits (PR 3) ; voix (micro, « Écrire plutôt ») à venir (PR 4).*
+*Découpé le 2026-11-17 en cinq PR : (1) garde d'accès aux routes protégées, (2) API du test (questions fixes, estimation par le LLM, `User.level`), (3) écrans à l'écrit, (4) API de la voix (consentement et transcription), (5) micro dans l'écran du test.*
+- [ ] 5 questions posées par Jade, réponses à l'oral (STT) ou à l'écrit. *API faite (PR 2), écrans à l'écrit faits (PR 3) ; API de la voix faite (PR 4 : consentement et transcription) ; feuille de consentement, micro et « Écrire plutôt » à venir (PR 5).*
 - [x] Le LLM estime le niveau CECR avec une justification courte ; résultat enregistré sur `User.level`. *Fait côté API (PR 2). Le modèle « plus puissant » n'est pas encore choisissable : `LlmRequest` n'a pas de champ modèle, le modèle par défaut du fournisseur est utilisé.*
 - [x] Écran de résultat : niveau, 3 points forts, 3 points à travailler, bouton « Commencer ». *« Commencer » renvoie à `/` tant que Discussions (NS-108) n'existe pas.*
 

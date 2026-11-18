@@ -50,6 +50,7 @@ model User {
   phoneE164       String?           @unique // format international (+221…), demandé à l'inscription
   phoneVerifiedAt DateTime? // rempli quand la vérification par SMS sera activée
   smsOptIn        Boolean           @default(false) // consentement séparé aux SMS
+  voiceConsentAt  DateTime? // consentement aux enregistrements vocaux ; null = pas de consentement
   locale          String            @default("fr")
   countryCode     String? // ISO 3166-1 alpha-2, pour la devise
   theme           ThemePref         @default(SYSTEM)

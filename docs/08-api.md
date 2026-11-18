@@ -19,6 +19,8 @@
 | DELETE | `/me` | Supprime le compte et toutes ses données |
 | GET | `/me/export` | Export des données personnelles (JSON) |
 | POST | `/onboarding/level-test/answer` | Jeton d'accès exigé. Envoie `{ position, text }` (position 1 à 5, texte de 1 à 1000 caractères ; les 5 questions fixes sont dans `packages/shared`). Réponses 1 à 4 : `{ done: false, next }`. Réponse 5 : le LLM estime le niveau, qui est enregistré sur `User.level`, et la réponse est `{ done: true, level, justification, strengths[3], weaknesses[3] }` (textes en français). Refaire le test réécrit les réponses |
+| GET · PUT | `/onboarding/voice-consent` | Jeton d'accès exigé. `GET` renvoie `{ accepted }`. `PUT { accepted }` enregistre (204) ou retire le consentement aux enregistrements vocaux ; la date du premier accord est gardée sur `User.voiceConsentAt` |
+| POST | `/onboarding/level-test/transcribe` | Jeton d'accès exigé. Corps : l'audio en octets bruts, `Content-Type: audio/*`, 1 Mo au plus (413 au-delà). Renvoie `{ text }` transcrit par le STT. L'audio n'est pas conservé. Sans consentement : 403 `VOICE_CONSENT_REQUIRED`. Audio vide : 400. STT absent ou en échec : 503 `AI_UNAVAILABLE` (l'écran propose d'écrire) |
 | GET | `/topics` | Thèmes et nombre de contacts |
 | GET | `/agents?topic=&category=&q=` | Catalogue des contacts |
 | GET | `/conversations` | Liste triée par dernier message, avec non lus |
@@ -76,6 +78,7 @@ Connexion authentifiée par le jeton d'accès. Chaque utilisateur rejoint la sal
 | `CHANNEL_UNAVAILABLE` | 400 | Canal d'envoi éteint (SMS tant que le budget n'est pas accordé) |
 | `DELIVERY_FAILED` | 503 | Le code n'a pas pu être envoyé, réessayer |
 | `AI_UNAVAILABLE` | 503 | Fournisseur IA indisponible, réessayer |
+| `VOICE_CONSENT_REQUIRED` | 403 | Transcription demandée sans consentement aux enregistrements vocaux |
 | `LEVEL_TEST_INCOMPLETE` | 409 | Cinquième réponse envoyée alors qu'une des quatre premières manque |
 | `PAYMENT_FAILED` | 402 | Paiement refusé |
 
