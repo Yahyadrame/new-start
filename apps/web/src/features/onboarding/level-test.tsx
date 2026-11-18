@@ -2,17 +2,19 @@
 
 import { LEVEL_QUESTIONS, LEVEL_TEST_LENGTH, type LevelResult as Result } from '@newstart/shared';
 import { Avatar, AvatarFallback, Button } from '@newstart/ui';
-import { SendHorizontal } from 'lucide-react';
+import { Mic, SendHorizontal, Square } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { getSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { LevelResult } from './level-result';
 import { LevelAnswerError, sendLevelAnswer } from './send-level-answer';
+import { canRecord, useRecorder } from './use-recorder';
+import { VoiceConsentDialog } from './voice-consent-dialog';
+import { getVoiceConsent, setVoiceConsent, transcribeAnswer } from './voice-api';
 
 const t = fr.level;
 type Turn = { from: 'jade' | 'me'; text: string };
-type ErrorKey = keyof typeof t.errors;
 
 const question = (position: number): Turn => ({
   from: 'jade',
@@ -27,7 +29,11 @@ export function LevelTest() {
   const [turns, setTurns] = useState<Turn[]>([question(1)]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<ErrorKey | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [asking, setAsking] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [micOn, setMicOn] = useState(false);
+  const recorder = useRecorder();
   const [result, setResult] = useState<Result | null>(null);
   const end = useRef<HTMLDivElement>(null);
 
@@ -35,6 +41,7 @@ export function LevelTest() {
     const session = getSession();
     if (session) setToken(session.accessToken);
     else router.replace('/signup');
+    setMicOn(canRecord());
   }, [router]);
 
   useEffect(() => {
@@ -61,9 +68,56 @@ export function LevelTest() {
     } catch (err) {
       const status = err instanceof LevelAnswerError ? err.status : 0;
       if (status === 401) return router.replace('/signup');
-      setError(status === 503 ? 'unavailable' : status === 409 ? 'incomplete' : 'server');
+      setError(
+        status === 503
+          ? t.errors.unavailable
+          : status === 409
+            ? t.errors.incomplete
+            : t.errors.server,
+      );
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function record() {
+    if (!token) return;
+    setError(null);
+    if (!(await recorder.start())) return setError(t.voice.errors.denied);
+  }
+
+  async function onMic() {
+    if (!token) return;
+    if (recorder.recording) {
+      setListening(true);
+      try {
+        const audio = await recorder.stop();
+        const text = audio ? (await transcribeAnswer(token, audio)).trim() : '';
+        if (text) setDraft((d) => (d ? `${d} ${text}` : text));
+        else setError(t.voice.errors.empty);
+      } catch {
+        setError(t.voice.errors.transcribe);
+      } finally {
+        setListening(false);
+      }
+      return;
+    }
+    try {
+      if (await getVoiceConsent(token)) return record();
+      setAsking(true);
+    } catch {
+      setError(t.voice.errors.transcribe);
+    }
+  }
+
+  async function onConsent(accepted: boolean) {
+    setAsking(false);
+    if (!token || !accepted) return;
+    try {
+      await setVoiceConsent(token, true);
+      await record();
+    } catch {
+      setError(t.voice.errors.transcribe);
     }
   }
 
@@ -115,7 +169,7 @@ export function LevelTest() {
             .replace('{total}', String(LEVEL_TEST_LENGTH))}
         </p>
         <p role="alert" className="text-[13px] text-danger empty:hidden">
-          {error && t.errors[error]}
+          {error}
         </p>
         <div className="flex items-end gap-2">
           <textarea
@@ -128,6 +182,23 @@ export function LevelTest() {
             onKeyDown={onKeyDown}
             className="max-h-40 min-h-11 w-full resize-none rounded-3xl border border-line bg-surface-1 px-4 py-2.5 text-[15px] text-text [field-sizing:content] placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text disabled:opacity-50"
           />
+          {micOn && (
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              aria-label={recorder.recording ? t.voice.stop : t.voice.start}
+              aria-pressed={recorder.recording}
+              disabled={busy || listening}
+              onClick={onMic}
+            >
+              {recorder.recording ? (
+                <Square aria-hidden="true" size={20} />
+              ) : (
+                <Mic aria-hidden="true" size={20} />
+              )}
+            </Button>
+          )}
           <Button
             type="submit"
             size="icon"
@@ -137,12 +208,17 @@ export function LevelTest() {
             <SendHorizontal aria-hidden="true" size={20} />
           </Button>
         </div>
-        {busy && (
+        {(busy || listening || recorder.recording) && (
           <p role="status" className="text-[13px] text-text-muted">
-            {label}
+            {recorder.recording ? t.voice.recording : listening ? t.voice.transcribing : label}
           </p>
         )}
       </form>
+      <VoiceConsentDialog
+        open={asking}
+        onAccept={() => onConsent(true)}
+        onDecline={() => onConsent(false)}
+      />
     </div>
   );
 }
