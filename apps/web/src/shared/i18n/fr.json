@@ -147,7 +147,9 @@
     "loading": "Chargement de tes réglages…",
     "errors": {
       "load": "Tes réglages ne se chargent pas. Recharge la page dans un instant.",
-      "save": "Ce changement n'a pas été enregistré. Réessaie."
+      "save": "Ce changement n'a pas été enregistré. Réessaie.",
+      "export": "L'export n'a pas marché. Réessaie dans un instant.",
+      "delete": "Le compte n'a pas été supprimé. Réessaie dans un instant."
     },
     "appearance": {
       "title": "Apparence"
@@ -174,7 +176,19 @@
     "data": {
       "title": "Données",
       "saver": "Économie de données",
-      "saverHint": "Images plus légères, audio compressé, pas de préchargement."
+      "saverHint": "Images plus légères, audio compressé, pas de préchargement.",
+      "export": "Exporter mes données",
+      "exportHint": "Un fichier avec ton profil, tes réponses au test et tes conversations.",
+      "exportAction": "Exporter",
+      "delete": "Supprimer mon compte",
+      "deleteHint": "Ton compte et tout ce qu'il contient sont effacés tout de suite.",
+      "deleteAction": "Supprimer"
+    },
+    "deleteDialog": {
+      "title": "Supprimer ton compte ?",
+      "body": "Ton profil, tes réponses au test de niveau et tes conversations sont effacés tout de suite, sans retour possible. Les sauvegardes disparaissent en 30 jours au plus.",
+      "confirm": "Oui, supprimer mon compte",
+      "cancel": "Garder mon compte"
     }
   }
 }
