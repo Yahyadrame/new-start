@@ -190,5 +190,23 @@
       "confirm": "Oui, supprimer mon compte",
       "cancel": "Garder mon compte"
     }
+  },
+  "chats": {
+    "title": "Discussions",
+    "explore": "Explorer les thèmes",
+    "statusesLabel": "Statuts de tes contacts",
+    "filtersLabel": "Filtrer les discussions",
+    "filters": {
+      "all": "Tous",
+      "unread": "Non lus"
+    },
+    "online": "En ligne",
+    "aiBadge": "IA",
+    "you": "Toi : ",
+    "noMessage": "Pas encore de message",
+    "unread": "{n} non lus",
+    "empty": "Aucune discussion pour l'instant. Choisis un contact avec le bouton « + ».",
+    "emptyFilter": "Rien dans ce filtre pour l'instant.",
+    "error": "Impossible de charger tes discussions. Réessaie dans un instant."
   }
 }

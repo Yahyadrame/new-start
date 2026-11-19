@@ -1,0 +1,26 @@
+import type { ConversationItem } from '@newstart/shared';
+import { describe, expect, it } from 'vitest';
+import { applyFilter, formatWhen } from './chats-format';
+
+const item = (id: string, category: string, unreadCount: number) =>
+  ({ id, unreadCount, agent: { category } }) as ConversationItem;
+const items = [item('a', 'Quotidien', 1), item('b', 'Pro', 0), item('c', 'Quotidien', 0)];
+
+describe('applyFilter', () => {
+  it('garde tout, les non lus, ou une catégorie', () => {
+    expect(applyFilter(items, 'all')).toHaveLength(3);
+    expect(applyFilter(items, 'unread').map((i) => i.id)).toEqual(['a']);
+    expect(applyFilter(items, 'Quotidien').map((i) => i.id)).toEqual(['a', 'c']);
+    expect(applyFilter(items, 'Voyage')).toEqual([]);
+  });
+});
+
+describe('formatWhen', () => {
+  const now = new Date(2026, 10, 18, 15, 0);
+  it("affiche l'heure pour aujourd'hui", () => {
+    expect(formatWhen(new Date(2026, 10, 18, 9, 5).toISOString(), now)).toBe('09:05');
+  });
+  it('affiche le jour et le mois pour une autre date', () => {
+    expect(formatWhen(new Date(2026, 10, 17, 9, 5).toISOString(), now)).toMatch(/17\s+nov/);
+  });
+});

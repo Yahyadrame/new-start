@@ -108,7 +108,7 @@ describe('LevelTest', () => {
     await waitFor(() => expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('B1'));
     expect(getSession()?.user.level).toBe('B1');
     fireEvent.click(screen.getByRole('button', { name: t.result.start }));
-    expect(nav.push).toHaveBeenCalledWith('/');
+    expect(nav.push).toHaveBeenCalledWith('/chats');
   });
 
   it('annonce que Jade lit les réponses pendant l’évaluation finale', async () => {
