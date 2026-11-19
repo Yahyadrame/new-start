@@ -23,7 +23,7 @@
 | POST | `/onboarding/level-test/transcribe` | Jeton d'accès exigé. Corps : l'audio en octets bruts, `Content-Type: audio/*`, 1 Mo au plus (413 au-delà). Renvoie `{ text }` transcrit par le STT. L'audio n'est pas conservé. Sans consentement : 403 `VOICE_CONSENT_REQUIRED`. Audio vide : 400. STT absent ou en échec : 503 `AI_UNAVAILABLE` (l'écran propose d'écrire) |
 | GET | `/topics` | Thèmes et nombre de contacts |
 | GET | `/agents?topic=&category=&q=` | Catalogue des contacts |
-| GET | `/conversations` | Liste triée par dernier message, avec non lus |
+| GET | `/conversations` | Jeton d'accès exigé. Les conversations du compte, la plus récente d'abord : `id`, `agent` (`slug`, `name`, `initials`, `roleFr`, `category`), `lastMessage` (`author`, `text`, ou `null` si la conversation est vide), `lastMessageAt`, `unreadCount`. Pas de pagination au MVP (une conversation par agent, 12 au plus au lancement). |
 | POST | `/conversations` | Démarre une conversation `{ agentSlug }` (idempotent) |
 | GET | `/conversations/:id/messages?cursor=` | Historique paginé |
 | POST | `/messages/:id/translate` | Traduction FR d'un message d'agent (mise en cache) |

@@ -1,6 +1,7 @@
 # Sprint 2 — Messagerie avec corrections (E2)
 
 ## NS-201 — Liste des discussions (3) · M
+*Découpé le 2026-11-18 en deux PR : (1) API `GET /conversations`, (2) écran `/chats` (statuts en constante partagée, décision du jour). « Commencer » du test de niveau renverra vers `/chats`.*
 - [ ] Tri par dernier message, badges non lus, rôle en capitales, point « en ligne », filtres Tous / Non lus / Quotidien / Pro / Business / Voyage.
 - [ ] Badge « IA » à côté de chaque nom.
 - [ ] Statuts affichés en lecture seule (contenu fixe par agent au MVP).
