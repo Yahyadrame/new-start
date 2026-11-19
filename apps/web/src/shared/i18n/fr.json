@@ -208,5 +208,10 @@
     "empty": "Aucune discussion pour l'instant. Choisis un contact avec le bouton « + ».",
     "emptyFilter": "Rien dans ce filtre pour l'instant.",
     "error": "Impossible de charger tes discussions. Réessaie dans un instant."
+  },
+  "conversation": {
+    "back": "Retour aux discussions",
+    "soon": "La conversation arrive bientôt. Tu pourras écrire à ton contact ici.",
+    "notFound": "Ce contact n'existe pas dans tes discussions."
   }
 }
