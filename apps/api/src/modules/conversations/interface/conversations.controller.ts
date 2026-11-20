@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { MessagesQuery, SendMessage, StartConversation } from '@newstart/shared';
 import { AccessGuard, CurrentUserId } from '../../../shared/auth/access.guard.js';
 import { parseBody } from '../../../shared/http/validate.js';
@@ -24,6 +35,13 @@ export class ConversationsController {
   @Get(':id/messages')
   messages(@CurrentUserId() userId: string, @Param('id') id: string, @Query() query: unknown) {
     return this.conversations.messages(userId, id, parseBody(MessagesQuery, query).cursor);
+  }
+
+  /** Ouvrir la conversation la marque lue ; sans corps, 204. */
+  @Post(':id/read')
+  @HttpCode(204)
+  async read(@CurrentUserId() userId: string, @Param('id') id: string) {
+    await this.conversations.markRead(userId, id);
   }
 
   /** 201 pour un nouveau message, 200 quand le `clientId` était déjà enregistré (renvoi). */

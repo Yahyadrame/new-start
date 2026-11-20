@@ -112,6 +112,22 @@ export class PrismaConversationsStore implements ConversationsStore {
     });
   }
 
+  async markRead(userId: string, conversationId: string) {
+    const owned = await this.db.conversation.findFirst({
+      where: { id: conversationId, userId },
+      select: { id: true },
+    });
+    if (!owned) return false;
+    await this.db.$transaction([
+      this.db.message.updateMany({
+        where: { conversationId, author: { not: 'USER' }, readAt: null },
+        data: { readAt: new Date() },
+      }),
+      this.db.conversation.update({ where: { id: conversationId }, data: { unreadCount: 0 } }),
+    ]);
+    return true;
+  }
+
   async send(userId: string, conversationId: string, { clientId, text }: SendMessage) {
     const owned = await this.db.conversation.findFirst({
       where: { id: conversationId, userId },
