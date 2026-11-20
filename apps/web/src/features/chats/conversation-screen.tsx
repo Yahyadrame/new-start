@@ -9,9 +9,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { listConversations, listMessages, sendMessage } from './chats-api';
+import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
 import { MessageBubble } from './message-bubble';
 import { PendingBubble, type PendingMessage } from './pending-bubble';
+import { TypingBubble } from './typing-bubble';
 
 const t = fr.chats;
 const c = fr.conversation;
@@ -25,6 +27,8 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [older, setOlder] = useState<'idle' | 'loading' | 'error'>('idle');
   const [pending, setPending] = useState<PendingMessage[]>([]);
+  // Date du dernier message envoyé tant que le contact n'a pas répondu ; null sinon.
+  const [awaiting, setAwaiting] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const token = useRef('');
   const end = useRef<HTMLDivElement>(null);
@@ -43,6 +47,8 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         const page = await listMessages(token.current, found.id);
         setMessages([...page.items].reverse());
         setNextCursor(page.nextCursor);
+        const last = page.items[0];
+        if (last?.author === 'USER' && isFresh(last.createdAt)) setAwaiting(last.createdAt);
       } catch {
         setError(true);
       }
@@ -72,6 +78,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         const sent = await sendMessage(token.current, conversationId, { clientId, text });
         setMessages((prev) => [...(prev ?? []), sent]);
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+        setAwaiting(sent.createdAt);
       } catch {
         mark('failed');
       }
@@ -86,11 +93,28 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
     void deliver(item.id, message);
   };
 
+  // Tant que le contact n'a pas répondu, on relit les derniers messages (la correction arrive avec la réponse).
+  useEffect(() => {
+    if (!awaiting || !item) return;
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries += 1;
+      if (tries >= POLL_LIMIT) setAwaiting(null);
+      void listMessages(token.current, item.id)
+        .then((page) => {
+          setMessages((prev) => mergeLatest(prev ?? [], page.items));
+          if (hasReplyAfter(page.items, awaiting)) setAwaiting(null);
+        })
+        .catch(() => undefined); // le tour suivant réessaie
+    }, POLL_MS);
+    return () => clearInterval(timer);
+  }, [awaiting, item]);
+
   // On arrive sur le plus récent, et un nouveau message ramène en bas. Charger des messages plus anciens ne bouge rien.
   const newest = messages?.at(-1)?.id;
   useEffect(() => {
     if (loaded) end.current?.scrollIntoView({ block: 'end' });
-  }, [loaded, newest, pending.length]);
+  }, [loaded, newest, pending.length, awaiting !== null]);
 
   const retry = () => {
     setError(false);
@@ -153,7 +177,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
               {c.olderError}
             </p>
           )}
-          {messages.length === 0 && pending.length === 0 ? (
+          {messages.length === 0 && pending.length === 0 && !awaiting ? (
             <p className="text-text-muted">{c.empty}</p>
           ) : (
             <ol aria-label={c.messagesLabel} className="flex flex-col gap-3">
@@ -167,6 +191,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
                   onRetry={() => item && void deliver(item.id, p)}
                 />
               ))}
+              {awaiting && item && <TypingBubble name={item.agent.name} />}
             </ol>
           )}
           <div ref={end} />

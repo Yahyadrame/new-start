@@ -12,7 +12,7 @@
 - [ ] Test : deux réplicas de l'API, un message envoyé sur l'un arrive par l'autre.
 
 ## NS-203 — Réponse d'agent et correction · L
-*Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction (fait ; la version du prompt est journalisée, pas encore stockée en base), (3) écran, (4) modération, détresse et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
+*Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction (faite), (3) écran (fait : « en train d'écrire… » et relecture de l'historique toutes les 2 s pendant 60 s au plus, à retirer avec NS-202), (4) modération, détresse et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
 - [ ] Job `agent.reply` dans le worker : prompt `agent.v1`, 16 derniers messages, sortie JSON validée par Zod, 2 nouvelles tentatives.
 - [ ] Modération en entrée et en sortie ; cas de détresse traité selon `docs/09-ia-agents.md`.
 - [ ] Idempotence par `clientId`.
@@ -20,7 +20,7 @@
 
 ## NS-204 — Écran Conversation (4) · L
 *Découpé le 2026-11-20 en trois PR : (1) API `GET /conversations/:id/messages`, (2) écran (bulles, historique, pagination), (3) composer et envoi HTTP idempotent, coupée en deux le 2026-11-20 pour tenir sous 400 lignes : API `POST /conversations/:id/messages` (faite), puis composer dans l'écran (le WebSocket de NS-202 le remplacera ; l'agent ne répond qu'avec NS-203).*
-- [ ] Bulles, coches, « en train d'écrire… », carte « Plus naturel », suggestions de l'agent, composer avec micro. *Bulles, heures et carte « Plus naturel » faites (PR 2) ; composer fait (PR 3, champ et bouton d'envoi) ; coches, « en train d'écrire… » et suggestions attendent le temps réel et l'IA (NS-202, NS-203) ; micro : NS-206.*
+- [ ] Bulles, coches, « en train d'écrire… », carte « Plus naturel », suggestions de l'agent, composer avec micro. *Bulles, heures et carte « Plus naturel » faites (PR 2) ; composer fait (PR 3, champ et bouton d'envoi) ; « en train d'écrire… » fait par relecture de l'historique (NS-203, PR 3) en attendant le temps réel ; coches et suggestions attendent NS-202 ; micro : NS-206.*
 - [x] Pagination par curseur en remontant. *Bouton « Voir les messages précédents » (PR 2).*
 - [ ] États : envoi en cours, échec avec « Touche pour réessayer », limite gratuite atteinte. *Envoi en cours et échec faits (PR 3) ; limite gratuite : NS-208.*
 
