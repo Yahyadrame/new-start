@@ -36,6 +36,7 @@
 | GET | `/series/:season` · GET `/episodes/:id` | Série et épisode |
 | POST | `/episodes/:id/progress` | Étape terminée `{ step }` |
 | GET | `/games` · POST `/games/:type/sessions` | Liste et nouvelle partie (questions générées depuis le noyau) |
+| GET | `/games/:type/questions?count=10` | Questions sans état (`true-false`, `match`), réponses incluses ; 1 à 20 questions. Remplace `POST /games/:type/sessions` au MVP |
 | POST | `/games/sessions/:id/answers` | Réponse ; renvoie juste/faux, points, combo |
 | GET | `/reviews/due` · POST `/reviews/:cardId/grade` | Révisions FSRS (`again`, `hard`, `good`, `easy`) |
 | GET | `/progress/summary` · GET `/progress/week` | Tableau de bord |
