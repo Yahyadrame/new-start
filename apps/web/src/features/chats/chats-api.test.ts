@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ChatsError, listConversations } from './chats-api';
+import { ChatsError, listConversations, listMessages } from './chats-api';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -17,5 +17,30 @@ describe('listConversations', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
     await expect(listConversations('tok')).rejects.toMatchObject({ status: 401 });
     await expect(listConversations('tok')).rejects.toBeInstanceOf(ChatsError);
+  });
+});
+
+describe('listMessages', () => {
+  const page = { items: [], nextCursor: null };
+
+  it('lit la première page sans curseur', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => page });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await listMessages('tok', 'c1')).toEqual(page);
+    expect(fetchMock).toHaveBeenCalledWith('/api/conversations/c1/messages', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('passe le curseur encodé pour les messages plus anciens', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => page });
+    vi.stubGlobal('fetch', fetchMock);
+    await listMessages('tok', 'c1', 'a+b/c=');
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/conversations/c1/messages?cursor=a%2Bb%2Fc%3D');
+  });
+
+  it('lève ChatsError avec le statut quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+    await expect(listMessages('tok', 'c1')).rejects.toMatchObject({ status: 404 });
   });
 });

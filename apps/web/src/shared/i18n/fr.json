@@ -230,8 +230,16 @@
   },
   "conversation": {
     "back": "Retour aux discussions",
-    "soon": "La conversation arrive bientôt. Tu pourras écrire à ton contact ici.",
-    "notFound": "Ce contact n'existe pas dans tes discussions."
+    "notFound": "Ce contact n'existe pas dans tes discussions.",
+    "messagesLabel": "Messages",
+    "empty": "Aucun message pour l'instant.",
+    "older": "Voir les messages précédents",
+    "olderLoading": "Chargement…",
+    "olderError": "Les messages précédents n'ont pas pu être chargés.",
+    "messagesError": "Les messages n'ont pas pu être chargés.",
+    "retry": "Réessayer",
+    "natural": "Plus naturel",
+    "perfect": "Rien à corriger"
   },
   "nav": {
     "label": "Navigation principale",

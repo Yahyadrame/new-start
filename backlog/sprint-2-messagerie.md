@@ -19,9 +19,13 @@
 
 ## NS-204 — Écran Conversation (4) · L
 *Découpé le 2026-11-20 en trois PR : (1) API `GET /conversations/:id/messages`, (2) écran (bulles, historique, pagination), (3) composer et envoi HTTP idempotent (le WebSocket de NS-202 le remplacera ; l'agent ne répond qu'avec NS-203).*
-- [ ] Bulles, coches, « en train d'écrire… », carte « Plus naturel », suggestions de l'agent, composer avec micro.
-- [ ] Pagination par curseur en remontant.
+- [ ] Bulles, coches, « en train d'écrire… », carte « Plus naturel », suggestions de l'agent, composer avec micro. *Bulles, heures et carte « Plus naturel » faites (PR 2) ; composer en PR 3 ; coches, « en train d'écrire… » et suggestions attendent le temps réel et l'IA (NS-202, NS-203) ; micro : NS-206.*
+- [x] Pagination par curseur en remontant. *Bouton « Voir les messages précédents » (PR 2).*
 - [ ] États : envoi en cours, échec avec « Touche pour réessayer », limite gratuite atteinte.
+
+## NS-209 — Marquer une conversation comme lue · S
+*Ajouté le 2026-11-20 : ouvrir une conversation ne remet pas `unreadCount` à zéro, et la route d'historique ne le fait pas (une lecture ne modifie rien).*
+- [ ] Route pour marquer la conversation lue (`unreadCount` à 0, `readAt` des messages du contact), appelée par l'écran Conversation à l'ouverture ; tests.
 
 ## NS-205 — Écouter et traduire · M
 - [ ] `POST /messages/:id/speech` : TTS avec la voix de l'agent, mis en cache sur Cloudinary.
