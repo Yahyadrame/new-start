@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { ConversationItem } from '@newstart/shared';
+import type { ConversationItem, SendMessage } from '@newstart/shared';
+import { Prisma } from '../../../generated/prisma/client.js';
 import type { MessageCursor } from '../application/message-cursor.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { ConversationsStore, MessageRow } from '../application/conversations.js';
@@ -14,6 +15,15 @@ const select = {
     orderBy: { createdAt: 'desc' },
     take: 1,
   },
+} as const;
+
+const messageSelect = {
+  id: true,
+  author: true,
+  text: true,
+  translationFr: true,
+  createdAt: true,
+  correction: { select: { better: true, whyFr: true } },
 } as const;
 
 type Row = Omit<ConversationItem, 'lastMessage' | 'lastMessageAt'> & {
@@ -98,14 +108,42 @@ export class PrismaConversationsStore implements ConversationsStore {
       },
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       take: limit,
-      select: {
-        id: true,
-        author: true,
-        text: true,
-        translationFr: true,
-        createdAt: true,
-        correction: { select: { better: true, whyFr: true } },
-      },
+      select: messageSelect,
     });
+  }
+
+  async send(userId: string, conversationId: string, { clientId, text }: SendMessage) {
+    const owned = await this.db.conversation.findFirst({
+      where: { id: conversationId, userId },
+      select: { id: true },
+    });
+    if (!owned) return null;
+    const find = () =>
+      this.db.message.findUnique({
+        where: { conversationId_clientId: { conversationId, clientId } },
+        select: messageSelect,
+      });
+    const known = await find();
+    if (known) return { row: known, created: false };
+    try {
+      const [row] = await this.db.$transaction([
+        this.db.message.create({
+          data: { conversationId, clientId, author: 'USER', text },
+          select: messageSelect,
+        }),
+        this.db.conversation.update({
+          where: { id: conversationId },
+          data: { lastMessageAt: new Date() },
+        }),
+      ]);
+      return { row, created: true };
+    } catch (e) {
+      // Deux envois du même clientId en même temps : le second retrouve le premier.
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        const row = await find();
+        if (row) return { row, created: false };
+      }
+      throw e;
+    }
   }
 }

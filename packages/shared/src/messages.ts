@@ -24,3 +24,10 @@ export const MESSAGES_PAGE_SIZE = 30;
 /** Paramètres de `GET /conversations/:id/messages`. */
 export const MessagesQuery = z.object({ cursor: z.string().min(1).max(100).optional() });
 export type MessagesQuery = z.infer<typeof MessagesQuery>;
+
+/** Corps de `POST /conversations/:id/messages` : `clientId` rend le renvoi sans risque de doublon. */
+export const SendMessage = z.object({
+  clientId: z.uuid(),
+  text: z.string().trim().min(1).max(2000),
+});
+export type SendMessage = z.infer<typeof SendMessage>;
