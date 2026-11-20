@@ -7,6 +7,7 @@ import {
   type SendMessage,
 } from '@newstart/shared';
 import { isAdult } from '../../../shared/age.js';
+import type { ReplyScheduler } from './agent-reply.js';
 import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor.js';
 
 export const CONVERSATIONS_STORE = Symbol('CONVERSATIONS_STORE');
@@ -57,6 +58,7 @@ export class ConversationsService {
   constructor(
     private readonly store: ConversationsStore,
     private readonly currentYear: () => number = () => new Date().getFullYear(),
+    private readonly replies?: ReplyScheduler,
   ) {}
 
   list(userId: string) {
@@ -107,6 +109,8 @@ export class ConversationsService {
       ? await this.store.send(userId, conversationId, message)
       : null;
     if (!sent) throw notFound();
+    // Un renvoi (`created: false`) ne relance pas l'agent : il a déjà répondu ou répond encore.
+    if (sent.created) this.replies?.schedule(conversationId, sent.row.id);
     return { message: toItem(sent.row), created: sent.created };
   }
 }

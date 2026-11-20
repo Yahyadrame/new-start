@@ -1,0 +1,113 @@
+import { describe, expect, it, vi } from 'vitest';
+import { Prisma } from '../../../generated/prisma/client.js';
+import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
+import { FAILURE_TEXT, HISTORY_SIZE } from '../application/agent-reply.js';
+import { PrismaAgentReplyStore } from './prisma-agent-reply.store.js';
+
+function fake() {
+  const db = {
+    message: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn((a: unknown) => a) },
+    correction: { create: vi.fn((a: unknown) => a) },
+    conversation: { update: vi.fn((a: unknown) => a) },
+    $transaction: vi.fn().mockResolvedValue([]),
+  };
+  return { db, store: new PrismaAgentReplyStore(db as unknown as PrismaService) };
+}
+
+const createdAt = new Date('2026-11-21T10:00:00.000Z');
+const found = {
+  createdAt,
+  conversation: {
+    agent: { name: 'Jade', persona: 'p', style: 's', accent: 'en-US' },
+    user: { firstName: 'Awa', level: 'B1', goal: 'TRAVEL' },
+  },
+};
+
+describe('PrismaAgentReplyStore.context', () => {
+  it('rend null quand le message n’est pas à rejouer (absent, ou déjà corrigé)', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(null);
+    expect(await store.context('c1', 'm1')).toBeNull();
+    expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
+      id: 'm1',
+      conversationId: 'c1',
+      author: 'USER',
+      correction: null,
+    });
+    expect(db.message.findMany).not.toHaveBeenCalled();
+  });
+
+  it('relit les 16 derniers messages jusqu’au message et les rend du plus ancien au plus récent', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue([
+      { author: 'USER', text: 'second' },
+      { author: 'AGENT', text: 'first' },
+    ]);
+    const context = await store.context('c1', 'm1');
+    const args = db.message.findMany.mock.calls[0]?.[0];
+    expect(args.take).toBe(HISTORY_SIZE);
+    expect(args.where).toEqual({
+      conversationId: 'c1',
+      author: { in: ['USER', 'AGENT'] },
+      createdAt: { lte: createdAt },
+    });
+    expect(context?.history).toEqual([
+      { author: 'AGENT', text: 'first' },
+      { author: 'USER', text: 'second' },
+    ]);
+    expect(context?.learner).toEqual({ firstName: 'Awa', level: 'B1', goal: 'TRAVEL' });
+    expect(context?.agent.name).toBe('Jade');
+  });
+});
+
+describe('PrismaAgentReplyStore.saveReply', () => {
+  it('enregistre la correction, la réponse et le compteur de non lus dans une transaction', async () => {
+    const { db, store } = fake();
+    await store.saveReply('c1', 'm1', {
+      reply: 'Hi',
+      fix: { better: 'I agree', why: 'Grammaire' },
+    });
+    expect(db.correction.create).toHaveBeenCalledWith({
+      data: { messageId: 'm1', better: 'I agree', whyFr: 'Grammaire' },
+    });
+    expect(db.message.create).toHaveBeenCalledWith({
+      data: { conversationId: 'c1', author: 'AGENT', text: 'Hi' },
+    });
+    expect(
+      (db.conversation.update.mock.calls[0]?.[0] as { data: { unreadCount: unknown } }).data
+        .unreadCount,
+    ).toEqual({ increment: 1 });
+    expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(3);
+  });
+
+  it('écrit une correction vide quand le message est parfait', async () => {
+    const { db, store } = fake();
+    await store.saveReply('c1', 'm1', { reply: 'Hi', fix: null });
+    expect(db.correction.create).toHaveBeenCalledWith({
+      data: { messageId: 'm1', better: null, whyFr: null },
+    });
+  });
+
+  it('ignore une seconde réponse au même message (clé unique) et relance les autres erreurs', async () => {
+    const { db, store } = fake();
+    const unique = new Prisma.PrismaClientKnownRequestError('dup', {
+      code: 'P2002',
+      clientVersion: 'x',
+    });
+    db.$transaction.mockRejectedValueOnce(unique);
+    await expect(store.saveReply('c1', 'm1', { reply: 'Hi', fix: null })).resolves.toBeUndefined();
+    db.$transaction.mockRejectedValueOnce(new Error('panne'));
+    await expect(store.saveReply('c1', 'm1', { reply: 'Hi', fix: null })).rejects.toThrow('panne');
+  });
+});
+
+describe('PrismaAgentReplyStore.saveFailure', () => {
+  it('ajoute le message système', async () => {
+    const { db, store } = fake();
+    await store.saveFailure('c1');
+    expect(db.message.create).toHaveBeenCalledWith({
+      data: { conversationId: 'c1', author: 'SYSTEM', text: FAILURE_TEXT },
+    });
+  });
+});
