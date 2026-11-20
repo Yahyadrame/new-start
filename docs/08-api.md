@@ -24,7 +24,7 @@
 | GET | `/topics` | Thèmes dans l'ordre d'affichage, avec le nombre de contacts actifs ; Amour est absent pour une personne mineure ou sans année de naissance |
 | GET | `/agents?topic=&q=` | Catalogue des contacts actifs, triés par prénom ; `q` cherche dans le prénom, le rôle et la catégorie. `403 TOPIC_ADULT_ONLY` si le thème demandé est réservé aux majeurs |
 | GET | `/conversations` | Jeton d'accès exigé. Les conversations du compte, la plus récente d'abord : `id`, `agent` (`slug`, `name`, `initials`, `roleFr`, `category`), `lastMessage` (`author`, `text`, ou `null` si la conversation est vide), `lastMessageAt`, `unreadCount`. Pas de pagination au MVP (une conversation par agent, 12 au plus au lancement). |
-| POST | `/conversations` | Démarre une conversation `{ agentSlug }` (idempotent) |
+| POST | `/conversations` | Jeton d'accès exigé. Corps `{ agentSlug }`. Démarre la conversation avec ce contact et y pose son premier message (non lu), ou rend celle qui existe déjà sans rien ajouter. Répond 201 avec la même ligne que `GET /conversations`. `404 NOT_FOUND` si le contact n'existe pas ou est éteint ; `403 TOPIC_ADULT_ONLY` s'il est réservé aux majeurs et que la personne ne l'est pas à coup sûr |
 | GET | `/conversations/:id/messages?cursor=` | Historique paginé |
 | POST | `/messages/:id/translate` | Traduction FR d'un message d'agent (mise en cache) |
 | POST | `/messages/:id/speech` | URL audio TTS du message (mise en cache) |

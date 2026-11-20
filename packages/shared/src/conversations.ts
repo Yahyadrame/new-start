@@ -18,3 +18,7 @@ export const ConversationItem = z.object({
   unreadCount: z.number().int().min(0),
 });
 export type ConversationItem = z.infer<typeof ConversationItem>;
+
+/** Corps de `POST /conversations` : le contact à qui l'on veut écrire. */
+export const StartConversation = z.object({ agentSlug: z.string().min(1).max(40) });
+export type StartConversation = z.infer<typeof StartConversation>;

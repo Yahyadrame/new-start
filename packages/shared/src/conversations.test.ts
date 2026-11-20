@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ConversationItem } from './conversations.js';
+import { ConversationItem, StartConversation } from './conversations.js';
 
 const item = {
   id: 'c1',
@@ -26,5 +26,13 @@ describe('ConversationItem', () => {
     expect(
       ConversationItem.safeParse({ ...item, lastMessage: { author: 'BOT', text: 'x' } }).success,
     ).toBe(false);
+  });
+});
+
+describe('StartConversation', () => {
+  it('veut un slug de contact non vide', () => {
+    expect(StartConversation.safeParse({ agentSlug: 'jade' }).success).toBe(true);
+    expect(StartConversation.safeParse({ agentSlug: '' }).success).toBe(false);
+    expect(StartConversation.safeParse({}).success).toBe(false);
   });
 });
