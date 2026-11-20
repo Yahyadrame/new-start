@@ -239,7 +239,12 @@
     "messagesError": "Les messages n'ont pas pu être chargés.",
     "retry": "Réessayer",
     "natural": "Plus naturel",
-    "perfect": "Rien à corriger"
+    "perfect": "Rien à corriger",
+    "composerLabel": "Ton message",
+    "composerPlaceholder": "Écris en anglais…",
+    "send": "Envoyer",
+    "sending": "Envoi en cours…",
+    "sendFailed": "Le message n'est pas parti. Touche pour réessayer."
   },
   "nav": {
     "label": "Navigation principale",

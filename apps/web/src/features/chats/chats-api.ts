@@ -1,4 +1,4 @@
-import type { ConversationItem, MessagesPage } from '@newstart/shared';
+import type { ConversationItem, MessageItem, MessagesPage, SendMessage } from '@newstart/shared';
 
 export class ChatsError extends Error {
   constructor(readonly status: number) {
@@ -24,4 +24,19 @@ export async function listMessages(
   });
   if (!res.ok) throw new ChatsError(res.status);
   return (await res.json()) as MessagesPage;
+}
+
+/** Envoie un message. Renvoyer le même `clientId` ne crée jamais de doublon : l'API rend le message déjà enregistré. */
+export async function sendMessage(
+  token: string,
+  conversationId: string,
+  body: SendMessage,
+): Promise<MessageItem> {
+  const res = await fetch(`/api/conversations/${conversationId}/messages`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+  return (await res.json()) as MessageItem;
 }

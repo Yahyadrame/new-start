@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ChatsError, listConversations, listMessages } from './chats-api';
+import { ChatsError, listConversations, listMessages, sendMessage } from './chats-api';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -42,5 +42,25 @@ describe('listMessages', () => {
   it('lève ChatsError avec le statut quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
     await expect(listMessages('tok', 'c1')).rejects.toMatchObject({ status: 404 });
+  });
+});
+
+describe('sendMessage', () => {
+  const body = { clientId: '0198f0a0-0000-4000-8000-000000000002', text: 'Hello' };
+
+  it('envoie le message en POST avec le jeton et rend le message enregistré', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'm1' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await sendMessage('tok', 'c1', body)).toEqual({ id: 'm1' });
+    expect(fetchMock).toHaveBeenCalledWith('/api/conversations/c1/messages', {
+      method: 'POST',
+      headers: { authorization: 'Bearer tok', 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  });
+
+  it('lève ChatsError avec le statut quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }));
+    await expect(sendMessage('tok', 'c1', body)).rejects.toMatchObject({ status: 429 });
   });
 });
