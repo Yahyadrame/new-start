@@ -1,4 +1,4 @@
-import type { Me, MePatch } from '@newstart/shared';
+import type { Me, MePatch, NotebookEntryItem } from '@newstart/shared';
 
 export class ProfileError extends Error {
   constructor(readonly status: number) {
@@ -39,4 +39,11 @@ export async function deleteMe(token: string): Promise<void> {
   const res = await fetch('/api/me', { method: 'DELETE', headers: headers(token) });
   if (!res.ok) throw new ProfileError(res.status);
   await fetch('/api/auth/logout', { method: 'POST' }).catch(() => undefined);
+}
+
+/** Le carnet de la personne, l'entrée la plus récente d'abord. */
+export async function listNotebook(token: string): Promise<NotebookEntryItem[]> {
+  const res = await fetch('/api/notebook', { headers: headers(token) });
+  if (!res.ok) throw new ProfileError(res.status);
+  return (await res.json()) as NotebookEntryItem[];
 }

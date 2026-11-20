@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ProfileError, deleteMe, exportMe, getMe, patchMe } from './profile-api';
+import { ProfileError, deleteMe, exportMe, getMe, listNotebook, patchMe } from './profile-api';
 
 afterEach(() => vi.unstubAllGlobals());
 const stub = (res: Partial<Response>) => {
@@ -56,5 +56,21 @@ describe('profile-api', () => {
     const fetchMock = stub({ ok: false, status: 500 });
     await expect(deleteMe('tok')).rejects.toMatchObject({ status: 500 });
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('listNotebook', () => {
+  it('lit le carnet avec le jeton', async () => {
+    const fetchMock = stub({ ok: true, json: async () => [{ id: 'n1' }] });
+    expect(await listNotebook('tok')).toEqual([{ id: 'n1' }]);
+    expect(fetchMock).toHaveBeenCalledWith('/api/notebook', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève ProfileError avec le statut quand l’API refuse', async () => {
+    stub({ ok: false, status: 401 });
+    await expect(listNotebook('tok')).rejects.toMatchObject({ status: 401 });
+    await expect(listNotebook('tok')).rejects.toBeInstanceOf(ProfileError);
   });
 });

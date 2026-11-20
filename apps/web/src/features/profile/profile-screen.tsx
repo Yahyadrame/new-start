@@ -8,6 +8,7 @@ import { ensureSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
 import { DeleteAccountDialog } from './delete-account-dialog';
+import { NotebookSection } from './notebook-section';
 import { deleteMe, exportMe, getMe, patchMe } from './profile-api';
 
 const t = fr.profile;
@@ -226,6 +227,8 @@ export function ProfileScreen() {
               </Row>
             )}
           </Group>
+
+          <NotebookSection />
 
           <Group title={t.data.title}>
             <Row label={t.data.saver} hint={t.data.saverHint}>

@@ -38,8 +38,8 @@
 - [ ] Repli si le micro est refusé : le bouton disparaît, l'écriture reste possible.
 
 ## NS-207 — Carnet · S
-*Découpé le 2026-11-20 en trois PR : (1) API `POST` et `GET /notebook` (faite), (2) bouton « Ajouter au carnet » sur la carte « Plus naturel » (fait), (3) liste dans le profil.*
-- [ ] « Ajouter au carnet » depuis une correction ; liste dans le profil.
+*Découpé le 2026-11-20 en trois PR : (1) API `POST` et `GET /notebook` (faite), (2) bouton « Ajouter au carnet » sur la carte « Plus naturel » (fait), (3) liste dans le profil (faite).*
+- [x] « Ajouter au carnet » depuis une correction ; liste dans le profil. *Bouton sur la carte (PR 2) et section « Mon carnet » dans le profil (PR 3).*
 
 ## NS-208 — Limites d'usage · M
 - [ ] Compteurs Redis par jour et par clé ; consolidation dans `UsageCounter` ; événement `quota.update`.

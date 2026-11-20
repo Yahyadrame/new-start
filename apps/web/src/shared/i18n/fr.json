@@ -154,6 +154,15 @@
     "appearance": {
       "title": "Apparence"
     },
+    "notebook": {
+      "title": "Mon carnet",
+      "loading": "Chargement de ton carnet…",
+      "error": "Ton carnet ne se charge pas.",
+      "retry": "Réessayer",
+      "empty": "Ton carnet est vide. Sous un message corrigé, touche « Ajouter au carnet » pour garder une tournure.",
+      "original": "Ce que tu as écrit",
+      "better": "Plus naturel"
+    },
     "learning": {
       "title": "Apprentissage",
       "dailyGoal": "Objectif quotidien",
