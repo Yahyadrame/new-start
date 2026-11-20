@@ -1,5 +1,8 @@
 /** Phrases courantes qui contiennent « mourir » ou « die » sans parler de détresse. */
 const FIGURATIVE = [
+  /suicide (?:squad|blonde)/g,
+  /(?:suicide|self[- ]?harm) (?:prevention|awareness)/g,
+  /(?:article|book|film|movie|song|documentary) (?:about|on) suicide/g,
   /mourir d(?:e |')\s?(?:rire|faim|chaud|froid|soif|envie|peur|honte|fatigue|ennui|jalousie)/g,
   /die (?:laughing|of (?:embarrassment|boredom|laughter|shame)|from (?:embarrassment|laughing))/g,
 ];
@@ -13,14 +16,14 @@ const DISTRESS = [
   /\ben finir (?:avec (?:tout|la vie|ma vie)|\s*$)/,
   /\ben finir avec (?:la|ma) vie\b/,
   /\bplus (?:envie|gout|force) de vivre\b/,
-  /\b(?:ne|n') ?(?:veux|voudrais) plus vivre\b/,
-  /\bme (?:faire du mal|blesser|scarifier|mutiler)\b/,
+  /\b(?:ne|n') ?(?:veux|voudrais) plus vivre\b(?! (?:en|avec|a|dans|chez|ici|ou|ici)\b)/,
+  /\bme (?:faire du mal|blesser|scarifi|mutiler)/,
   /\bautomutilation\b/,
   /\bkill(?:ing)? my ?self\b/,
   /\b(?:end|ending) (?:my (?:own )?life|it all)\b/,
   /\btake my own life\b/,
-  /\bwant(?:ed)? to die\b/,
-  /\bwanna die\b/,
+  /\bwant(?:ed)? to die\b(?! (?:my|your|his|her|the|it|them)\b)/,
+  /\bwanna die\b(?! (?:my|your|his|her|the|it|them)\b)/,
   /\b(?:don't|do not|dont) want to (?:live|be alive|be here anymore)\b(?! (?:in|with|near|at|on|here|there|alone|abroad)\b)/,
   /\bno reason to live\b/,
   /\b(?:hurt|hurting|harm|harming) my ?self\b/,

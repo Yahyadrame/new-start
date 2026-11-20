@@ -34,9 +34,7 @@ describe('detectDistress', () => {
     'I hurt my knee yesterday',
     "I don't want to live in Paris",
     '',
-  ])('laisse passer « %s »', (text) =>
-    expect(detectDistress(text)).toBe(text.includes('suicide squad')),
-  );
+  ])('laisse passer « %s »', (text) => expect(detectDistress(text)).toBe(false));
 });
 
 describe('DISTRESS_REPLY_FR', () => {
