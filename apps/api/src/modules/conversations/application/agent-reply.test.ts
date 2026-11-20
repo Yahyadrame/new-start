@@ -103,6 +103,25 @@ describe('AgentReplyService.reply', () => {
   });
 });
 
+describe('AgentReplyService.reply, garde de sortie', () => {
+  it('redemande une réponse refusée, puis enregistre la suivante', async () => {
+    const answers = [json('I love you!'), json('Same here!')];
+    const { store, llm, service } = setup(async () => answers.shift() ?? json('x'));
+    await service.reply('c1', 'm1');
+    expect(llm.complete).toHaveBeenCalledTimes(2);
+    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', { reply: 'Same here!', fix: null });
+    expect(store.saveFailure).not.toHaveBeenCalled();
+  });
+
+  it('n’enregistre jamais une réponse refusée trois fois et ajoute le message d’échec', async () => {
+    const { store, llm, service } = setup(async () => json("I'm a real person"));
+    await service.reply('c1', 'm1');
+    expect(llm.complete).toHaveBeenCalledTimes(3);
+    expect(store.saveReply).not.toHaveBeenCalled();
+    expect(store.saveFailure).toHaveBeenCalledWith('c1');
+  });
+});
+
 describe('AgentReplyService.schedule', () => {
   it('rend la main tout de suite et avale une erreur de stockage', async () => {
     const { store, service } = setup(async () => json('x'));
