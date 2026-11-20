@@ -183,6 +183,7 @@ model ReviewCard {
   due          DateTime @default(now())
   reps         Int      @default(0)
   lapses       Int      @default(0)
+  lastReview   DateTime? // dernière réponse ; null pour une carte neuve
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, expressionId])
   @@index([userId, due])
