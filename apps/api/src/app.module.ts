@@ -6,6 +6,7 @@ import { ConfigModule } from './config/config.module.js';
 import { ENV, type Env } from './config/env.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { CatalogModule } from './modules/catalog/catalog.module.js';
+import { NotebookModule } from './modules/notebook/notebook.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ConversationsModule } from './modules/conversations/conversations.module.js';
 import { MeModule } from './modules/me/me.module.js';
@@ -36,6 +37,7 @@ import { PrismaModule } from './shared/prisma/prisma.module.js';
     MeModule,
     ConversationsModule,
     CatalogModule,
+    NotebookModule,
   ],
   // Sans Sentry.init, le filtre renvoie les erreurs comme Nest le fait déjà : rien n'est envoyé.
   providers: [{ provide: APP_FILTER, useClass: SentryGlobalFilter }],

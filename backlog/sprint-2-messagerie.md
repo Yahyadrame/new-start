@@ -38,6 +38,7 @@
 - [ ] Repli si le micro est refusé : le bouton disparaît, l'écriture reste possible.
 
 ## NS-207 — Carnet · S
+*Découpé le 2026-11-20 en trois PR : (1) API `POST` et `GET /notebook` (faite), (2) bouton « Ajouter au carnet » sur la carte « Plus naturel », (3) liste dans le profil.*
 - [ ] « Ajouter au carnet » depuis une correction ; liste dans le profil.
 
 ## NS-208 — Limites d'usage · M
