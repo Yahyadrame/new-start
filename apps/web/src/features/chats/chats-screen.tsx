@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
+import { BottomNav } from '../../shared/navigation';
 import { listConversations } from './chats-api';
 import { applyFilter, FILTERS, formatWhen, type Filter } from './chats-format';
 
@@ -35,7 +36,7 @@ export function ChatsScreen() {
   const shown = items ? applyFilter(items, filter) : [];
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-28">
       <header className="flex items-center justify-between">
         <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
           {t.title}
@@ -147,6 +148,7 @@ export function ChatsScreen() {
           </li>
         ))}
       </ul>
+      <BottomNav />
     </main>
   );
 }
