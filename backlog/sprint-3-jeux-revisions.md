@@ -1,6 +1,7 @@
 # Sprint 3 — Noyau, jeux et révisions (E3, E4)
 
 ## NS-301 — Générateur de questions · M
+*Fonctions pures dans `packages/shared/src/game-questions.ts` (faites, 2026-11-20). Reste : stocker les phrases d'exemple (colonne ou table, génération LLM relue) et la route qui sert les questions.*
 - [ ] Questions générées depuis `Expression` : Vrai ou faux (traduction juste ou celle d'une autre expression), Mot manquant (phrase d'exemple + 3 leurres de la même semaine), Associer (4 paires).
 - [ ] Les phrases d'exemple sont générées une fois par le LLM, relues, et stockées (pas de génération à chaque partie).
 

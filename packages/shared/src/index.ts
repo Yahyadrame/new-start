@@ -6,3 +6,4 @@ export * from './agent-statuses.js';
 export * from './catalog.js';
 export * from './messages.js';
 export * from './notebook.js';
+export * from './game-questions.js';
