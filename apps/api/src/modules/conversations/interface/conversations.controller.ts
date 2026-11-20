@@ -1,5 +1,7 @@
-import { Controller, Get, Inject, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import { StartConversation } from '@newstart/shared';
 import { AccessGuard, CurrentUserId } from '../../../shared/auth/access.guard.js';
+import { parseBody } from '../../../shared/http/validate.js';
 import { ConversationsService } from '../application/conversations.js';
 
 @Controller('conversations')
@@ -10,5 +12,10 @@ export class ConversationsController {
   @Get()
   list(@CurrentUserId() userId: string) {
     return this.conversations.list(userId);
+  }
+
+  @Post()
+  start(@CurrentUserId() userId: string, @Body() body: unknown) {
+    return this.conversations.start(userId, parseBody(StartConversation, body).agentSlug);
   }
 }

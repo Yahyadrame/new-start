@@ -11,7 +11,11 @@ const agent = {
 };
 
 function fake(rows: unknown[]) {
-  const db = { conversation: { findMany: vi.fn().mockResolvedValue(rows) } };
+  const db = {
+    conversation: { findMany: vi.fn().mockResolvedValue(rows), upsert: vi.fn() },
+    user: { findUnique: vi.fn() },
+    agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
+  };
   return { db, store: new PrismaConversationsStore(db as unknown as PrismaService) };
 }
 
@@ -51,5 +55,48 @@ describe('PrismaConversationsStore', () => {
       { id: 'c2', agent, unreadCount: 0, lastMessageAt: new Date(0), messages: [] },
     ]);
     expect((await store.list('u1'))[0]?.lastMessage).toBeNull();
+  });
+
+  it('lit l’année de naissance du compte', async () => {
+    const { db, store } = fake([]);
+    db.user.findUnique.mockResolvedValue({ birthYear: 1999 });
+    expect(await store.birthYear('u1')).toBe(1999);
+    db.user.findUnique.mockResolvedValue(null);
+    expect(await store.birthYear('u1')).toBeUndefined();
+  });
+
+  it('dit si le contact actif est réservé aux majeurs, ou null s’il est absent', async () => {
+    const { db, store } = fake([]);
+    db.agent.findFirst.mockResolvedValue({ topic: { adultOnly: true } });
+    expect(await store.agentRule('maya')).toEqual({ adultOnly: true });
+    expect(db.agent.findFirst.mock.calls[0]?.[0].where).toEqual({ slug: 'maya', isActive: true });
+    db.agent.findFirst.mockResolvedValue({ topic: null });
+    expect(await store.agentRule('jade')).toEqual({ adultOnly: false });
+    db.agent.findFirst.mockResolvedValue(null);
+    expect(await store.agentRule('zzz')).toBeNull();
+  });
+
+  it('crée la conversation avec le premier message, sans toucher à celle qui existe', async () => {
+    const { db, store } = fake([]);
+    db.agent.findUniqueOrThrow.mockResolvedValue({ id: 'a1', firstMessage: 'Hi!' });
+    db.conversation.upsert.mockResolvedValue({
+      id: 'c1',
+      agent,
+      unreadCount: 1,
+      lastMessageAt: new Date('2026-11-20T10:00:00.000Z'),
+      messages: [{ author: 'AGENT', text: 'Hi!' }],
+    });
+    const item = await store.open('u1', 'jade');
+    expect(item.lastMessage).toEqual({ author: 'AGENT', text: 'Hi!' });
+    expect(item.lastMessageAt).toBe('2026-11-20T10:00:00.000Z');
+    const args = db.conversation.upsert.mock.calls[0]?.[0];
+    expect(args.where).toEqual({ userId_agentId: { userId: 'u1', agentId: 'a1' } });
+    expect(args.create).toMatchObject({
+      userId: 'u1',
+      agentId: 'a1',
+      unreadCount: 1,
+      messages: { create: { author: 'AGENT', text: 'Hi!' } },
+    });
+    expect(args.update).toEqual({});
   });
 });
