@@ -54,3 +54,7 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 ## NS-210 — Ressources d'aide par pays · S
 *Ajouté le 2026-11-20 : le message de détresse ne cite que le 3114 (France) et findahelpline.com ; aucun autre numéro n'est inventé.*
 - [ ] Liste des lignes d'aide par pays, choisie selon le pays de la personne, relue par le porteur du projet.
+
+## NS-211 — Pages provisoires des onglets · S
+*Ajouté le 2026-11-20 : les onglets Série, Jeux et Progrès de la barre du bas menaient à une page introuvable (404).*
+- [x] Écran « Bientôt » sur `/series`, `/games` et `/progress`, avec la barre d'onglets et un retour vers les discussions ; tests. Chaque page sera remplacée par son vrai écran (NS-402, NS-301 et suivants, progrès).
