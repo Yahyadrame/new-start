@@ -15,6 +15,7 @@
 
 ## NS-304 — Révisions espacées · M
 *Découpé le 2026-11-20 : (1) ordonnanceur `ts-fsrs` dans `modules/reviews/domain` (fait), (2) modèle `ReviewCard`, migration, stockage et service (fait), (3) routes `GET /reviews/due` et `POST /reviews/:id/grade` (faites), (4) cartes créées depuis le carnet et les jeux.*
+*À trancher avant la tranche 4 : une entrée du carnet est une phrase corrigée, pas une `Expression`, donc elle ne peut pas devenir une carte `ReviewCard` (clé étrangère sur `Expression`). Proposition : ne créer des cartes que pour les expressions ratées dans les jeux, et garder le carnet comme liste de relecture. Les jeux (NS-303) viennent d'abord.*
 - [ ] Algorithme FSRS (librairie `ts-fsrs`) ; une carte est créée pour chaque expression ratée ou ajoutée au carnet.
 - [ ] `GET /reviews/due`, `POST /reviews/:id/grade`.
 
