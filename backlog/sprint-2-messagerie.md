@@ -4,7 +4,7 @@
 *Découpé le 2026-11-18 en deux PR : (1) API `GET /conversations`, (2) écran `/chats` (statuts en constante partagée, décision du jour). « Commencer » du test de niveau renverra vers `/chats`.*
 - [x] Tri par dernier message, badges non lus, rôle en capitales, point « en ligne », filtres Tous / Non lus / Quotidien / Pro / Business / Voyage. *API (PR 1) et écran `/chats` (PR 2) faits.*
 - [x] Badge « IA » à côté de chaque nom.
-- [x] Statuts affichés en lecture seule (contenu fixe par agent au MVP). *Constante `AGENT_STATUSES` dans `packages/shared`. Barre d'onglets du bas et `/explore` restent à faire. `/chats/[agentSlug]` : coquille faite (en-tête du contact), l'écran complet est NS-204.*
+- [x] Statuts affichés en lecture seule (contenu fixe par agent au MVP). *Constante `AGENT_STATUSES` dans `packages/shared`. Barre d'onglets du bas faite (affichée sur `/chats` ; les onglets Série, Jeux et Progrès mènent à des routes à venir). `/explore` reste à faire. `/chats/[agentSlug]` : coquille faite (en-tête du contact), l'écran complet est NS-204.*
 
 ## NS-202 — Passerelle temps réel · L
 - [ ] Socket.IO espace `/rt`, authentification par jeton, adaptateur Redis, salles `user:<id>`.

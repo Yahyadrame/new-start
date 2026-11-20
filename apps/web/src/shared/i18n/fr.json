@@ -213,5 +213,12 @@
     "back": "Retour aux discussions",
     "soon": "La conversation arrive bientôt. Tu pourras écrire à ton contact ici.",
     "notFound": "Ce contact n'existe pas dans tes discussions."
+  },
+  "nav": {
+    "label": "Navigation principale",
+    "chats": "Discussions",
+    "series": "Série",
+    "games": "Jeux",
+    "progress": "Progrès"
   }
 }

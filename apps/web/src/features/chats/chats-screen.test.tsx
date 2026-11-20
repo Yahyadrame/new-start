@@ -10,6 +10,7 @@ const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 vi.mock('./chats-api', () => ({ listConversations }));
+vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { ChatsScreen } = await import('./chats-screen');
 
 const t = fr.chats;
@@ -53,6 +54,11 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('ChatsScreen', () => {
+  it('affiche la barre d’onglets du bas', async () => {
+    render(<ChatsScreen />);
+    expect(await screen.findByText('barre du bas')).toBeTruthy();
+  });
+
   it('renvoie vers l’accueil sans session', async () => {
     ensureSession.mockResolvedValue(null);
     render(<ChatsScreen />);
