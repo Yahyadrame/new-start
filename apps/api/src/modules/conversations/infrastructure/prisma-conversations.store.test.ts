@@ -21,7 +21,7 @@ function fake(rows: unknown[]) {
     },
     user: { findUnique: vi.fn() },
     $transaction: vi.fn(),
-    message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn() },
+    message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), updateMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
   };
   return { db, store: new PrismaConversationsStore(db as unknown as PrismaService) };
@@ -137,6 +137,35 @@ describe('PrismaConversationsStore', () => {
     db.message.findMany.mockResolvedValue([]);
     await store.messages('u1', 'c1', null, 31);
     expect(db.message.findMany.mock.calls[0]?.[0].where).toEqual({ conversationId: 'c1' });
+  });
+
+  describe('markRead', () => {
+    it('ne touche à rien quand la conversation n’est pas à cette personne', async () => {
+      const { db, store } = fake([]);
+      db.conversation.findFirst.mockResolvedValue(null);
+      expect(await store.markRead('u1', 'c9')).toBe(false);
+      expect(db.conversation.findFirst.mock.calls[0]?.[0].where).toEqual({
+        id: 'c9',
+        userId: 'u1',
+      });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('date les messages du contact et remet le compteur à zéro', async () => {
+      const { db, store } = fake([]);
+      db.conversation.findFirst.mockResolvedValue({ id: 'c1' });
+      expect(await store.markRead('u1', 'c1')).toBe(true);
+      expect(db.message.updateMany.mock.calls[0]?.[0].where).toEqual({
+        conversationId: 'c1',
+        author: { not: 'USER' },
+        readAt: null,
+      });
+      expect(db.conversation.update.mock.calls[0]?.[0]).toMatchObject({
+        where: { id: 'c1' },
+        data: { unreadCount: 0 },
+      });
+      expect(db.$transaction).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('send', () => {

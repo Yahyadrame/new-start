@@ -33,6 +33,8 @@ export interface ConversationsStore {
     before: MessageCursor | null,
     limit: number,
   ): Promise<MessageRow[] | null>;
+  /** Remet `unreadCount` à 0 et date la lecture des messages du contact. Faux si la conversation n'est pas à elle. */
+  markRead(userId: string, conversationId: string): Promise<boolean>;
   /**
    * Ajoute le message de la personne. Si ce `clientId` est déjà enregistré dans la conversation,
    * rend le message existant (`created: false`) sans rien ajouter. Null si la conversation n'est pas à elle.
@@ -102,6 +104,11 @@ export class ConversationsService {
           ? encodeCursor({ createdAt: last.createdAt, id: last.id })
           : null,
     };
+  }
+
+  async markRead(userId: string, conversationId: string) {
+    const done = UUID.test(conversationId) && (await this.store.markRead(userId, conversationId));
+    if (!done) throw notFound();
   }
 
   async send(userId: string, conversationId: string, message: SendMessage) {

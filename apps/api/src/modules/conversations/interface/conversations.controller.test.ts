@@ -9,6 +9,7 @@ import { ConversationsController } from './conversations.controller.js';
 const list = vi.fn().mockResolvedValue([{ id: 'c1' }]);
 const start = vi.fn().mockResolvedValue({ id: 'c2' });
 const send = vi.fn();
+const markRead = vi.fn();
 const messages = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 let app: INestApplication;
@@ -16,7 +17,7 @@ beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [ConversationsController],
     providers: [
-      { provide: ConversationsService, useValue: { list, start, messages, send } },
+      { provide: ConversationsService, useValue: { list, start, messages, send, markRead } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -133,5 +134,21 @@ describe('POST /conversations/:id/messages', () => {
       expect(res.body.code).toBe('VALIDATION_FAILED');
     }
     expect(send).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /conversations/:id/read', () => {
+  beforeEach(() => vi.clearAllMocks());
+  const post = () => request(app.getHttpServer()).post('/conversations/c1/read');
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await post()).status).toBe(401);
+    expect(markRead).not.toHaveBeenCalled();
+  });
+
+  it('marque lue la conversation du compte et répond 204', async () => {
+    const res = await post().set({ Authorization: 'Bearer tok-u1' });
+    expect(res.status).toBe(204);
+    expect(markRead).toHaveBeenCalledWith('u1', 'c1');
   });
 });

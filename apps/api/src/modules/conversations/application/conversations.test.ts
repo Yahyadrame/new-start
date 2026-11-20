@@ -11,6 +11,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     open: vi.fn().mockResolvedValue(item),
     messages: vi.fn(),
     send: vi.fn(),
+    markRead: vi.fn(),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
 }
@@ -172,5 +173,28 @@ describe('ConversationsService.send', () => {
     vi.mocked(store.send).mockResolvedValueOnce({ row, created: false });
     await service.send('u1', ID, body);
     expect(schedule).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('ConversationsService.markRead', () => {
+  const ID = '0198f0a0-0000-7000-8000-000000000001';
+
+  it('marque la conversation lue', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.markRead).mockResolvedValue(true);
+    await service.markRead('u1', ID);
+    expect(store.markRead).toHaveBeenCalledWith('u1', ID);
+  });
+
+  it('répond 404 quand la conversation n’est pas à cette personne', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.markRead).mockResolvedValue(false);
+    await expect(service.markRead('u1', ID)).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('répond 404 sans toucher au stockage quand l’identifiant n’est pas un UUID', async () => {
+    const { store, service } = setup(null);
+    await expect(service.markRead('u1', 'nope')).rejects.toMatchObject({ status: 404 });
+    expect(store.markRead).not.toHaveBeenCalled();
   });
 });
