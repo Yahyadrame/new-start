@@ -70,6 +70,7 @@ model User {
   conversations   Conversation[]
   levelAnswers    LevelTestAnswer[]
   notebook        NotebookEntry[]
+  reviewCards     ReviewCard[]
 }
 
 model AuthIdentity {
@@ -199,14 +200,15 @@ model Correction {
 
 // Le noyau d'anglais parlé, chargé depuis data/*.csv par `pnpm --filter @newstart/api db:seed`.
 model Expression {
-  id        Int    @id // rang dans data/expressions.csv
-  text      String @unique
-  meaningFr String
-  situation String
-  register  String // Familier | Neutre | Poli
-  sceneType String
-  week      Int
-  frequency Float
+  id          Int          @id // rang dans data/expressions.csv
+  reviewCards ReviewCard[]
+  text        String       @unique
+  meaningFr   String
+  situation   String
+  register    String // Familier | Neutre | Poli
+  sceneType   String
+  week        Int
+  frequency   Float
 }
 
 model Word {
@@ -249,4 +251,24 @@ model NotebookEntry {
 
   @@unique([userId, messageId])
   @@index([userId, createdAt])
+}
+
+// Carte de révision FSRS : une par personne et par expression (NS-304).
+model ReviewCard {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  userId       String     @db.Uuid
+  expressionId Int
+  stability    Float      @default(0)
+  difficulty   Float      @default(0)
+  due          DateTime   @default(now())
+  reps         Int        @default(0)
+  lapses       Int        @default(0)
+  lastReview   DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expression   Expression @relation(fields: [expressionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, expressionId])
+  @@index([userId, due])
 }
