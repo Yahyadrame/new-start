@@ -6,11 +6,12 @@ const replace = vi.fn();
 const ensureSession = vi.fn();
 const listConversations = vi.fn();
 const listMessages = vi.fn();
+const sendMessage = vi.fn();
 const scrollIntoView = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./chats-api', () => ({ listConversations, listMessages }));
+vi.mock('./chats-api', () => ({ listConversations, listMessages, sendMessage }));
 const { ConversationScreen } = await import('./conversation-screen');
 
 const jade = {
@@ -120,5 +121,48 @@ describe('ConversationScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: fr.conversation.retry }));
     await screen.findByRole('list', { name: fr.conversation.messagesLabel });
     expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  describe('envoi', () => {
+    const write = async (text: string) => {
+      const field = await screen.findByLabelText(fr.conversation.composerLabel);
+      fireEvent.change(field, { target: { value: text } });
+      fireEvent.submit(field.closest('form') as HTMLFormElement);
+    };
+
+    it('montre le message en cours d’envoi, puis le message enregistré', async () => {
+      let resolve: (m: unknown) => void = () => undefined;
+      sendMessage.mockReturnValue(new Promise((r) => (resolve = r)));
+      render(<ConversationScreen agentSlug="jade" />);
+      await write('Hello');
+      expect(screen.getByRole('status').textContent).toBe(fr.conversation.sending);
+      const [, call] = [0, sendMessage.mock.calls[0]];
+      expect(call?.slice(0, 2)).toEqual(['tok', 'c1']);
+      expect(call?.[2]).toMatchObject({ text: 'Hello' });
+      expect(call?.[2].clientId).toMatch(/^[0-9a-f-]{36}$/);
+      resolve(msg('m3', 'USER', 'Hello'));
+      await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+      expect(texts()).toEqual(['First', 'Second', 'Hello']);
+    });
+
+    it('propose de réessayer avec le même clientId quand le message n’est pas parti', async () => {
+      sendMessage
+        .mockRejectedValueOnce(new Error('réseau'))
+        .mockResolvedValueOnce(msg('m3', 'USER', 'Hello'));
+      render(<ConversationScreen agentSlug="jade" />);
+      await write('Hello');
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.sendFailed }));
+      await waitFor(() => expect(texts()).toEqual(['First', 'Second', 'Hello']));
+      expect(screen.queryByRole('button', { name: fr.conversation.sendFailed })).toBeNull();
+      expect(sendMessage).toHaveBeenCalledTimes(2);
+      expect(sendMessage.mock.calls[1]?.[2]).toEqual(sendMessage.mock.calls[0]?.[2]);
+    });
+
+    it('descend au message envoyé', async () => {
+      sendMessage.mockResolvedValue(msg('m3', 'USER', 'Hello'));
+      render(<ConversationScreen agentSlug="jade" />);
+      await write('Hello');
+      await waitFor(() => expect(scrollIntoView.mock.calls.length).toBeGreaterThan(1));
+    });
   });
 });

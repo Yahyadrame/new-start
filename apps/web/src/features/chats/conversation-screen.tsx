@@ -8,13 +8,15 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
-import { listConversations, listMessages } from './chats-api';
+import { listConversations, listMessages, sendMessage } from './chats-api';
+import { Composer } from './composer';
 import { MessageBubble } from './message-bubble';
+import { PendingBubble, type PendingMessage } from './pending-bubble';
 
 const t = fr.chats;
 const c = fr.conversation;
 
-/** Écran 4 : l'en-tête du contact et l'historique, du plus ancien au plus récent. L'envoi vient ensuite. */
+/** Écran 4 : l'en-tête du contact, l'historique du plus ancien au plus récent, et le champ d'écriture. */
 export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   const router = useRouter();
   const [item, setItem] = useState<ConversationItem | null | undefined>(undefined);
@@ -22,6 +24,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   const [messages, setMessages] = useState<MessageItem[] | undefined>(undefined);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [older, setOlder] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [pending, setPending] = useState<PendingMessage[]>([]);
   const [attempt, setAttempt] = useState(0);
   const token = useRef('');
   const end = useRef<HTMLDivElement>(null);
@@ -46,11 +49,6 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
     })();
   }, [router, agentSlug, attempt]);
 
-  // Au premier affichage, on arrive sur le message le plus récent.
-  useEffect(() => {
-    if (loaded) end.current?.scrollIntoView({ block: 'end' });
-  }, [loaded]);
-
   const loadOlder = useCallback(async () => {
     if (!item || !nextCursor) return;
     setOlder('loading');
@@ -63,6 +61,36 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
       setOlder('error');
     }
   }, [item, nextCursor]);
+
+  // Le clientId reste le même à chaque nouvel essai : l'API ne crée jamais deux fois le message.
+  const deliver = useCallback(
+    async (conversationId: string, { clientId, text }: PendingMessage) => {
+      const mark = (status: PendingMessage['status']) =>
+        setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
+      mark('sending');
+      try {
+        const sent = await sendMessage(token.current, conversationId, { clientId, text });
+        setMessages((prev) => [...(prev ?? []), sent]);
+        setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+      } catch {
+        mark('failed');
+      }
+    },
+    [],
+  );
+
+  const send = (text: string) => {
+    if (!item) return;
+    const message: PendingMessage = { clientId: crypto.randomUUID(), text, status: 'sending' };
+    setPending((prev) => [...prev, message]);
+    void deliver(item.id, message);
+  };
+
+  // On arrive sur le plus récent, et un nouveau message ramène en bas. Charger des messages plus anciens ne bouge rien.
+  const newest = messages?.at(-1)?.id;
+  useEffect(() => {
+    if (loaded) end.current?.scrollIntoView({ block: 'end' });
+  }, [loaded, newest, pending.length]);
 
   const retry = () => {
     setError(false);
@@ -125,18 +153,26 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
               {c.olderError}
             </p>
           )}
-          {messages.length === 0 ? (
+          {messages.length === 0 && pending.length === 0 ? (
             <p className="text-text-muted">{c.empty}</p>
           ) : (
             <ol aria-label={c.messagesLabel} className="flex flex-col gap-3">
               {messages.map((m) => (
                 <MessageBubble key={m.id} message={m} />
               ))}
+              {pending.map((p) => (
+                <PendingBubble
+                  key={p.clientId}
+                  message={p}
+                  onRetry={() => item && void deliver(item.id, p)}
+                />
+              ))}
             </ol>
           )}
           <div ref={end} />
         </>
       )}
+      {loaded && <Composer onSend={send} />}
     </main>
   );
 }
