@@ -49,3 +49,13 @@ export async function markConversationRead(token: string, conversationId: string
   });
   if (!res.ok) throw new ChatsError(res.status);
 }
+
+/** Garde la correction d'un message dans le carnet. Répéter l'appel rend la même entrée, sans doublon. */
+export async function addToNotebook(token: string, messageId: string): Promise<void> {
+  const res = await fetch('/api/notebook', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ messageId }),
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+}
