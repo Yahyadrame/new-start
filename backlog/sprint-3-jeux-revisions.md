@@ -14,6 +14,7 @@
 - [ ] Écran de fin : score, XP gagnés, Rejouer.
 
 ## NS-304 — Révisions espacées · M
+*Découpé le 2026-11-20 : (1) ordonnanceur `ts-fsrs` dans `modules/reviews/domain` (fait), (2) modèle `ReviewCard`, migration et stockage, (3) routes `GET /reviews/due` et `POST /reviews/:id/grade`, (4) cartes créées depuis le carnet et les jeux.*
 - [ ] Algorithme FSRS (librairie `ts-fsrs`) ; une carte est créée pour chaque expression ratée ou ajoutée au carnet.
 - [ ] `GET /reviews/due`, `POST /reviews/:id/grade`.
 
