@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ConversationItem } from '@newstart/shared';
+import type { MessageCursor } from '../application/message-cursor.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
-import type { ConversationsStore } from '../application/conversations.js';
+import type { ConversationsStore, MessageRow } from '../application/conversations.js';
 
 const select = {
   id: true,
@@ -72,5 +73,39 @@ export class PrismaConversationsStore implements ConversationsStore {
       select,
     });
     return toItem(row);
+  }
+
+  async messages(
+    userId: string,
+    conversationId: string,
+    before: MessageCursor | null,
+    limit: number,
+  ): Promise<MessageRow[] | null> {
+    const owned = await this.db.conversation.findFirst({
+      where: { id: conversationId, userId },
+      select: { id: true },
+    });
+    if (!owned) return null;
+    return this.db.message.findMany({
+      where: {
+        conversationId,
+        ...(before && {
+          OR: [
+            { createdAt: { lt: before.createdAt } },
+            { createdAt: before.createdAt, id: { lt: before.id } },
+          ],
+        }),
+      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit,
+      select: {
+        id: true,
+        author: true,
+        text: true,
+        translationFr: true,
+        createdAt: true,
+        correction: { select: { better: true, whyFr: true } },
+      },
+    });
   }
 }
