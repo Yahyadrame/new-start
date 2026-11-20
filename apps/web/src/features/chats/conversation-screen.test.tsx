@@ -7,11 +7,17 @@ const ensureSession = vi.fn();
 const listConversations = vi.fn();
 const listMessages = vi.fn();
 const sendMessage = vi.fn();
+const markConversationRead = vi.fn();
 const scrollIntoView = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./chats-api', () => ({ listConversations, listMessages, sendMessage }));
+vi.mock('./chats-api', () => ({
+  listConversations,
+  listMessages,
+  sendMessage,
+  markConversationRead,
+}));
 const { ConversationScreen } = await import('./conversation-screen');
 
 const jade = {
@@ -52,8 +58,10 @@ beforeEach(() => {
     items: [msg('m2', 'AGENT', 'Second'), msg('m1', 'USER', 'First')],
     nextCursor: null,
   });
+  markConversationRead.mockResolvedValue(undefined);
   Element.prototype.scrollIntoView = scrollIntoView;
 });
+
 afterEach(cleanup);
 
 describe('ConversationScreen', () => {
@@ -171,6 +179,29 @@ describe('ConversationScreen', () => {
       await waitFor(() => expect(scrollIntoView.mock.calls.length).toBeGreaterThan(1));
     });
   });
+  describe('conversation lue', () => {
+    it('la marque lue à l’ouverture quand des messages ne sont pas lus', async () => {
+      listConversations.mockResolvedValue([{ ...jade, unreadCount: 2 }]);
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('Second');
+      expect(markConversationRead).toHaveBeenCalledWith('tok', 'c1');
+    });
+
+    it('ne fait aucun appel quand tout est déjà lu', async () => {
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('Second');
+      expect(markConversationRead).not.toHaveBeenCalled();
+    });
+
+    it('garde l’écran quand l’appel échoue', async () => {
+      listConversations.mockResolvedValue([{ ...jade, unreadCount: 1 }]);
+      markConversationRead.mockRejectedValue(new Error('x'));
+      render(<ConversationScreen agentSlug="jade" />);
+      expect(await screen.findByText('Second')).toBeTruthy();
+      expect(screen.queryByText(fr.conversation.messagesError)).toBeNull();
+    });
+  });
+
   describe('réponse du contact', () => {
     const write = async (text: string) => {
       const field = await screen.findByLabelText(fr.conversation.composerLabel);
@@ -206,6 +237,7 @@ describe('ConversationScreen', () => {
       expect(screen.getByText('Hi there')).toBeTruthy();
       expect(screen.getByText('Hello!')).toBeTruthy();
       expect(screen.getAllByText('Hello')).toHaveLength(1);
+      expect(markConversationRead).toHaveBeenCalledWith('tok', 'c1');
     });
 
     it('continue de relire tant que le contact n’a pas répondu', async () => {
