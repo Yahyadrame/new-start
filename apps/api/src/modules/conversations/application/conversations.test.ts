@@ -10,6 +10,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     agentRule: vi.fn().mockResolvedValue(rule),
     open: vi.fn().mockResolvedValue(item),
     messages: vi.fn(),
+    send: vi.fn(),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
 }
@@ -116,5 +117,49 @@ describe('ConversationsService.messages', () => {
     const { store, service } = serve(rows(1));
     await expect(service.messages('u1', 'abc')).rejects.toMatchObject({ status: 404 });
     expect(store.messages).not.toHaveBeenCalled();
+  });
+});
+
+describe('ConversationsService.send', () => {
+  const ID = '0198f0a0-0000-7000-8000-000000000001';
+  const body = { clientId: '0198f0a0-0000-4000-8000-000000000002', text: 'Hello' };
+  const row = {
+    id: 'm1',
+    author: 'USER' as const,
+    text: 'Hello',
+    translationFr: null,
+    createdAt: new Date('2026-11-20T10:00:00.000Z'),
+    correction: null,
+  };
+
+  it('rend le message avec sa date en texte et signale la création', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.send).mockResolvedValue({ row, created: true });
+    expect(await service.send('u1', ID, body)).toEqual({
+      message: { ...row, createdAt: '2026-11-20T10:00:00.000Z' },
+      created: true,
+    });
+    expect(store.send).toHaveBeenCalledWith('u1', ID, body);
+  });
+
+  it('signale un renvoi quand le clientId était déjà enregistré', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.send).mockResolvedValue({ row, created: false });
+    expect((await service.send('u1', ID, body)).created).toBe(false);
+  });
+
+  it('répond 404 pour une conversation absente ou d’une autre personne', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.send).mockResolvedValue(null);
+    await expect(service.send('u1', ID, body)).rejects.toMatchObject({
+      status: 404,
+      response: { code: 'NOT_FOUND' },
+    });
+  });
+
+  it('répond 404 pour un identifiant qui n’est pas un UUID, sans interroger le stockage', async () => {
+    const { store, service } = setup(null);
+    await expect(service.send('u1', 'abc', body)).rejects.toMatchObject({ status: 404 });
+    expect(store.send).not.toHaveBeenCalled();
   });
 });

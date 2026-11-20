@@ -18,7 +18,7 @@
 - [ ] Jeux d'évaluation `corrections.jsonl` (200 cas) et `safety.jsonl` (100 cas) lancés en CI.
 
 ## NS-204 — Écran Conversation (4) · L
-*Découpé le 2026-11-20 en trois PR : (1) API `GET /conversations/:id/messages`, (2) écran (bulles, historique, pagination), (3) composer et envoi HTTP idempotent (le WebSocket de NS-202 le remplacera ; l'agent ne répond qu'avec NS-203).*
+*Découpé le 2026-11-20 en trois PR : (1) API `GET /conversations/:id/messages`, (2) écran (bulles, historique, pagination), (3) composer et envoi HTTP idempotent, coupée en deux le 2026-11-20 pour tenir sous 400 lignes : API `POST /conversations/:id/messages` (faite), puis composer dans l'écran (le WebSocket de NS-202 le remplacera ; l'agent ne répond qu'avec NS-203).*
 - [ ] Bulles, coches, « en train d'écrire… », carte « Plus naturel », suggestions de l'agent, composer avec micro. *Bulles, heures et carte « Plus naturel » faites (PR 2) ; composer en PR 3 ; coches, « en train d'écrire… » et suggestions attendent le temps réel et l'IA (NS-202, NS-203) ; micro : NS-206.*
 - [x] Pagination par curseur en remontant. *Bouton « Voir les messages précédents » (PR 2).*
 - [ ] États : envoi en cours, échec avec « Touche pour réessayer », limite gratuite atteinte.

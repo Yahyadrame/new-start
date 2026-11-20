@@ -4,6 +4,7 @@ import {
   type ConversationItem,
   type MessageItem,
   type MessagesPage,
+  type SendMessage,
 } from '@newstart/shared';
 import { isAdult } from '../../../shared/age.js';
 import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor.js';
@@ -31,7 +32,24 @@ export interface ConversationsStore {
     before: MessageCursor | null,
     limit: number,
   ): Promise<MessageRow[] | null>;
+  /**
+   * Ajoute le message de la personne. Si ce `clientId` est déjà enregistré dans la conversation,
+   * rend le message existant (`created: false`) sans rien ajouter. Null si la conversation n'est pas à elle.
+   */
+  send(
+    userId: string,
+    conversationId: string,
+    message: SendMessage,
+  ): Promise<{ row: MessageRow; created: boolean } | null>;
 }
+
+const toItem = (row: MessageRow): MessageItem => ({
+  ...row,
+  createdAt: row.createdAt.toISOString(),
+});
+
+const notFound = () =>
+  new HttpException({ code: 'NOT_FOUND', message: "Cette conversation n'existe pas." }, 404);
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -76,11 +94,19 @@ export class ConversationsService {
     const page = rows.slice(0, MESSAGES_PAGE_SIZE);
     const last = page.at(-1);
     return {
-      items: page.map((row) => ({ ...row, createdAt: row.createdAt.toISOString() })),
+      items: page.map(toItem),
       nextCursor:
         rows.length > MESSAGES_PAGE_SIZE && last
           ? encodeCursor({ createdAt: last.createdAt, id: last.id })
           : null,
     };
+  }
+
+  async send(userId: string, conversationId: string, message: SendMessage) {
+    const sent = UUID.test(conversationId)
+      ? await this.store.send(userId, conversationId, message)
+      : null;
+    if (!sent) throw notFound();
+    return { message: toItem(sent.row), created: sent.created };
   }
 }

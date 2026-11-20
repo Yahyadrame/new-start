@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { Prisma } from '../../../generated/prisma/client.js';
 import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import { PrismaConversationsStore } from './prisma-conversations.store.js';
 
@@ -16,9 +17,11 @@ function fake(rows: unknown[]) {
       findMany: vi.fn().mockResolvedValue(rows),
       findFirst: vi.fn(),
       upsert: vi.fn(),
+      update: vi.fn(),
     },
     user: { findUnique: vi.fn() },
-    message: { findMany: vi.fn() },
+    $transaction: vi.fn(),
+    message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
   };
   return { db, store: new PrismaConversationsStore(db as unknown as PrismaService) };
@@ -134,5 +137,66 @@ describe('PrismaConversationsStore', () => {
     db.message.findMany.mockResolvedValue([]);
     await store.messages('u1', 'c1', null, 31);
     expect(db.message.findMany.mock.calls[0]?.[0].where).toEqual({ conversationId: 'c1' });
+  });
+
+  describe('send', () => {
+    const message = { clientId: '0198f0a0-0000-4000-8000-000000000002', text: 'Hello' };
+    const owned = (db: ReturnType<typeof fake>['db']) =>
+      db.conversation.findFirst.mockResolvedValue({ id: 'c1' });
+
+    it('ne rend rien pour une conversation qui n’est pas à cette personne', async () => {
+      const { db, store } = fake([]);
+      db.conversation.findFirst.mockResolvedValue(null);
+      expect(await store.send('u1', 'c9', message)).toBeNull();
+      expect(db.conversation.findFirst.mock.calls[0]?.[0].where).toEqual({
+        id: 'c9',
+        userId: 'u1',
+      });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('rend le message déjà enregistré sans rien écrire', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue({ id: 'm1' });
+      expect(await store.send('u1', 'c1', message)).toEqual({ row: { id: 'm1' }, created: false });
+      expect(db.message.findUnique.mock.calls[0]?.[0].where).toEqual({
+        conversationId_clientId: { conversationId: 'c1', clientId: message.clientId },
+      });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('crée le message de la personne et fait remonter la conversation', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}]);
+      expect(await store.send('u1', 'c1', message)).toEqual({ row: { id: 'm2' }, created: true });
+      expect(db.message.create.mock.calls[0]?.[0].data).toEqual({
+        conversationId: 'c1',
+        clientId: message.clientId,
+        author: 'USER',
+        text: 'Hello',
+      });
+      expect(db.conversation.update.mock.calls[0]?.[0].where).toEqual({ id: 'c1' });
+    });
+
+    it('retrouve le message quand un envoi simultané du même clientId a gagné', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: 'm1' });
+      db.$transaction.mockRejectedValue(
+        new Prisma.PrismaClientKnownRequestError('dup', { code: 'P2002', clientVersion: 'x' }),
+      );
+      expect(await store.send('u1', 'c1', message)).toEqual({ row: { id: 'm1' }, created: false });
+    });
+
+    it('laisse remonter une autre erreur', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.$transaction.mockRejectedValue(new Error('base coupée'));
+      await expect(store.send('u1', 'c1', message)).rejects.toThrow('base coupée');
+    });
   });
 });
