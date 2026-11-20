@@ -7,3 +7,4 @@ export * from './catalog.js';
 export * from './messages.js';
 export * from './notebook.js';
 export * from './game-questions.js';
+export * from './reviews.js';
