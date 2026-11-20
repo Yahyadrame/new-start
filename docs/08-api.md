@@ -31,7 +31,7 @@
 | POST | `/messages/:id/translate` | Traduction FR d'un message d'agent (mise en cache) |
 | POST | `/messages/:id/speech` | URL audio TTS du message (mise en cache) |
 | POST | `/media/upload-signature` | Signature de téléversement Cloudinary pour une note vocale ou une dictée |
-| POST | `/notebook` | Jeton d'accès exigé. Corps `{ messageId }` (UUID d'un message de la personne). Garde une copie de la correction « Plus naturel » : `{ id, original, better, whyFr, createdAt }`. Garder deux fois le même message rend la même entrée. 400 `VALIDATION_ERROR` si le corps est invalide ; 404 `NOT_FOUND` si le message n'est pas à la personne ou n'a pas de version « Plus naturel ». |
+| POST | `/notebook` | Jeton d'accès exigé. Corps `{ messageId }` (UUID d'un message de la personne). Garde une copie de la correction « Plus naturel » : `{ id, original, better, whyFr, createdAt }`. Garder deux fois le même message rend la même entrée. 400 `VALIDATION_FAILED` si le corps est invalide ; 404 `NOT_FOUND` si le message n'est pas à la personne ou n'a pas de version « Plus naturel ». |
 | GET | `/notebook` | Jeton d'accès exigé. Les entrées du carnet, la plus récente d'abord. |
 | GET | `/series/:season` · GET `/episodes/:id` | Série et épisode |
 | POST | `/episodes/:id/progress` | Étape terminée `{ step }` |
