@@ -8,6 +8,7 @@ const listConversations = vi.fn();
 const listMessages = vi.fn();
 const sendMessage = vi.fn();
 const markConversationRead = vi.fn();
+const addToNotebook = vi.fn();
 const scrollIntoView = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
@@ -17,6 +18,7 @@ vi.mock('./chats-api', () => ({
   listMessages,
   sendMessage,
   markConversationRead,
+  addToNotebook,
 }));
 const { ConversationScreen } = await import('./conversation-screen');
 
@@ -177,6 +179,23 @@ describe('ConversationScreen', () => {
       render(<ConversationScreen agentSlug="jade" />);
       await write('Hello');
       await waitFor(() => expect(scrollIntoView.mock.calls.length).toBeGreaterThan(1));
+    });
+  });
+  describe('carnet', () => {
+    it('garde la correction du message avec le jeton de la session', async () => {
+      addToNotebook.mockResolvedValue(undefined);
+      listMessages.mockResolvedValue({
+        items: [
+          {
+            ...msg('m7', 'USER', 'I go home'),
+            correction: { better: 'I went home', whyFr: null },
+          },
+        ],
+        nextCursor: null,
+      });
+      render(<ConversationScreen agentSlug="jade" />);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.addToNotebook }));
+      await waitFor(() => expect(addToNotebook).toHaveBeenCalledWith('tok', 'm7'));
     });
   });
   describe('conversation lue', () => {

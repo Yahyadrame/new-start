@@ -8,7 +8,13 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
-import { listConversations, listMessages, markConversationRead, sendMessage } from './chats-api';
+import {
+  addToNotebook,
+  listConversations,
+  listMessages,
+  markConversationRead,
+  sendMessage,
+} from './chats-api';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
 import { MessageBubble } from './message-bubble';
@@ -191,7 +197,11 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
           ) : (
             <ol aria-label={c.messagesLabel} className="flex flex-col gap-3">
               {messages.map((m) => (
-                <MessageBubble key={m.id} message={m} />
+                <MessageBubble
+                  key={m.id}
+                  message={m}
+                  onAddToNotebook={(id) => addToNotebook(token.current, id)}
+                />
               ))}
               {pending.map((p) => (
                 <PendingBubble

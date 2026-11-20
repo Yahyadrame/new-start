@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  addToNotebook,
   ChatsError,
   listConversations,
   listMessages,
@@ -85,5 +86,23 @@ describe('markConversationRead', () => {
   it('lève ChatsError avec le statut quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
     await expect(markConversationRead('tok', 'c1')).rejects.toMatchObject({ status: 404 });
+  });
+});
+
+describe('addToNotebook', () => {
+  it('envoie le messageId en POST avec le jeton', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+    await addToNotebook('tok', 'm1');
+    expect(fetchMock).toHaveBeenCalledWith('/api/notebook', {
+      method: 'POST',
+      headers: { authorization: 'Bearer tok', 'content-type': 'application/json' },
+      body: JSON.stringify({ messageId: 'm1' }),
+    });
+  });
+
+  it('lève ChatsError avec le statut quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+    await expect(addToNotebook('tok', 'm1')).rejects.toMatchObject({ status: 404 });
   });
 });

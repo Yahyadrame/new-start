@@ -1,6 +1,6 @@
 import type { MessageItem } from '@newstart/shared';
-import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 import { MessageBubble } from './message-bubble';
 
@@ -15,10 +15,10 @@ const message = (over: Partial<MessageItem>): MessageItem => ({
   correction: null,
   ...over,
 });
-const show = (m: MessageItem) =>
+const show = (m: MessageItem, onAddToNotebook?: (id: string) => Promise<void>) =>
   render(
     <ol>
-      <MessageBubble message={m} />
+      <MessageBubble message={m} {...(onAddToNotebook && { onAddToNotebook })} />
     </ol>,
   );
 
@@ -52,6 +52,55 @@ describe('MessageBubble', () => {
     show(message({ author: 'USER', correction: { better: null, whyFr: null } }));
     expect(screen.getByText(fr.conversation.perfect)).toBeTruthy();
     expect(screen.queryByText(fr.conversation.natural)).toBeNull();
+  });
+
+  describe('bouton « Ajouter au carnet »', () => {
+    const corrected = message({
+      id: 'm9',
+      author: 'USER',
+      correction: { better: 'I went home.', whyFr: null },
+    });
+    const button = () => screen.getByRole('button', { name: fr.conversation.addToNotebook });
+
+    it("n'apparaît pas sans action fournie, ni quand rien n'est à corriger", () => {
+      show(corrected);
+      expect(screen.queryByRole('button')).toBeNull();
+      cleanup();
+      show(message({ author: 'USER', correction: { better: null, whyFr: null } }), vi.fn());
+      expect(screen.queryByRole('button')).toBeNull();
+    });
+
+    it('garde la correction de ce message puis confirme', async () => {
+      const add = vi.fn().mockResolvedValue(undefined);
+      show(corrected, add);
+      fireEvent.click(button());
+      expect(add).toHaveBeenCalledWith('m9');
+      expect(await screen.findByText(fr.conversation.addedToNotebook)).toBeTruthy();
+      expect(screen.queryByRole('button')).toBeNull();
+    });
+
+    it("se désactive pendant l'ajout", async () => {
+      let done: () => void = () => undefined;
+      const add = vi.fn().mockReturnValue(new Promise<void>((r) => (done = r)));
+      show(corrected, add);
+      fireEvent.click(button());
+      const busy = screen.getByRole('button', { name: fr.conversation.addingToNotebook });
+      expect((busy as HTMLButtonElement).disabled).toBe(true);
+      done();
+      await screen.findByText(fr.conversation.addedToNotebook);
+    });
+
+    it('laisse réessayer après un échec', async () => {
+      const add = vi.fn().mockRejectedValueOnce(new Error('x')).mockResolvedValue(undefined);
+      show(corrected, add);
+      fireEvent.click(button());
+      const retry = await screen.findByRole('button', {
+        name: fr.conversation.addToNotebookFailed,
+      });
+      fireEvent.click(retry);
+      await waitFor(() => expect(screen.getByText(fr.conversation.addedToNotebook)).toBeTruthy());
+      expect(add).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('centre un message système, sans bulle ni heure', () => {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { MessageItem } from '@newstart/shared';
 import { cn } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
@@ -5,8 +6,43 @@ import { formatWhen } from './chats-format';
 
 const c = fr.conversation;
 
+type Save = 'idle' | 'saving' | 'saved' | 'failed';
+
+/** Bouton de la carte : un échec laisse le bouton actif pour réessayer. */
+function NotebookButton({ onAdd }: { onAdd: () => Promise<void> }) {
+  const [state, setState] = useState<Save>('idle');
+  if (state === 'saved') return <p className="text-[13px] font-semibold">{c.addedToNotebook}</p>;
+  const add = () => {
+    setState('saving');
+    onAdd().then(
+      () => setState('saved'),
+      () => setState('failed'),
+    );
+  };
+  return (
+    <button
+      type="button"
+      onClick={add}
+      disabled={state === 'saving'}
+      className="min-h-11 self-start rounded-full border border-line px-4 text-[13px] font-semibold focus-visible:outline-2 focus-visible:outline-accent-text disabled:opacity-60"
+    >
+      {state === 'saving'
+        ? c.addingToNotebook
+        : state === 'failed'
+          ? c.addToNotebookFailed
+          : c.addToNotebook}
+    </button>
+  );
+}
+
 /** Sous un message de la personne : la tournure plus naturelle, ou un mot si rien n'est à corriger. */
-function Correction({ correction }: { correction: NonNullable<MessageItem['correction']> }) {
+function Correction({
+  correction,
+  onAdd,
+}: {
+  correction: NonNullable<MessageItem['correction']>;
+  onAdd: (() => Promise<void>) | undefined;
+}) {
   if (!correction.better) return <p className="px-1 text-xs text-text-muted">{c.perfect}</p>;
   return (
     <aside className="flex flex-col gap-1 rounded-2xl border border-line bg-surface-1 px-4 py-3">
@@ -15,11 +51,19 @@ function Correction({ correction }: { correction: NonNullable<MessageItem['corre
       </p>
       <p className="text-[15px] font-medium">{correction.better}</p>
       {correction.whyFr && <p className="text-[13px] text-text-muted">{correction.whyFr}</p>}
+      {onAdd && <NotebookButton onAdd={onAdd} />}
     </aside>
   );
 }
 
-export function MessageBubble({ message }: { message: MessageItem }) {
+export function MessageBubble({
+  message,
+  onAddToNotebook,
+}: {
+  message: MessageItem;
+  /** Garde la correction de ce message dans le carnet ; sans elle, la carte n'a pas de bouton. */
+  onAddToNotebook?: (messageId: string) => Promise<void>;
+}) {
   if (message.author === 'SYSTEM') {
     return <li className="self-center text-center text-xs text-text-muted">{message.text}</li>;
   }
@@ -39,7 +83,12 @@ export function MessageBubble({ message }: { message: MessageItem }) {
       <time dateTime={message.createdAt} className="px-1 text-xs text-text-muted">
         {formatWhen(message.createdAt)}
       </time>
-      {mine && message.correction && <Correction correction={message.correction} />}
+      {mine && message.correction && (
+        <Correction
+          correction={message.correction}
+          onAdd={onAddToNotebook && (() => onAddToNotebook(message.id))}
+        />
+      )}
     </li>
   );
 }
