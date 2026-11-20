@@ -1,4 +1,12 @@
 import { Module } from '@nestjs/common';
+import type { AiProviders } from '@newstart/ai';
+import { AI } from '../../shared/ai/ai.module.js';
+import {
+  AGENT_REPLY_STORE,
+  AgentReplyService,
+  type AgentReplyStore,
+} from './application/agent-reply.js';
+import { PrismaAgentReplyStore } from './infrastructure/prisma-agent-reply.store.js';
 import {
   CONVERSATIONS_STORE,
   ConversationsService,
@@ -11,10 +19,17 @@ import { ConversationsController } from './interface/conversations.controller.js
   controllers: [ConversationsController],
   providers: [
     { provide: CONVERSATIONS_STORE, useClass: PrismaConversationsStore },
+    { provide: AGENT_REPLY_STORE, useClass: PrismaAgentReplyStore },
+    {
+      provide: AgentReplyService,
+      inject: [AGENT_REPLY_STORE, AI],
+      useFactory: (store: AgentReplyStore, ai: AiProviders) => new AgentReplyService(store, ai.llm),
+    },
     {
       provide: ConversationsService,
-      inject: [CONVERSATIONS_STORE],
-      useFactory: (store: ConversationsStore) => new ConversationsService(store),
+      inject: [CONVERSATIONS_STORE, AgentReplyService],
+      useFactory: (store: ConversationsStore, replies: AgentReplyService) =>
+        new ConversationsService(store, undefined, replies),
     },
   ],
 })
