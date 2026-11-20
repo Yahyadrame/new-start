@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
@@ -36,7 +36,13 @@ const msg = (id: string, author: 'USER' | 'AGENT', text: string) => ({
   createdAt: '2026-11-20T10:00:00.000Z',
   correction: null,
 });
-const texts = () => screen.getAllByRole('listitem').map((li) => li.querySelector('p')?.textContent);
+// La bulle « en train d'écrire… » est testée à part : ici, seulement les messages.
+const texts = () =>
+  screen
+    .getAllByRole('listitem')
+    .map((li) => li.querySelector('p'))
+    .filter((p) => p?.getAttribute('role') !== 'status')
+    .map((p) => p?.textContent);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -141,7 +147,7 @@ describe('ConversationScreen', () => {
       expect(call?.[2]).toMatchObject({ text: 'Hello' });
       expect(call?.[2].clientId).toMatch(/^[0-9a-f-]{36}$/);
       resolve(msg('m3', 'USER', 'Hello'));
-      await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+      await waitFor(() => expect(screen.queryByText(fr.conversation.sending)).toBeNull());
       expect(texts()).toEqual(['First', 'Second', 'Hello']);
     });
 
@@ -163,6 +169,90 @@ describe('ConversationScreen', () => {
       render(<ConversationScreen agentSlug="jade" />);
       await write('Hello');
       await waitFor(() => expect(scrollIntoView.mock.calls.length).toBeGreaterThan(1));
+    });
+  });
+  describe('réponse du contact', () => {
+    const write = async (text: string) => {
+      const field = await screen.findByLabelText(fr.conversation.composerLabel);
+      fireEvent.change(field, { target: { value: text } });
+      fireEvent.submit(field.closest('form') as HTMLFormElement);
+    };
+    const typing = fr.conversation.typing.replace('{name}', 'Jade');
+    const sent = { ...msg('m3', 'USER', 'Hello'), createdAt: '2026-11-20T10:01:00.000Z' };
+    const reply = { ...msg('m4', 'AGENT', 'Hi there'), createdAt: '2026-11-20T10:01:03.000Z' };
+    const corrected = { ...sent, correction: { better: 'Hello!', whyFr: 'Plus naturel' } };
+    const tick = (ms: number) =>
+      act(async () => {
+        await vi.advanceTimersByTimeAsync(ms);
+      });
+
+    // Seuls les intervalles sont simulés : waitFor et findBy continuent de fonctionner.
+    beforeEach(() => vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] }));
+    afterEach(() => vi.useRealTimers());
+
+    const sendHello = async () => {
+      sendMessage.mockResolvedValue(sent);
+      render(<ConversationScreen agentSlug="jade" />);
+      await write('Hello');
+      await screen.findByText(typing);
+      listMessages.mockClear();
+    };
+
+    it('montre « en train d’écrire… » après l’envoi, puis la réponse et la correction', async () => {
+      await sendHello();
+      listMessages.mockResolvedValue({ items: [reply, corrected], nextCursor: null });
+      await tick(2000);
+      await waitFor(() => expect(screen.queryByText(typing)).toBeNull());
+      expect(screen.getByText('Hi there')).toBeTruthy();
+      expect(screen.getByText('Hello!')).toBeTruthy();
+      expect(screen.getAllByText('Hello')).toHaveLength(1);
+    });
+
+    it('continue de relire tant que le contact n’a pas répondu', async () => {
+      await sendHello();
+      listMessages.mockResolvedValue({ items: [sent], nextCursor: null });
+      await tick(6000);
+      expect(listMessages).toHaveBeenCalledTimes(3);
+      expect(screen.getByText(typing)).toBeTruthy();
+    });
+
+    it('s’arrête au bout de 60 s sans réponse', async () => {
+      await sendHello();
+      listMessages.mockResolvedValue({ items: [sent], nextCursor: null });
+      // Un tour à la fois : React se rend entre deux tours et retire l'intervalle après le 30e appel.
+      for (let i = 0; i < 35; i += 1) await tick(2000);
+      expect(listMessages).toHaveBeenCalledTimes(30);
+      expect(screen.queryByText(typing)).toBeNull();
+    });
+
+    it('réessaie au tour suivant quand une relecture échoue', async () => {
+      await sendHello();
+      listMessages
+        .mockRejectedValueOnce(new Error('réseau'))
+        .mockResolvedValue({ items: [reply, sent], nextCursor: null });
+      await tick(4000);
+      await waitFor(() => expect(screen.getByText('Hi there')).toBeTruthy());
+      expect(listMessages).toHaveBeenCalledTimes(2);
+    });
+
+    it('n’attend rien quand le dernier message vient du contact', async () => {
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('Second');
+      expect(screen.queryByText(typing)).toBeNull();
+    });
+
+    it('reprend l’attente à l’ouverture si le dernier message est tout récent et sans réponse', async () => {
+      const fresh = { ...msg('m9', 'USER', 'Just sent'), createdAt: new Date().toISOString() };
+      listMessages.mockResolvedValue({ items: [fresh], nextCursor: null });
+      render(<ConversationScreen agentSlug="jade" />);
+      expect(await screen.findByText(typing)).toBeTruthy();
+    });
+
+    it('n’attend pas non plus un message ancien resté sans réponse', async () => {
+      listMessages.mockResolvedValue({ items: [sent], nextCursor: null });
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('Hello');
+      expect(screen.queryByText(typing)).toBeNull();
     });
   });
 });

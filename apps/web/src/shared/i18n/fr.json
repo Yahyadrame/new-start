@@ -244,7 +244,8 @@
     "composerPlaceholder": "Écris en anglais…",
     "send": "Envoyer",
     "sending": "Envoi en cours…",
-    "sendFailed": "Le message n'est pas parti. Touche pour réessayer."
+    "sendFailed": "Le message n'est pas parti. Touche pour réessayer.",
+    "typing": "{name} est en train d'écrire…"
   },
   "nav": {
     "label": "Navigation principale",
