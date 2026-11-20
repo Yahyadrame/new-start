@@ -12,8 +12,13 @@ const agent = {
 
 function fake(rows: unknown[]) {
   const db = {
-    conversation: { findMany: vi.fn().mockResolvedValue(rows), upsert: vi.fn() },
+    conversation: {
+      findMany: vi.fn().mockResolvedValue(rows),
+      findFirst: vi.fn(),
+      upsert: vi.fn(),
+    },
     user: { findUnique: vi.fn() },
+    message: { findMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
   };
   return { db, store: new PrismaConversationsStore(db as unknown as PrismaService) };
@@ -98,5 +103,36 @@ describe('PrismaConversationsStore', () => {
       messages: { create: { author: 'AGENT', text: 'Hi!' } },
     });
     expect(args.update).toEqual({});
+  });
+
+  it('ne rend rien pour une conversation qui n’est pas à cette personne', async () => {
+    const { db, store } = fake([]);
+    db.conversation.findFirst.mockResolvedValue(null);
+    expect(await store.messages('u1', 'c9', null, 31)).toBeNull();
+    expect(db.conversation.findFirst.mock.calls[0]?.[0].where).toEqual({ id: 'c9', userId: 'u1' });
+    expect(db.message.findMany).not.toHaveBeenCalled();
+  });
+
+  it('lit les messages du plus récent au plus ancien, avant le curseur', async () => {
+    const { db, store } = fake([]);
+    db.conversation.findFirst.mockResolvedValue({ id: 'c1' });
+    db.message.findMany.mockResolvedValue([{ id: 'm1' }]);
+    const createdAt = new Date('2026-11-20T10:00:00.000Z');
+    expect(await store.messages('u1', 'c1', { createdAt, id: 'm5' }, 31)).toEqual([{ id: 'm1' }]);
+    const args = db.message.findMany.mock.calls[0]?.[0];
+    expect(args.where).toEqual({
+      conversationId: 'c1',
+      OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: 'm5' } }],
+    });
+    expect(args.orderBy).toEqual([{ createdAt: 'desc' }, { id: 'desc' }]);
+    expect(args.take).toBe(31);
+  });
+
+  it('lit la première page sans condition de curseur', async () => {
+    const { db, store } = fake([]);
+    db.conversation.findFirst.mockResolvedValue({ id: 'c1' });
+    db.message.findMany.mockResolvedValue([]);
+    await store.messages('u1', 'c1', null, 31);
+    expect(db.message.findMany.mock.calls[0]?.[0].where).toEqual({ conversationId: 'c1' });
   });
 });

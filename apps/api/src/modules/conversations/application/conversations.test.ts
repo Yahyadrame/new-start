@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { encodeCursor } from './message-cursor.js';
 import { ConversationsService, type ConversationsStore } from './conversations.js';
 
 function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1990) {
@@ -8,6 +9,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     birthYear: vi.fn().mockResolvedValue(birthYear),
     agentRule: vi.fn().mockResolvedValue(rule),
     open: vi.fn().mockResolvedValue(item),
+    messages: vi.fn(),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
 }
@@ -50,5 +52,69 @@ describe('ConversationsService', () => {
     const { store, service } = setup({ adultOnly: true }, 1990);
     await service.start('u1', 'maya');
     expect(store.open).toHaveBeenCalledWith('u1', 'maya');
+  });
+});
+
+describe('ConversationsService.messages', () => {
+  const ID = '0198f0a0-0000-7000-8000-000000000001';
+  const row = (n: number) => ({
+    id: `m${n}`,
+    author: 'AGENT' as const,
+    text: `t${n}`,
+    translationFr: null,
+    createdAt: new Date(Date.UTC(2026, 10, 20, 10, 60 - n)),
+    correction: null,
+  });
+  const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
+  const serve = (found: ReturnType<typeof rows> | null) => {
+    const { store, service } = setup(null);
+    vi.mocked(store.messages).mockResolvedValue(found);
+    return { store, service };
+  };
+
+  it('rend une page de 30 sans curseur quand il n’y a rien de plus ancien', async () => {
+    const { store, service } = serve(rows(3));
+    const page = await service.messages('u1', ID);
+    expect(page.nextCursor).toBeNull();
+    expect(page.items.map((m) => m.id)).toEqual(['m1', 'm2', 'm3']);
+    expect(page.items[0]?.createdAt).toBe('2026-11-20T10:59:00.000Z');
+    expect(store.messages).toHaveBeenCalledWith('u1', ID, null, 31);
+  });
+
+  it('coupe à 30 messages et donne le curseur du dernier message gardé', async () => {
+    const { service } = serve(rows(31));
+    const page = await service.messages('u1', ID);
+    expect(page.items).toHaveLength(30);
+    expect(page.nextCursor).toBe(encodeCursor({ createdAt: row(30).createdAt, id: 'm30' }));
+  });
+
+  it('passe le curseur décodé au stockage', async () => {
+    const { store, service } = serve(rows(1));
+    const cursor = { createdAt: new Date('2026-11-20T09:00:00.000Z'), id: 'm9' };
+    await service.messages('u1', ID, encodeCursor(cursor));
+    expect(store.messages).toHaveBeenCalledWith('u1', ID, cursor, 31);
+  });
+
+  it('répond 400 à un curseur invalide, sans interroger le stockage', async () => {
+    const { store, service } = serve(rows(1));
+    await expect(service.messages('u1', ID, 'zzz')).rejects.toMatchObject({
+      status: 400,
+      response: { code: 'VALIDATION_FAILED' },
+    });
+    expect(store.messages).not.toHaveBeenCalled();
+  });
+
+  it('répond 404 pour une conversation absente ou d’une autre personne', async () => {
+    const { service } = serve(null);
+    await expect(service.messages('u1', ID)).rejects.toMatchObject({
+      status: 404,
+      response: { code: 'NOT_FOUND' },
+    });
+  });
+
+  it('répond 404 pour un identifiant qui n’est pas un UUID, sans interroger le stockage', async () => {
+    const { store, service } = serve(rows(1));
+    await expect(service.messages('u1', 'abc')).rejects.toMatchObject({ status: 404 });
+    expect(store.messages).not.toHaveBeenCalled();
   });
 });

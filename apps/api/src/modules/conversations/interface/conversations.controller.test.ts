@@ -8,13 +8,14 @@ import { ConversationsController } from './conversations.controller.js';
 
 const list = vi.fn().mockResolvedValue([{ id: 'c1' }]);
 const start = vi.fn().mockResolvedValue({ id: 'c2' });
+const messages = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 let app: INestApplication;
 beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [ConversationsController],
     providers: [
-      { provide: ConversationsService, useValue: { list, start } },
+      { provide: ConversationsService, useValue: { list, start, messages } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -63,5 +64,33 @@ describe('POST /conversations', () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(start).not.toHaveBeenCalled();
+  });
+});
+
+describe('GET /conversations/:id/messages', () => {
+  beforeEach(() => vi.clearAllMocks());
+  const get = (url: string) => request(app.getHttpServer()).get(url);
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await get('/conversations/c1/messages')).status).toBe(401);
+    expect(messages).not.toHaveBeenCalled();
+  });
+
+  it('rend la page de messages du compte, avec le curseur demandé', async () => {
+    const res = await get('/conversations/c1/messages?cursor=abc').set({
+      Authorization: 'Bearer tok-u1',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ items: [], nextCursor: null });
+    expect(messages).toHaveBeenCalledWith('u1', 'c1', 'abc');
+  });
+
+  it('répond 400 VALIDATION_FAILED à un curseur vide', async () => {
+    const res = await get('/conversations/c1/messages?cursor=').set({
+      Authorization: 'Bearer tok-u1',
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_FAILED');
+    expect(messages).not.toHaveBeenCalled();
   });
 });
