@@ -14,7 +14,7 @@
 ## NS-203 — Réponse d'agent et correction · L
 *Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction (faite), (3) écran (fait : « en train d'écrire… » et relecture de l'historique toutes les 2 s pendant 60 s au plus, à retirer avec NS-202), (4) détresse (faite, détection par motifs, sans appel à l'IA), puis modération et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
 - [ ] Job `agent.reply` dans le worker : prompt `agent.v1`, 16 derniers messages, sortie JSON validée par Zod, 2 nouvelles tentatives.
-- [ ] Modération en entrée et en sortie ; cas de détresse traité selon `docs/09-ia-agents.md`.
+- [ ] Modération en entrée et en sortie ; cas de détresse traité selon `docs/09-ia-agents.md`. *Détresse faite ; garde de sortie par motifs faite (2026-11-20). Reste : modération par modèle, en entrée comme en sortie.*
 - [ ] Idempotence par `clientId`.
 - [ ] Jeux d'évaluation `corrections.jsonl` (200 cas) et `safety.jsonl` (100 cas) lancés en CI.
 

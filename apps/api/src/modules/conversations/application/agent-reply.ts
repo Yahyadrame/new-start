@@ -2,9 +2,12 @@ import { Logger } from '@nestjs/common';
 import {
   AGENT_PROMPT_VERSION,
   askAgent,
+  BlockedReplyError,
   buildAgentSystem,
+  checkAgentReply,
   DISTRESS_REPLY_FR,
   detectDistress,
+  isTransient,
   withRetry,
   type AgentReply,
   type LlmProvider,
@@ -73,12 +76,21 @@ export class AgentReplyService implements ReplyScheduler {
     }));
     let answer: AgentReply;
     try {
-      const { reply, fix } = await withRetry(() => askAgent(this.llm, { system, messages }), {
-        retries: 2,
-        delayMs: 1000,
-        ...(this.sleep && { sleep: this.sleep }),
-      });
-      answer = { reply, fix };
+      answer = await withRetry(
+        async () => {
+          const { reply, fix } = await askAgent(this.llm, { system, messages });
+          // Garde de sortie : une réponse refusée est redemandée, sans jamais être enregistrée.
+          const blocked = checkAgentReply(reply);
+          if (blocked) throw new BlockedReplyError(blocked);
+          return { reply, fix };
+        },
+        {
+          retries: 2,
+          delayMs: 1000,
+          retryOn: (error) => isTransient(error) || error instanceof BlockedReplyError,
+          ...(this.sleep && { sleep: this.sleep }),
+        },
+      );
     } catch (error) {
       log.warn(`Pas de réponse de l'IA (${AGENT_PROMPT_VERSION}) : ${String(error)}`);
       await this.store.saveFailure(conversationId);

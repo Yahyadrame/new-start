@@ -11,3 +11,4 @@ export * from './fallback.js';
 export * from './factory.js';
 export * from './compare.js';
 export * from './safety/distress.js';
+export * from './safety/output-guard.js';
