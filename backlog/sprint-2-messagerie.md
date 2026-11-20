@@ -12,7 +12,7 @@
 - [ ] Test : deux réplicas de l'API, un message envoyé sur l'un arrive par l'autre.
 
 ## NS-203 — Réponse d'agent et correction · L
-*Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction (faite), (3) écran (fait : « en train d'écrire… » et relecture de l'historique toutes les 2 s pendant 60 s au plus, à retirer avec NS-202), (4) modération, détresse et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
+*Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction (faite), (3) écran (fait : « en train d'écrire… » et relecture de l'historique toutes les 2 s pendant 60 s au plus, à retirer avec NS-202), (4) détresse (faite, détection par motifs, sans appel à l'IA), puis modération et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
 - [ ] Job `agent.reply` dans le worker : prompt `agent.v1`, 16 derniers messages, sortie JSON validée par Zod, 2 nouvelles tentatives.
 - [ ] Modération en entrée et en sortie ; cas de détresse traité selon `docs/09-ia-agents.md`.
 - [ ] Idempotence par `clientId`.
@@ -49,3 +49,7 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 - [ ] Intervalle d'interrogation de 30 s ou plus, pour laisser Neon s'endormir (risque décrit dans `docs/decisions.md`) ; mesurer les CU-heures consommées et alerter le porteur au-delà de 80.
 - [ ] La file vit dans un paquet partagé, pour que l'API (`RUN_JOBS=inline`) et le worker l'utilisent.
 - Dépend de NS-002 et d'une base Neon (NS-008).
+
+## NS-210 — Ressources d'aide par pays · S
+*Ajouté le 2026-11-20 : le message de détresse ne cite que le 3114 (France) et findahelpline.com ; aucun autre numéro n'est inventé.*
+- [ ] Liste des lignes d'aide par pays, choisie selon le pays de la personne, relue par le porteur du projet.

@@ -1,4 +1,4 @@
-import { ProviderError, type LlmProvider } from '@newstart/ai';
+import { DISTRESS_REPLY_FR, ProviderError, type LlmProvider } from '@newstart/ai';
 import { describe, expect, it, vi } from 'vitest';
 import { AgentReplyService, type AgentReplyStore, type ReplyContext } from './agent-reply.js';
 
@@ -23,6 +23,22 @@ function setup(complete: LlmProvider['complete'], ctx: ReplyContext | null = con
   const sleep = vi.fn().mockResolvedValue(undefined);
   return { store, llm, sleep, service: new AgentReplyService(store, llm, sleep) };
 }
+
+describe('AgentReplyService.reply, détresse', () => {
+  it('répond avec le message de soutien, sans appeler l’IA ni corriger', async () => {
+    const distress: ReplyContext = {
+      ...context,
+      history: [{ author: 'USER', text: 'Je veux mourir' }],
+    };
+    const { store, llm, service } = setup(async () => json('x'), distress);
+    await service.reply('c1', 'm1');
+    expect(llm.complete).not.toHaveBeenCalled();
+    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', {
+      reply: DISTRESS_REPLY_FR,
+      fix: null,
+    });
+  });
+});
 
 describe('AgentReplyService.reply', () => {
   it('répond avec le gabarit agent.v1 et l’historique, puis enregistre la réponse et la correction', async () => {

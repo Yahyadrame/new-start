@@ -10,3 +10,4 @@ export * from './prompts/agent.v1.js';
 export * from './fallback.js';
 export * from './factory.js';
 export * from './compare.js';
+export * from './safety/distress.js';

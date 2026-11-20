@@ -3,6 +3,8 @@ import {
   AGENT_PROMPT_VERSION,
   askAgent,
   buildAgentSystem,
+  DISTRESS_REPLY_FR,
+  detectDistress,
   withRetry,
   type AgentReply,
   type LlmProvider,
@@ -54,6 +56,16 @@ export class AgentReplyService implements ReplyScheduler {
   async reply(conversationId: string, messageId: string) {
     const context = await this.store.context(conversationId, messageId);
     if (!context) return;
+    const last = context.history.at(-1);
+    if (last?.author === 'USER' && detectDistress(last.text)) {
+      // Cas de détresse : l'agent sort du jeu, sans appel à l'IA ni correction (docs/09-ia-agents.md).
+      await this.store.saveReply(conversationId, messageId, {
+        reply: DISTRESS_REPLY_FR,
+        fix: null,
+      });
+      log.log('Message de détresse : réponse de soutien enregistrée');
+      return;
+    }
     const system = buildAgentSystem(context);
     const messages = context.history.map(({ author, text }) => ({
       role: author === 'USER' ? ('user' as const) : ('assistant' as const),
