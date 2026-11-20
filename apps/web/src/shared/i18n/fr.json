@@ -209,6 +209,25 @@
     "emptyFilter": "Rien dans ce filtre pour l'instant.",
     "error": "Impossible de charger tes discussions. Réessaie dans un instant."
   },
+  "explore": {
+    "title": "Explorer",
+    "searchLabel": "Chercher un contact",
+    "searchPlaceholder": "Un prénom, un métier, un thème",
+    "topicsLabel": "Thèmes",
+    "contactsLabel": "Contacts",
+    "contactOne": "1 contact",
+    "contactCount": "{n} contacts",
+    "soon": "Bientôt",
+    "back": "Retour aux thèmes",
+    "aiBadge": "IA",
+    "write": "Écrire",
+    "writeTo": "Écrire à {name}",
+    "noResult": "Aucun contact ne correspond à ta recherche.",
+    "emptyTopic": "Pas encore de contact dans ce thème.",
+    "error": "Impossible de charger les contacts. Réessaie dans un instant.",
+    "writeError": "Impossible d'ouvrir la discussion. Réessaie dans un instant.",
+    "adultOnly": "Ce contact est réservé aux personnes majeures."
+  },
   "conversation": {
     "back": "Retour aux discussions",
     "soon": "La conversation arrive bientôt. Tu pourras écrire à ton contact ici.",

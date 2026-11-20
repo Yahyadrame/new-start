@@ -8,7 +8,7 @@ Maquettes complètes, en sombre et en clair : <https://claude.ai/artifact/7WBnVm
 | 11 | Inscription | `/signup` | Prénom, numéro de téléphone (indicatif +221 par défaut, liste des pays), objectif, puis Google ou e-mail | Numéro obligatoire, non vérifié tant que les SMS sont désactivés ; case séparée « J'accepte de recevoir des SMS de New Start » |
 | 2 | Test de niveau | `/onboarding/level` | Conversation avec Jade, 5 questions, micro, « Écrire plutôt » | Résultat : niveau CECR estimé |
 | 3 | Discussions | `/chats` | Statuts, filtres, liste des contacts, bouton « + » vers Explorer | Onglet par défaut une fois connecté |
-| 12 | Explorer les thèmes | `/explore` | Recherche, 9 thèmes, contacts du thème avec « Écrire » et « Appel vidéo » | |
+| 12 | Explorer les thèmes | `/explore` | Recherche, 9 thèmes, contacts du thème avec « Écrire » (« Appel vidéo » reporté en V3, décision du 2026-11-20) | |
 | 4 | Conversation | `/chats/[agentSlug]` | Bulles, correction « Plus naturel », Écouter, Traduire, note vocale, suggestions, micro | Temps réel (WebSocket) |
 | 5 | Appel vocal | `/call/[agentSlug]` | Minuteur, avatar, sous-titres en direct EN/FR, astuce, micro, FR, haut-parleur, raccrocher | V2 (offre Pro) |
 | 13 | Appel vidéo | `/video/[agentSlug]` | Avatar plein écran, vignette « Toi », sous-titres, expression du moment | V3 |
