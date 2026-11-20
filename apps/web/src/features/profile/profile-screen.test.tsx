@@ -9,11 +9,12 @@ const patchMe = vi.fn();
 const exportMe = vi.fn();
 const deleteMe = vi.fn();
 const setSession = vi.fn();
+const listNotebook = vi.fn();
 // Un objet stable, comme le routeur de Next : sinon l'effet de chargement repart à chaque rendu.
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession, setSession }));
-vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe }));
+vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe, listNotebook }));
 const { ProfileScreen } = await import('./profile-screen');
 
 const t = fr.profile;
@@ -36,6 +37,7 @@ beforeEach(() => {
   window.localStorage.clear();
   document.documentElement.removeAttribute('data-theme');
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
+  listNotebook.mockResolvedValue([]);
   getMe.mockResolvedValue(me);
   patchMe.mockImplementation(async (_token: string, patch: object) => ({ ...me, ...patch }));
 });
