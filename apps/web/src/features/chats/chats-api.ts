@@ -40,3 +40,12 @@ export async function sendMessage(
   if (!res.ok) throw new ChatsError(res.status);
   return (await res.json()) as MessageItem;
 }
+
+/** Marque la conversation lue (remet le badge de la liste à zéro). */
+export async function markConversationRead(token: string, conversationId: string): Promise<void> {
+  const res = await fetch(`/api/conversations/${conversationId}/read`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+}

@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
-import { listConversations, listMessages, sendMessage } from './chats-api';
+import { listConversations, listMessages, markConversationRead, sendMessage } from './chats-api';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
 import { MessageBubble } from './message-bubble';
@@ -34,6 +34,11 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
 
+  // Lire n'est pas bloquant : si l'appel échoue, le badge reste, il sera remis à zéro à la prochaine ouverture.
+  const markRead = useCallback((conversationId: string) => {
+    void markConversationRead(token.current, conversationId).catch(() => undefined);
+  }, []);
+
   useEffect(() => {
     void (async () => {
       const session = await ensureSession();
@@ -44,6 +49,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         const found = items.find((i) => i.agent.slug === agentSlug) ?? null;
         setItem(found);
         if (!found) return;
+        if (found.unreadCount > 0) markRead(found.id);
         const page = await listMessages(token.current, found.id);
         setMessages([...page.items].reverse());
         setNextCursor(page.nextCursor);
@@ -53,7 +59,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         setError(true);
       }
     })();
-  }, [router, agentSlug, attempt]);
+  }, [router, agentSlug, attempt, markRead]);
 
   const loadOlder = useCallback(async () => {
     if (!item || !nextCursor) return;
@@ -103,12 +109,15 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
       void listMessages(token.current, item.id)
         .then((page) => {
           setMessages((prev) => mergeLatest(prev ?? [], page.items));
-          if (hasReplyAfter(page.items, awaiting)) setAwaiting(null);
+          if (hasReplyAfter(page.items, awaiting)) {
+            setAwaiting(null);
+            markRead(item.id);
+          }
         })
         .catch(() => undefined); // le tour suivant réessaie
     }, POLL_MS);
     return () => clearInterval(timer);
-  }, [awaiting, item]);
+  }, [awaiting, item, markRead]);
 
   // On arrive sur le plus récent, et un nouveau message ramène en bas. Charger des messages plus anciens ne bouge rien.
   const newest = messages?.at(-1)?.id;

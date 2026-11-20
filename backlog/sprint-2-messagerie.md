@@ -27,7 +27,7 @@
 ## NS-209 — Marquer une conversation comme lue · S
 *Ajouté le 2026-11-20 : ouvrir une conversation ne remet pas `unreadCount` à zéro, et la route d'historique ne le fait pas (une lecture ne modifie rien).*
 - [x] Route `POST /conversations/:id/read` (`unreadCount` à 0, `readAt` des messages du contact) ; tests. *API faite (PR 1).*
-- [ ] L'écran Conversation l'appelle à l'ouverture et quand une réponse arrive (PR 2).
+- [x] L'écran Conversation l'appelle à l'ouverture et quand une réponse arrive (PR 2).
 
 ## NS-205 — Écouter et traduire · M
 - [ ] `POST /messages/:id/speech` : TTS avec la voix de l'agent, mis en cache sur Cloudinary.
