@@ -268,6 +268,22 @@
     "games": { "title": "Jeux" },
     "progress": { "title": "Progrès" }
   },
+  "games": {
+    "title": "Jeux",
+    "progress": "Question {n} sur {total}",
+    "trueFalse": { "means": "veut dire", "true": "Vrai", "false": "Faux" },
+    "right": "Juste.",
+    "wrong": "Raté.",
+    "next": "Question suivante",
+    "finish": "Voir mon score",
+    "end": {
+      "title": "Partie terminée",
+      "score": "{score} bonnes réponses sur {total}.",
+      "replay": "Rejouer"
+    },
+    "empty": "Pas assez d'expressions pour lancer une partie.",
+    "error": "Impossible de charger la partie. Réessaie dans un instant."
+  },
   "nav": {
     "label": "Navigation principale",
     "chats": "Discussions",
