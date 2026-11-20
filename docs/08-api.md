@@ -21,8 +21,8 @@
 | POST | `/onboarding/level-test/answer` | Jeton d'accès exigé. Envoie `{ position, text }` (position 1 à 5, texte de 1 à 1000 caractères ; les 5 questions fixes sont dans `packages/shared`). Réponses 1 à 4 : `{ done: false, next }`. Réponse 5 : le LLM estime le niveau, qui est enregistré sur `User.level` ; la conversation avec Jade est créée avec son premier message (une seule fois), et la réponse est `{ done: true, level, justification, strengths[3], weaknesses[3] }` (textes en français). Refaire le test réécrit les réponses |
 | GET · PUT | `/onboarding/voice-consent` | Jeton d'accès exigé. `GET` renvoie `{ accepted }`. `PUT { accepted }` enregistre (204) ou retire le consentement aux enregistrements vocaux ; la date du premier accord est gardée sur `User.voiceConsentAt` |
 | POST | `/onboarding/level-test/transcribe` | Jeton d'accès exigé. Corps : l'audio en octets bruts, `Content-Type: audio/*`, 1 Mo au plus (413 au-delà). Renvoie `{ text }` transcrit par le STT. L'audio n'est pas conservé. Sans consentement : 403 `VOICE_CONSENT_REQUIRED`. Audio vide : 400. STT absent ou en échec : 503 `AI_UNAVAILABLE` (l'écran propose d'écrire) |
-| GET | `/topics` | Thèmes et nombre de contacts |
-| GET | `/agents?topic=&category=&q=` | Catalogue des contacts |
+| GET | `/topics` | Thèmes dans l'ordre d'affichage, avec le nombre de contacts actifs ; Amour est absent pour une personne mineure ou sans année de naissance |
+| GET | `/agents?topic=&q=` | Catalogue des contacts actifs, triés par prénom ; `q` cherche dans le prénom, le rôle et la catégorie. `403 TOPIC_ADULT_ONLY` si le thème demandé est réservé aux majeurs |
 | GET | `/conversations` | Jeton d'accès exigé. Les conversations du compte, la plus récente d'abord : `id`, `agent` (`slug`, `name`, `initials`, `roleFr`, `category`), `lastMessage` (`author`, `text`, ou `null` si la conversation est vide), `lastMessageAt`, `unreadCount`. Pas de pagination au MVP (une conversation par agent, 12 au plus au lancement). |
 | POST | `/conversations` | Démarre une conversation `{ agentSlug }` (idempotent) |
 | GET | `/conversations/:id/messages?cursor=` | Historique paginé |
