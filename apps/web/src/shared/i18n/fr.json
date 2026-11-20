@@ -247,6 +247,14 @@
     "sendFailed": "Le message n'est pas parti. Touche pour réessayer.",
     "typing": "{name} est en train d'écrire…"
   },
+  "comingSoon": {
+    "badge": "Bientôt",
+    "body": "Cet écran n'est pas encore prêt. En attendant, tes discussions t'attendent.",
+    "toChats": "Aller aux discussions",
+    "series": { "title": "Série" },
+    "games": { "title": "Jeux" },
+    "progress": { "title": "Progrès" }
+  },
   "nav": {
     "label": "Navigation principale",
     "chats": "Discussions",
