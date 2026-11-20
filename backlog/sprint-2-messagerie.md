@@ -12,7 +12,7 @@
 - [ ] Test : deux réplicas de l'API, un message envoyé sur l'un arrive par l'autre.
 
 ## NS-203 — Réponse d'agent et correction · L
-*Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction, (3) écran, (4) modération, détresse et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
+*Découpé le 2026-11-21 en quatre PR, sans file ni temps réel d'abord (décision du jour) : (1) gabarit `agent.v1` (fait), (2) API de la réponse et de la correction (fait ; la version du prompt est journalisée, pas encore stockée en base), (3) écran, (4) modération, détresse et évaluations. Le job `agent.reply` sur pg-boss viendra avec NS-016.*
 - [ ] Job `agent.reply` dans le worker : prompt `agent.v1`, 16 derniers messages, sortie JSON validée par Zod, 2 nouvelles tentatives.
 - [ ] Modération en entrée et en sortie ; cas de détresse traité selon `docs/09-ia-agents.md`.
 - [ ] Idempotence par `clientId`.

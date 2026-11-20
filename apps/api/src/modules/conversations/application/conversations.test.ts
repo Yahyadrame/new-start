@@ -162,4 +162,15 @@ describe('ConversationsService.send', () => {
     await expect(service.send('u1', 'abc', body)).rejects.toMatchObject({ status: 404 });
     expect(store.send).not.toHaveBeenCalled();
   });
+  it('lance la réponse de l’agent pour un nouveau message, et pas pour un renvoi', async () => {
+    const { store } = setup(null);
+    const schedule = vi.fn();
+    const service = new ConversationsService(store, () => 2026, { schedule });
+    vi.mocked(store.send).mockResolvedValueOnce({ row, created: true });
+    await service.send('u1', ID, body);
+    expect(schedule).toHaveBeenCalledWith(ID, 'm1');
+    vi.mocked(store.send).mockResolvedValueOnce({ row, created: false });
+    await service.send('u1', ID, body);
+    expect(schedule).toHaveBeenCalledTimes(1);
+  });
 });
