@@ -306,3 +306,24 @@ model NotificationLog {
   @@unique([userId, kind, day])
   @@index([userId, createdAt])
 }
+
+/// Une offre d'abonnement (docs/14-paiements.md). Les prix sont dans `PlanPrice`, jamais dans le code.
+model Plan {
+  code       String      @id
+  nameFr     String
+  periodDays Int
+  renews     Boolean
+  position   Int
+  prices     PlanPrice[]
+}
+
+model PlanPrice {
+  planCode    String
+  /// "XOF" ou "USD".
+  currency    String
+  /// Unité mineure : 1 = 1 FCFA, ou 1 centime de dollar.
+  amountMinor Int
+  plan        Plan   @relation(fields: [planCode], references: [code], onDelete: Cascade)
+
+  @@id([planCode, currency])
+}
