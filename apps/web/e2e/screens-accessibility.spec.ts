@@ -71,6 +71,28 @@ async function signedIn(page: Page) {
     r.fulfill(json([{ slug: 'travel', nameFr: 'Voyage', agentCount: 1 }])),
   );
   await page.route('**/api/agents*', (r) => r.fulfill(json([{ ...jade, topic: null }])));
+  await page.route('**/api/notifications', (r) =>
+    r.fulfill(
+      json([
+        {
+          id: 'n1',
+          kind: 'reminder',
+          title: 'Ton rappel du jour',
+          body: 'Quelques minutes d’anglais aujourd’hui ? Ta série compte sur toi.',
+          createdAt: new Date().toISOString(),
+          read: false,
+        },
+        {
+          id: 'n2',
+          kind: 'reminder',
+          title: 'Ton rappel du jour',
+          body: 'Quelques minutes d’anglais aujourd’hui ? Ta série compte sur toi.',
+          createdAt: new Date(Date.now() - 3 * 86_400_000).toISOString(),
+          read: true,
+        },
+      ]),
+    ),
+  );
   await page.route('**/api/progress', (r) =>
     r.fulfill(
       json({
@@ -93,6 +115,7 @@ for (const [path, heading] of [
   ['/games', 'Jeux'],
   ['/chats/jade', 'Conversation'],
   ['/series', 'Série'],
+  ['/notifications', 'Notifications'],
 ] as const) {
   test(`l'écran ${heading} est accessible`, async ({ page }) => {
     await signedIn(page);
