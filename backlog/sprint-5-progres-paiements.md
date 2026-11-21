@@ -1,6 +1,7 @@
 # Sprint 5 — Progrès, notifications, abonnements (E6, E7)
 
 ## NS-501 — XP, niveaux, série de jours · M
+*Fait le 2026-11-21 : +5 XP par bonne réponse (#199) et +10 XP par message envoyé. Restent : +30 par épisode (attend le sprint 4), série de jours, `DailyActivity`.*
 - [ ] Règles : +10 XP par message, +5 par bonne réponse, +30 par épisode terminé ; série de jours calculée dans le fuseau de l'utilisateur ; mode pause respecté.
 - [ ] `DailyActivity` mise à jour en temps réel ; minutes parlées issues de la durée des enregistrements.
 
