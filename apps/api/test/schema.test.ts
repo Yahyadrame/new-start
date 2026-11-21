@@ -25,8 +25,8 @@ describe('schema Prisma', () => {
       expect(names).toContain(n);
   });
   it('donne un UUID v7, createdAt et updatedAt à chaque table de compte et de conversation', () => {
-    // Contenu partagé (Expression, Word) et compteur par jour (DailyActivity : `day` fait office de date).
-    const noyau = new Set(['Expression', 'Word', 'DailyActivity']);
+    // Contenu partagé (Expression, Word, Plan, PlanPrice : clé métier) et compteur par jour (DailyActivity : `day` fait office de date).
+    const noyau = new Set(['Expression', 'Word', 'DailyActivity', 'Plan', 'PlanPrice']);
     for (const m of models.filter((x) => !noyau.has(x.name ?? ''))) {
       expect(m.body, m.name).toContain('@default(uuid(7))');
       expect(m.body, m.name).toMatch(/createdAt\s+DateTime\s+@default\(now\(\)\)/);
