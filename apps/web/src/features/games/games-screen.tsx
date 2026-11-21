@@ -1,7 +1,7 @@
 'use client';
 
 import type { MatchQuestion, TrueFalseQuestion } from '@newstart/shared';
-import { Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@newstart/ui';
+import { Badge, Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@newstart/ui';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
@@ -132,6 +132,25 @@ export function GamesScreen() {
           )}
         </TabsContent>
       </Tabs>
+      <section aria-labelledby="upcoming-title" className="flex flex-col gap-3">
+        <h2 id="upcoming-title" className="font-display text-xl font-bold">
+          {t.upcoming.title}
+        </h2>
+        <ul className="grid grid-cols-2 gap-3">
+          {t.upcoming.items.map((game) => (
+            <li
+              key={game.name}
+              className="flex flex-col gap-1 rounded-2xl border border-line bg-surface-1 p-3"
+            >
+              <Badge variant="neutral" className="self-start">
+                {t.upcoming.badge}
+              </Badge>
+              <p className="text-[15px] font-semibold">{game.name}</p>
+              <p className="text-[13px] text-text-muted">{game.hint}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
       <BottomNav />
     </main>
   );

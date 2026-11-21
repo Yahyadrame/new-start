@@ -320,6 +320,23 @@
     "empty": "Pas assez d'expressions pour lancer une partie.",
     "error": "Impossible de charger la partie. Réessaie dans un instant.",
     "modes": { "trueFalse": "Vrai ou faux", "match": "Associer", "timeAttack": "Contre-la-montre" },
+    "upcoming": {
+      "title": "Bientôt",
+      "badge": "Bientôt",
+      "items": [
+        {
+          "name": "Quelle réplique ?",
+          "hint": "Une scène s'arrête : choisis ou dis la bonne réponse."
+        },
+        { "name": "Dictée express", "hint": "Écoute une phrase à vitesse réelle et écris-la." },
+        { "name": "Accents du monde", "hint": "Reconnais une phrase dite avec plusieurs accents." },
+        { "name": "Karaoké réplique", "hint": "Double un personnage, ta voix est notée." },
+        { "name": "L'enquête", "hint": "Interroge des suspects IA pour trouver le coupable." },
+        { "name": "Le négociateur", "hint": "Obtiens le meilleur prix face à un vendeur IA." },
+        { "name": "Survie à l'aéroport", "hint": "Douane, porte, valise, avec le temps qui file." },
+        { "name": "L'entretien final", "hint": "Un jury IA chronométré te note sur 100." }
+      ]
+    },
     "timeAttack": {
       "timer": "{s} s",
       "score": "{score} points",
