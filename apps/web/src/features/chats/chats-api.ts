@@ -1,7 +1,10 @@
 import type { ConversationItem, MessageItem, MessagesPage, SendMessage } from '@newstart/shared';
 
 export class ChatsError extends Error {
-  constructor(readonly status: number) {
+  constructor(
+    readonly status: number,
+    readonly code?: string,
+  ) {
     super(`conversations ${status}`);
   }
 }
@@ -37,7 +40,11 @@ export async function sendMessage(
     headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new ChatsError(res.status);
+  if (!res.ok) {
+    // Deux 429 existent : la limite du jour (USAGE_LIMIT) et la limite de débit (RATE_LIMITED).
+    const err = (await res.json().catch(() => null)) as { code?: string } | null;
+    throw new ChatsError(res.status, err?.code);
+  }
   return (await res.json()) as MessageItem;
 }
 
