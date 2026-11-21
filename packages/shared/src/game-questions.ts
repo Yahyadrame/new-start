@@ -114,3 +114,7 @@ export function buildMatch(pool: readonly GameExpression[], rng: Rng): MatchQues
     ),
   };
 }
+
+/** Corps de `POST /games/results` : le nombre de bonnes réponses d'une partie. */
+export const GameResult = z.object({ correct: z.number().int().min(0).max(60) });
+export type GameResult = z.infer<typeof GameResult>;
