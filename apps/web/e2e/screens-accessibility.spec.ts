@@ -124,6 +124,11 @@ async function signedIn(page: Page) {
       ]),
     ),
   );
+  await page.route('**/api/reviews/due', (r) =>
+    r.fulfill(
+      json([{ id: 'c1', expressionId: 1, text: 'You know', meaningFr: 'tu sais', due: day(0) }]),
+    ),
+  );
   await page.route('**/api/games/daily', (r) =>
     r.fulfill(
       json({

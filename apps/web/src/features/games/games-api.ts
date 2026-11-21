@@ -1,4 +1,9 @@
-import type { MatchQuestion, TrueFalseQuestion } from '@newstart/shared';
+import type {
+  DueReviewItem,
+  GradeReview,
+  MatchQuestion,
+  TrueFalseQuestion,
+} from '@newstart/shared';
 
 export class GamesError extends Error {
   constructor(readonly status: number) {
@@ -81,4 +86,25 @@ export async function sendDailyResult(
   });
   if (!res.ok) throw new GamesError(res.status);
   return (await res.json()) as { gained: number; bonus: number };
+}
+
+/** Les cartes à réviser aujourd'hui (au plus 20, calculées par l'API). */
+export async function fetchDueReviews(token: string): Promise<DueReviewItem[]> {
+  const res = await fetch('/api/reviews/due', { headers: { authorization: `Bearer ${token}` } });
+  if (!res.ok) throw new GamesError(res.status);
+  return (await res.json()) as DueReviewItem[];
+}
+
+/** Note une carte ; l'API recalcule la prochaine date. */
+export async function gradeReview(
+  token: string,
+  cardId: string,
+  grade: GradeReview['grade'],
+): Promise<void> {
+  const res = await fetch(`/api/reviews/${cardId}/grade`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ grade }),
+  });
+  if (!res.ok) throw new GamesError(res.status);
 }

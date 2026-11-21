@@ -17,6 +17,7 @@ import {
 } from './games-api';
 import { DailyChallenge } from './daily-challenge';
 import { MatchGame } from './match-game';
+import { ReviewSession } from './review-session';
 import { TimeAttackGame } from './time-attack-game';
 import { TrueFalseGame } from './true-false-game';
 
@@ -81,6 +82,7 @@ export function GamesScreen() {
         </p>
       )}
       <DailyChallenge />
+      <ReviewSession />
       <Tabs
         value={mode}
         onValueChange={(v) => {

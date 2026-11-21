@@ -6,6 +6,8 @@ import {
   sendResult,
   trueFalseQuestions,
   fetchDaily,
+  fetchDueReviews,
+  gradeReview,
   fetchStreak,
   sendDailyResult,
 } from './games-api';
@@ -142,5 +144,39 @@ describe('sendDailyResult', () => {
   it('lève GamesError quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 400 }));
     await expect(sendDailyResult('tok', 99)).rejects.toBeInstanceOf(GamesError);
+  });
+});
+
+describe('fetchDueReviews', () => {
+  it('lit les cartes dues avec le jeton', async () => {
+    const cards = [{ id: 'c1', expressionId: 1, text: 'You know', meaningFr: 'tu sais', due: 'x' }];
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => cards });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await fetchDueReviews('tok')).toEqual(cards);
+    expect(fetchMock).toHaveBeenCalledWith('/api/reviews/due', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève GamesError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
+    await expect(fetchDueReviews('tok')).rejects.toBeInstanceOf(GamesError);
+  });
+});
+
+describe('gradeReview', () => {
+  it('envoie la note de la carte', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+    await gradeReview('tok', 'c1', 'good');
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe('/api/reviews/c1/grade');
+    expect(init.method).toBe('POST');
+    expect(init.body).toBe(JSON.stringify({ grade: 'good' }));
+  });
+
+  it('lève GamesError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+    await expect(gradeReview('tok', 'c1', 'easy')).rejects.toBeInstanceOf(GamesError);
   });
 });

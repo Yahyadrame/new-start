@@ -10,6 +10,8 @@ const sendMissed = vi.fn();
 const sendResult = vi.fn();
 const fetchStreak = vi.fn();
 const fetchDaily = vi.fn();
+const fetchDueReviews = vi.fn();
+const gradeReview = vi.fn();
 const sendDailyResult = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
@@ -22,6 +24,8 @@ vi.mock('./games-api', () => ({
   fetchStreak,
   fetchDaily,
   sendDailyResult,
+  fetchDueReviews,
+  gradeReview,
 }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { GamesScreen } = await import('./games-screen');
@@ -41,6 +45,7 @@ beforeEach(() => {
   sendMissed.mockResolvedValue(undefined);
   sendResult.mockResolvedValue(0);
   fetchStreak.mockResolvedValue(0);
+  fetchDueReviews.mockResolvedValue([]);
   fetchDaily.mockResolvedValue({ done: false, questions: [] });
   trueFalseQuestions.mockResolvedValue([question]);
 });
