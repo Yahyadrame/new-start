@@ -23,7 +23,7 @@
 
 ## NS-504 — Offres et prix · S
 *Tranche 1 faite le 2026-11-21 (API) : tables `Plan` et `PlanPrice` (migration additive) remplies avec les prix proposés de `docs/14-paiements.md`, et `GET /plans?country=`. Ces prix restent à valider par le porteur du projet avant toute activation. Tranche 2 : page `/plans` avec la mention « Bientôt » (écran provisoire commun), testée avec axe. Les offres s'afficheront quand le porteur du projet décidera d'activer les paiements.*
-- [ ] Tables `Plan` et `PlanPrice`, `GET /plans?country=` ; écran Abonnement (10) affichant « Bientôt » tant que le paiement est désactivé.
+- [x] Tables `Plan` et `PlanPrice`, `GET /plans?country=` ; écran Abonnement (10) affichant « Bientôt » tant que le paiement est désactivé (#246, #247).
 
 ## NS-505 — Paiement Wave · L
 - [ ] Adaptateur Wave (mode test), webhook signé, idempotence, activation de l'abonnement.
