@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { GamesError, trueFalseQuestions } from './games-api';
+import { GamesError, matchQuestions, trueFalseQuestions } from './games-api';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -26,5 +26,14 @@ describe('trueFalseQuestions', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
     await expect(trueFalseQuestions('tok')).rejects.toMatchObject({ status: 401 });
     await expect(trueFalseQuestions('tok')).rejects.toBeInstanceOf(GamesError);
+  });
+});
+
+describe('matchQuestions', () => {
+  it('demande trois tableaux par défaut', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    vi.stubGlobal('fetch', fetchMock);
+    await matchQuestions('tok');
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/games/match/questions?count=3');
   });
 });

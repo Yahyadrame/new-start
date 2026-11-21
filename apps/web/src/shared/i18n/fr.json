@@ -282,7 +282,15 @@
       "replay": "Rejouer"
     },
     "empty": "Pas assez d'expressions pour lancer une partie.",
-    "error": "Impossible de charger la partie. Réessaie dans un instant."
+    "error": "Impossible de charger la partie. Réessaie dans un instant.",
+    "modes": { "trueFalse": "Vrai ou faux", "match": "Associer" },
+    "match": {
+      "hint": "Touche une expression, puis son sens.",
+      "wrong": "Ce n'est pas le bon sens. Essaie encore.",
+      "done": "Tableau réussi.",
+      "next": "Tableau suivant",
+      "mistakes": "{n} erreurs au total."
+    }
   },
   "nav": {
     "label": "Navigation principale",
