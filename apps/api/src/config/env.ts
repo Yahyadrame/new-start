@@ -63,6 +63,11 @@ const schema = z.object({
   RATE_LIMIT_PER_MINUTE: z.preprocess(emptyToUndefined, z.coerce.number().int().min(0).default(0)),
   // Nombre de proxys entre le navigateur et l'API (1 sur Render) : sans lui, toutes les requêtes semblent venir du proxy.
   TRUST_PROXY_HOPS: z.preprocess(emptyToUndefined, z.coerce.number().int().min(0).default(0)),
+  // Rappels du jour : intervalle du planificateur en secondes. 0 = éteint (défaut) ; 60 une fois les rappels validés sur staging.
+  REMINDERS_INTERVAL_SECONDS: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().min(0).default(0),
+  ),
   AI_MAX_CALLS_PER_MONTH: z.preprocess(emptyToUndefined, z.string().optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z
