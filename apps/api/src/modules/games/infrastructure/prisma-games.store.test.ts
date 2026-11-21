@@ -15,4 +15,15 @@ describe('PrismaGamesStore', () => {
       week: true,
     });
   });
+
+  it('ajoute l’XP à la personne et rend son total', async () => {
+    const db = { user: { update: vi.fn().mockResolvedValue({ xp: 40 }) } };
+    const store = new PrismaGamesStore(db as unknown as PrismaService);
+    expect(await store.addXp('u1', 15)).toBe(40);
+    expect(db.user.update).toHaveBeenCalledWith({
+      where: { id: 'u1' },
+      data: { xp: { increment: 15 } },
+      select: { xp: true },
+    });
+  });
 });

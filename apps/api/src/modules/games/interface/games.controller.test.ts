@@ -7,6 +7,7 @@ import { GamesService } from '../application/games.js';
 import { GamesController } from './games.controller.js';
 
 const questions = vi.fn().mockResolvedValue([{ kind: 'TRUE_FALSE' }]);
+const finish = vi.fn().mockResolvedValue({ gained: 15, xp: 40 });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 const auth = { Authorization: 'Bearer tok-u1' };
 let app: INestApplication;
@@ -14,7 +15,7 @@ beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [GamesController],
     providers: [
-      { provide: GamesService, useValue: { questions } },
+      { provide: GamesService, useValue: { questions, finish } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -54,5 +55,30 @@ describe('GET /games/:type/questions', () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(questions).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /games/results', () => {
+  const post = (body: unknown, headers: Record<string, string> = auth) =>
+    request(app.getHttpServer())
+      .post('/games/results')
+      .set(headers)
+      .send(body as object);
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await post({ correct: 3 }, {})).status).toBe(401);
+  });
+
+  it('rend l’XP gagné (200)', async () => {
+    const res = await post({ correct: 3 });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ gained: 15, xp: 40 });
+    expect(finish).toHaveBeenCalledWith('u1', 3);
+  });
+
+  it('refuse un nombre négatif ou trop grand (400)', async () => {
+    expect((await post({ correct: -1 })).status).toBe(400);
+    expect((await post({ correct: 61 })).status).toBe(400);
+    expect(finish).not.toHaveBeenCalled();
   });
 });
