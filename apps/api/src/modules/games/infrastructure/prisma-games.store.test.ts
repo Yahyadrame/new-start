@@ -53,4 +53,49 @@ describe('PrismaGamesStore', () => {
     const upsert = db.dailyActivity.upsert.mock.calls[0]?.[0];
     expect(upsert.create).toMatchObject({ userId: 'u1', gamesPlayed: 1, xpEarned: 15 });
   });
+
+  describe('défi du jour', () => {
+    const now = new Date('2026-11-21T23:30:00Z');
+
+    it('donne le jour dans le fuseau de la personne et l’état du défi', async () => {
+      const db = {
+        user: { findUnique: vi.fn().mockResolvedValue({ timezone: 'Asia/Tokyo' }) },
+        dailyActivity: { findUnique: vi.fn().mockResolvedValue({ challengeDone: true }) },
+      };
+      const store = new PrismaGamesStore(db as unknown as PrismaService);
+      expect(await store.today('u1', now)).toEqual({ day: '2026-11-22', done: true });
+      expect(db.dailyActivity.findUnique.mock.calls[0]?.[0].where).toEqual({
+        userId_day: { userId: 'u1', day: new Date('2026-11-22T00:00:00Z') },
+      });
+    });
+
+    it('prend UTC et « pas fait » sans compte ni ligne du jour', async () => {
+      const db = {
+        user: { findUnique: vi.fn().mockResolvedValue(null) },
+        dailyActivity: { findUnique: vi.fn().mockResolvedValue(null) },
+      };
+      const store = new PrismaGamesStore(db as unknown as PrismaService);
+      expect(await store.today('u1', now)).toEqual({ day: '2026-11-21', done: false });
+    });
+
+    it.each([
+      [1, true],
+      [0, false],
+    ])('marque le défi terminé (%i ligne changée) et rend %s', async (count, expected) => {
+      const db = {
+        dailyActivity: {
+          upsert: vi.fn().mockResolvedValue({}),
+          updateMany: vi.fn().mockResolvedValue({ count }),
+        },
+      };
+      const store = new PrismaGamesStore(db as unknown as PrismaService);
+      expect(await store.claimChallenge('u1', '2026-11-21')).toBe(expected);
+      const day = new Date('2026-11-21T00:00:00Z');
+      expect(db.dailyActivity.upsert.mock.calls[0]?.[0].create).toEqual({ userId: 'u1', day });
+      expect(db.dailyActivity.updateMany).toHaveBeenCalledWith({
+        where: { userId: 'u1', day, challengeDone: false },
+        data: { challengeDone: true },
+      });
+    });
+  });
 });
