@@ -303,6 +303,26 @@
   },
   "games": {
     "title": "Jeux",
+    "review": {
+      "title": "À réviser",
+      "count": "{n} expressions à revoir aujourd'hui.",
+      "one": "Une expression à revoir aujourd'hui.",
+      "none": "Rien à revoir pour l'instant. Les expressions que tu rates en jeu reviennent ici.",
+      "start": "Réviser",
+      "progress": "Carte {n} sur {total}",
+      "means": "veut dire",
+      "show": "Voir le sens",
+      "how": "Tu t'en souvenais comment ?",
+      "again": "À revoir",
+      "hard": "Difficile",
+      "good": "Bien",
+      "easy": "Facile",
+      "doneTitle": "Révision terminée",
+      "doneText": "Les prochaines reviennent au bon moment.",
+      "close": "Retour aux jeux",
+      "error": "Les révisions n'ont pas pu se charger. Réessaie dans un instant.",
+      "gradeError": "Ta réponse n'a pas été enregistrée. Réessaie."
+    },
     "daily": {
       "title": "Défi du jour",
       "intro": "Dix questions, les mêmes pour tout le monde aujourd'hui. Le bonus de 20 XP se gagne une fois par jour.",
