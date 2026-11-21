@@ -8,7 +8,7 @@ import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import { groupNotifications } from './group-notifications';
-import { fetchNotifications } from './notifications-api';
+import { fetchNotifications, markAllRead } from './notifications-api';
 
 const t = fr.notifications;
 
@@ -58,6 +58,8 @@ export function NotificationsScreen() {
       if (!session) return router.replace('/');
       try {
         setItems(await fetchNotifications(session.accessToken));
+        // Les titres restent en gras pour cette visite ; la prochaine les verra lus.
+        void markAllRead(session.accessToken).catch(() => undefined);
       } catch {
         setError(true);
       }

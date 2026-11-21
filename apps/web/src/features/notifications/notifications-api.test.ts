@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchNotifications, NotificationsError } from './notifications-api';
+import { fetchNotifications, markAllRead, NotificationsError } from './notifications-api';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -19,5 +19,22 @@ describe('fetchNotifications', () => {
   it('lève NotificationsError quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
     await expect(fetchNotifications('tok')).rejects.toBeInstanceOf(NotificationsError);
+  });
+});
+
+describe('markAllRead', () => {
+  it('envoie un POST avec le jeton', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+    await markAllRead('tok');
+    expect(fetchMock).toHaveBeenCalledWith('/api/notifications/read-all', {
+      method: 'POST',
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève NotificationsError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
+    await expect(markAllRead('tok')).rejects.toBeInstanceOf(NotificationsError);
   });
 });
