@@ -5,7 +5,7 @@
 - [ ] Mise à jour en production simulée pendant la charge : 0 erreur.
 
 ## NS-602 — Accessibilité · M
-*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Conversation, Série, Notifications, Code de l'inscription et test de niveau ajoutés (écran Profil en attente de NS-610). Résultat du niveau ajouté. Profil ajouté (NS-610). Restent : navigation clavier et lecteurs d'écran (à tester à la main par le porteur du projet).*
+*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Conversation, Série, Notifications, Code de l'inscription et test de niveau ajoutés (écran Profil en attente de NS-610). Résultat du niveau ajouté. Profil ajouté (NS-610). Tranche 2 : test Playwright de navigation au clavier sur onze écrans (Tab, focus visible, pas de piège), clair et sombre, mobile et ordinateur. Restent : l'ordre de lecture et les lecteurs d'écran, à tester à la main par le porteur du projet.*
 - [x] axe-core sur tous les écrans, clair et sombre.
 - [ ] Navigation clavier ; lecteurs d'écran sur les parcours principaux.
 
