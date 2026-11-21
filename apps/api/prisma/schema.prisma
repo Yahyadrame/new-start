@@ -71,6 +71,7 @@ model User {
   levelAnswers    LevelTestAnswer[]
   notebook        NotebookEntry[]
   reviewCards     ReviewCard[]
+  activities      DailyActivity[]
 }
 
 model AuthIdentity {
@@ -271,4 +272,17 @@ model ReviewCard {
 
   @@unique([userId, expressionId])
   @@index([userId, due])
+}
+
+model DailyActivity {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  userId        String   @db.Uuid
+  day           DateTime @db.Date
+  spokenSeconds Int      @default(0)
+  messagesSent  Int      @default(0)
+  gamesPlayed   Int      @default(0)
+  xpEarned      Int      @default(0)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, day])
 }
