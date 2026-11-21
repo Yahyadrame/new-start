@@ -31,6 +31,14 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('demande vingt questions pour le contre-la-montre', async () => {
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    fireEvent.mouseDown(screen.getByRole('tab', { name: t.modes.timeAttack }), { button: 0 });
+    expect(await screen.findByText('Combo x1')).toBeTruthy();
+    expect(trueFalseQuestions).toHaveBeenLastCalledWith('tok', 20);
+  });
+
   it('envoie les expressions ratées à la fin de la partie, sans bloquer si l’envoi échoue', async () => {
     sendMissed.mockRejectedValue(new Error('x'));
     render(<GamesScreen />);
@@ -53,13 +61,13 @@ describe('GamesScreen', () => {
     await screen.findByText('You know');
     fireEvent.mouseDown(screen.getByRole('tab', { name: t.modes.match }), { button: 0 });
     expect(await screen.findByText(t.match.hint)).toBeTruthy();
-    expect(matchQuestions).toHaveBeenCalledWith('tok');
+    expect(matchQuestions).toHaveBeenCalledWith('tok', undefined);
   });
 
   it('charge les questions avec le jeton et lance la partie', async () => {
     render(<GamesScreen />);
     expect(await screen.findByText('You know')).toBeTruthy();
-    expect(trueFalseQuestions).toHaveBeenCalledWith('tok');
+    expect(trueFalseQuestions).toHaveBeenCalledWith('tok', undefined);
   });
 
   it('renvoie vers l’accueil sans session', async () => {

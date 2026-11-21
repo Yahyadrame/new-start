@@ -283,7 +283,13 @@
     },
     "empty": "Pas assez d'expressions pour lancer une partie.",
     "error": "Impossible de charger la partie. Réessaie dans un instant.",
-    "modes": { "trueFalse": "Vrai ou faux", "match": "Associer" },
+    "modes": { "trueFalse": "Vrai ou faux", "match": "Associer", "timeAttack": "Contre-la-montre" },
+    "timeAttack": {
+      "timer": "{s} s",
+      "score": "{score} points",
+      "combo": "Combo x{n}",
+      "record": "Record : {record} points"
+    },
     "match": {
       "hint": "Touche une expression, puis son sens.",
       "wrong": "Ce n'est pas le bon sens. Essaie encore.",
