@@ -27,6 +27,19 @@ export class PrismaProgressStore implements ProgressStore {
       },
       localDay(now, user.timezone),
     );
-    return { xp: user.xp, streakDays };
+    const today = localDay(now, user.timezone);
+    const since = new Date(Date.parse(`${today}T00:00:00Z`) - 6 * 86_400_000);
+    const rows = await this.db.dailyActivity.findMany({
+      where: { userId, day: { gte: since } },
+      select: {
+        day: true,
+        spokenSeconds: true,
+        messagesSent: true,
+        gamesPlayed: true,
+        xpEarned: true,
+      },
+    });
+    const activity = rows.map((r) => ({ ...r, day: r.day.toISOString().slice(0, 10) }));
+    return { xp: user.xp, streakDays, today, activity };
   }
 }
