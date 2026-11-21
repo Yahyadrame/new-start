@@ -31,7 +31,7 @@ export function ProgressScreen() {
   }, [router]);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-28">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-14 pb-28">
       <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>

@@ -334,6 +334,9 @@
     "chats": "Discussions",
     "series": "Série",
     "games": "Jeux",
-    "progress": "Progrès"
+    "progress": "Progrès",
+    "bell": "Notifications",
+    "bellUnreadOne": "Notifications, 1 non lue",
+    "bellUnreadMany": "Notifications, {count} non lues"
   }
 }

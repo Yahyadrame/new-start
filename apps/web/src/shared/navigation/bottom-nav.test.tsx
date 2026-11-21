@@ -4,6 +4,9 @@ import fr from '../i18n/fr.json';
 
 const usePathname = vi.fn();
 vi.mock('next/navigation', () => ({ usePathname }));
+vi.mock('./notifications-bell', () => ({
+  NotificationsBell: () => <a href="/notifications">cloche</a>,
+}));
 const { BottomNav } = await import('./bottom-nav');
 
 afterEach(cleanup);
