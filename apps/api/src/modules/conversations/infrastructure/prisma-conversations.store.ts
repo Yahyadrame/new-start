@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { ConversationItem, SendMessage } from '@newstart/shared';
 import { Prisma } from '../../../generated/prisma/client.js';
 import type { MessageCursor } from '../application/message-cursor.js';
+import { streakUpdate } from '../../../shared/progress/streak.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { ConversationsStore, MessageRow } from '../application/conversations.js';
 
@@ -144,6 +145,7 @@ export class PrismaConversationsStore implements ConversationsStore {
       });
     const known = await find();
     if (known) return { row: known, created: false };
+    const streak = await streakUpdate(this.db, userId);
     try {
       const [row] = await this.db.$transaction([
         this.db.message.create({
@@ -155,7 +157,10 @@ export class PrismaConversationsStore implements ConversationsStore {
           data: { lastMessageAt: new Date() },
         }),
         // +10 XP par message (règle de NS-501), seulement pour un message créé
-        this.db.user.update({ where: { id: userId }, data: { xp: { increment: XP_PER_MESSAGE } } }),
+        this.db.user.update({
+          where: { id: userId },
+          data: { xp: { increment: XP_PER_MESSAGE }, ...streak },
+        }),
       ]);
       return { row, created: true };
     } catch (e) {
