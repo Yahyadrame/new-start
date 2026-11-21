@@ -78,3 +78,4 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 | 2026-11-21 | Heure du rappel | Elle se règle au Profil seulement, pas sur l'écran Notifications. | Un seul endroit, pas de doublon à maintenir | — |
 | 2026-11-21 | Limite de messages par jour (NS-509) | On garde la variable `MESSAGES_PER_DAY`, pas de table `FeatureFlag`. | Déjà en place ; le changement demande un redémarrage, pas un redéploiement du code | À revoir si on veut régler sans redémarrer |
 | 2026-11-21 | Autonomie prolongée jusqu'à 17 h | Même régime que jusqu'à 16 h : PR vertes poussées et fusionnées sans demander ; toujours ni compte créé, ni clé d'API ou secret posé, et prudence sur les dépenses. | Choix du porteur du projet |
+| 2026-11-21 | Autonomie prolongée jusqu'à 19 h | Même régime que jusqu'à 17 h : PR vertes poussées et fusionnées sans demander ; toujours ni compte créé, ni clé d'API ou secret posé, et prudence sur les dépenses. | Choix du porteur du projet |
