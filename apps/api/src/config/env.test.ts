@@ -29,6 +29,13 @@ describe('parseEnv', () => {
     });
     expect(() => parseEnv({ ...base, RATE_LIMIT_PER_MINUTE: '-1' })).toThrow();
   });
+  it('éteint le planificateur de rappels par défaut, réglable en secondes', () => {
+    expect(parseEnv(base).REMINDERS_INTERVAL_SECONDS).toBe(0);
+    expect(parseEnv({ ...base, REMINDERS_INTERVAL_SECONDS: '60' }).REMINDERS_INTERVAL_SECONDS).toBe(
+      60,
+    );
+    expect(() => parseEnv({ ...base, REMINDERS_INTERVAL_SECONDS: '-5' })).toThrow();
+  });
   it('convertit PORT en nombre', () => {
     expect(parseEnv({ ...base, PORT: '4000' }).PORT).toBe(4000);
   });
