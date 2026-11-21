@@ -15,8 +15,8 @@
 - [ ] Teaser de fin.
 
 ## NS-404 — Écran Explorer les thèmes (12) · M
-- [ ] Recherche, 9 thèmes, contacts par thème, « Écrire » et « Appel vidéo » (ce dernier affiché « Bientôt » au MVP).
-- [ ] Thème Amour masqué pour les mineurs (`TOPIC_ADULT_ONLY`).
+- [x] Recherche, 9 thèmes, contacts par thème, « Écrire ». *« Appel vidéo » reporté en V3 (décision du 2026-11-20, `docs/05-ecrans.md`).*
+- [x] Thème Amour masqué pour les mineurs (`TOPIC_ADULT_ONLY`).
 
 ## NS-405 — Contacts par thème · M
 - [ ] Créer 5 contacts par thème (45 au total) sur le modèle des fiches existantes, relus pour la sécurité et la qualité.
