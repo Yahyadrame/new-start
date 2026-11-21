@@ -103,6 +103,58 @@ describe('MessageBubble', () => {
     });
   });
 
+  describe('traduction', () => {
+    const button = () => screen.getByRole('button', { name: fr.conversation.translate });
+
+    it('traduit un message du contact au toucher', async () => {
+      const translate = vi.fn().mockResolvedValue('Bonjour');
+      render(
+        <ol>
+          <MessageBubble message={message({})} onTranslate={translate} />
+        </ol>,
+      );
+      fireEvent.click(button());
+      await waitFor(() => expect(screen.getByText('Bonjour')).toBeTruthy());
+      expect(translate).toHaveBeenCalledWith('m1');
+      expect(screen.queryByRole('button')).toBeNull();
+    });
+
+    it('montre tout de suite une traduction déjà gardée', () => {
+      render(
+        <ol>
+          <MessageBubble message={message({ translationFr: 'Salut' })} onTranslate={vi.fn()} />
+        </ol>,
+      );
+      expect(screen.getByText('Salut')).toBeTruthy();
+      expect(screen.queryByRole('button')).toBeNull();
+    });
+
+    it('laisse réessayer après un échec', async () => {
+      const translate = vi.fn().mockRejectedValueOnce(new Error('x')).mockResolvedValue('Bonjour');
+      render(
+        <ol>
+          <MessageBubble message={message({})} onTranslate={translate} />
+        </ol>,
+      );
+      fireEvent.click(button());
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.translateFailed }));
+      await waitFor(() => expect(screen.getByText('Bonjour')).toBeTruthy());
+      expect(translate).toHaveBeenCalledTimes(2);
+    });
+
+    it('n’offre pas le bouton sans onTranslate, ni sur un message de la personne', () => {
+      show(message({}));
+      expect(screen.queryByRole('button')).toBeNull();
+      cleanup();
+      render(
+        <ol>
+          <MessageBubble message={message({ author: 'USER' })} onTranslate={vi.fn()} />
+        </ol>,
+      );
+      expect(screen.queryByRole('button')).toBeNull();
+    });
+  });
+
   it('centre un message système, sans bulle ni heure', () => {
     show(message({ author: 'SYSTEM', text: 'Nouvelle conversation' }));
     expect(screen.getByText('Nouvelle conversation').className).toContain('self-center');

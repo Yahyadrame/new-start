@@ -31,7 +31,7 @@
 
 ## NS-205 — Écouter et traduire · M
 - [ ] `POST /messages/:id/speech` : TTS avec la voix de l'agent, mis en cache sur Cloudinary.
-- [x] `POST /messages/:id/translate` : traduction FR mise en cache. *API faite le 2026-11-21 ; reste le bouton « Traduire » dans l'écran Conversation.*
+- [x] `POST /messages/:id/translate` : traduction FR mise en cache. *API et bouton « Traduire » de l'écran Conversation faits le 2026-11-21.*
 
 ## NS-206 — Dictée · M
 - [ ] Enregistrement dans le navigateur (WebM/Opus), téléversement signé vers Cloudinary, transcription, texte inséré dans le champ.

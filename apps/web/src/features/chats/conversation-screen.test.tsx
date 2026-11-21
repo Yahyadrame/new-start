@@ -9,6 +9,7 @@ const listMessages = vi.fn();
 const sendMessage = vi.fn();
 const markConversationRead = vi.fn();
 const addToNotebook = vi.fn();
+const translateMessage = vi.fn();
 const scrollIntoView = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
@@ -19,6 +20,7 @@ vi.mock('./chats-api', () => ({
   sendMessage,
   markConversationRead,
   addToNotebook,
+  translateMessage,
 }));
 const { ConversationScreen } = await import('./conversation-screen');
 
