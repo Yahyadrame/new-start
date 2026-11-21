@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildMatch,
+  GameResult,
   buildMissingWord,
   buildTrueFalse,
   MatchQuestion,
@@ -120,5 +121,17 @@ describe('buildMatch', () => {
 
   it('rend null avec moins de quatre sens différents', () => {
     expect(buildMatch(pool.slice(0, 3), Math.random)).toBeNull();
+  });
+});
+
+describe('GameResult', () => {
+  it('accepte de 0 à 60 bonnes réponses', () => {
+    expect(GameResult.safeParse({ correct: 0 }).success).toBe(true);
+    expect(GameResult.safeParse({ correct: 60 }).success).toBe(true);
+  });
+  it('refuse un nombre négatif, trop grand ou non entier', () => {
+    for (const correct of [-1, 61, 1.5]) {
+      expect(GameResult.safeParse({ correct }).success).toBe(false);
+    }
   });
 });

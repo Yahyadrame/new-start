@@ -8,7 +8,10 @@ const pool = Array.from({ length: 8 }, (_, i) => ({
   week: 1,
 }));
 const service = (expressions = pool) =>
-  new GamesService({ expressions: vi.fn().mockResolvedValue(expressions) } as GamesStore);
+  new GamesService({
+    expressions: vi.fn().mockResolvedValue(expressions),
+    addXp: vi.fn(),
+  } as GamesStore);
 
 describe('GamesService.questions', () => {
   it('rend le nombre demandé de questions Vrai ou faux, sur des expressions différentes', async () => {
@@ -30,5 +33,14 @@ describe('GamesService.questions', () => {
 
   it('ne rend aucune question Associer sans quatre sens différents', async () => {
     expect(await service(pool.slice(0, 3)).questions('match', 3)).toEqual([]);
+  });
+});
+
+describe('GamesService.finish', () => {
+  it('donne 5 XP par bonne réponse et rend le total', async () => {
+    const addXp = vi.fn().mockResolvedValue(40);
+    const svc = new GamesService({ expressions: vi.fn(), addXp } as unknown as GamesStore);
+    expect(await svc.finish('u1', 3)).toEqual({ gained: 15, xp: 40 });
+    expect(addXp).toHaveBeenCalledWith('u1', 15);
   });
 });

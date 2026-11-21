@@ -12,4 +12,13 @@ export class PrismaGamesStore implements GamesStore {
     });
     return rows;
   }
+
+  async addXp(userId: string, amount: number) {
+    const user = await this.db.user.update({
+      where: { id: userId },
+      data: { xp: { increment: amount } },
+      select: { xp: true },
+    });
+    return user.xp;
+  }
 }
