@@ -71,6 +71,7 @@ async function signedIn(page: Page) {
     r.fulfill(json([{ slug: 'travel', nameFr: 'Voyage', agentCount: 1 }])),
   );
   await page.route('**/api/agents*', (r) => r.fulfill(json([{ ...jade, topic: null }])));
+  await page.route('**/api/notifications/unread-count', (r) => r.fulfill(json({ count: 2 })));
   await page.route('**/api/notifications', (r) =>
     r.fulfill(
       json([
