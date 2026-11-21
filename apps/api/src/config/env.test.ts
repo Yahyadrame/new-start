@@ -12,6 +12,12 @@ describe('parseEnv', () => {
       NODE_ENV: 'development',
     });
   });
+  it('fixe la limite de messages par jour à 60, réglable, jamais sous 1', () => {
+    expect(parseEnv(base).MESSAGES_PER_DAY).toBe(60);
+    expect(parseEnv({ ...base, MESSAGES_PER_DAY: '' }).MESSAGES_PER_DAY).toBe(60);
+    expect(parseEnv({ ...base, MESSAGES_PER_DAY: '25' }).MESSAGES_PER_DAY).toBe(25);
+    expect(() => parseEnv({ ...base, MESSAGES_PER_DAY: '0' })).toThrow();
+  });
   it('convertit PORT en nombre', () => {
     expect(parseEnv({ ...base, PORT: '4000' }).PORT).toBe(4000);
   });
