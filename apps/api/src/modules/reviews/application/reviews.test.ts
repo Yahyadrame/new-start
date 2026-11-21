@@ -13,6 +13,7 @@ function setup(found: ReturnType<typeof newCard> | null = newCard(now)) {
       ]),
     find: vi.fn().mockResolvedValue(found),
     save: vi.fn().mockResolvedValue(undefined),
+    createMissing: vi.fn().mockResolvedValue(2),
   };
   return { store, service: new ReviewsService(store) };
 }
@@ -48,5 +49,13 @@ describe('ReviewsService.grade', () => {
     const { store, service } = setup(null);
     await expect(service.grade('u1', 'c9', 'good', now)).rejects.toMatchObject({ status: 404 });
     expect(store.save).not.toHaveBeenCalled();
+  });
+});
+
+describe('ReviewsService.addMissed', () => {
+  it('crée des cartes neuves, sans doublon dans la liste', async () => {
+    const { store, service } = setup();
+    expect(await service.addMissed('u1', [3, 3, 5], now)).toEqual({ created: 2 });
+    expect(store.createMissing).toHaveBeenCalledWith('u1', [3, 5], newCard(now));
   });
 });

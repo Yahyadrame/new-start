@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DueReviewItem, GradeReview } from './reviews';
+import { DueReviewItem, GradeReview, MissedExpressions } from './reviews';
 
 describe('GradeReview', () => {
   it.each(['again', 'hard', 'good', 'easy'])('accepte « %s »', (grade) =>
@@ -22,5 +22,15 @@ describe('DueReviewItem', () => {
     };
     expect(DueReviewItem.parse(card)).toEqual(card);
     expect(DueReviewItem.safeParse({ ...card, expressionId: 1.5 }).success).toBe(false);
+  });
+});
+
+describe('MissedExpressions', () => {
+  it('accepte une liste d’identifiants', () =>
+    expect(MissedExpressions.safeParse({ expressionIds: [1, 2] }).success).toBe(true));
+  it('refuse une liste vide, trop longue ou non entière', () => {
+    expect(MissedExpressions.safeParse({ expressionIds: [] }).success).toBe(false);
+    expect(MissedExpressions.safeParse({ expressionIds: Array(51).fill(1) }).success).toBe(false);
+    expect(MissedExpressions.safeParse({ expressionIds: [1.5] }).success).toBe(false);
   });
 });

@@ -38,4 +38,16 @@ export class PrismaReviewsStore implements ReviewsStore {
   async save(cardId: string, next: CardState) {
     await this.db.reviewCard.update({ where: { id: cardId }, data: next });
   }
+
+  async createMissing(userId: string, expressionIds: number[], next: CardState) {
+    const known = await this.db.expression.findMany({
+      where: { id: { in: expressionIds } },
+      select: { id: true },
+    });
+    const { count } = await this.db.reviewCard.createMany({
+      data: known.map(({ id }) => ({ userId, expressionId: id, ...next })),
+      skipDuplicates: true,
+    });
+    return count;
+  }
 }
