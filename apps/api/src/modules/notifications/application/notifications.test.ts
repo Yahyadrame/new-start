@@ -14,9 +14,11 @@ describe('NotificationsService', () => {
       },
     ];
     const recent = vi.fn().mockResolvedValue(items);
-    expect(await new NotificationsService({ recent, markAllRead: vi.fn() }).list('u1')).toEqual(
-      items,
-    );
+    expect(
+      await new NotificationsService({ recent, markAllRead: vi.fn(), unreadCount: vi.fn() }).list(
+        'u1',
+      ),
+    ).toEqual(items);
     expect(recent).toHaveBeenCalledWith('u1', NOTIFICATIONS_LIMIT);
     expect(NOTIFICATIONS_LIMIT).toBe(30);
   });
@@ -24,7 +26,22 @@ describe('NotificationsService', () => {
   it('marque tout comme lu à l’heure donnée', async () => {
     const markAllRead = vi.fn().mockResolvedValue(undefined);
     const now = new Date('2026-11-21T14:00:00Z');
-    await new NotificationsService({ recent: vi.fn(), markAllRead }).markAllRead('u1', now);
+    await new NotificationsService({
+      recent: vi.fn(),
+      markAllRead,
+      unreadCount: vi.fn(),
+    }).markAllRead('u1', now);
     expect(markAllRead).toHaveBeenCalledWith('u1', now);
+  });
+
+  it('rend le nombre de non-lus de la personne', async () => {
+    const unreadCount = vi.fn().mockResolvedValue(3);
+    const service = new NotificationsService({
+      recent: vi.fn(),
+      markAllRead: vi.fn(),
+      unreadCount,
+    });
+    expect(await service.unreadCount('u1')).toBe(3);
+    expect(unreadCount).toHaveBeenCalledWith('u1');
   });
 });
