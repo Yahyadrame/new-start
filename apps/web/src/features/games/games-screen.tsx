@@ -9,6 +9,7 @@ import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import { matchQuestions, sendMissed, trueFalseQuestions } from './games-api';
 import { MatchGame } from './match-game';
+import { TimeAttackGame } from './time-attack-game';
 import { TrueFalseGame } from './true-false-game';
 
 const t = fr.games;
@@ -16,7 +17,7 @@ const t = fr.games;
 /** Onglet Jeux : Vrai ou faux (dix questions) ou Associer (trois tableaux). */
 export function GamesScreen() {
   const router = useRouter();
-  const [mode, setMode] = useState<'true-false' | 'match'>('true-false');
+  const [mode, setMode] = useState<'true-false' | 'match' | 'time-attack'>('true-false');
   const [questions, setQuestions] = useState<TrueFalseQuestion[] | MatchQuestion[] | null>(null);
   const [round, setRound] = useState(0);
   const [error, setError] = useState(false);
@@ -28,7 +29,10 @@ export function GamesScreen() {
       if (!session) return router.replace('/');
       try {
         setQuestions(
-          await (mode === 'match' ? matchQuestions : trueFalseQuestions)(session.accessToken),
+          await (mode === 'match' ? matchQuestions : trueFalseQuestions)(
+            session.accessToken,
+            mode === 'time-attack' ? 20 : undefined,
+          ),
         );
       } catch {
         setError(true);
@@ -56,9 +60,16 @@ export function GamesScreen() {
           setMode(v as typeof mode);
         }}
       >
-        <TabsList>
-          <TabsTrigger value="true-false">{t.modes.trueFalse}</TabsTrigger>
-          <TabsTrigger value="match">{t.modes.match}</TabsTrigger>
+        <TabsList className="w-full">
+          <TabsTrigger value="true-false" className="flex-1 px-2">
+            {t.modes.trueFalse}
+          </TabsTrigger>
+          <TabsTrigger value="match" className="flex-1 px-2">
+            {t.modes.match}
+          </TabsTrigger>
+          <TabsTrigger value="time-attack" className="flex-1 px-2">
+            {t.modes.timeAttack}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value={mode} className="flex flex-col gap-5">
           {error && <p role="alert">{t.error}</p>}
@@ -66,6 +77,14 @@ export function GamesScreen() {
           {questions && questions.length === 0 && <p>{t.empty}</p>}
           {questions && questions.length > 0 && mode === 'true-false' && (
             <TrueFalseGame
+              key={round}
+              questions={questions as TrueFalseQuestion[]}
+              onReplay={replay}
+              onFinish={finish}
+            />
+          )}
+          {questions && questions.length > 0 && mode === 'time-attack' && (
+            <TimeAttackGame
               key={round}
               questions={questions as TrueFalseQuestion[]}
               onReplay={replay}
