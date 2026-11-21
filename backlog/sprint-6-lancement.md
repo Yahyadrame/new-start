@@ -14,6 +14,7 @@
 - [ ] Ensuite : ajouter Profil au test d'accessibilité.
 
 ## NS-603 — Sécurité · M
+*Tranche 1 faite le 2026-11-21 : en-têtes de sécurité du site web (nosniff, cadres interdits, referrer, HSTS, micro permis pour le site seulement). Restent : Content-Security-Policy (demande un nonce pour les scripts de Next.js), en-têtes et limites de débit de l'API ("RATE_LIMITED", 3 codes par 10 minutes), OWASP ZAP sur staging.*
 - [ ] OWASP ZAP sur staging, correction des alertes hautes ; revue des en-têtes, CORS, limites de débit.
 - [ ] Revue des points sensibles SonarQube.
 

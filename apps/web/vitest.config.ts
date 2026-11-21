@@ -8,7 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      include: ['src/**/*.{ts,tsx}', 'e2e/config.ts'],
+      include: ['src/**/*.{ts,tsx}', 'e2e/config.ts', 'auth-rewrites.mjs', 'security-headers.mjs'],
       exclude: ['src/**/*.test.{ts,tsx}'],
     },
   },
