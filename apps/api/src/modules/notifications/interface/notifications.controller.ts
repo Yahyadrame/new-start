@@ -13,6 +13,12 @@ export class NotificationsController {
     return this.notifications.list(userId);
   }
 
+  /** Le nombre de non-lus, pour le point de la cloche. */
+  @Get('unread-count')
+  async unreadCount(@CurrentUserId() userId: string): Promise<{ count: number }> {
+    return { count: await this.notifications.unreadCount(userId) };
+  }
+
   /** Marque tout comme lu ; la personne ne voit que ses propres notifications. */
   @Post('read-all')
   @HttpCode(204)

@@ -45,6 +45,7 @@
 | GET | `/progress/summary` · GET `/progress/week` | Tableau de bord |
 | GET | `/notifications` | Jeton d'accès exigé. Les 30 notifications les plus récentes, la plus récente d'abord : `{ id, kind, title, body, createdAt, read }` |
 | POST | `/notifications/read-all` | Jeton d'accès exigé. Marque toutes les notifications de la personne comme lues ; répond 204 |
+| GET | `/notifications/unread-count` | Jeton d'accès exigé. Rend `{ count }`, le nombre de notifications non lues de la personne (point de la cloche) |
 | POST | `/push/subscriptions` | Abonnement Web Push |
 | GET | `/plans?country=SN` | Offres et prix dans la devise du pays |
 | POST | `/billing/checkout` | Démarre un paiement `{ plan, provider }` ; renvoie l'URL ou les instructions |
