@@ -10,6 +10,7 @@ import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import {
   addToNotebook,
+  translateMessage,
   listConversations,
   listMessages,
   markConversationRead,
@@ -208,6 +209,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
                   key={m.id}
                   message={m}
                   onAddToNotebook={(id) => addToNotebook(token.current, id)}
+                  onTranslate={(id) => translateMessage(token.current, id)}
                 />
               ))}
               {pending.map((p) => (

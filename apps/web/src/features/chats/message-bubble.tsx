@@ -35,6 +35,34 @@ function NotebookButton({ onAdd }: { onAdd: () => Promise<void> }) {
   );
 }
 
+/** Sous un message du contact : « Traduire » puis la traduction ; un échec laisse le bouton actif. */
+function Translation({
+  initial,
+  onTranslate,
+}: {
+  initial: string | null;
+  onTranslate: (() => Promise<string>) | undefined;
+}) {
+  const [text, setText] = useState(initial);
+  const [state, setState] = useState<'idle' | 'loading' | 'failed'>('idle');
+  if (text) return <p className="px-1 text-[13px] text-text-muted">{text}</p>;
+  if (!onTranslate) return null;
+  const run = () => {
+    setState('loading');
+    onTranslate().then(setText, () => setState('failed'));
+  };
+  return (
+    <button
+      type="button"
+      onClick={run}
+      disabled={state === 'loading'}
+      className="min-h-11 self-start rounded-full px-3 text-[13px] font-semibold text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text disabled:opacity-60"
+    >
+      {state === 'loading' ? c.translating : state === 'failed' ? c.translateFailed : c.translate}
+    </button>
+  );
+}
+
 /** Sous un message de la personne : la tournure plus naturelle, ou un mot si rien n'est à corriger. */
 function Correction({
   correction,
@@ -59,8 +87,11 @@ function Correction({
 export function MessageBubble({
   message,
   onAddToNotebook,
+  onTranslate,
 }: {
   message: MessageItem;
+  /** Traduit un message du contact ; sans elle, pas de bouton. */
+  onTranslate?: (messageId: string) => Promise<string>;
   /** Garde la correction de ce message dans le carnet ; sans elle, la carte n'a pas de bouton. */
   onAddToNotebook?: (messageId: string) => Promise<void>;
 }) {
@@ -83,6 +114,12 @@ export function MessageBubble({
       <time dateTime={message.createdAt} className="px-1 text-xs text-text-muted">
         {formatWhen(message.createdAt)}
       </time>
+      {!mine && (
+        <Translation
+          initial={message.translationFr}
+          onTranslate={onTranslate && (() => onTranslate(message.id))}
+        />
+      )}
       {mine && message.correction && (
         <Correction
           correction={message.correction}

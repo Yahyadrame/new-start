@@ -66,3 +66,13 @@ export async function addToNotebook(token: string, messageId: string): Promise<v
   });
   if (!res.ok) throw new ChatsError(res.status);
 }
+
+/** La traduction française d'un message du contact ; l'API la garde, un second appel ne coûte rien. */
+export async function translateMessage(token: string, messageId: string): Promise<string> {
+  const res = await fetch(`/api/messages/${messageId}/translate`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+  return ((await res.json()) as { translationFr: string }).translationFr;
+}
