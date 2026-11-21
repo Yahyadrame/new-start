@@ -1,4 +1,5 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { summarize } from '@newstart/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
@@ -16,13 +17,7 @@ const t = fr.progress;
 beforeEach(() => {
   vi.clearAllMocks();
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
-  fetchProgress.mockResolvedValue({
-    xp: 250,
-    level: 3,
-    levelXp: 50,
-    nextLevelXp: 100,
-    streakDays: 6,
-  });
+  fetchProgress.mockResolvedValue(summarize(250, 6, [], '2026-11-21'));
 });
 afterEach(cleanup);
 
@@ -36,17 +31,12 @@ describe('ProgressScreen', () => {
     expect(screen.getByText('Encore 50 XP pour passer au niveau 4.')).toBeTruthy();
     expect(screen.getByText('250 XP au total')).toBeTruthy();
     expect(screen.getByText('6 jours de suite')).toBeTruthy();
+    expect(screen.getByText(t.figuresTitle)).toBeTruthy();
     expect(fetchProgress).toHaveBeenCalledWith('tok');
   });
 
   it('invite à démarrer une série quand elle est à 0', async () => {
-    fetchProgress.mockResolvedValue({
-      xp: 0,
-      level: 1,
-      levelXp: 0,
-      nextLevelXp: 100,
-      streakDays: 0,
-    });
+    fetchProgress.mockResolvedValue(summarize(0, 0, [], '2026-11-21'));
     render(<ProgressScreen />);
     expect(await screen.findByText(t.noStreak)).toBeTruthy();
   });
