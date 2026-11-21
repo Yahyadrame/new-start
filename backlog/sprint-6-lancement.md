@@ -20,6 +20,8 @@
 - [x] Revue des points sensibles SonarQube : 0 point à relire sur `main` le 2026-11-21 (API publique de SonarCloud, statut TO_REVIEW). À refaire avant la mise en production.
 
 ## NS-604 — Sauvegardes et reprise · S
+*En attente du porteur (décision du 2026-11-21) : l'export `pg_dump` hebdomadaire (artefact privé) ne démarre que quand il fournit le secret `BACKUP_DATABASE_URL` (idéalement un rôle en lecture seule) et la version de PostgreSQL de Neon. Le dump contient des données personnelles.*
+- [ ] Export `pg_dump` hebdomadaire par un workflow GitHub Actions, gardé en artefact privé (`docs/10-devops.md`).
 - [ ] Restauration complète de la base sur un environnement vide, chronométrée, documentée.
 
 ## NS-605 — Tableaux de bord produit · M
