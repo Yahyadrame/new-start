@@ -57,6 +57,8 @@ const schema = z.object({
   TTS_PROVIDER: z.preprocess(emptyToUndefined, z.string().optional()),
   GROQ_API_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
   GEMINI_API_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
+  // Limite d'usage du lancement : messages envoyés par personne et par jour (docs/02-fonctionnalites.md).
+  MESSAGES_PER_DAY: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).default(60)),
   AI_MAX_CALLS_PER_MONTH: z.preprocess(emptyToUndefined, z.string().optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z

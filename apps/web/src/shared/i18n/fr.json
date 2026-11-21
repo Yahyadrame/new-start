@@ -277,7 +277,19 @@
     "total": "{xp} XP au total",
     "streak": "{n} jours de suite",
     "noStreak": "Pas encore de série : un message ou une partie aujourd'hui, et elle démarre.",
-    "error": "Tes progrès ne se chargent pas pour le moment. Réessaie dans un instant."
+    "error": "Tes progrès ne se chargent pas pour le moment. Réessaie dans un instant.",
+    "figuresTitle": "Ces 7 derniers jours",
+    "figures": {
+      "messages": "Messages envoyés",
+      "games": "Parties jouées",
+      "weekXp": "XP gagnés",
+      "activeDays": "Jours actifs"
+    },
+    "week": {
+      "title": "Minutes parlées",
+      "empty": "Pas encore de minutes parlées. Elles s'ajoutent quand tu t'enregistres.",
+      "minutes": "{n} min"
+    }
   },
   "games": {
     "title": "Jeux",

@@ -77,6 +77,7 @@ Connexion authentifiée par le jeton d'accès. Chaque utilisateur rejoint la sal
 | `NOT_FOUND` | 404 | Ressource inconnue |
 | `CONFLICT` | 409 | Doublon (ex. `clientId` déjà reçu) |
 | `QUOTA_EXCEEDED` | 429 | Limite de l'offre atteinte (`details.resetAt`) |
+| `USAGE_LIMIT` | 429 | Limite d'usage du jour atteinte (60 messages par jour au lancement, réglable avec `MESSAGES_PER_DAY`) ; message doux, sans mention d'abonnement |
 | `RATE_LIMITED` | 429 | Trop de requêtes (et plus de 3 codes demandés en 10 minutes pour une destination) |
 | `INVALID_REFRESH_TOKEN` | 401 | Cookie absent, inconnu, expiré ou déjà utilisé : se reconnecter |
 | `INVALID_CODE` | 400 | Code faux, expiré, déjà utilisé ou verrouillé après 5 essais (même réponse dans tous les cas) |

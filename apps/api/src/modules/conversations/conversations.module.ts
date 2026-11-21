@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import type { AiProviders } from '@newstart/ai';
+import { ENV, type Env } from '../../config/env.js';
 import { AI } from '../../shared/ai/ai.module.js';
 import {
   AGENT_REPLY_STORE,
@@ -27,9 +28,9 @@ import { ConversationsController } from './interface/conversations.controller.js
     },
     {
       provide: ConversationsService,
-      inject: [CONVERSATIONS_STORE, AgentReplyService],
-      useFactory: (store: ConversationsStore, replies: AgentReplyService) =>
-        new ConversationsService(store, undefined, replies),
+      inject: [CONVERSATIONS_STORE, AgentReplyService, ENV],
+      useFactory: (store: ConversationsStore, replies: AgentReplyService, env: Env) =>
+        new ConversationsService(store, undefined, replies, env.MESSAGES_PER_DAY),
     },
   ],
 })

@@ -6,7 +6,7 @@
 - [ ] `DailyActivity` mise à jour en temps réel ; minutes parlées issues de la durée des enregistrements.
 
 ## NS-502 — Écran Progrès (9) · M
-*Découpé le 2026-11-21 : (1) API `GET /progress` (niveau et XP, 100 XP par niveau), (2) écran avec niveau et barre d'XP (fait, série de jours incluse), (3) API : `GET /progress` rend `week` et `figures` (à valider par le porteur : les 4 chiffres clés retenus sont messages, parties, XP de la semaine, jours actifs sur 7) ; (4) écran : chiffres et barres des minutes.*
+*Découpé le 2026-11-21 : (1) API `GET /progress` (niveau et XP, 100 XP par niveau), (2) écran avec niveau et barre d'XP (fait, série de jours incluse), (3) API : `GET /progress` rend `week` et `figures` (à valider par le porteur : les 4 chiffres clés retenus sont messages, parties, XP de la semaine, jours actifs sur 7) ; (4) écran : chiffres et barres des minutes (fait ; les barres attendent les minutes parlées de NS-403).*
 - [ ] Niveau et XP, 4 chiffres clés, barres des minutes par jour ; bloc « Entre amis » masqué au MVP.
 
 ## NS-503 — Notifications (15) · M
@@ -16,6 +16,7 @@
 > Au lancement tout est gratuit : les tickets de paiement (NS-504 à NS-508) sont développés et testés en bac à sable, derrière le drapeau `payments.enabled = false`. Ils ne doivent rien afficher ni rien débiter tant que le porteur du projet n'a pas décidé de les activer.
 
 ## NS-509 — Limites d'usage du lancement · S
+*Tranche 1 faite le 2026-11-21 (API) : 60 messages par jour, lus dans `DailyActivity`, réglables avec `MESSAGES_PER_DAY` (choix à valider : variable d'environnement plutôt que table `FeatureFlag`, sans redéploiement du code mais avec redémarrage). Un renvoi déjà enregistré passe même à la limite. Restent : message doux dans l'écran Conversation (code `USAGE_LIMIT`), limites écouter et dictée (attendent NS-205 et NS-206).*
 - [ ] Limites de `docs/02-fonctionnalites.md` (section « Au lancement : tout est gratuit »), réglables sans redéploiement ; message doux à la limite, sans mention d'abonnement.
 
 ## NS-504 — Offres et prix · S

@@ -140,7 +140,7 @@ describe('ConversationsService.send', () => {
       message: { ...row, createdAt: '2026-11-20T10:00:00.000Z' },
       created: true,
     });
-    expect(store.send).toHaveBeenCalledWith('u1', ID, body);
+    expect(store.send).toHaveBeenCalledWith('u1', ID, body, 60);
   });
 
   it('signale un renvoi quand le clientId était déjà enregistré', async () => {
@@ -156,6 +156,19 @@ describe('ConversationsService.send', () => {
       status: 404,
       response: { code: 'NOT_FOUND' },
     });
+  });
+
+  it('répond 429 avec un message doux quand la limite du jour est atteinte', async () => {
+    const { store } = setup(null);
+    const schedule = vi.fn();
+    const service = new ConversationsService(store, () => 2026, { schedule }, 5);
+    vi.mocked(store.send).mockResolvedValue({ limited: true });
+    await expect(service.send('u1', ID, body)).rejects.toMatchObject({
+      status: 429,
+      response: { code: 'USAGE_LIMIT', message: expect.stringContaining('Reviens demain') },
+    });
+    expect(store.send).toHaveBeenCalledWith('u1', ID, body, 5);
+    expect(schedule).not.toHaveBeenCalled();
   });
 
   it('répond 404 pour un identifiant qui n’est pas un UUID, sans interroger le stockage', async () => {

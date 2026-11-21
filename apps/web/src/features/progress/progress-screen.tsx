@@ -8,6 +8,7 @@ import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import { fetchProgress } from './progress-api';
+import { WeekActivity } from './week-activity';
 
 const t = fr.progress;
 
@@ -66,6 +67,7 @@ export function ProgressScreen() {
           </p>
         </section>
       )}
+      {summary && <WeekActivity summary={summary} />}
       <BottomNav />
     </main>
   );
