@@ -44,3 +44,18 @@ describe('PrismaNotificationsStore.recent', () => {
     });
   });
 });
+
+describe('PrismaNotificationsStore.markAllRead', () => {
+  it('ne touche que les notifications non lues de la personne', async () => {
+    const updateMany = vi.fn().mockResolvedValue({ count: 2 });
+    const store = new PrismaNotificationsStore({
+      notificationLog: { updateMany },
+    } as unknown as PrismaService);
+    const now = new Date('2026-11-21T14:00:00Z');
+    await store.markAllRead('u1', now);
+    expect(updateMany).toHaveBeenCalledWith({
+      where: { userId: 'u1', readAt: null },
+      data: { readAt: now },
+    });
+  });
+});

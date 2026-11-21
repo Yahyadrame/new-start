@@ -22,4 +22,11 @@ export class PrismaNotificationsStore implements NotificationsStore {
       read: r.readAt !== null,
     }));
   }
+
+  async markAllRead(userId: string, now: Date): Promise<void> {
+    await this.prisma.notificationLog.updateMany({
+      where: { userId, readAt: null },
+      data: { readAt: now },
+    });
+  }
 }
