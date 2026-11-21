@@ -258,6 +258,7 @@
     "send": "Envoyer",
     "sending": "Envoi en cours…",
     "sendFailed": "Le message n'est pas parti. Touche pour réessayer.",
+    "limitReached": "Tu as bien pratiqué aujourd'hui. Reviens demain, {name} t'attend.",
     "typing": "{name} est en train d'écrire…"
   },
   "comingSoon": {

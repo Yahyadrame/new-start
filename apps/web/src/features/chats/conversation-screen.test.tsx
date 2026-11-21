@@ -161,6 +161,17 @@ describe('ConversationScreen', () => {
       expect(texts()).toEqual(['First', 'Second', 'Hello']);
     });
 
+    it('affiche un message doux à la limite du jour, sans proposer de réessayer', async () => {
+      sendMessage.mockRejectedValue(Object.assign(new Error('limite'), { status: 429 }));
+      render(<ConversationScreen agentSlug="jade" />);
+      await write('Hello');
+      expect(
+        await screen.findByText("Tu as bien pratiqué aujourd'hui. Reviens demain, Jade t'attend."),
+      ).toBeTruthy();
+      expect(screen.queryByRole('button', { name: fr.conversation.sendFailed })).toBeNull();
+      expect(texts()).toEqual(['First', 'Second']);
+    });
+
     it('propose de réessayer avec le même clientId quand le message n’est pas parti', async () => {
       sendMessage
         .mockRejectedValueOnce(new Error('réseau'))
