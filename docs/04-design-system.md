@@ -21,7 +21,8 @@ Palette de base : `#CCFF00`, `#000000`, `#999999`, `#F2F2F2`. Les nuances de sur
 | `--color-accent` | `#CCFF00` | `#CCFF00` | Bouton principal, mes bulles, badges, onglet actif |
 | `--color-on-accent` | `#000000` | `#000000` | Texte et icônes posés sur l'accent |
 | `--color-accent-text` | `#CCFF00` | `#000000` | Liens et mots mis en valeur |
-| `--color-danger` | `#E5484D` | `#E5484D` | Uniquement « Raccrocher » et suppressions |
+| `--color-danger` | `#E5484D` | `#C8363B` | Texte d'erreur, bordure d'un champ en erreur (4,5:1 sur le fond de chaque thème) |
+| `--color-danger-solid` | `#C8363B` | `#C8363B` | Fond des boutons « Raccrocher » et suppressions, texte blanc dessus (5,19:1) |
 
 Règles :
 
