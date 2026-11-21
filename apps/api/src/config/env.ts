@@ -68,6 +68,17 @@ const schema = z.object({
     emptyToUndefined,
     z.coerce.number().int().min(0).default(0),
   ),
+  // Web Push (VAPID) : sans les trois, les notifications push restent en mémoire (adaptateur factice).
+  // Clé publique et privée au format base64url (générées une fois, la privée est un secret). Sujet : mailto: ou https://.
+  VAPID_PUBLIC_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
+  VAPID_PRIVATE_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
+  VAPID_SUBJECT: z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .regex(/^(mailto:|https:\/\/)/)
+      .optional(),
+  ),
   AI_MAX_CALLS_PER_MONTH: z.preprocess(emptyToUndefined, z.string().optional()),
   // Origines web autorisées à appeler l'API (CORS), séparées par des virgules. Vide = aucune.
   CORS_ORIGINS: z

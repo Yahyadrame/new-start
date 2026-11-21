@@ -36,6 +36,14 @@ describe('parseEnv', () => {
     );
     expect(() => parseEnv({ ...base, REMINDERS_INTERVAL_SECONDS: '-5' })).toThrow();
   });
+  it('rend les variables VAPID facultatives et vérifie le sujet', () => {
+    expect(parseEnv(base).VAPID_PUBLIC_KEY).toBeUndefined();
+    expect(parseEnv({ ...base, VAPID_SUBJECT: '' }).VAPID_SUBJECT).toBeUndefined();
+    expect(parseEnv({ ...base, VAPID_SUBJECT: 'mailto:a@example.test' }).VAPID_SUBJECT).toBe(
+      'mailto:a@example.test',
+    );
+    expect(() => parseEnv({ ...base, VAPID_SUBJECT: 'a@example.test' })).toThrow();
+  });
   it('convertit PORT en nombre', () => {
     expect(parseEnv({ ...base, PORT: '4000' }).PORT).toBe(4000);
   });
