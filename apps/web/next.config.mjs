@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
 import { authRewrites } from './auth-rewrites.mjs';
+import { securityHeaders } from './security-headers.mjs';
 
 /** @type {import('next').NextConfig} */
 export default {
@@ -9,5 +10,6 @@ export default {
   // Image Docker (NS-004) : serveur autonome ; la racine du monorepo permet d'y inclure packages/ui.
   output: 'standalone',
   rewrites: async () => authRewrites(),
+  headers: async () => securityHeaders(),
   outputFileTracingRoot: fileURLToPath(new URL('../..', import.meta.url)),
 };
