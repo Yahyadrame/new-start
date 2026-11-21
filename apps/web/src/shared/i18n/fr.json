@@ -269,6 +269,13 @@
     "games": { "title": "Jeux" },
     "progress": { "title": "Progrès" }
   },
+  "notifications": {
+    "title": "Notifications",
+    "today": "Aujourd'hui",
+    "week": "Cette semaine",
+    "empty": "Rien pour le moment. Ton rappel du jour apparaîtra ici.",
+    "error": "Tes notifications ne se chargent pas pour le moment. Réessaie dans un instant."
+  },
   "progress": {
     "title": "Progrès",
     "level": "Niveau",
