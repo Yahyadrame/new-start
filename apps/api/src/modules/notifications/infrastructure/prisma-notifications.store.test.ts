@@ -59,3 +59,14 @@ describe('PrismaNotificationsStore.markAllRead', () => {
     });
   });
 });
+
+describe('PrismaNotificationsStore.unreadCount', () => {
+  it('compte les notifications non lues de la personne, et seulement les siennes', async () => {
+    const count = vi.fn().mockResolvedValue(2);
+    const store = new PrismaNotificationsStore({
+      notificationLog: { count },
+    } as unknown as PrismaService);
+    expect(await store.unreadCount('u1')).toBe(2);
+    expect(count).toHaveBeenCalledWith({ where: { userId: 'u1', readAt: null } });
+  });
+});
