@@ -5,6 +5,7 @@
 - [ ] `DailyActivity` mise à jour en temps réel ; minutes parlées issues de la durée des enregistrements.
 
 ## NS-502 — Écran Progrès (9) · M
+*Découpé le 2026-11-21 : (1) API `GET /progress` (niveau et XP, 100 XP par niveau), (2) écran avec niveau et barre d'XP, (3) 4 chiffres clés et minutes par jour (attendent `DailyActivity` de NS-501).*
 - [ ] Niveau et XP, 4 chiffres clés, barres des minutes par jour ; bloc « Entre amis » masqué au MVP.
 
 ## NS-503 — Notifications (15) · M

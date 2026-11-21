@@ -39,6 +39,7 @@
 | GET | `/games/:type/questions?count=10` | Questions sans état (`true-false`, `match`), réponses incluses ; 1 à 20 questions. Remplace `POST /games/:type/sessions` au MVP |
 | POST | `/games/sessions/:id/answers` | Réponse ; renvoie juste/faux, points, combo |
 | POST | `/games/results` | Fin de partie : `{ correct }` (0 à 60), ajoute 5 XP par bonne réponse, rend `{ gained, xp }` |
+| GET | `/progress` | Niveau et XP : `{ xp, level, levelXp, nextLevelXp }` (100 XP par niveau) |
 | GET | `/reviews/due` · POST `/reviews/:cardId/grade` | Révisions FSRS (`again`, `hard`, `good`, `easy`) |
 | POST | `/reviews/missed` | Crée une carte pour chaque expression ratée dans un jeu (`{ expressionIds }`, doublons ignorés) |
 | GET | `/progress/summary` · GET `/progress/week` | Tableau de bord |
