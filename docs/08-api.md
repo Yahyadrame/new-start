@@ -39,6 +39,8 @@
 | GET | `/games/:type/questions?count=10` | Questions sans état (`true-false`, `match`), réponses incluses ; 1 à 20 questions. Remplace `POST /games/:type/sessions` au MVP |
 | POST | `/games/sessions/:id/answers` | Réponse ; renvoie juste/faux, points, combo |
 | POST | `/games/results` | Fin de partie : `{ correct }` (0 à 60), ajoute 5 XP par bonne réponse, rend `{ gained, xp }` |
+| GET | `/games/daily` | Défi du jour : 10 Vrai ou faux, les mêmes pour tous ce jour-là (graine = jour de la personne), avec `{ day, done, questions }` |
+| POST | `/games/daily/results` | Fin du défi : `{ correct }`, 5 XP par bonne réponse, plus 20 XP la première fois du jour ; rend `{ gained, bonus, xp }` |
 | GET | `/progress` | Niveau, série et activité : `{ xp, level, levelXp, nextLevelXp, streakDays, week, figures }`. 100 XP par niveau ; `week` donne les minutes parlées des 7 derniers jours ; `figures` donne messages, parties, XP de la semaine et jours actifs |
 | GET | `/reviews/due` · POST `/reviews/:cardId/grade` | Révisions FSRS (`again`, `hard`, `good`, `easy`) |
 | POST | `/reviews/missed` | Crée une carte pour chaque expression ratée dans un jeu (`{ expressionIds }`, doublons ignorés) |

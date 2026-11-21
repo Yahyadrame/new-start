@@ -8,6 +8,8 @@ import { GamesController } from './games.controller.js';
 
 const questions = vi.fn().mockResolvedValue([{ kind: 'TRUE_FALSE' }]);
 const finish = vi.fn().mockResolvedValue({ gained: 15, xp: 40 });
+const daily = vi.fn().mockResolvedValue({ day: '2026-11-21', done: false, questions: [] });
+const finishDaily = vi.fn().mockResolvedValue({ gained: 55, bonus: 20, xp: 90 });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 const auth = { Authorization: 'Bearer tok-u1' };
 let app: INestApplication;
@@ -15,7 +17,7 @@ beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [GamesController],
     providers: [
-      { provide: GamesService, useValue: { questions, finish } },
+      { provide: GamesService, useValue: { questions, finish, daily, finishDaily } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -80,5 +82,43 @@ describe('POST /games/results', () => {
     expect((await post({ correct: -1 })).status).toBe(400);
     expect((await post({ correct: 61 })).status).toBe(400);
     expect(finish).not.toHaveBeenCalled();
+  });
+});
+
+describe('GET /games/daily', () => {
+  it('refuse sans jeton (401)', async () => {
+    expect((await request(app.getHttpServer()).get('/games/daily')).status).toBe(401);
+  });
+
+  it('rend le défi du jour de la personne connectée', async () => {
+    const res = await get('/games/daily');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ day: '2026-11-21', done: false, questions: [] });
+    expect(daily).toHaveBeenCalledWith('u1');
+  });
+});
+
+describe('POST /games/daily/results', () => {
+  const post = (body: unknown) =>
+    request(app.getHttpServer())
+      .post('/games/daily/results')
+      .set(auth)
+      .send(body as object);
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await request(app.getHttpServer()).post('/games/daily/results')).status).toBe(401);
+  });
+
+  it('rend l’XP gagné avec le bonus', async () => {
+    const res = await post({ correct: 7 });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ gained: 55, bonus: 20, xp: 90 });
+    expect(finishDaily).toHaveBeenCalledWith('u1', 7);
+  });
+
+  it('refuse un score invalide (400)', async () => {
+    const res = await post({ correct: 'beaucoup' });
+    expect(res.status).toBe(400);
+    expect(finishDaily).not.toHaveBeenCalled();
   });
 });

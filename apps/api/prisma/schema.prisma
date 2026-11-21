@@ -283,6 +283,8 @@ model DailyActivity {
   messagesSent  Int      @default(0)
   gamesPlayed   Int      @default(0)
   xpEarned      Int      @default(0)
+  /// Le défi du jour est terminé (le bonus d'XP n'est donné qu'une fois par jour).
+  challengeDone Boolean  @default(false)
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, day])
