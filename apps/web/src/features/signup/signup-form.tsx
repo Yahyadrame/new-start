@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SIGNUP_GOALS } from '@newstart/shared';
 import { Button, Input, Select } from '@newstart/ui';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -23,6 +24,10 @@ const TEXT_FIELDS: { name: TextField; type: string; autoComplete: string; hint?:
 const THIS_YEAR = new Date().getFullYear();
 // De 13 à 100 ans : la liste remplace la saisie libre.
 const BIRTH_YEARS = Array.from({ length: 88 }, (_, i) => THIS_YEAR - 13 - i);
+const LEGAL_LINKS = [
+  { href: '/terms', label: t.termsLink },
+  { href: '/privacy', label: t.privacyLink },
+];
 const CONSENTS: Consent[] = ['acceptTerms', 'smsOptIn', 'voiceConsent'];
 
 function FieldError({ id, children }: { id: string; children?: ReactNode }) {
@@ -150,6 +155,17 @@ export function SignupForm() {
           </label>
         ))}
         <FieldError id="terms-note">{errors.acceptTerms && t.errors.acceptTerms}</FieldError>
+        <p className="flex flex-wrap gap-x-4 text-[14px]">
+          {LEGAL_LINKS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="inline-flex min-h-11 items-center font-semibold text-accent-text underline focus-visible:outline-2 focus-visible:outline-accent-text"
+            >
+              {label}
+            </Link>
+          ))}
+        </p>
       </div>
 
       <FieldError id="server-note">{failed && t.errors.server}</FieldError>

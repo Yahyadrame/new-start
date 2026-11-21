@@ -66,6 +66,8 @@
       }
     },
     "acceptTerms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
+    "termsLink": "Lire les conditions d'utilisation",
+    "privacyLink": "Lire la politique de confidentialité",
     "smsOptIn": "Je veux recevoir des rappels par SMS.",
     "voiceConsent": "J'accepte que mes enregistrements vocaux soient conservés pour corriger ma prononciation.",
     "submit": "Recevoir mon code",
@@ -268,10 +270,18 @@
     "badge": "Bientôt",
     "body": "Cet écran n'est pas encore prêt. En attendant, tes discussions t'attendent.",
     "toChats": "Aller aux discussions",
-    "series": { "title": "Série" },
-    "plans": { "title": "Abonnement" },
-    "games": { "title": "Jeux" },
-    "progress": { "title": "Progrès" }
+    "series": {
+      "title": "Série"
+    },
+    "plans": {
+      "title": "Abonnement"
+    },
+    "games": {
+      "title": "Jeux"
+    },
+    "progress": {
+      "title": "Progrès"
+    }
   },
   "notifications": {
     "title": "Notifications",
@@ -338,7 +348,11 @@
     "streak": "{n} jours de suite. Une partie aujourd'hui garde la série.",
     "noStreak": "Pas encore de série : une partie aujourd'hui, et elle démarre.",
     "progress": "Question {n} sur {total}",
-    "trueFalse": { "means": "veut dire", "true": "Vrai", "false": "Faux" },
+    "trueFalse": {
+      "means": "veut dire",
+      "true": "Vrai",
+      "false": "Faux"
+    },
     "right": "Juste.",
     "wrong": "Raté.",
     "next": "Question suivante",
@@ -351,7 +365,11 @@
     },
     "empty": "Pas assez d'expressions pour lancer une partie.",
     "error": "Impossible de charger la partie. Réessaie dans un instant.",
-    "modes": { "trueFalse": "Vrai ou faux", "match": "Associer", "timeAttack": "Contre-la-montre" },
+    "modes": {
+      "trueFalse": "Vrai ou faux",
+      "match": "Associer",
+      "timeAttack": "Contre-la-montre"
+    },
     "upcoming": {
       "title": "Bientôt",
       "badge": "Bientôt",
@@ -360,13 +378,34 @@
           "name": "Quelle réplique ?",
           "hint": "Une scène s'arrête : choisis ou dis la bonne réponse."
         },
-        { "name": "Dictée express", "hint": "Écoute une phrase à vitesse réelle et écris-la." },
-        { "name": "Accents du monde", "hint": "Reconnais une phrase dite avec plusieurs accents." },
-        { "name": "Karaoké réplique", "hint": "Double un personnage, ta voix est notée." },
-        { "name": "L'enquête", "hint": "Interroge des suspects IA pour trouver le coupable." },
-        { "name": "Le négociateur", "hint": "Obtiens le meilleur prix face à un vendeur IA." },
-        { "name": "Survie à l'aéroport", "hint": "Douane, porte, valise, avec le temps qui file." },
-        { "name": "L'entretien final", "hint": "Un jury IA chronométré te note sur 100." }
+        {
+          "name": "Dictée express",
+          "hint": "Écoute une phrase à vitesse réelle et écris-la."
+        },
+        {
+          "name": "Accents du monde",
+          "hint": "Reconnais une phrase dite avec plusieurs accents."
+        },
+        {
+          "name": "Karaoké réplique",
+          "hint": "Double un personnage, ta voix est notée."
+        },
+        {
+          "name": "L'enquête",
+          "hint": "Interroge des suspects IA pour trouver le coupable."
+        },
+        {
+          "name": "Le négociateur",
+          "hint": "Obtiens le meilleur prix face à un vendeur IA."
+        },
+        {
+          "name": "Survie à l'aéroport",
+          "hint": "Douane, porte, valise, avec le temps qui file."
+        },
+        {
+          "name": "L'entretien final",
+          "hint": "Un jury IA chronométré te note sur 100."
+        }
       ]
     },
     "timeAttack": {
@@ -396,5 +435,78 @@
   "offline": {
     "title": "Pas de connexion.",
     "hint": "Certaines pages ne se chargeront pas."
+  },
+  "legal": {
+    "draft": "Version provisoire, en cours de relecture juridique. Elle peut changer avant l'ouverture au public.",
+    "back": "Retour",
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "sections": [
+        {
+          "title": "À quoi sert New Start",
+          "body": [
+            "New Start t'aide à pratiquer l'anglais à l'oral et à l'écrit : discussions avec des contacts, série, jeux et révisions."
+          ]
+        },
+        {
+          "title": "Des contacts IA, pas des personnes",
+          "body": [
+            "Les contacts avec qui tu discutes sont des intelligences artificielles. Ils ne se font jamais passer pour des humains. Leurs réponses peuvent contenir des erreurs : vérifie ce qui compte pour toi."
+          ]
+        },
+        {
+          "title": "Ton compte",
+          "body": [
+            "Il faut avoir au moins 13 ans pour créer un compte. Les thèmes réservés aux adultes ne sont ouverts qu'aux personnes majeures.",
+            "Tu peux exporter tes données et supprimer ton compte à tout moment depuis l'écran Profil."
+          ]
+        },
+        {
+          "title": "Contenu et comportement",
+          "body": [
+            "Les contacts n'écrivent pas de contenu sexuel. Ne t'en sers pas pour harceler, menacer ou tromper quelqu'un."
+          ]
+        },
+        {
+          "title": "Gratuité et abonnements",
+          "body": [
+            "Au lancement, tout est gratuit. Si des offres payantes arrivent, leurs prix et leurs conditions seront affichés avant tout paiement, et rien ne sera débité sans ton accord."
+          ]
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "sections": [
+        {
+          "title": "Les données que nous gardons",
+          "body": [
+            "Numéro de téléphone : demandé à l'inscription. Il sert aux SMS (code de connexion, rappels) seulement si tu as donné ton accord. Conservé pendant la vie du compte.",
+            "Adresse e-mail : connexion et e-mails de service. Conservée pendant la vie du compte.",
+            "Prénom, objectif, niveau, année de naissance : personnalisation et restriction des thèmes adultes. Conservés pendant la vie du compte.",
+            "Messages et corrections : discussions et progrès. Conservés pendant la vie du compte, tu peux les supprimer.",
+            "Enregistrements vocaux : transcription et prononciation, avec ton accord explicite. Gardés 30 jours, puis seule la transcription reste.",
+            "Paiements : facturation. Conservés pendant la durée légale de conservation comptable. Nous ne voyons jamais ton numéro de carte, c'est le prestataire de paiement qui le gère."
+          ]
+        },
+        {
+          "title": "Qui traite tes données avec nous",
+          "body": [
+            "Brevo (e-mails et SMS), Cloudinary (médias), des fournisseurs d'intelligence artificielle, notre hébergeur et Sentry (suivi des erreurs). Nous demandons que tes messages ne servent pas à entraîner leurs modèles."
+          ]
+        },
+        {
+          "title": "Tes droits",
+          "body": [
+            "Depuis l'écran Profil, tu peux exporter tes données et supprimer ton compte. La suppression est effective sous 30 jours, sauvegardes comprises.",
+            "Tes données sont chiffrées pendant le transport et au repos."
+          ]
+        },
+        {
+          "title": "Les plus jeunes",
+          "body": ["Il faut avoir au moins 13 ans. Nous n'affichons pas de publicité ciblée."]
+        }
+      ]
+    }
   }
 }

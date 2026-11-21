@@ -169,6 +169,8 @@ for (const [path, heading] of [
   ['/chats/jade', 'Conversation'],
   ['/series', 'Série'],
   ['/plans', 'Abonnement'],
+  ['/terms', "Conditions d'utilisation"],
+  ['/privacy', 'Politique de confidentialité'],
   ['/notifications', 'Notifications'],
   ['/profile', 'Profil'],
 ] as const) {
