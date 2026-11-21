@@ -5,6 +5,7 @@
 - [ ] Mise à jour en production simulée pendant la charge : 0 erreur.
 
 ## NS-602 — Accessibilité · M
+*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Restent : Conversation, Profil, Série, parcours d'inscription connecté, navigation clavier et lecteurs d'écran (à tester à la main par le porteur du projet).*
 - [ ] axe-core sur tous les écrans, clair et sombre ; navigation clavier ; lecteurs d'écran sur les parcours principaux.
 
 ## NS-603 — Sécurité · M
