@@ -5,10 +5,11 @@ import fr from '../../shared/i18n/fr.json';
 const replace = vi.fn();
 const ensureSession = vi.fn();
 const trueFalseQuestions = vi.fn();
+const matchQuestions = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./games-api', () => ({ trueFalseQuestions }));
+vi.mock('./games-api', () => ({ trueFalseQuestions, matchQuestions }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { GamesScreen } = await import('./games-screen');
 
@@ -29,6 +30,21 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('charge les tableaux Associer en changeant d’onglet', async () => {
+    matchQuestions.mockResolvedValue([
+      {
+        kind: 'MATCH',
+        pairs: [{ expressionId: 1, text: 'No way' }],
+        meanings: [{ expressionId: 1, meaningFr: 'impossible' }],
+      },
+    ]);
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    fireEvent.mouseDown(screen.getByRole('tab', { name: t.modes.match }), { button: 0 });
+    expect(await screen.findByText(t.match.hint)).toBeTruthy();
+    expect(matchQuestions).toHaveBeenCalledWith('tok');
+  });
+
   it('charge les questions avec le jeton et lance la partie', async () => {
     render(<GamesScreen />);
     expect(await screen.findByText('You know')).toBeTruthy();
