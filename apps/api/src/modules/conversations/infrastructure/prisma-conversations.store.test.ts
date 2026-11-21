@@ -20,7 +20,7 @@ function fake(rows: unknown[]) {
       update: vi.fn(),
     },
     user: { findUnique: vi.fn(), update: vi.fn() },
-    dailyActivity: { upsert: vi.fn() },
+    dailyActivity: { upsert: vi.fn(), findUnique: vi.fn() },
     $transaction: vi.fn(),
     message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), updateMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
@@ -244,6 +244,49 @@ describe('PrismaConversationsStore', () => {
         xpEarned: 10,
       });
       expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(4);
+    });
+
+    describe('limite du jour', () => {
+      const today = {
+        streakDays: 1,
+        lastActiveDay: new Date('2026-11-21T00:00:00Z'),
+        timezone: 'Africa/Dakar',
+        pausedUntil: null,
+      };
+      const setup = (messagesSent: number | null) => {
+        const { db, store } = fake([]);
+        owned(db);
+        db.message.findUnique.mockResolvedValue(null);
+        db.user.findUnique.mockResolvedValue(today);
+        db.dailyActivity.findUnique.mockResolvedValue(
+          messagesSent === null ? null : { messagesSent },
+        );
+        db.$transaction.mockResolvedValue([{ id: 'm2' }, {}, {}, {}]);
+        return { db, store };
+      };
+
+      it('refuse un nouveau message quand la limite est atteinte, sans rien écrire', async () => {
+        const { db, store } = setup(60);
+        expect(await store.send('u1', 'c1', message, 60)).toEqual({ limited: true });
+        expect(db.$transaction).not.toHaveBeenCalled();
+      });
+
+      it('accepte le dernier message permis et un premier message du jour', async () => {
+        const last = setup(59);
+        expect(await last.store.send('u1', 'c1', message, 60)).toMatchObject({ created: true });
+        const first = setup(null);
+        expect(await first.store.send('u1', 'c1', message, 60)).toMatchObject({ created: true });
+      });
+
+      it('rend un renvoi déjà enregistré même à la limite', async () => {
+        const { db, store } = setup(60);
+        db.message.findUnique.mockResolvedValue({ id: 'm1' });
+        expect(await store.send('u1', 'c1', message, 60)).toEqual({
+          row: { id: 'm1' },
+          created: false,
+        });
+        expect(db.dailyActivity.findUnique).not.toHaveBeenCalled();
+      });
     });
 
     it('retrouve le message quand un envoi simultané du même clientId a gagné', async () => {

@@ -38,12 +38,14 @@ export interface ConversationsStore {
   /**
    * Ajoute le message de la personne. Si ce `clientId` est déjà enregistré dans la conversation,
    * rend le message existant (`created: false`) sans rien ajouter. Null si la conversation n'est pas à elle.
+   * Un nouveau message au-delà de `dailyLimit` messages aujourd'hui n'est pas créé : `{ limited: true }`.
    */
   send(
     userId: string,
     conversationId: string,
     message: SendMessage,
-  ): Promise<{ row: MessageRow; created: boolean } | null>;
+    dailyLimit: number,
+  ): Promise<{ row: MessageRow; created: boolean } | { limited: true } | null>;
 }
 
 const toItem = (row: MessageRow): MessageItem => ({
@@ -54,6 +56,15 @@ const toItem = (row: MessageRow): MessageItem => ({
 const notFound = () =>
   new HttpException({ code: 'NOT_FOUND', message: "Cette conversation n'existe pas." }, 404);
 
+const limitReached = () =>
+  new HttpException(
+    {
+      code: 'USAGE_LIMIT',
+      message: "Tu as bien pratiqué aujourd'hui. Reviens demain, Jade t'attend.",
+    },
+    429,
+  );
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export class ConversationsService {
@@ -61,6 +72,7 @@ export class ConversationsService {
     private readonly store: ConversationsStore,
     private readonly currentYear: () => number = () => new Date().getFullYear(),
     private readonly replies?: ReplyScheduler,
+    private readonly messagesPerDay = 60,
   ) {}
 
   list(userId: string) {
@@ -113,9 +125,10 @@ export class ConversationsService {
 
   async send(userId: string, conversationId: string, message: SendMessage) {
     const sent = UUID.test(conversationId)
-      ? await this.store.send(userId, conversationId, message)
+      ? await this.store.send(userId, conversationId, message, this.messagesPerDay)
       : null;
     if (!sent) throw notFound();
+    if ('limited' in sent) throw limitReached();
     // Un renvoi (`created: false`) ne relance pas l'agent : il a déjà répondu ou répond encore.
     if (sent.created) this.replies?.schedule(conversationId, sent.row.id);
     return { message: toItem(sent.row), created: sent.created };

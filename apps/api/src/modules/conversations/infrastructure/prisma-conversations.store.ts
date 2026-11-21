@@ -133,7 +133,12 @@ export class PrismaConversationsStore implements ConversationsStore {
     return true;
   }
 
-  async send(userId: string, conversationId: string, { clientId, text }: SendMessage) {
+  async send(
+    userId: string,
+    conversationId: string,
+    { clientId, text }: SendMessage,
+    dailyLimit = Number.POSITIVE_INFINITY,
+  ) {
     const owned = await this.db.conversation.findFirst({
       where: { id: conversationId, userId },
       select: { id: true },
@@ -147,6 +152,14 @@ export class PrismaConversationsStore implements ConversationsStore {
     const known = await find();
     if (known) return { row: known, created: false };
     const streak = await streakUpdate(this.db, userId);
+    if (streak.lastActiveDay) {
+      const today = await this.db.dailyActivity.findUnique({
+        where: { userId_day: { userId, day: streak.lastActiveDay } },
+        select: { messagesSent: true },
+      });
+      // ponytail: lecture puis écriture, deux envois simultanés peuvent dépasser la limite de 1 ; un verrou si ça compte
+      if ((today?.messagesSent ?? 0) >= dailyLimit) return { limited: true as const };
+    }
     try {
       const [row] = await this.db.$transaction([
         this.db.message.create({
