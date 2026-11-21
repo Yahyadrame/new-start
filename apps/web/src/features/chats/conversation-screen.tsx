@@ -36,6 +36,8 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   // Date du dernier message envoyé tant que le contact n'a pas répondu ; null sinon.
   const [awaiting, setAwaiting] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  // La limite du jour est atteinte : le message n'est pas parti et réessayer ne sert à rien avant demain.
+  const [limited, setLimited] = useState(false);
   const token = useRef('');
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
@@ -91,7 +93,12 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         setMessages((prev) => [...(prev ?? []), sent]);
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
         setAwaiting(sent.createdAt);
-      } catch {
+      } catch (e) {
+        if ((e as { status?: number }).status === 429) {
+          setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+          setLimited(true);
+          return;
+        }
         mark('failed');
       }
     },
@@ -215,6 +222,11 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
           )}
           <div ref={end} />
         </>
+      )}
+      {limited && item && (
+        <p role="status" className="rounded-2xl bg-surface-1 px-4 py-3 text-[15px]">
+          {c.limitReached.replace('{name}', item.agent.name)}
+        </p>
       )}
       {loaded && <Composer onSend={send} />}
     </main>
