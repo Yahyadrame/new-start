@@ -32,3 +32,20 @@ export async function sendMissed(token: string, expressionIds: number[]): Promis
   });
   if (!res.ok) throw new GamesError(res.status);
 }
+
+/** Le bilan d'une partie : combien de bonnes réponses, et quelles expressions ratées. */
+export interface GameOutcome {
+  correct: number;
+  missedIds: number[];
+}
+
+/** Fin de partie : l'XP gagné (5 par bonne réponse), calculé par l'API. */
+export async function sendResult(token: string, correct: number): Promise<number> {
+  const res = await fetch('/api/games/results', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ correct }),
+  });
+  if (!res.ok) throw new GamesError(res.status);
+  return ((await res.json()) as { gained: number }).gained;
+}

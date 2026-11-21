@@ -279,7 +279,8 @@
     "end": {
       "title": "Partie terminée",
       "score": "{score} bonnes réponses sur {total}.",
-      "replay": "Rejouer"
+      "replay": "Rejouer",
+      "xp": "+{n} XP"
     },
     "empty": "Pas assez d'expressions pour lancer une partie.",
     "error": "Impossible de charger la partie. Réessaie dans un instant.",

@@ -4,6 +4,7 @@ import type { TrueFalseQuestion } from '@newstart/shared';
 import { Button } from '@newstart/ui';
 import { useEffect, useRef, useState } from 'react';
 import fr from '../../shared/i18n/fr.json';
+import type { GameOutcome } from './games-api';
 import { multiplier, pointsFor, readRecord, saveRecord, TIME_ATTACK_SECONDS } from './time-attack';
 
 const t = fr.games;
@@ -13,15 +14,19 @@ export function TimeAttackGame({
   questions,
   onReplay,
   onFinish,
+  xp,
 }: Readonly<{
   questions: TrueFalseQuestion[];
   onReplay: () => void;
-  /** Appelé une fois, à la fin, avec les expressions ratées. */
-  onFinish: (missedIds: number[]) => void;
+  /** Appelé une fois, à la fin. */
+  onFinish: (outcome: GameOutcome) => void;
+  /** L'XP gagné, une fois connu. */
+  xp: number | null;
 }>) {
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [correct, setCorrect] = useState(0);
   const [missed, setMissed] = useState<number[]>([]);
   const [left, setLeft] = useState(TIME_ATTACK_SECONDS);
   const [record, setRecord] = useState(0);
@@ -44,8 +49,8 @@ export function TimeAttackGame({
     if (!over || reported.current) return;
     reported.current = true;
     saveRecord(score);
-    onFinish(missed);
-  }, [over, score, missed, onFinish]);
+    onFinish({ correct, missedIds: missed });
+  }, [over, score, correct, missed, onFinish]);
 
   if (over) {
     return (
@@ -53,6 +58,7 @@ export function TimeAttackGame({
         <h2 className="font-display text-2xl font-bold">{t.end.title}</h2>
         <p>{t.timeAttack.score.replace('{score}', String(score))}</p>
         <p>{t.timeAttack.record.replace('{record}', String(Math.max(record, score)))}</p>
+        {xp !== null && <p>{t.end.xp.replace('{n}', String(xp))}</p>}
         <Button onClick={onReplay}>{t.end.replay}</Button>
       </section>
     );
@@ -62,6 +68,7 @@ export function TimeAttackGame({
     if (value === question.answer) {
       setScore((s) => s + pointsFor(streak));
       setStreak((n) => n + 1);
+      setCorrect((n) => n + 1);
     } else {
       setStreak(0);
       setMissed((m) => [...m, question.expressionId]);

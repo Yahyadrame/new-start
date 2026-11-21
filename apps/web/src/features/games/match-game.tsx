@@ -4,6 +4,7 @@ import type { MatchQuestion } from '@newstart/shared';
 import { Button } from '@newstart/ui';
 import { useState } from 'react';
 import fr from '../../shared/i18n/fr.json';
+import type { GameOutcome } from './games-api';
 
 const t = fr.games;
 
@@ -12,17 +13,21 @@ export function MatchGame({
   questions,
   onReplay,
   onFinish,
+  xp,
 }: Readonly<{
   questions: MatchQuestion[];
   onReplay: () => void;
-  /** Appelé une fois, au dernier tableau, avec les expressions ratées. */
-  onFinish: (missedIds: number[]) => void;
+  /** Appelé une fois, au dernier tableau. */
+  onFinish: (outcome: GameOutcome) => void;
+  /** L'XP gagné, une fois connu. */
+  xp: number | null;
 }>) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [solved, setSolved] = useState<number[]>([]);
   const [mistakes, setMistakes] = useState(0);
   const [missed, setMissed] = useState<number[]>([]);
+  const [correct, setCorrect] = useState(0);
   const [wrongMeaning, setWrongMeaning] = useState<number | null>(null);
 
   const board = questions.at(index);
@@ -31,6 +36,7 @@ export function MatchGame({
       <section className="flex flex-col gap-4" aria-live="polite">
         <h2 className="font-display text-2xl font-bold">{t.end.title}</h2>
         <p>{t.match.mistakes.replace('{n}', String(mistakes))}</p>
+        {xp !== null && <p>{t.end.xp.replace('{n}', String(xp))}</p>}
         <Button onClick={onReplay}>{t.end.replay}</Button>
       </section>
     );
@@ -41,6 +47,8 @@ export function MatchGame({
     if (selected === null) return;
     if (id === selected) {
       setSolved((s) => [...s, id]);
+      // seule une paire trouvée du premier coup compte comme bonne réponse
+      if (!missed.includes(id)) setCorrect((n) => n + 1);
     } else {
       setMistakes((m) => m + 1);
       setMissed((m) => (m.includes(selected) ? m : [...m, selected]));
@@ -49,7 +57,7 @@ export function MatchGame({
     setSelected(null);
   };
   const next = () => {
-    if (index + 1 === questions.length) onFinish(missed);
+    if (index + 1 === questions.length) onFinish({ correct, missedIds: missed });
     setSolved([]);
     setWrongMeaning(null);
     setIndex((i) => i + 1);

@@ -7,7 +7,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
-import { matchQuestions, sendMissed, trueFalseQuestions } from './games-api';
+import {
+  type GameOutcome,
+  matchQuestions,
+  sendMissed,
+  sendResult,
+  trueFalseQuestions,
+} from './games-api';
 import { MatchGame } from './match-game';
 import { TimeAttackGame } from './time-attack-game';
 import { TrueFalseGame } from './true-false-game';
@@ -20,6 +26,7 @@ export function GamesScreen() {
   const [mode, setMode] = useState<'true-false' | 'match' | 'time-attack'>('true-false');
   const [questions, setQuestions] = useState<TrueFalseQuestion[] | MatchQuestion[] | null>(null);
   const [round, setRound] = useState(0);
+  const [xp, setXp] = useState<number | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -40,11 +47,16 @@ export function GamesScreen() {
     })();
   }, [router, round, mode]);
 
-  const replay = useCallback(() => setRound((r) => r + 1), []);
-  // Les cartes de révision sont un bonus : si l'envoi échoue, la partie n'en souffre pas.
-  const finish = useCallback(async (missedIds: number[]) => {
+  const replay = useCallback(() => {
+    setXp(null);
+    setRound((r) => r + 1);
+  }, []);
+  // XP et cartes de révision sont un bonus : si l'envoi échoue, la partie n'en souffre pas.
+  const finish = useCallback(async ({ correct, missedIds }: GameOutcome) => {
     const session = await ensureSession();
-    if (session) await sendMissed(session.accessToken, missedIds).catch(() => undefined);
+    if (!session) return;
+    await sendMissed(session.accessToken, missedIds).catch(() => undefined);
+    setXp(await sendResult(session.accessToken, correct).catch(() => null));
   }, []);
 
   return (
@@ -57,6 +69,7 @@ export function GamesScreen() {
         onValueChange={(v) => {
           setError(false);
           setQuestions(null);
+          setXp(null);
           setMode(v as typeof mode);
         }}
       >
@@ -81,6 +94,7 @@ export function GamesScreen() {
               questions={questions as TrueFalseQuestion[]}
               onReplay={replay}
               onFinish={finish}
+              xp={xp}
             />
           )}
           {questions && questions.length > 0 && mode === 'time-attack' && (
@@ -89,6 +103,7 @@ export function GamesScreen() {
               questions={questions as TrueFalseQuestion[]}
               onReplay={replay}
               onFinish={finish}
+              xp={xp}
             />
           )}
           {questions && questions.length > 0 && mode === 'match' && (
@@ -97,6 +112,7 @@ export function GamesScreen() {
               questions={questions as MatchQuestion[]}
               onReplay={replay}
               onFinish={finish}
+              xp={xp}
             />
           )}
         </TabsContent>

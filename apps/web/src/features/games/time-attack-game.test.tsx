@@ -24,7 +24,12 @@ const click = (name: string) => fireEvent.click(screen.getByRole('button', { nam
 describe('TimeAttackGame', () => {
   it('enchaîne les questions sans bouton « suivant » et compte les points', () => {
     render(
-      <TimeAttackGame questions={[q(1, true), q(2, true)]} onReplay={vi.fn()} onFinish={vi.fn()} />,
+      <TimeAttackGame
+        questions={[q(1, true), q(2, true)]}
+        onReplay={vi.fn()}
+        onFinish={vi.fn()}
+        xp={null}
+      />,
     );
     click(t.trueFalse.true);
     expect(screen.getByText('Expr 2')).toBeTruthy();
@@ -33,7 +38,7 @@ describe('TimeAttackGame', () => {
 
   it('monte le combo après trois bonnes réponses puis le coupe sur une erreur', () => {
     const qs = [q(1, true), q(2, true), q(3, true), q(4, true), q(5, true)];
-    render(<TimeAttackGame questions={qs} onReplay={vi.fn()} onFinish={vi.fn()} />);
+    render(<TimeAttackGame questions={qs} onReplay={vi.fn()} onFinish={vi.fn()} xp={null} />);
     for (let i = 0; i < 3; i++) click(t.trueFalse.true);
     expect(screen.getByText('Combo x2')).toBeTruthy();
     click(t.trueFalse.false);
@@ -47,6 +52,7 @@ describe('TimeAttackGame', () => {
         questions={[q(1, true), q(2, true)]}
         onReplay={vi.fn()}
         onFinish={onFinish}
+        xp={null}
       />,
     );
     click(t.trueFalse.false);
@@ -56,16 +62,26 @@ describe('TimeAttackGame', () => {
     expect(screen.getByText(t.end.title)).toBeTruthy();
     expect(screen.getByText('Record : 0 points')).toBeTruthy();
     expect(onFinish).toHaveBeenCalledOnce();
-    expect(onFinish).toHaveBeenCalledWith([1]);
+    expect(onFinish).toHaveBeenCalledWith({ correct: 0, missedIds: [1] });
   });
 
   it('finit quand il n’y a plus de questions et enregistre le record', () => {
     const onReplay = vi.fn();
-    render(<TimeAttackGame questions={[q(1, true)]} onReplay={onReplay} onFinish={vi.fn()} />);
+    render(
+      <TimeAttackGame questions={[q(1, true)]} onReplay={onReplay} onFinish={vi.fn()} xp={null} />,
+    );
     click(t.trueFalse.true);
     expect(screen.getByText('Record : 10 points')).toBeTruthy();
     expect(localStorage.getItem('ns-time-attack-record')).toBe('10');
     click(t.end.replay);
     expect(onReplay).toHaveBeenCalledOnce();
+  });
+
+  it('affiche l’XP gagné quand il est connu', () => {
+    render(
+      <TimeAttackGame questions={[q(1, true)]} onReplay={vi.fn()} onFinish={vi.fn()} xp={5} />,
+    );
+    click(t.trueFalse.true);
+    expect(screen.getByText('+5 XP')).toBeTruthy();
   });
 });
