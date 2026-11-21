@@ -168,6 +168,7 @@ for (const [path, heading] of [
   ['/games', 'Jeux'],
   ['/chats/jade', 'Conversation'],
   ['/series', 'Série'],
+  ['/plans', 'Abonnement'],
   ['/notifications', 'Notifications'],
   ['/profile', 'Profil'],
 ] as const) {

@@ -269,6 +269,7 @@
     "body": "Cet écran n'est pas encore prêt. En attendant, tes discussions t'attendent.",
     "toChats": "Aller aux discussions",
     "series": { "title": "Série" },
+    "plans": { "title": "Abonnement" },
     "games": { "title": "Jeux" },
     "progress": { "title": "Progrès" }
   },

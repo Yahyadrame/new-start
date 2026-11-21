@@ -22,7 +22,7 @@
 - [ ] Limites de `docs/02-fonctionnalites.md` (section « Au lancement : tout est gratuit »), réglables sans redéploiement ; message doux à la limite, sans mention d'abonnement.
 
 ## NS-504 — Offres et prix · S
-*Tranche 1 faite le 2026-11-21 (API) : tables `Plan` et `PlanPrice` (migration additive) remplies avec les prix proposés de `docs/14-paiements.md`, et `GET /plans?country=`. Ces prix restent à valider par le porteur du projet avant toute activation. Reste : l'écran Abonnement « Bientôt ».*
+*Tranche 1 faite le 2026-11-21 (API) : tables `Plan` et `PlanPrice` (migration additive) remplies avec les prix proposés de `docs/14-paiements.md`, et `GET /plans?country=`. Ces prix restent à valider par le porteur du projet avant toute activation. Tranche 2 : page `/plans` avec la mention « Bientôt » (écran provisoire commun), testée avec axe. Les offres s'afficheront quand le porteur du projet décidera d'activer les paiements.*
 - [ ] Tables `Plan` et `PlanPrice`, `GET /plans?country=` ; écran Abonnement (10) affichant « Bientôt » tant que le paiement est désactivé.
 
 ## NS-505 — Paiement Wave · L
