@@ -49,7 +49,7 @@
 | POST | `/notifications/read-all` | Jeton d'accès exigé. Marque toutes les notifications de la personne comme lues ; répond 204 |
 | GET | `/notifications/unread-count` | Jeton d'accès exigé. Rend `{ count }`, le nombre de notifications non lues de la personne (point de la cloche) |
 | POST | `/push/subscriptions` | Abonnement Web Push |
-| GET | `/plans?country=SN` | Offres et prix dans la devise du pays |
+| GET | `/plans?country=SN` | Jeton d'accès exigé. Rend les offres dans l'ordre d'affichage, avec `code`, `nameFr`, `periodDays`, `renews`, `currency` et `amountMinor` (unité mineure). Pays UEMOA : FCFA ; tout autre pays ou pas de pays : dollars |
 | POST | `/billing/checkout` | Démarre un paiement `{ plan, provider }` ; renvoie l'URL ou les instructions |
 | POST | `/billing/cancel` | Annule à la fin de la période |
 | POST | `/webhooks/wave` · `/webhooks/orange-money` · `/webhooks/stripe` | Confirmations de paiement (signature vérifiée) |

@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { CatalogModule } from './modules/catalog/catalog.module.js';
 import { GamesModule } from './modules/games/games.module.js';
 import { NotificationsModule } from './modules/notifications/notifications.module.js';
+import { PlansModule } from './modules/plans/plans.module.js';
 import { ProgressModule } from './modules/progress/progress.module.js';
 import { NotebookModule } from './modules/notebook/notebook.module.js';
 import { ReviewsModule } from './modules/reviews/reviews.module.js';
@@ -41,6 +42,7 @@ import { PrismaModule } from './shared/prisma/prisma.module.js';
     MeModule,
     ConversationsModule,
     CatalogModule,
+    PlansModule,
     NotebookModule,
     ReviewsModule,
     GamesModule,

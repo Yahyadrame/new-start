@@ -10,3 +10,4 @@ export * from './game-questions.js';
 export * from './reviews.js';
 export * from './progress.js';
 export * from './notifications.js';
+export * from './plans.js';
