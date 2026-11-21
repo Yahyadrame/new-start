@@ -12,15 +12,18 @@ export const ProgressSummary = z.object({
   levelXp: z.number().int().min(0),
   /** XP à gagner pour passer au niveau suivant. */
   nextLevelXp: z.number().int().min(1),
+  /** Jours de suite avec une activité (0 si la série est rompue). */
+  streakDays: z.number().int().min(0),
 });
 export type ProgressSummary = z.infer<typeof ProgressSummary>;
 
 /** Niveau d'après le total d'XP : on part du niveau 1 à 0 XP. */
-export function summarize(xp: number): ProgressSummary {
+export function summarize(xp: number, streakDays = 0): ProgressSummary {
   return {
     xp,
     level: Math.floor(xp / XP_PER_LEVEL) + 1,
     levelXp: xp % XP_PER_LEVEL,
     nextLevelXp: XP_PER_LEVEL,
+    streakDays,
   };
 }
