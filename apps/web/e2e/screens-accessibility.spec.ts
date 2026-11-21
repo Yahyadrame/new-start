@@ -152,3 +152,24 @@ test('le test de niveau est accessible', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expectAccessible(page);
 });
+
+test('le résultat du test de niveau est accessible', async ({ page }) => {
+  await signedIn(page);
+  await page.route('**/api/onboarding/level-test/answer', (r) =>
+    r.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        done: true,
+        level: 'B1',
+        justification: 'Tu te fais comprendre sans effort sur des sujets familiers.',
+        strengths: ['Vocabulaire du quotidien', 'Phrases simples justes', 'Bonne prise de parole'],
+        weaknesses: ['Temps du passé', 'Prépositions', 'Phrases plus longues'],
+      }),
+    }),
+  );
+  await page.goto('/onboarding/level');
+  await page.getByRole('textbox').fill('I live in Dakar and I like football.');
+  await page.getByRole('button', { name: 'Envoyer' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'B1' })).toBeVisible();
+  await expectAccessible(page);
+});
