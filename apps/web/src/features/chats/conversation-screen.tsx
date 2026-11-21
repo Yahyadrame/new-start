@@ -94,7 +94,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
         setAwaiting(sent.createdAt);
       } catch (e) {
-        if ((e as { status?: number }).status === 429) {
+        if ((e as { code?: string }).code === 'USAGE_LIMIT') {
           setPending((prev) => prev.filter((p) => p.clientId !== clientId));
           setLimited(true);
           return;

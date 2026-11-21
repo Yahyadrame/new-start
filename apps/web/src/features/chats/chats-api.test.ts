@@ -67,8 +67,30 @@ describe('sendMessage', () => {
   });
 
   it('lève ChatsError avec le statut quand l’API refuse', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }));
-    await expect(sendMessage('tok', 'c1', body)).rejects.toMatchObject({ status: 429 });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => Promise.reject(new Error('corps vide')),
+      }),
+    );
+    await expect(sendMessage('tok', 'c1', body)).rejects.toMatchObject({ status: 500 });
+  });
+
+  it('garde le code d’erreur de l’API (limite du jour ou limite de débit)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        json: async () => ({ code: 'USAGE_LIMIT', message: 'x' }),
+      }),
+    );
+    await expect(sendMessage('tok', 'c1', body)).rejects.toMatchObject({
+      status: 429,
+      code: 'USAGE_LIMIT',
+    });
   });
 });
 

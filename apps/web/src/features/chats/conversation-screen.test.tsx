@@ -162,7 +162,9 @@ describe('ConversationScreen', () => {
     });
 
     it('affiche un message doux à la limite du jour, sans proposer de réessayer', async () => {
-      sendMessage.mockRejectedValue(Object.assign(new Error('limite'), { status: 429 }));
+      sendMessage.mockRejectedValue(
+        Object.assign(new Error('limite'), { status: 429, code: 'USAGE_LIMIT' }),
+      );
       render(<ConversationScreen agentSlug="jade" />);
       await write('Hello');
       expect(
@@ -170,6 +172,16 @@ describe('ConversationScreen', () => {
       ).toBeTruthy();
       expect(screen.queryByRole('button', { name: fr.conversation.sendFailed })).toBeNull();
       expect(texts()).toEqual(['First', 'Second']);
+    });
+
+    it('propose de réessayer, sans « reviens demain », quand la limite de débit joue (429 RATE_LIMITED)', async () => {
+      sendMessage.mockRejectedValue(
+        Object.assign(new Error('débit'), { status: 429, code: 'RATE_LIMITED' }),
+      );
+      render(<ConversationScreen agentSlug="jade" />);
+      await write('Hello');
+      expect(await screen.findByRole('button', { name: fr.conversation.sendFailed })).toBeTruthy();
+      expect(screen.queryByText(/Reviens demain/)).toBeNull();
     });
 
     it('propose de réessayer avec le même clientId quand le message n’est pas parti', async () => {
