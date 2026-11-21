@@ -17,13 +17,14 @@ const items = [
   },
 ];
 const list = vi.fn().mockResolvedValue(items);
+const markAllRead = vi.fn().mockResolvedValue(undefined);
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 let app: INestApplication;
 beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [NotificationsController],
     providers: [
-      { provide: NotificationsService, useValue: { list } },
+      { provide: NotificationsService, useValue: { list, markAllRead } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -45,5 +46,19 @@ describe('GET /notifications', () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual(items);
     expect(list).toHaveBeenCalledWith('u1');
+  });
+});
+
+describe('POST /notifications/read-all', () => {
+  it('refuse sans jeton (401)', async () => {
+    expect((await request(app.getHttpServer()).post('/notifications/read-all')).status).toBe(401);
+  });
+
+  it('marque tout comme lu pour la personne connectée (204)', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/notifications/read-all')
+      .set({ Authorization: 'Bearer tok-u1' });
+    expect(res.status).toBe(204);
+    expect(markAllRead).toHaveBeenCalledWith('u1');
   });
 });

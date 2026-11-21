@@ -8,6 +8,8 @@ export const NOTIFICATIONS_LIMIT = 30;
 export interface NotificationsStore {
   /** Les plus récentes d'abord. */
   recent(userId: string, limit: number): Promise<NotificationItem[]>;
+  /** Marque comme lues toutes les notifications non lues de la personne. */
+  markAllRead(userId: string, now: Date): Promise<void>;
 }
 
 export class NotificationsService {
@@ -15,5 +17,9 @@ export class NotificationsService {
 
   list(userId: string): Promise<NotificationItem[]> {
     return this.store.recent(userId, NOTIFICATIONS_LIMIT);
+  }
+
+  markAllRead(userId: string, now = new Date()): Promise<void> {
+    return this.store.markAllRead(userId, now);
   }
 }
