@@ -7,3 +7,7 @@ allowBuilds:
   esbuild: true
   prisma: false # le client est généré par `prisma generate` dans les scripts
   '@prisma/engines': false
+
+# Next embarque une version de postcss avec des failles connues (audit du 2026-11-21) : on force une version corrigée.
+overrides:
+  postcss: '>=8.5.23'
