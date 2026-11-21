@@ -16,7 +16,13 @@ const t = fr.progress;
 beforeEach(() => {
   vi.clearAllMocks();
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
-  fetchProgress.mockResolvedValue({ xp: 250, level: 3, levelXp: 50, nextLevelXp: 100 });
+  fetchProgress.mockResolvedValue({
+    xp: 250,
+    level: 3,
+    levelXp: 50,
+    nextLevelXp: 100,
+    streakDays: 6,
+  });
 });
 afterEach(cleanup);
 
@@ -29,7 +35,20 @@ describe('ProgressScreen', () => {
     expect(bar.getAttribute('aria-valuemax')).toBe('100');
     expect(screen.getByText('Encore 50 XP pour passer au niveau 4.')).toBeTruthy();
     expect(screen.getByText('250 XP au total')).toBeTruthy();
+    expect(screen.getByText('6 jours de suite')).toBeTruthy();
     expect(fetchProgress).toHaveBeenCalledWith('tok');
+  });
+
+  it('invite à démarrer une série quand elle est à 0', async () => {
+    fetchProgress.mockResolvedValue({
+      xp: 0,
+      level: 1,
+      levelXp: 0,
+      nextLevelXp: 100,
+      streakDays: 0,
+    });
+    render(<ProgressScreen />);
+    expect(await screen.findByText(t.noStreak)).toBeTruthy();
   });
 
   it('renvoie à l’accueil sans session', async () => {

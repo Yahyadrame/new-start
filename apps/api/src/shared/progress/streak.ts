@@ -25,6 +25,13 @@ export function nextStreak(state: StreakState, today: string): number {
   return state.lastActiveDay === yesterday ? state.streakDays + 1 : 1;
 }
 
+/** Série à afficher : rompue (0) si ni aujourd'hui ni hier n'ont compté, sauf en mode pause. */
+export function currentStreak(state: StreakState, today: string): number {
+  if (state.paused || state.lastActiveDay === today) return state.streakDays;
+  const yesterday = dayBefore(today).toISOString().slice(0, 10);
+  return state.lastActiveDay === yesterday ? state.streakDays : 0;
+}
+
 /**
  * Les champs `User` à écrire avec l'XP gagné : série et dernier jour d'activité.
  * Rend `{}` pour un compte inconnu ; à utiliser dans le même `update` que l'incrément d'XP.

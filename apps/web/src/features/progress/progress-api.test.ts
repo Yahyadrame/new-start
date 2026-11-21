@@ -5,7 +5,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe('fetchProgress', () => {
   it('lit le résumé avec le jeton', async () => {
-    const summary = { xp: 250, level: 3, levelXp: 50, nextLevelXp: 100 };
+    const summary = { xp: 250, level: 3, levelXp: 50, nextLevelXp: 100, streakDays: 6 };
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => summary });
     vi.stubGlobal('fetch', fetchMock);
     expect(await fetchProgress('tok')).toEqual(summary);

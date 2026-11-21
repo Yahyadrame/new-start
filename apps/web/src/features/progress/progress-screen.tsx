@@ -59,6 +59,11 @@ export function ProgressScreen() {
               .replace('{level}', String(summary.level + 1))}
           </p>
           <p>{t.total.replace('{xp}', String(summary.xp))}</p>
+          <p>
+            {summary.streakDays > 0
+              ? t.streak.replace('{n}', String(summary.streakDays))
+              : t.noStreak}
+          </p>
         </section>
       )}
       <BottomNav />

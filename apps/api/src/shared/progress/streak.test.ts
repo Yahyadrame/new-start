@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { PrismaService } from '../prisma/prisma.service.js';
-import { localDay, nextStreak, streakUpdate } from './streak.js';
+import { currentStreak, localDay, nextStreak, streakUpdate } from './streak.js';
 
 const state = (over: Partial<Parameters<typeof nextStreak>[0]> = {}) => ({
   streakDays: 4,
@@ -37,6 +37,24 @@ describe('nextStreak', () => {
 
   it('gèle la série en mode pause', () => {
     expect(nextStreak(state({ lastActiveDay: '2026-11-18', paused: true }), '2026-11-21')).toBe(4);
+  });
+});
+
+describe('currentStreak', () => {
+  it('garde la série comptée aujourd’hui ou hier', () => {
+    expect(currentStreak(state({ lastActiveDay: '2026-11-21' }), '2026-11-21')).toBe(4);
+    expect(currentStreak(state(), '2026-11-21')).toBe(4);
+  });
+
+  it('la remet à 0 quand elle est rompue ou jamais commencée', () => {
+    expect(currentStreak(state({ lastActiveDay: '2026-11-18' }), '2026-11-21')).toBe(0);
+    expect(currentStreak(state({ streakDays: 0, lastActiveDay: null }), '2026-11-21')).toBe(0);
+  });
+
+  it('la garde en mode pause', () => {
+    expect(currentStreak(state({ lastActiveDay: '2026-11-10', paused: true }), '2026-11-21')).toBe(
+      4,
+    );
   });
 });
 

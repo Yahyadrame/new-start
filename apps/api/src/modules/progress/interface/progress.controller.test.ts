@@ -6,7 +6,9 @@ import { ACCESS_VERIFIER, AccessGuard } from '../../../shared/auth/access.guard.
 import { ProgressService } from '../application/progress.js';
 import { ProgressController } from './progress.controller.js';
 
-const summary = vi.fn().mockResolvedValue({ xp: 250, level: 3, levelXp: 50, nextLevelXp: 100 });
+const summary = vi
+  .fn()
+  .mockResolvedValue({ xp: 250, level: 3, levelXp: 50, nextLevelXp: 100, streakDays: 6 });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 let app: INestApplication;
 beforeAll(async () => {
@@ -33,7 +35,7 @@ describe('GET /progress', () => {
       .get('/progress')
       .set({ Authorization: 'Bearer tok-u1' });
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ xp: 250, level: 3, levelXp: 50, nextLevelXp: 100 });
+    expect(res.body).toEqual({ xp: 250, level: 3, levelXp: 50, nextLevelXp: 100, streakDays: 6 });
     expect(summary).toHaveBeenCalledWith('u1');
   });
 });
