@@ -91,4 +91,14 @@ describe('SignupForm : choix guidés', () => {
     submit();
     expect(await screen.findByText(t.errors.birthYear)).toBeTruthy();
   });
+
+  it('renvoie vers les conditions et la politique de confidentialité', () => {
+    render(<SignupForm />);
+    expect(screen.getByRole('link', { name: fr.signup.termsLink }).getAttribute('href')).toBe(
+      '/terms',
+    );
+    expect(screen.getByRole('link', { name: fr.signup.privacyLink }).getAttribute('href')).toBe(
+      '/privacy',
+    );
+  });
 });

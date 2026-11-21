@@ -26,6 +26,7 @@
 - [ ] Rétention J1 / J7, minutes parlées, conversion, coût IA par utilisateur (événements anonymisés, sans contenu de message).
 
 ## NS-606 — Conformité · S
+*Tranche 1 faite le 2026-11-21 : pages `/terms` et `/privacy`, rédigées à partir de `docs/11` seulement, avec la mention « version provisoire », liées depuis l'inscription et testées avec axe. Restent : relecture par un professionnel, coordonnées de contact à ajouter, démarche auprès de la CDP.*
 - [ ] Pages Conditions d'utilisation et Politique de confidentialité (rédaction à faire valider) ; démarche auprès de la CDP au Sénégal.
 
 ## NS-607 — Mise en production · M
