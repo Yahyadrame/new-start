@@ -5,8 +5,13 @@
 - [ ] Mise à jour en production simulée pendant la charge : 0 erreur.
 
 ## NS-602 — Accessibilité · M
-*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Restent : Conversation, Profil, Série, parcours d'inscription connecté, navigation clavier et lecteurs d'écran (à tester à la main par le porteur du projet).*
+*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Conversation et Série ajoutés (écran Profil en attente de NS-610). Restent : Profil, parcours d'inscription connecté, navigation clavier et lecteurs d'écran (à tester à la main par le porteur du projet).*
 - [ ] axe-core sur tous les écrans, clair et sombre ; navigation clavier ; lecteurs d'écran sur les parcours principaux.
+
+## NS-610 — Contraste de la couleur danger · S
+- [ ] `--color-danger` (`#E5484D`, `docs/04-design-system.md`) n'atteint que 3,91:1 : texte d'erreur sur fond blanc (« Ton carnet ne se charge pas. ») et texte blanc du bouton de suppression sur l'écran Profil. La règle est 4,5:1. Trouvé par axe-core le 2026-11-21 ; l'écran Profil n'est pas encore dans `screens-accessibility.spec.ts` à cause de cela.
+- [ ] **À décider par le porteur du projet** : assombrir le jeton (par exemple vers `#C8363B`, à vérifier dans les deux thèmes, change les maquettes), ou garder `#E5484D` pour les grands textes et les icônes seulement et utiliser une teinte plus sombre pour le texte et les boutons.
+- [ ] Ensuite : ajouter Profil au test d'accessibilité.
 
 ## NS-603 — Sécurité · M
 - [ ] OWASP ZAP sur staging, correction des alertes hautes ; revue des en-têtes, CORS, limites de débit.

@@ -5,7 +5,12 @@ import { expect, test, type Page } from '@playwright/test';
 async function expectAccessible(page: Page) {
   const { violations } = await new AxeBuilder({ page }).analyze();
   const grave = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
-  expect(grave.map((v) => `${v.id} : ${v.help}`)).toEqual([]);
+  expect(
+    grave.map(
+      (v) =>
+        `${v.id} : ${v.help} → ${v.nodes.map((n) => n.target.join(' ') + ' ' + (n.any[0]?.message ?? '') + ' ' + n.html.slice(0, 120)).join(' ; ')}`,
+    ),
+  ).toEqual([]);
 }
 
 const jade = { slug: 'jade', name: 'Jade', initials: 'J', roleFr: 'Amie', category: 'DAILY' };
@@ -36,6 +41,32 @@ async function signedIn(page: Page) {
       ]),
     ),
   );
+  await page.route('**/api/conversations/c1/messages*', (r) =>
+    r.fulfill(
+      json({
+        items: [
+          {
+            id: 'm2',
+            author: 'AGENT',
+            text: 'Nice! Where are you going?',
+            translationFr: null,
+            createdAt: '2026-11-21T09:01:00Z',
+            correction: null,
+          },
+          {
+            id: 'm1',
+            author: 'USER',
+            text: 'I go to Dakar yesterday.',
+            translationFr: null,
+            createdAt: '2026-11-21T09:00:00Z',
+            correction: { better: 'I went to Dakar yesterday.', whyFr: 'Passé : went.' },
+          },
+        ],
+        nextCursor: null,
+      }),
+    ),
+  );
+  await page.route('**/api/conversations/c1/read', (r) => r.fulfill({ status: 204 }));
   await page.route('**/api/topics', (r) =>
     r.fulfill(json([{ slug: 'travel', nameFr: 'Voyage', agentCount: 1 }])),
   );
@@ -60,6 +91,8 @@ for (const [path, heading] of [
   ['/explore', 'Explorer'],
   ['/progress', 'Progrès'],
   ['/games', 'Jeux'],
+  ['/chats/jade', 'Conversation'],
+  ['/series', 'Série'],
 ] as const) {
   test(`l'écran ${heading} est accessible`, async ({ page }) => {
     await signedIn(page);
