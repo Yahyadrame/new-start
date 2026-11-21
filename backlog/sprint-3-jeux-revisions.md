@@ -6,7 +6,7 @@
 - [ ] Les phrases d'exemple sont générées une fois par le LLM, relues, et stockées (pas de génération à chaque partie).
 
 ## NS-302 — Écran Jeux (7) · S
-- [ ] Défi du jour, série de jours, grille ; les jeux V2 affichés comme « Bientôt ».
+- [ ] Défi du jour, série de jours, grille ; les jeux V2 affichés comme « Bientôt ». *Série de jours faite le 2026-11-21 (ligne sous le titre, lue dans le progrès). Restent : défi du jour (règle à décider avec le porteur du projet) et grille des jeux V2.*
 
 ## NS-303 — Jeu en cours (8) · L
 *Découpé le 2026-11-20 : (1) API `GET /games/:type/questions` pour Vrai ou faux et Associer (faite ; Mot manquant attend les phrases d'exemple de NS-301), (2) écran de jeu (Vrai ou faux fait ; Associer reste à brancher), (3) contre-la-montre et record, (4) écran de fin et XP, (5) envoi des résultats et des expressions ratées (crée les cartes NS-304).*

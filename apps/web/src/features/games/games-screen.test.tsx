@@ -8,10 +8,17 @@ const trueFalseQuestions = vi.fn();
 const matchQuestions = vi.fn();
 const sendMissed = vi.fn();
 const sendResult = vi.fn();
+const fetchStreak = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./games-api', () => ({ trueFalseQuestions, matchQuestions, sendMissed, sendResult }));
+vi.mock('./games-api', () => ({
+  trueFalseQuestions,
+  matchQuestions,
+  sendMissed,
+  sendResult,
+  fetchStreak,
+}));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { GamesScreen } = await import('./games-screen');
 
@@ -29,11 +36,30 @@ beforeEach(() => {
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
   sendMissed.mockResolvedValue(undefined);
   sendResult.mockResolvedValue(0);
+  fetchStreak.mockResolvedValue(0);
   trueFalseQuestions.mockResolvedValue([question]);
 });
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('montre la série de jours', async () => {
+    fetchStreak.mockResolvedValue(4);
+    render(<GamesScreen />);
+    expect(await screen.findByText(t.streak.replace('{n}', '4'))).toBeTruthy();
+  });
+
+  it('invite à démarrer une série quand elle est à zéro', async () => {
+    render(<GamesScreen />);
+    expect(await screen.findByText(t.noStreak)).toBeTruthy();
+  });
+
+  it('cache la ligne quand la série ne se charge pas', async () => {
+    fetchStreak.mockRejectedValue(new Error('x'));
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    expect(screen.queryByText(t.noStreak)).toBeNull();
+  });
+
   it('affiche l’XP gagné à la fin de la partie', async () => {
     sendResult.mockResolvedValue(5);
     render(<GamesScreen />);

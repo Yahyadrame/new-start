@@ -49,3 +49,10 @@ export async function sendResult(token: string, correct: number): Promise<number
   if (!res.ok) throw new GamesError(res.status);
   return ((await res.json()) as { gained: number }).gained;
 }
+
+/** Série de jours de la personne (lue dans son résumé de progrès). */
+export async function fetchStreak(token: string): Promise<number> {
+  const res = await fetch('/api/progress', { headers: { authorization: `Bearer ${token}` } });
+  if (!res.ok) throw new GamesError(res.status);
+  return ((await res.json()) as { streakDays: number }).streakDays;
+}

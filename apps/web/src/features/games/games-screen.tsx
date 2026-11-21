@@ -9,6 +9,7 @@ import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import {
   type GameOutcome,
+  fetchStreak,
   matchQuestions,
   sendMissed,
   sendResult,
@@ -28,6 +29,15 @@ export function GamesScreen() {
   const [round, setRound] = useState(0);
   const [xp, setXp] = useState<number | null>(null);
   const [error, setError] = useState(false);
+  const [streak, setStreak] = useState<number | null>(null);
+
+  // La série est un plus : sans elle, l'écran ne montre simplement pas la ligne.
+  useEffect(() => {
+    void (async () => {
+      const session = await ensureSession();
+      if (session) setStreak(await fetchStreak(session.accessToken).catch(() => null));
+    })();
+  }, [round]);
 
   useEffect(() => {
     setQuestions(null);
@@ -64,6 +74,11 @@ export function GamesScreen() {
       <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>
+      {streak !== null && (
+        <p className="-mt-3 text-[15px] text-text-muted">
+          {streak > 0 ? t.streak.replace('{n}', String(streak)) : t.noStreak}
+        </p>
+      )}
       <Tabs
         value={mode}
         onValueChange={(v) => {

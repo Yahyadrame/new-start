@@ -5,6 +5,7 @@ import {
   sendMissed,
   sendResult,
   trueFalseQuestions,
+  fetchStreak,
 } from './games-api';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -86,5 +87,23 @@ describe('sendResult', () => {
   it('lève GamesError quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 400 }));
     await expect(sendResult('tok', 99)).rejects.toBeInstanceOf(GamesError);
+  });
+});
+
+describe('fetchStreak', () => {
+  it('rend la série de jours lue dans le progrès', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({ streakDays: 4, xp: 250 }) });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await fetchStreak('tok')).toBe(4);
+    expect(fetchMock).toHaveBeenCalledWith('/api/progress', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève GamesError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
+    await expect(fetchStreak('tok')).rejects.toBeInstanceOf(GamesError);
   });
 });
