@@ -1,6 +1,5 @@
-import { ComingSoonScreen } from '../../features/coming-soon';
-import fr from '../../shared/i18n/fr.json';
+import { ProgressScreen } from '../../features/progress';
 
 export default function Page() {
-  return <ComingSoonScreen title={fr.comingSoon.progress.title} />;
+  return <ProgressScreen />;
 }
