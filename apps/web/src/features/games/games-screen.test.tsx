@@ -7,10 +7,11 @@ const ensureSession = vi.fn();
 const trueFalseQuestions = vi.fn();
 const matchQuestions = vi.fn();
 const sendMissed = vi.fn();
+const sendResult = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./games-api', () => ({ trueFalseQuestions, matchQuestions, sendMissed }));
+vi.mock('./games-api', () => ({ trueFalseQuestions, matchQuestions, sendMissed, sendResult }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { GamesScreen } = await import('./games-screen');
 
@@ -26,11 +27,33 @@ const question = {
 beforeEach(() => {
   vi.clearAllMocks();
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
+  sendMissed.mockResolvedValue(undefined);
+  sendResult.mockResolvedValue(0);
   trueFalseQuestions.mockResolvedValue([question]);
 });
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('affiche l’XP gagné à la fin de la partie', async () => {
+    sendResult.mockResolvedValue(5);
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    fireEvent.click(screen.getByRole('button', { name: t.trueFalse.true }));
+    fireEvent.click(screen.getByRole('button', { name: t.finish }));
+    expect(await screen.findByText('+5 XP')).toBeTruthy();
+    expect(sendResult).toHaveBeenCalledWith('tok', 1);
+  });
+
+  it('n’affiche pas d’XP quand l’envoi échoue', async () => {
+    sendResult.mockRejectedValue(new Error('x'));
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    fireEvent.click(screen.getByRole('button', { name: t.trueFalse.true }));
+    fireEvent.click(screen.getByRole('button', { name: t.finish }));
+    await waitFor(() => expect(sendResult).toHaveBeenCalled());
+    expect(screen.queryByText(/XP/)).toBeNull();
+  });
+
   it('demande vingt questions pour le contre-la-montre', async () => {
     render(<GamesScreen />);
     await screen.findByText('You know');

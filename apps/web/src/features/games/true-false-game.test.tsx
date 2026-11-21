@@ -16,13 +16,13 @@ const questions = [q('You know', 'tu sais', true), q('I know', 'tu sais', false)
 
 describe('TrueFalseGame', () => {
   it('montre la première question et sa progression', () => {
-    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={vi.fn()} />);
+    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={vi.fn()} xp={null} />);
     expect(screen.getByText('You know')).toBeTruthy();
     expect(screen.getByText('Question 1 sur 2')).toBeTruthy();
   });
 
   it('corrige une bonne réponse et bloque les boutons', () => {
-    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={vi.fn()} />);
+    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={vi.fn()} xp={null} />);
     fireEvent.click(screen.getByRole('button', { name: t.trueFalse.true }));
     expect(screen.getByText(t.right)).toBeTruthy();
     expect(
@@ -31,14 +31,16 @@ describe('TrueFalseGame', () => {
   });
 
   it('corrige une mauvaise réponse', () => {
-    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={vi.fn()} />);
+    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={vi.fn()} xp={null} />);
     fireEvent.click(screen.getByRole('button', { name: t.trueFalse.false }));
     expect(screen.getByText(t.wrong)).toBeTruthy();
   });
 
   it('compte le score, finit la partie et propose de rejouer', () => {
     const onReplay = vi.fn();
-    render(<TrueFalseGame questions={questions} onReplay={onReplay} onFinish={vi.fn()} />);
+    render(
+      <TrueFalseGame questions={questions} onReplay={onReplay} onFinish={vi.fn()} xp={null} />,
+    );
     fireEvent.click(screen.getByRole('button', { name: t.trueFalse.true }));
     fireEvent.click(screen.getByRole('button', { name: t.next }));
     expect(screen.getByText('I know')).toBeTruthy();
@@ -51,13 +53,15 @@ describe('TrueFalseGame', () => {
 
   it('rend les expressions ratées une seule fois, à la dernière question', () => {
     const onFinish = vi.fn();
-    render(<TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={onFinish} />);
+    render(
+      <TrueFalseGame questions={questions} onReplay={vi.fn()} onFinish={onFinish} xp={null} />,
+    );
     fireEvent.click(screen.getByRole('button', { name: t.trueFalse.false }));
     fireEvent.click(screen.getByRole('button', { name: t.next }));
     expect(onFinish).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: t.trueFalse.false }));
     fireEvent.click(screen.getByRole('button', { name: t.finish }));
     expect(onFinish).toHaveBeenCalledOnce();
-    expect(onFinish).toHaveBeenCalledWith([1]);
+    expect(onFinish).toHaveBeenCalledWith({ correct: 1, missedIds: [1] });
   });
 });

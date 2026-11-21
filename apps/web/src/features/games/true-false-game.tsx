@@ -4,6 +4,7 @@ import type { TrueFalseQuestion } from '@newstart/shared';
 import { Button } from '@newstart/ui';
 import { useState } from 'react';
 import fr from '../../shared/i18n/fr.json';
+import type { GameOutcome } from './games-api';
 
 const t = fr.games;
 
@@ -12,11 +13,14 @@ export function TrueFalseGame({
   questions,
   onReplay,
   onFinish,
+  xp,
 }: Readonly<{
   questions: TrueFalseQuestion[];
   onReplay: () => void;
-  /** Appelé une fois, à la dernière question, avec les expressions ratées. */
-  onFinish: (missedIds: number[]) => void;
+  /** Appelé une fois, à la dernière question. */
+  onFinish: (outcome: GameOutcome) => void;
+  /** L'XP gagné, une fois connu. */
+  xp: number | null;
 }>) {
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<boolean | null>(null);
@@ -33,6 +37,7 @@ export function TrueFalseGame({
             .replace('{score}', String(score))
             .replace('{total}', String(questions.length))}
         </p>
+        {xp !== null && <p>{t.end.xp.replace('{n}', String(xp))}</p>}
         <Button onClick={onReplay}>{t.end.replay}</Button>
       </section>
     );
@@ -47,7 +52,7 @@ export function TrueFalseGame({
     else setMissed((m) => [...m, question.expressionId]);
   };
   const next = () => {
-    if (index + 1 === questions.length) onFinish(missed);
+    if (index + 1 === questions.length) onFinish({ correct: score, missedIds: missed });
     setPicked(null);
     setIndex((i) => i + 1);
   };
