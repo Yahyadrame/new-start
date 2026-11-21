@@ -20,6 +20,7 @@ function fake(rows: unknown[]) {
       update: vi.fn(),
     },
     user: { findUnique: vi.fn(), update: vi.fn() },
+    dailyActivity: { upsert: vi.fn() },
     $transaction: vi.fn(),
     message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), updateMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
@@ -234,9 +235,15 @@ describe('PrismaConversationsStore', () => {
         timezone: 'Africa/Dakar',
         pausedUntil: null,
       });
-      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}, {}]);
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}, {}, {}]);
       await store.send('u1', 'c1', message);
       expect(db.user.update.mock.calls[0]?.[0].data).toMatchObject({ streakDays: 1 });
+      expect(db.dailyActivity.upsert.mock.calls[0]?.[0].create).toMatchObject({
+        userId: 'u1',
+        messagesSent: 1,
+        xpEarned: 10,
+      });
+      expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(4);
     });
 
     it('retrouve le message quand un envoi simultané du même clientId a gagné', async () => {

@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { ConversationItem, SendMessage } from '@newstart/shared';
 import { Prisma } from '../../../generated/prisma/client.js';
 import type { MessageCursor } from '../application/message-cursor.js';
+import { recordActivity } from '../../../shared/progress/daily-activity.js';
 import { streakUpdate } from '../../../shared/progress/streak.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { ConversationsStore, MessageRow } from '../application/conversations.js';
@@ -161,6 +162,14 @@ export class PrismaConversationsStore implements ConversationsStore {
           where: { id: userId },
           data: { xp: { increment: XP_PER_MESSAGE }, ...streak },
         }),
+        ...(streak.lastActiveDay
+          ? [
+              recordActivity(this.db, userId, streak.lastActiveDay, {
+                messagesSent: 1,
+                xpEarned: XP_PER_MESSAGE,
+              }),
+            ]
+          : []),
       ]);
       return { row, created: true };
     } catch (e) {

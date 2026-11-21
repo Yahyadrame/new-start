@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
+import { recordActivity } from '../../../shared/progress/daily-activity.js';
 import { streakUpdate } from '../../../shared/progress/streak.js';
 import type { GamesStore } from '../application/games.js';
 
@@ -15,11 +16,18 @@ export class PrismaGamesStore implements GamesStore {
   }
 
   async addXp(userId: string, amount: number) {
+    const streak = await streakUpdate(this.db, userId);
     const user = await this.db.user.update({
       where: { id: userId },
-      data: { xp: { increment: amount }, ...(await streakUpdate(this.db, userId)) },
+      data: { xp: { increment: amount }, ...streak },
       select: { xp: true },
     });
+    if (streak.lastActiveDay) {
+      await recordActivity(this.db, userId, streak.lastActiveDay, {
+        gamesPlayed: 1,
+        xpEarned: amount,
+      });
+    }
     return user.xp;
   }
 }

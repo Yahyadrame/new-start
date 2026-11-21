@@ -43,11 +43,14 @@ describe('PrismaGamesStore', () => {
         }),
         update: vi.fn().mockResolvedValue({ xp: 15 }),
       },
+      dailyActivity: { upsert: vi.fn().mockResolvedValue({}) },
     };
     await new PrismaGamesStore(db as unknown as PrismaService).addXp('u1', 15);
     expect(db.user.update.mock.calls[0]?.[0].data).toMatchObject({
       xp: { increment: 15 },
       streakDays: 1,
     });
+    const upsert = db.dailyActivity.upsert.mock.calls[0]?.[0];
+    expect(upsert.create).toMatchObject({ userId: 'u1', gamesPlayed: 1, xpEarned: 15 });
   });
 });
