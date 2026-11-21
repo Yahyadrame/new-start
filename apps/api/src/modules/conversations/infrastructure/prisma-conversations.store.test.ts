@@ -19,7 +19,7 @@ function fake(rows: unknown[]) {
       upsert: vi.fn(),
       update: vi.fn(),
     },
-    user: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn(), update: vi.fn() },
     $transaction: vi.fn(),
     message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), updateMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
@@ -208,6 +208,19 @@ describe('PrismaConversationsStore', () => {
         text: 'Hello',
       });
       expect(db.conversation.update.mock.calls[0]?.[0].where).toEqual({ id: 'c1' });
+    });
+
+    it('ajoute 10 XP à la personne dans la même transaction', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}, {}]);
+      await store.send('u1', 'c1', message);
+      expect(db.user.update).toHaveBeenCalledWith({
+        where: { id: 'u1' },
+        data: { xp: { increment: 10 } },
+      });
+      expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(3);
     });
 
     it('retrouve le message quand un envoi simultané du même clientId a gagné', async () => {

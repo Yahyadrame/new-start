@@ -37,6 +37,9 @@ const toItem = ({ messages, lastMessageAt, ...row }: Row): ConversationItem => (
   lastMessageAt: lastMessageAt.toISOString(),
 });
 
+/** XP gagnés pour chaque message envoyé. */
+const XP_PER_MESSAGE = 10;
+
 @Injectable()
 export class PrismaConversationsStore implements ConversationsStore {
   constructor(@Inject(PrismaService) private readonly db: PrismaService) {}
@@ -151,6 +154,8 @@ export class PrismaConversationsStore implements ConversationsStore {
           where: { id: conversationId },
           data: { lastMessageAt: new Date() },
         }),
+        // +10 XP par message (règle de NS-501), seulement pour un message créé
+        this.db.user.update({ where: { id: userId }, data: { xp: { increment: XP_PER_MESSAGE } } }),
       ]);
       return { row, created: true };
     } catch (e) {
