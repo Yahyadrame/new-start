@@ -12,3 +12,12 @@ export async function fetchNotifications(token: string): Promise<NotificationIte
   if (!res.ok) throw new NotificationsError(res.status);
   return (await res.json()) as NotificationItem[];
 }
+
+/** Marque tout comme lu ; un échec n'empêche pas de lire la liste, on l'ignore côté écran. */
+export async function markAllRead(token: string): Promise<void> {
+  const res = await fetch('/api/notifications/read-all', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new NotificationsError(res.status);
+}

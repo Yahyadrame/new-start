@@ -5,9 +5,10 @@ import fr from '../../shared/i18n/fr.json';
 const replace = vi.fn();
 const ensureSession = vi.fn();
 const fetchNotifications = vi.fn();
+const markAllRead = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ replace }) }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./notifications-api', () => ({ fetchNotifications }));
+vi.mock('./notifications-api', () => ({ fetchNotifications, markAllRead }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { NotificationsScreen } = await import('./notifications-screen');
 
@@ -25,6 +26,7 @@ const item = (id: string, createdAt: Date, over: Record<string, unknown> = {}) =
 beforeEach(() => {
   vi.clearAllMocks();
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
+  markAllRead.mockResolvedValue(undefined);
 });
 afterEach(cleanup);
 
@@ -41,6 +43,15 @@ describe('NotificationsScreen', () => {
     expect(screen.getByRole('heading', { name: t.week })).toBeTruthy();
     expect(screen.getByText('Rappel b')).toBeTruthy();
     expect(fetchNotifications).toHaveBeenCalledWith('tok');
+  });
+
+  it('marque tout comme lu après l’affichage, sans bloquer si ça échoue', async () => {
+    markAllRead.mockRejectedValue(new Error('x'));
+    fetchNotifications.mockResolvedValue([item('a', new Date())]);
+    render(<NotificationsScreen />);
+    expect(await screen.findByText('Rappel a')).toBeTruthy();
+    await waitFor(() => expect(markAllRead).toHaveBeenCalledWith('tok'));
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 
   it('n’affiche pas un groupe vide', async () => {
