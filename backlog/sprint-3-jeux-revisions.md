@@ -12,7 +12,7 @@
 *Découpé le 2026-11-20 : (1) API `GET /games/:type/questions` pour Vrai ou faux et Associer (faite ; Mot manquant attend les phrases d'exemple de NS-301), (2) écran de jeu (Vrai ou faux fait ; Associer reste à brancher), (3) contre-la-montre et record, (4) écran de fin et XP, (5) envoi des résultats et des expressions ratées (crée les cartes NS-304).*
 - [ ] Les 4 jeux du MVP, retour immédiat avec sens et exemple, bouton écouter.
 - [x] Contre-la-montre : 60 s, combo x2/x3, record personnel (record gardé sur l'appareil, serveur plus tard).
-- [ ] Écran de fin : score, XP gagnés, Rejouer.
+- [x] Écran de fin : score, XP gagnés, Rejouer (fait dans chacun des trois jeux).
 
 ## NS-304 — Révisions espacées · M
 *Découpé le 2026-11-20 : (1) ordonnanceur `ts-fsrs` dans `modules/reviews/domain` (fait), (2) modèle `ReviewCard`, migration, stockage et service (fait), (3) routes `GET /reviews/due` et `POST /reviews/:id/grade` (faites), (4) cartes créées depuis le carnet et les jeux, (5) carte « À réviser » sur l'écran Jeux : séance carte par carte, notes À revoir / Difficile / Bien / Facile (faite le 2026-11-21).*
