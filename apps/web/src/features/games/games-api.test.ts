@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { GamesError, matchQuestions, trueFalseQuestions } from './games-api';
+import { GamesError, matchQuestions, sendMissed, trueFalseQuestions } from './games-api';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -35,5 +35,30 @@ describe('matchQuestions', () => {
     vi.stubGlobal('fetch', fetchMock);
     await matchQuestions('tok');
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/games/match/questions?count=3');
+  });
+});
+
+describe('sendMissed', () => {
+  it('n’appelle rien quand rien n’est raté', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    await sendMissed('tok', []);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('envoie les identifiants avec le jeton', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+    await sendMissed('tok', [1, 2]);
+    expect(fetchMock).toHaveBeenCalledWith('/api/reviews/missed', {
+      method: 'POST',
+      headers: { authorization: 'Bearer tok', 'content-type': 'application/json' },
+      body: '{"expressionIds":[1,2]}',
+    });
+  });
+
+  it('lève GamesError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
+    await expect(sendMissed('tok', [1])).rejects.toBeInstanceOf(GamesError);
   });
 });

@@ -21,3 +21,14 @@ export const trueFalseQuestions = (token: string, count = 10) =>
 /** Des tableaux Associer : quatre expressions à relier à leur sens. */
 export const matchQuestions = (token: string, count = 3) =>
   questions<MatchQuestion>('match', token, count);
+
+/** Les expressions ratées pendant une partie deviennent des cartes de révision. */
+export async function sendMissed(token: string, expressionIds: number[]): Promise<void> {
+  if (expressionIds.length === 0) return;
+  const res = await fetch('/api/reviews/missed', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ expressionIds }),
+  });
+  if (!res.ok) throw new GamesError(res.status);
+}

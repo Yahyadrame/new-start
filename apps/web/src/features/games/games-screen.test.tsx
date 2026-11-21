@@ -6,10 +6,11 @@ const replace = vi.fn();
 const ensureSession = vi.fn();
 const trueFalseQuestions = vi.fn();
 const matchQuestions = vi.fn();
+const sendMissed = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./games-api', () => ({ trueFalseQuestions, matchQuestions }));
+vi.mock('./games-api', () => ({ trueFalseQuestions, matchQuestions, sendMissed }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { GamesScreen } = await import('./games-screen');
 
@@ -30,6 +31,16 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('envoie les expressions ratées à la fin de la partie, sans bloquer si l’envoi échoue', async () => {
+    sendMissed.mockRejectedValue(new Error('x'));
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    fireEvent.click(screen.getByRole('button', { name: t.trueFalse.false }));
+    fireEvent.click(screen.getByRole('button', { name: t.finish }));
+    await waitFor(() => expect(sendMissed).toHaveBeenCalledWith('tok', [1]));
+    expect(screen.getByText(t.end.title)).toBeTruthy();
+  });
+
   it('charge les tableaux Associer en changeant d’onglet', async () => {
     matchQuestions.mockResolvedValue([
       {

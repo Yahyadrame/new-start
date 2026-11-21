@@ -34,14 +34,14 @@ const solveAll = () => {
 
 describe('MatchGame', () => {
   it('bloque les sens tant qu’aucune expression n’est choisie', () => {
-    render(<MatchGame questions={[board]} onReplay={vi.fn()} />);
+    render(<MatchGame questions={[board]} onReplay={vi.fn()} onFinish={vi.fn()} />);
     expect((screen.getByRole('button', { name: 'tu sais' }) as HTMLButtonElement).disabled).toBe(
       true,
     );
   });
 
   it('verrouille une paire juste', () => {
-    render(<MatchGame questions={[board]} onReplay={vi.fn()} />);
+    render(<MatchGame questions={[board]} onReplay={vi.fn()} onFinish={vi.fn()} />);
     click('You know');
     click('tu sais');
     expect((screen.getByRole('button', { name: 'You know' }) as HTMLButtonElement).disabled).toBe(
@@ -50,7 +50,7 @@ describe('MatchGame', () => {
   });
 
   it('signale une paire fausse sans la verrouiller', () => {
-    render(<MatchGame questions={[board]} onReplay={vi.fn()} />);
+    render(<MatchGame questions={[board]} onReplay={vi.fn()} onFinish={vi.fn()} />);
     click('You know');
     click('attends');
     expect(screen.getByText(t.match.wrong)).toBeTruthy();
@@ -61,7 +61,7 @@ describe('MatchGame', () => {
 
   it('finit le tableau, compte les erreurs et propose de rejouer', () => {
     const onReplay = vi.fn();
-    render(<MatchGame questions={[board]} onReplay={onReplay} />);
+    render(<MatchGame questions={[board]} onReplay={onReplay} onFinish={vi.fn()} />);
     click('You know');
     click('attends');
     solveAll();
@@ -73,9 +73,21 @@ describe('MatchGame', () => {
   });
 
   it('passe au tableau suivant', () => {
-    render(<MatchGame questions={[board, board]} onReplay={vi.fn()} />);
+    render(<MatchGame questions={[board, board]} onReplay={vi.fn()} onFinish={vi.fn()} />);
     solveAll();
     click(t.match.next);
     expect(screen.getByText('Question 2 sur 2')).toBeTruthy();
+  });
+
+  it('rend l’expression ratée une seule fois, même après deux erreurs', () => {
+    const onFinish = vi.fn();
+    render(<MatchGame questions={[board]} onReplay={vi.fn()} onFinish={onFinish} />);
+    click('You know');
+    click('attends');
+    click('You know');
+    click('impossible');
+    solveAll();
+    click(t.finish);
+    expect(onFinish).toHaveBeenCalledWith([1]);
   });
 });

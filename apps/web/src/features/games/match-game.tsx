@@ -11,11 +11,18 @@ const t = fr.games;
 export function MatchGame({
   questions,
   onReplay,
-}: Readonly<{ questions: MatchQuestion[]; onReplay: () => void }>) {
+  onFinish,
+}: Readonly<{
+  questions: MatchQuestion[];
+  onReplay: () => void;
+  /** Appelé une fois, au dernier tableau, avec les expressions ratées. */
+  onFinish: (missedIds: number[]) => void;
+}>) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [solved, setSolved] = useState<number[]>([]);
   const [mistakes, setMistakes] = useState(0);
+  const [missed, setMissed] = useState<number[]>([]);
   const [wrongMeaning, setWrongMeaning] = useState<number | null>(null);
 
   const board = questions.at(index);
@@ -36,11 +43,13 @@ export function MatchGame({
       setSolved((s) => [...s, id]);
     } else {
       setMistakes((m) => m + 1);
+      setMissed((m) => (m.includes(selected) ? m : [...m, selected]));
       setWrongMeaning(id);
     }
     setSelected(null);
   };
   const next = () => {
+    if (index + 1 === questions.length) onFinish(missed);
     setSolved([]);
     setWrongMeaning(null);
     setIndex((i) => i + 1);
