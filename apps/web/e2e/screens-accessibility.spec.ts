@@ -124,3 +124,31 @@ for (const [path, heading] of [
     await expectAccessible(page);
   });
 }
+
+test("l'écran Code de l'inscription est accessible", async ({ page }) => {
+  await page.addInitScript(() =>
+    sessionStorage.setItem(
+      'ns_pending_signup',
+      JSON.stringify({
+        firstName: 'Awa',
+        phone: '+221771234567',
+        goal: 'TRAVEL',
+        birthYear: 2000,
+        acceptTerms: true,
+        smsOptIn: false,
+        voiceConsent: false,
+        email: 'awa@example.test',
+      }),
+    ),
+  );
+  await page.goto('/signup/code');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expectAccessible(page);
+});
+
+test('le test de niveau est accessible', async ({ page }) => {
+  await signedIn(page);
+  await page.goto('/onboarding/level');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expectAccessible(page);
+});
