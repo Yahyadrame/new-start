@@ -54,3 +54,14 @@ describe('CORS', () => {
     expect(res.headers['access-control-allow-origin']).toBeUndefined();
   });
 });
+
+describe('en-têtes de sécurité', () => {
+  it('sont posés sur chaque réponse, sans x-powered-by', async () => {
+    const res = await request(app.getHttpServer()).get('/health/live');
+    expect(res.headers['x-content-type-options']).toBe('nosniff');
+    expect(res.headers['x-frame-options']).toBe('DENY');
+    expect(res.headers['content-security-policy']).toContain("default-src 'none'");
+    expect(res.headers['strict-transport-security']).toContain('max-age=31536000');
+    expect(res.headers).not.toHaveProperty('x-powered-by');
+  });
+});

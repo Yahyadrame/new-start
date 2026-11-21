@@ -6,10 +6,12 @@ import { AppModule } from './app.module.js';
 import { originMatchers } from './config/cors.js';
 import { ENV, type Env } from './config/env.js';
 import { useAudioBody } from './shared/http/audio-body.js';
+import { useSecurityHeaders } from './shared/http/security-headers.js';
 
 export async function createApp() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
   useAudioBody(app);
+  useSecurityHeaders(app);
   app.useLogger(app.get(Logger));
   const { CORS_ORIGINS } = app.get<Env>(ENV);
   if (CORS_ORIGINS.length > 0) app.enableCors({ origin: originMatchers(CORS_ORIGINS) });
