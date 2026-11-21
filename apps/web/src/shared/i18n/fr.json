@@ -303,6 +303,8 @@
   },
   "games": {
     "title": "Jeux",
+    "streak": "{n} jours de suite. Une partie aujourd'hui garde la série.",
+    "noStreak": "Pas encore de série : une partie aujourd'hui, et elle démarre.",
     "progress": "Question {n} sur {total}",
     "trueFalse": { "means": "veut dire", "true": "Vrai", "false": "Faux" },
     "right": "Juste.",
