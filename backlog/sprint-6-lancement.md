@@ -54,5 +54,5 @@ Il faut une API d'aperçu, donc l'hébergement de production décidé avec le po
 - [ ] Un tag `vX.Y.Z` crée les notes de version, puis déploie en production après l'accord du porteur du projet (avec NS-607).
 
 ## NS-609 — Workflow de nuit `nightly.yml` · M
-*Ajouté le 2026-11-15, venu du sprint 0.*
+*Ajouté le 2026-11-15, venu du sprint 0. Tranche 1 faite le 2026-11-21 : `nightly.yml` lance l'audit des dépendances de production chaque nuit à 3 h (UTC) ; première passe : `postcss` forcé à 8.5.23 ou plus. Restent : e2e sur staging, évaluations IA, OWASP ZAP.*
 - [ ] Chaque nuit : tests e2e complets sur staging, évaluations IA, audit des dépendances, scan OWASP ZAP.
