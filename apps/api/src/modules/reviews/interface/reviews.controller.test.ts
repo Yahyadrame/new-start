@@ -7,6 +7,7 @@ import { ReviewsService } from '../application/reviews.js';
 import { ReviewsController } from './reviews.controller.js';
 
 const listDue = vi.fn().mockResolvedValue([{ id: 'c1' }]);
+const addMissed = vi.fn().mockResolvedValue({ created: 2 });
 const grade = vi.fn().mockResolvedValue({ due: '2026-11-22T12:00:00.000Z' });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 const auth = { Authorization: 'Bearer tok-u1' };
@@ -16,7 +17,7 @@ beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [ReviewsController],
     providers: [
-      { provide: ReviewsService, useValue: { listDue, grade } },
+      { provide: ReviewsService, useValue: { listDue, grade, addMissed } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -68,5 +69,30 @@ describe('POST /reviews/:id/grade', () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(grade).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /reviews/missed', () => {
+  const post = (body: unknown, headers: Record<string, string> = auth) =>
+    request(app.getHttpServer())
+      .post('/reviews/missed')
+      .set(headers)
+      .send(body as object);
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await post({ expressionIds: [1] }, {})).status).toBe(401);
+  });
+
+  it('crée les cartes des expressions ratées (200)', async () => {
+    const res = await post({ expressionIds: [1, 2] });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ created: 2 });
+    expect(addMissed).toHaveBeenCalledWith('u1', [1, 2]);
+  });
+
+  it('refuse une liste vide ou mal formée (400)', async () => {
+    expect((await post({ expressionIds: [] })).status).toBe(400);
+    expect((await post({ expressionIds: ['a'] })).status).toBe(400);
+    expect(addMissed).not.toHaveBeenCalled();
   });
 });

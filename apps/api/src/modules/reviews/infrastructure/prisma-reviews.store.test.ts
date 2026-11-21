@@ -4,7 +4,10 @@ import { newCard } from '../domain/scheduler.js';
 import { PrismaReviewsStore } from './prisma-reviews.store.js';
 
 function fake() {
-  const db = { reviewCard: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() } };
+  const db = {
+    reviewCard: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn(), createMany: vi.fn() },
+    expression: { findMany: vi.fn() },
+  };
   return { db, store: new PrismaReviewsStore(db as unknown as PrismaService) };
 }
 const now = new Date('2026-11-20T12:00:00Z');
@@ -42,5 +45,15 @@ describe('PrismaReviewsStore', () => {
     const next = newCard(now);
     await store.save('c1', next);
     expect(db.reviewCard.update).toHaveBeenCalledWith({ where: { id: 'c1' }, data: next });
+  });
+
+  it('ne crée de cartes que pour les expressions connues, sans doublon', async () => {
+    const { db, store } = fake();
+    db.expression.findMany.mockResolvedValue([{ id: 3 }]);
+    db.reviewCard.createMany.mockResolvedValue({ count: 1 });
+    expect(await store.createMissing('u1', [3, 999], newCard(now))).toBe(1);
+    const arg = db.reviewCard.createMany.mock.calls[0]?.[0];
+    expect(arg.skipDuplicates).toBe(true);
+    expect(arg.data).toEqual([{ userId: 'u1', expressionId: 3, ...newCard(now) }]);
   });
 });
