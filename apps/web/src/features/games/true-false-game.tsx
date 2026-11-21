@@ -14,6 +14,7 @@ export function TrueFalseGame({
   onReplay,
   onFinish,
   xp,
+  replayLabel = t.end.replay,
 }: Readonly<{
   questions: TrueFalseQuestion[];
   onReplay: () => void;
@@ -21,6 +22,8 @@ export function TrueFalseGame({
   onFinish: (outcome: GameOutcome) => void;
   /** L'XP gagné, une fois connu. */
   xp: number | null;
+  /** Texte du bouton de fin (« Rejouer » par défaut). */
+  replayLabel?: string;
 }>) {
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<boolean | null>(null);
@@ -38,7 +41,7 @@ export function TrueFalseGame({
             .replace('{total}', String(questions.length))}
         </p>
         {xp !== null && <p>{t.end.xp.replace('{n}', String(xp))}</p>}
-        <Button onClick={onReplay}>{t.end.replay}</Button>
+        <Button onClick={onReplay}>{replayLabel}</Button>
       </section>
     );
   }
