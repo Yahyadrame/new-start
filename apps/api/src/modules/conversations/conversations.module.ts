@@ -13,11 +13,18 @@ import {
   ConversationsService,
   type ConversationsStore,
 } from './application/conversations.js';
+import {
+  TRANSLATION_STORE,
+  TranslationService,
+  type TranslationStore,
+} from './application/translation.js';
+import { PrismaTranslationStore } from './infrastructure/prisma-translation.store.js';
+import { MessagesController } from './interface/messages.controller.js';
 import { PrismaConversationsStore } from './infrastructure/prisma-conversations.store.js';
 import { ConversationsController } from './interface/conversations.controller.js';
 
 @Module({
-  controllers: [ConversationsController],
+  controllers: [ConversationsController, MessagesController],
   providers: [
     { provide: CONVERSATIONS_STORE, useClass: PrismaConversationsStore },
     { provide: AGENT_REPLY_STORE, useClass: PrismaAgentReplyStore },
@@ -25,6 +32,13 @@ import { ConversationsController } from './interface/conversations.controller.js
       provide: AgentReplyService,
       inject: [AGENT_REPLY_STORE, AI],
       useFactory: (store: AgentReplyStore, ai: AiProviders) => new AgentReplyService(store, ai.llm),
+    },
+    { provide: TRANSLATION_STORE, useClass: PrismaTranslationStore },
+    {
+      provide: TranslationService,
+      inject: [TRANSLATION_STORE, AI],
+      useFactory: (store: TranslationStore, ai: AiProviders) =>
+        new TranslationService(store, ai.llm),
     },
     {
       provide: ConversationsService,
