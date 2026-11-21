@@ -220,7 +220,23 @@ describe('PrismaConversationsStore', () => {
         where: { id: 'u1' },
         data: { xp: { increment: 10 } },
       });
+      expect(db.user.findUnique).toHaveBeenCalledTimes(1); // série de jours
       expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(3);
+    });
+
+    it('met la série de jours à jour avec l’XP', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.user.findUnique.mockResolvedValue({
+        streakDays: 2,
+        lastActiveDay: null,
+        timezone: 'Africa/Dakar',
+        pausedUntil: null,
+      });
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}, {}]);
+      await store.send('u1', 'c1', message);
+      expect(db.user.update.mock.calls[0]?.[0].data).toMatchObject({ streakDays: 1 });
     });
 
     it('retrouve le message quand un envoi simultané du même clientId a gagné', async () => {

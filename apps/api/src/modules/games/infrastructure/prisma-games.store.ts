@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
+import { streakUpdate } from '../../../shared/progress/streak.js';
 import type { GamesStore } from '../application/games.js';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class PrismaGamesStore implements GamesStore {
   async addXp(userId: string, amount: number) {
     const user = await this.db.user.update({
       where: { id: userId },
-      data: { xp: { increment: amount } },
+      data: { xp: { increment: amount }, ...(await streakUpdate(this.db, userId)) },
       select: { xp: true },
     });
     return user.xp;

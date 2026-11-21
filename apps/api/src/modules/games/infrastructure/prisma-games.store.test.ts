@@ -17,13 +17,37 @@ describe('PrismaGamesStore', () => {
   });
 
   it('ajoute l’XP à la personne et rend son total', async () => {
-    const db = { user: { update: vi.fn().mockResolvedValue({ xp: 40 }) } };
+    const db = {
+      user: {
+        findUnique: vi.fn().mockResolvedValue(null),
+        update: vi.fn().mockResolvedValue({ xp: 40 }),
+      },
+    };
     const store = new PrismaGamesStore(db as unknown as PrismaService);
     expect(await store.addXp('u1', 15)).toBe(40);
     expect(db.user.update).toHaveBeenCalledWith({
       where: { id: 'u1' },
       data: { xp: { increment: 15 } },
       select: { xp: true },
+    });
+  });
+
+  it('met aussi à jour la série de jours', async () => {
+    const db = {
+      user: {
+        findUnique: vi.fn().mockResolvedValue({
+          streakDays: 2,
+          lastActiveDay: null,
+          timezone: 'Africa/Dakar',
+          pausedUntil: null,
+        }),
+        update: vi.fn().mockResolvedValue({ xp: 15 }),
+      },
+    };
+    await new PrismaGamesStore(db as unknown as PrismaService).addXp('u1', 15);
+    expect(db.user.update.mock.calls[0]?.[0].data).toMatchObject({
+      xp: { increment: 15 },
+      streakDays: 1,
     });
   });
 });
