@@ -5,13 +5,14 @@
 - [ ] Mise à jour en production simulée pendant la charge : 0 erreur.
 
 ## NS-602 — Accessibilité · M
-*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Conversation, Série, Notifications, Code de l'inscription et test de niveau ajoutés (écran Profil en attente de NS-610). Résultat du niveau ajouté. Restent : Profil, navigation clavier et lecteurs d'écran (à tester à la main par le porteur du projet).*
-- [ ] axe-core sur tous les écrans, clair et sombre ; navigation clavier ; lecteurs d'écran sur les parcours principaux.
+*Tranche 1 faite le 2026-11-21 : axe-core sur Discussions, Explorer, Progrès et Jeux (API simulée), clair et sombre, mobile et ordinateur. Conversation, Série, Notifications, Code de l'inscription et test de niveau ajoutés (écran Profil en attente de NS-610). Résultat du niveau ajouté. Profil ajouté (NS-610). Restent : navigation clavier et lecteurs d'écran (à tester à la main par le porteur du projet).*
+- [x] axe-core sur tous les écrans, clair et sombre.
+- [ ] Navigation clavier ; lecteurs d'écran sur les parcours principaux.
 
 ## NS-610 — Contraste de la couleur danger · S
 - [ ] `--color-danger` (`#E5484D`, `docs/04-design-system.md`) n'atteint que 3,91:1 : texte d'erreur sur fond blanc (« Ton carnet ne se charge pas. ») et texte blanc du bouton de suppression sur l'écran Profil. La règle est 4,5:1. Trouvé par axe-core le 2026-11-21 ; l'écran Profil n'est pas encore dans `screens-accessibility.spec.ts` à cause de cela.
-- [ ] **À décider par le porteur du projet** : assombrir le jeton (par exemple vers `#C8363B`, à vérifier dans les deux thèmes, change les maquettes), ou garder `#E5484D` pour les grands textes et les icônes seulement et utiliser une teinte plus sombre pour le texte et les boutons.
-- [ ] Ensuite : ajouter Profil au test d'accessibilité.
+- [x] Décidé par le porteur du projet le 2026-11-21 : assombrir le jeton. `--color-danger` vaut `#C8363B` en clair et reste `#E5484D` en sombre (5,37:1 sur le noir) ; le nouveau `--color-danger-solid` (`#C8363B`) sert de fond aux boutons rouges, texte blanc dessus (5,19:1). Un test de contraste garde les valeurs.
+- [x] Profil ajouté au test d'accessibilité.
 
 ## NS-603 — Sécurité · M
 *Tranche 1 faite le 2026-11-21 : en-têtes de sécurité du site web (nosniff, cadres interdits, referrer, HSTS, micro permis pour le site seulement). Tranche 2 : mêmes en-têtes sur l'API, avec une CSP « rien n'est chargé », sans nouvelle dépendance. Tranche 3 : limite de débit générale par IP (`RATE_LIMIT_PER_MINUTE`, éteinte par défaut ; à activer sur staging après avoir réglé `TRUST_PROXY_HOPS`, 1 derrière Render, à vérifier). Restent : Content-Security-Policy du site (demande un nonce pour les scripts de Next.js), compteurs partagés via Redis quand l'API aura plusieurs instances, OWASP ZAP sur staging.*

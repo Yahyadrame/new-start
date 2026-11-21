@@ -93,6 +93,36 @@ async function signedIn(page: Page) {
       ]),
     ),
   );
+  await page.route('**/api/me', (r) =>
+    r.fulfill(
+      json({
+        id: 'u1',
+        firstName: 'Awa',
+        goal: 'TRAVEL',
+        level: 'A2',
+        theme: 'SYSTEM',
+        reminderTime: null,
+        timezone: 'Africa/Dakar',
+        dailyGoalMin: 15,
+        preferredAccent: 'en-US',
+        dataSaver: false,
+        pausedUntil: null,
+      }),
+    ),
+  );
+  await page.route('**/api/notebook', (r) =>
+    r.fulfill(
+      json([
+        {
+          id: 'e1',
+          original: 'I go to Dakar yesterday.',
+          better: 'I went to Dakar yesterday.',
+          whyFr: 'Passé : went.',
+          createdAt: '2026-11-20T09:00:00Z',
+        },
+      ]),
+    ),
+  );
   await page.route('**/api/progress', (r) =>
     r.fulfill(
       json({
@@ -116,6 +146,7 @@ for (const [path, heading] of [
   ['/chats/jade', 'Conversation'],
   ['/series', 'Série'],
   ['/notifications', 'Notifications'],
+  ['/profile', 'Profil'],
 ] as const) {
   test(`l'écran ${heading} est accessible`, async ({ page }) => {
     await signedIn(page);
