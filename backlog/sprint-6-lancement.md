@@ -14,7 +14,7 @@
 - [ ] Ensuite : ajouter Profil au test d'accessibilité.
 
 ## NS-603 — Sécurité · M
-*Tranche 1 faite le 2026-11-21 : en-têtes de sécurité du site web (nosniff, cadres interdits, referrer, HSTS, micro permis pour le site seulement). Tranche 2 : mêmes en-têtes sur l'API, avec une CSP « rien n'est chargé », sans nouvelle dépendance. Restent : Content-Security-Policy du site (demande un nonce pour les scripts de Next.js), limite de débit générale de l'API (seule la demande de code est limitée aujourd'hui, à 3 par 10 minutes), OWASP ZAP sur staging.*
+*Tranche 1 faite le 2026-11-21 : en-têtes de sécurité du site web (nosniff, cadres interdits, referrer, HSTS, micro permis pour le site seulement). Tranche 2 : mêmes en-têtes sur l'API, avec une CSP « rien n'est chargé », sans nouvelle dépendance. Tranche 3 : limite de débit générale par IP (`RATE_LIMIT_PER_MINUTE`, éteinte par défaut ; à activer sur staging après avoir réglé `TRUST_PROXY_HOPS`, 1 derrière Render, à vérifier). Restent : Content-Security-Policy du site (demande un nonce pour les scripts de Next.js), compteurs partagés via Redis quand l'API aura plusieurs instances, OWASP ZAP sur staging.*
 - [ ] OWASP ZAP sur staging, correction des alertes hautes ; revue des en-têtes, CORS, limites de débit.
 - [ ] Revue des points sensibles SonarQube.
 
