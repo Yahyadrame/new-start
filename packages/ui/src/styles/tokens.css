@@ -9,7 +9,8 @@
   --color-accent: #ccff00;
   --color-on-accent: #000000;
   --color-accent-text: #000000;
-  --color-danger: #e5484d;
+  --color-danger: #c8363b;
+  --color-danger-solid: #c8363b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -21,6 +22,7 @@
     --color-text: #f2f2f2;
     --color-text-muted: #999999;
     --color-accent-text: #ccff00;
+    --color-danger: #e5484d;
   }
 }
 
@@ -32,6 +34,7 @@
   --color-text: #f2f2f2;
   --color-text-muted: #999999;
   --color-accent-text: #ccff00;
+  --color-danger: #e5484d;
 }
 
 @theme inline {
@@ -45,6 +48,7 @@
   --color-on-accent: var(--color-on-accent);
   --color-accent-text: var(--color-accent-text);
   --color-danger: var(--color-danger);
+  --color-danger-solid: var(--color-danger-solid);
   --font-display: var(--font-space-grotesk), sans-serif;
   --font-sans: var(--font-inter), sans-serif;
 }
