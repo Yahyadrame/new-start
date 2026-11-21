@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
@@ -42,6 +42,18 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('liste les jeux à venir avec leur badge « Bientôt »', async () => {
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    expect(screen.getByRole('heading', { level: 2, name: t.upcoming.title })).toBeTruthy();
+    for (const game of t.upcoming.items) expect(screen.getByText(game.name)).toBeTruthy();
+    const cards = within(screen.getByRole('region', { name: t.upcoming.title })).getAllByRole(
+      'listitem',
+    );
+    expect(cards).toHaveLength(t.upcoming.items.length);
+    for (const card of cards) expect(within(card).getByText(t.upcoming.badge)).toBeTruthy();
+  });
+
   it('montre la série de jours', async () => {
     fetchStreak.mockResolvedValue(4);
     render(<GamesScreen />);
