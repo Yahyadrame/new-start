@@ -23,6 +23,10 @@ export class PrismaNotificationsStore implements NotificationsStore {
     }));
   }
 
+  unreadCount(userId: string): Promise<number> {
+    return this.prisma.notificationLog.count({ where: { userId, readAt: null } });
+  }
+
   async markAllRead(userId: string, now: Date): Promise<void> {
     await this.prisma.notificationLog.updateMany({
       where: { userId, readAt: null },
