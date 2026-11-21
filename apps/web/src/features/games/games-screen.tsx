@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
-import { matchQuestions, trueFalseQuestions } from './games-api';
+import { matchQuestions, sendMissed, trueFalseQuestions } from './games-api';
 import { MatchGame } from './match-game';
 import { TrueFalseGame } from './true-false-game';
 
@@ -37,6 +37,11 @@ export function GamesScreen() {
   }, [router, round, mode]);
 
   const replay = useCallback(() => setRound((r) => r + 1), []);
+  // Les cartes de révision sont un bonus : si l'envoi échoue, la partie n'en souffre pas.
+  const finish = useCallback(async (missedIds: number[]) => {
+    const session = await ensureSession();
+    if (session) await sendMissed(session.accessToken, missedIds).catch(() => undefined);
+  }, []);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-28">
@@ -64,10 +69,16 @@ export function GamesScreen() {
               key={round}
               questions={questions as TrueFalseQuestion[]}
               onReplay={replay}
+              onFinish={finish}
             />
           )}
           {questions && questions.length > 0 && mode === 'match' && (
-            <MatchGame key={round} questions={questions as MatchQuestion[]} onReplay={replay} />
+            <MatchGame
+              key={round}
+              questions={questions as MatchQuestion[]}
+              onReplay={replay}
+              onFinish={finish}
+            />
           )}
         </TabsContent>
       </Tabs>

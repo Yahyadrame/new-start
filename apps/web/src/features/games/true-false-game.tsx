@@ -11,10 +11,17 @@ const t = fr.games;
 export function TrueFalseGame({
   questions,
   onReplay,
-}: Readonly<{ questions: TrueFalseQuestion[]; onReplay: () => void }>) {
+  onFinish,
+}: Readonly<{
+  questions: TrueFalseQuestion[];
+  onReplay: () => void;
+  /** Appelé une fois, à la dernière question, avec les expressions ratées. */
+  onFinish: (missedIds: number[]) => void;
+}>) {
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<boolean | null>(null);
   const [score, setScore] = useState(0);
+  const [missed, setMissed] = useState<number[]>([]);
 
   const question = questions.at(index);
   if (!question) {
@@ -37,8 +44,10 @@ export function TrueFalseGame({
     if (answered) return;
     setPicked(value);
     if (value === question.answer) setScore((s) => s + 1);
+    else setMissed((m) => [...m, question.expressionId]);
   };
   const next = () => {
+    if (index + 1 === questions.length) onFinish(missed);
     setPicked(null);
     setIndex((i) => i + 1);
   };
