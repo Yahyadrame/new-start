@@ -18,6 +18,17 @@ describe('parseEnv', () => {
     expect(parseEnv({ ...base, MESSAGES_PER_DAY: '25' }).MESSAGES_PER_DAY).toBe(25);
     expect(() => parseEnv({ ...base, MESSAGES_PER_DAY: '0' })).toThrow();
   });
+  it('éteint la limite de débit par défaut et ne prend aucun proxy', () => {
+    expect(parseEnv(base).RATE_LIMIT_PER_MINUTE).toBe(0);
+    expect(parseEnv(base).TRUST_PROXY_HOPS).toBe(0);
+    expect(
+      parseEnv({ ...base, RATE_LIMIT_PER_MINUTE: '300', TRUST_PROXY_HOPS: '1' }),
+    ).toMatchObject({
+      RATE_LIMIT_PER_MINUTE: 300,
+      TRUST_PROXY_HOPS: 1,
+    });
+    expect(() => parseEnv({ ...base, RATE_LIMIT_PER_MINUTE: '-1' })).toThrow();
+  });
   it('convertit PORT en nombre', () => {
     expect(parseEnv({ ...base, PORT: '4000' }).PORT).toBe(4000);
   });
