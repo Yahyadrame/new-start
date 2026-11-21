@@ -43,7 +43,8 @@
 | GET | `/reviews/due` · POST `/reviews/:cardId/grade` | Révisions FSRS (`again`, `hard`, `good`, `easy`) |
 | POST | `/reviews/missed` | Crée une carte pour chaque expression ratée dans un jeu (`{ expressionIds }`, doublons ignorés) |
 | GET | `/progress/summary` · GET `/progress/week` | Tableau de bord |
-| GET | `/notifications` · POST `/notifications/read-all` | Notifications |
+| GET | `/notifications` | Jeton d'accès exigé. Les 30 notifications les plus récentes, la plus récente d'abord : `{ id, kind, title, body, createdAt, read }` |
+| POST | `/notifications/read-all` | Notifications (à venir) |
 | POST | `/push/subscriptions` | Abonnement Web Push |
 | GET | `/plans?country=SN` | Offres et prix dans la devise du pays |
 | POST | `/billing/checkout` | Démarre un paiement `{ plan, provider }` ; renvoie l'URL ou les instructions |
