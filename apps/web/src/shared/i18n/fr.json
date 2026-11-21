@@ -303,6 +303,17 @@
   },
   "games": {
     "title": "Jeux",
+    "daily": {
+      "title": "Défi du jour",
+      "intro": "Dix questions, les mêmes pour tout le monde aujourd'hui. Le bonus de 20 XP se gagne une fois par jour.",
+      "play": "Jouer le défi",
+      "done": "Défi terminé aujourd'hui",
+      "doneHint": "Tu peux le rejouer, sans nouveau bonus. Le prochain arrive demain.",
+      "replay": "Rejouer le défi",
+      "bonus": "Bonus du jour : +{n} XP",
+      "close": "Retour aux jeux",
+      "error": "Le défi n'a pas pu se charger. Réessaie dans un instant."
+    },
     "streak": "{n} jours de suite. Une partie aujourd'hui garde la série.",
     "noStreak": "Pas encore de série : une partie aujourd'hui, et elle démarre.",
     "progress": "Question {n} sur {total}",

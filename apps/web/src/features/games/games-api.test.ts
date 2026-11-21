@@ -5,7 +5,9 @@ import {
   sendMissed,
   sendResult,
   trueFalseQuestions,
+  fetchDaily,
   fetchStreak,
+  sendDailyResult,
 } from './games-api';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -105,5 +107,40 @@ describe('fetchStreak', () => {
   it('lève GamesError quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
     await expect(fetchStreak('tok')).rejects.toBeInstanceOf(GamesError);
+  });
+});
+
+describe('fetchDaily', () => {
+  it('lit le défi du jour avec le jeton', async () => {
+    const body = { done: false, questions: [] };
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => body });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await fetchDaily('tok')).toEqual(body);
+    expect(fetchMock).toHaveBeenCalledWith('/api/games/daily', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève GamesError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
+    await expect(fetchDaily('tok')).rejects.toBeInstanceOf(GamesError);
+  });
+});
+
+describe('sendDailyResult', () => {
+  it('envoie le score et rend l’XP et le bonus', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({ gained: 55, bonus: 20, xp: 90 }) });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await sendDailyResult('tok', 7)).toEqual({ gained: 55, bonus: 20, xp: 90 });
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe('/api/games/daily/results');
+    expect(init.body).toBe(JSON.stringify({ correct: 7 }));
+  });
+
+  it('lève GamesError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 400 }));
+    await expect(sendDailyResult('tok', 99)).rejects.toBeInstanceOf(GamesError);
   });
 });

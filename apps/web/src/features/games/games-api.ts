@@ -56,3 +56,29 @@ export async function fetchStreak(token: string): Promise<number> {
   if (!res.ok) throw new GamesError(res.status);
   return ((await res.json()) as { streakDays: number }).streakDays;
 }
+
+export interface DailyChallenge {
+  done: boolean;
+  questions: TrueFalseQuestion[];
+}
+
+/** Le défi du jour : mêmes questions pour tous, et si la personne l'a déjà terminé. */
+export async function fetchDaily(token: string): Promise<DailyChallenge> {
+  const res = await fetch('/api/games/daily', { headers: { authorization: `Bearer ${token}` } });
+  if (!res.ok) throw new GamesError(res.status);
+  return (await res.json()) as DailyChallenge;
+}
+
+/** Fin du défi : l'XP gagné et la part du bonus du jour (0 si déjà pris). */
+export async function sendDailyResult(
+  token: string,
+  correct: number,
+): Promise<{ gained: number; bonus: number }> {
+  const res = await fetch('/api/games/daily/results', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ correct }),
+  });
+  if (!res.ok) throw new GamesError(res.status);
+  return (await res.json()) as { gained: number; bonus: number };
+}

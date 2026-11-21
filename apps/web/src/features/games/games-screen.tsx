@@ -15,6 +15,7 @@ import {
   sendResult,
   trueFalseQuestions,
 } from './games-api';
+import { DailyChallenge } from './daily-challenge';
 import { MatchGame } from './match-game';
 import { TimeAttackGame } from './time-attack-game';
 import { TrueFalseGame } from './true-false-game';
@@ -79,6 +80,7 @@ export function GamesScreen() {
           {streak > 0 ? t.streak.replace('{n}', String(streak)) : t.noStreak}
         </p>
       )}
+      <DailyChallenge />
       <Tabs
         value={mode}
         onValueChange={(v) => {

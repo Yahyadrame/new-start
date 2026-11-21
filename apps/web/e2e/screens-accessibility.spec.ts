@@ -124,6 +124,23 @@ async function signedIn(page: Page) {
       ]),
     ),
   );
+  await page.route('**/api/games/daily', (r) =>
+    r.fulfill(
+      json({
+        day: '2026-11-21',
+        done: false,
+        questions: [
+          {
+            kind: 'TRUE_FALSE',
+            expressionId: 1,
+            text: 'You know',
+            meaningFr: 'tu sais',
+            answer: true,
+          },
+        ],
+      }),
+    ),
+  );
   await page.route('**/api/progress', (r) =>
     r.fulfill(
       json({
