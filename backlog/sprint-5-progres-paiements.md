@@ -10,7 +10,7 @@
 - [ ] Niveau et XP, 4 chiffres clés, barres des minutes par jour ; bloc « Entre amis » masqué au MVP.
 
 ## NS-503 — Notifications (15) · M
-*Tranche 1 faite le 2026-11-21 : règle `reminderDue` (un rappel par jour, à l'heure choisie ou après, pas si la personne a pratiqué, pas en pause), fonction pure. Tranche 2 : table `NotificationLog` (clé unique personne + type + jour, qui garantit un rappel par jour) et cas d'usage `SendReminders`, sans planificateur ni envoi. Restent : tâche planifiée (aucun planificateur n'existe encore dans l'API), envoi Web Push (demande des clés VAPID : à poser par le porteur du projet), `GET /notifications`, écran Notifications.*
+*Tranche 1 faite le 2026-11-21 : règle `reminderDue` (un rappel par jour, à l'heure choisie ou après, pas si la personne a pratiqué, pas en pause), fonction pure. Tranche 2 : table `NotificationLog` (clé unique personne + type + jour, qui garantit un rappel par jour) et cas d'usage `SendReminders`, sans planificateur ni envoi. Restent : tâche planifiée (aucun planificateur n'existe encore dans l'API), envoi Web Push (demande des clés VAPID : à poser par le porteur du projet), écran Notifications. Tranche 3 : `GET /notifications` (liste, plus récentes d'abord), sans `read-all` pour l'instant.*
 - [ ] Web Push ; un rappel par jour maximum à l'heure choisie, seulement si l'utilisateur n'a pas pratiqué ; `NotificationLog` pour garantir la limite.
 - [ ] Écran Notifications.
 
