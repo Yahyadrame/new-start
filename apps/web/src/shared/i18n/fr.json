@@ -338,5 +338,9 @@
     "bell": "Notifications",
     "bellUnreadOne": "Notifications, 1 non lue",
     "bellUnreadMany": "Notifications, {count} non lues"
+  },
+  "offline": {
+    "title": "Pas de connexion.",
+    "hint": "Certaines pages ne se chargeront pas."
   }
 }

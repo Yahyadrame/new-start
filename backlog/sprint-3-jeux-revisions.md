@@ -23,7 +23,7 @@
 ## NS-305 — Hors connexion (17) · L
 - [ ] PWA (Serwist) : interface, jeux de base et 200 prochaines cartes en cache.
 - [ ] File d'attente IndexedDB des réponses, synchronisée au retour du réseau.
-- [ ] Écran et bandeau « Pas de connexion ».
+- [ ] Écran et bandeau « Pas de connexion ». *Bandeau fait (2026-11-21, `shared/network`, sur toutes les pages) ; reste l'écran dédié, qui dépend du service worker.*
 
 ## NS-306 — Argot récent · M
 - [ ] Ajouter 60 expressions récentes (réseaux, séries et animés récents) relues à la main, au même format que `data/expressions.csv`.
