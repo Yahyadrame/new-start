@@ -195,7 +195,7 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] `manifest` avec nom, couleurs et icônes 192 et 512 px, dont une icône « maskable ».
 - [x] `theme-color` clair et sombre.
 - [x] Test unitaire du manifeste et de l'icône.
-- [ ] Vérifié sur un iPhone après fusion : retirer l'ancien raccourci de l'écran d'accueil, ouvrir le lien dans Safari, « Ajouter à l'écran d'accueil ».
+- [ ] Vérifié après fusion sur un iPhone (Safari) et sur un Android (Chrome) : retirer l'ancien raccourci de l'écran d'accueil, rouvrir le lien, puis « Ajouter à l'écran d'accueil » ou « Installer l'application ».
 
 ## NS-033 — Refonte de l'interface, maquettes façon WhatsApp · L
 *Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b).*
