@@ -1,6 +1,6 @@
 import type { ConversationItem } from '@newstart/shared';
 import { describe, expect, it } from 'vitest';
-import { applyFilter, formatWhen } from './chats-format';
+import { applyFilter, formatWhen, matchesQuery } from './chats-format';
 
 const item = (id: string, category: string, unreadCount: number) =>
   ({ id, unreadCount, agent: { category } }) as ConversationItem;
@@ -22,5 +22,23 @@ describe('formatWhen', () => {
   });
   it('affiche le jour et le mois pour une autre date', () => {
     expect(formatWhen(new Date(2026, 10, 17, 9, 5).toISOString(), now)).toMatch(/17\s+nov/);
+  });
+});
+
+describe('matchesQuery', () => {
+  const chats = [
+    { id: 'a', agent: { name: 'Élodie' }, lastMessage: { text: 'See you' } },
+    { id: 'b', agent: { name: 'Sam' }, lastMessage: null },
+  ] as ConversationItem[];
+
+  it('garde tout quand la recherche est vide', () => {
+    expect(matchesQuery(chats, '   ')).toHaveLength(2);
+  });
+
+  it('cherche dans le prénom et le dernier message, sans accents ni casse', () => {
+    expect(matchesQuery(chats, 'elodie').map((i) => i.id)).toEqual(['a']);
+    expect(matchesQuery(chats, 'YOU').map((i) => i.id)).toEqual(['a']);
+    expect(matchesQuery(chats, 'sam').map((i) => i.id)).toEqual(['b']);
+    expect(matchesQuery(chats, 'zzz')).toEqual([]);
   });
 });

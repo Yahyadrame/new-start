@@ -9,6 +9,18 @@ export function applyFilter(items: ConversationItem[], filter: Filter): Conversa
   return items.filter((i) => i.agent.category === filter);
 }
 
+/** Garde les discussions dont le prénom ou le dernier message contient la recherche (sans tenir compte des accents ni de la casse). */
+export function matchesQuery(items: ConversationItem[], query: string): ConversationItem[] {
+  const fold = (v: string) =>
+    v
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  const q = fold(query.trim());
+  if (!q) return items;
+  return items.filter((i) => fold(`${i.agent.name} ${i.lastMessage?.text ?? ''}`).includes(q));
+}
+
 /** L'heure pour aujourd'hui, sinon le jour et le mois ("17 nov."). */
 export function formatWhen(iso: string, now = new Date()): string {
   const date = new Date(iso);

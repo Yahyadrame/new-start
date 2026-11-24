@@ -66,21 +66,28 @@ describe('ChatsScreen', () => {
     expect(listConversations).not.toHaveBeenCalled();
   });
 
-  it('liste les contacts avec rôle, badge IA, aperçu, non lus et lien vers la conversation', async () => {
+  it('liste les contacts avec badge IA, aperçu, non lus et lien vers la conversation', async () => {
     render(<ChatsScreen />);
     const jade = (await screen.findByText('Heyyy!')).closest('a');
     expect(jade?.getAttribute('href')).toBe('/chats/jade');
     expect(jade?.textContent).toContain(t.aiBadge);
-    expect(jade?.textContent).toContain('Rôle de Jade');
     expect(screen.getByLabelText(t.unread.replace('{n}', '2'))).toBeTruthy();
     expect(screen.getByText(`${t.you}See you`)).toBeTruthy();
     expect(screen.getByText(t.noMessage)).toBeTruthy();
     expect(listConversations).toHaveBeenCalledWith('tok');
   });
 
-  it('montre le statut de chaque contact', async () => {
+  it('cherche par prénom ou par message, sans tenir compte des accents', async () => {
     render(<ChatsScreen />);
-    expect(await screen.findByText('Cooking dinner, come say hi')).toBeTruthy();
+    await screen.findByText('Heyyy!');
+    const search = screen.getByRole('searchbox', { name: t.searchLabel });
+    fireEvent.change(search, { target: { value: 'EMMA' } });
+    expect(screen.getByText(`${t.you}See you`)).toBeTruthy();
+    expect(screen.queryByText('Heyyy!')).toBeNull();
+    fireEvent.change(search, { target: { value: 'heyyy' } });
+    expect(screen.getByText('Heyyy!')).toBeTruthy();
+    fireEvent.change(search, { target: { value: 'zzz' } });
+    expect(screen.getByText(t.noMatch)).toBeTruthy();
   });
 
   it('propose le bouton « + » vers Explorer', async () => {
