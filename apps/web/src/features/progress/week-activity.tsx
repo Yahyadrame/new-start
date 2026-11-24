@@ -19,19 +19,27 @@ export function WeekActivity({ summary }: Readonly<{ summary: ProgressSummary }>
 
   return (
     <section className="flex flex-col gap-3" aria-labelledby="week-title">
-      <h2 id="week-title" className="font-display text-xl font-bold">
+      <h2
+        id="week-title"
+        className="mt-2 text-xs font-semibold tracking-[0.08em] text-text-muted uppercase"
+      >
         {t.figuresTitle}
       </h2>
       <dl className="grid grid-cols-2 gap-3">
         {cells.map(([label, value]) => (
-          <div key={label} className="flex flex-col-reverse gap-1 rounded-2xl bg-surface-1 p-4">
+          <div
+            key={label}
+            className="flex flex-col-reverse gap-1 rounded-3xl border border-line bg-surface-1 p-4"
+          >
             <dt className="text-sm text-text-muted">{label}</dt>
-            <dd className="font-display text-3xl font-bold">{value}</dd>
+            <dd className="font-display text-2xl font-bold">{value}</dd>
           </div>
         ))}
       </dl>
-      <div className="flex flex-col gap-3 rounded-2xl bg-surface-1 p-5">
-        <h3 className="text-sm text-text-muted">{t.week.title}</h3>
+      <div className="flex flex-col gap-3 rounded-3xl border border-line bg-surface-1 p-4">
+        <h3 className="text-xs font-semibold tracking-[0.08em] text-text-muted uppercase">
+          {t.week.title}
+        </h3>
         {longest === 0 ? (
           <p>{t.week.empty}</p>
         ) : (
@@ -43,7 +51,7 @@ export function WeekActivity({ summary }: Readonly<{ summary: ProgressSummary }>
                 className="flex h-full flex-1 flex-col items-center justify-end gap-1"
               >
                 <div
-                  className="w-full rounded-t bg-accent"
+                  className="w-full rounded-lg bg-accent"
                   style={{ height: `${(d.minutes / longest) * 100}%` }}
                 />
                 <span aria-hidden="true" className="text-xs text-text-muted">
