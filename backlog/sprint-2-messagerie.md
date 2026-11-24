@@ -78,5 +78,6 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 - [ ] Plusieurs fonds (motifs et couleurs) qui respectent les thèmes clair et sombre et gardent les contrastes 4,5:1 sur les bulles.
 *Décidé le 2026-11-24 : le choix est gardé sur le compte (option B).*
 - [ ] Migration additive : un champ `chatBackground` sur `User`, avec une valeur par défaut. Route `PATCH` du profil mise à jour et documentée dans `docs/08-api.md`.
-- [ ] Le choix se fait dans le Profil et s'applique à toutes les conversations.
+- [ ] Le choix se fait depuis le menu « ⋮ » de l'en-tête de la conversation (maquette), et aussi au Profil ; il s'applique à toutes les conversations.
+- [ ] Le « ⋮ » est un vrai bouton (cible ≥ 44 px, menu au clavier) : il ouvre au minimum « Fond de la conversation ».
 - [ ] Le motif est décoratif, sans aucun texte dans l'image ; tests unitaires.
