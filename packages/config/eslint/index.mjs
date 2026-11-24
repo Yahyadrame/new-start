@@ -92,5 +92,10 @@ export default tseslint.config(
     files: ['**/*.cjs'],
     languageOptions: { sourceType: 'commonjs', globals: { module: 'writable' } },
   },
+  {
+    // Service worker (NS-611) : `self` est la portée globale du worker.
+    files: ['apps/web/public/sw.js'],
+    languageOptions: { globals: { self: 'readonly' } },
+  },
   architecture,
 );
