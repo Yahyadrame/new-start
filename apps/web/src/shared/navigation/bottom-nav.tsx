@@ -17,7 +17,10 @@ const TABS = [
   { href: '/profile', label: t.profile, Icon: UserRound },
 ] as const;
 
-/** Barre d'onglets du bas (écrans 3, 6, 7, 9) : l'onglet actif a une pilule verte derrière l'icône. */
+/**
+ * Navigation principale : barre d'onglets en bas sur mobile, rail à gauche dès 1024 px (NS-034).
+ * L'onglet actif a une pilule verte derrière l'icône ; Profil se place en bas du rail.
+ */
 export function BottomNav() {
   const pathname = usePathname();
   return (
@@ -25,13 +28,20 @@ export function BottomNav() {
       <NotificationsBell />
       <nav
         aria-label={t.label}
-        className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)]"
+        data-shell-nav=""
+        className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:inset-y-0 lg:right-auto lg:w-[72px] lg:border-t-0 lg:border-r lg:pb-0"
       >
-        <ul className="mx-auto flex max-w-md justify-around px-2 pt-2 pb-2">
-          {TABS.map(({ href, label, Icon }) => {
+        <ul className="mx-auto flex max-w-md justify-around px-2 pt-2 pb-2 lg:h-full lg:max-w-none lg:flex-col lg:justify-start lg:gap-3 lg:px-0 lg:py-4">
+          {TABS.map(({ href, label, Icon }, index) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             return (
-              <li key={href}>
+              <li
+                key={href}
+                className={cn(
+                  'lg:flex lg:justify-center',
+                  index === TABS.length - 1 && 'lg:mt-auto',
+                )}
+              >
                 <Link
                   href={href}
                   aria-current={active ? 'page' : undefined}

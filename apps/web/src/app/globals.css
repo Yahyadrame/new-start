@@ -34,3 +34,10 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Dès 1024 px, la navigation devient un rail fixe de 72 px à gauche : le contenu lui laisse la place (NS-034). */
+@media (min-width: 1024px) {
+  body:has([data-shell-nav]) {
+    padding-left: 72px;
+  }
+}
