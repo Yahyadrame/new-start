@@ -1,6 +1,15 @@
 import type { ConversationItem } from '@newstart/shared';
 import { describe, expect, it } from 'vitest';
-import { applyFilter, dayLabel, formatHour, formatWhen, matchesQuery } from './chats-format';
+import {
+  applyFilter,
+  dayLabel,
+  FILTERS,
+  formatHour,
+  formatWhen,
+  MAIN_FILTERS,
+  matchesQuery,
+  MORE_FILTERS,
+} from './chats-format';
 
 const item = (id: string, category: string, unreadCount: number) =>
   ({ id, unreadCount, agent: { category } }) as ConversationItem;
@@ -12,6 +21,14 @@ describe('applyFilter', () => {
     expect(applyFilter(items, 'unread').map((i) => i.id)).toEqual(['a']);
     expect(applyFilter(items, 'Quotidien').map((i) => i.id)).toEqual(['a', 'c']);
     expect(applyFilter(items, 'Voyage')).toEqual([]);
+  });
+});
+
+describe('FILTERS', () => {
+  it('montre trois filtres et range les autres catégories dans le menu', () => {
+    expect(MAIN_FILTERS).toEqual(['all', 'unread', 'Quotidien']);
+    expect(MORE_FILTERS).toEqual(['Pro', 'Business', 'Voyage']);
+    expect(FILTERS).toHaveLength(6);
   });
 });
 

@@ -64,5 +64,7 @@ describe('BottomNav', () => {
     const logo = document.querySelector('img[src="/logo-icon.svg"]');
     expect(logo?.parentElement?.className).toContain('hidden');
     expect(logo?.parentElement?.getAttribute('aria-hidden')).toBe('true');
+    expect(logo?.parentElement?.className).toContain('lg:h-16');
+    expect(logo?.getAttribute('width')).toBe('44');
   });
 });

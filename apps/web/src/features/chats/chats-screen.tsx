@@ -1,8 +1,19 @@
 'use client';
 
 import type { ConversationItem } from '@newstart/shared';
-import { Avatar, AvatarFallback, Badge, Button, cn, Input, Skeleton } from '@newstart/ui';
-import { Plus, Search } from 'lucide-react';
+import {
+  Avatar,
+  AvatarFallback,
+  Badge,
+  Button,
+  cn,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Skeleton,
+} from '@newstart/ui';
+import { ChevronDown, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -10,7 +21,14 @@ import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import { listConversations } from './chats-api';
-import { applyFilter, FILTERS, formatWhen, matchesQuery, type Filter } from './chats-format';
+import {
+  applyFilter,
+  formatWhen,
+  MAIN_FILTERS,
+  matchesQuery,
+  MORE_FILTERS,
+  type Filter,
+} from './chats-format';
 
 const t = fr.chats;
 
@@ -21,6 +39,7 @@ export function ChatsScreen() {
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     void (async () => {
@@ -34,12 +53,13 @@ export function ChatsScreen() {
     })();
   }, [router]);
 
+  const isMore = (MORE_FILTERS as readonly string[]).includes(filter);
   const filtered = items ? applyFilter(items, filter) : [];
   const shown = matchesQuery(filtered, query);
 
   return (
-    <main className="flex min-h-dvh w-full flex-col gap-3 pt-12 pb-28 lg:pb-6">
-      <header className="flex items-center justify-between px-4">
+    <main className="flex min-h-dvh w-full flex-col gap-3 pt-12 pb-28 lg:pt-0 lg:pb-6">
+      <header className="flex items-center justify-between px-4 lg:h-16">
         <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
           {t.title}
         </h1>
@@ -79,19 +99,47 @@ export function ChatsScreen() {
           <div
             role="group"
             aria-label={t.filtersLabel}
-            className="flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-1.5 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {FILTERS.map((f) => (
+            {MAIN_FILTERS.map((f) => (
               <Button
                 key={f}
                 variant={filter === f ? 'primary' : 'outline'}
                 aria-pressed={filter === f}
                 onClick={() => setFilter(f)}
-                className="shrink-0"
+                className="shrink-0 px-3"
               >
                 {f === 'all' ? t.filters.all : f === 'unread' ? t.filters.unread : f}
               </Button>
             ))}
+            <Popover open={moreOpen} onOpenChange={setMoreOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={isMore ? 'primary' : 'outline'}
+                  aria-label={isMore ? undefined : t.filters.moreLabel}
+                  className="shrink-0 px-3"
+                >
+                  {isMore ? filter : t.filters.more}
+                  <ChevronDown aria-hidden="true" className="size-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-44">
+                {MORE_FILTERS.map((f) => (
+                  <Button
+                    key={f}
+                    variant="ghost"
+                    aria-pressed={filter === f}
+                    onClick={() => {
+                      setFilter(f);
+                      setMoreOpen(false);
+                    }}
+                    className={cn('w-full justify-start', filter === f && 'font-bold')}
+                  >
+                    {f}
+                  </Button>
+                ))}
+              </PopoverContent>
+            </Popover>
           </div>
         </>
       )}

@@ -147,7 +147,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
 
   return (
     <main className="flex min-h-dvh w-full flex-col bg-surface-1">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-bg px-4 py-3">
+      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-bg px-4 py-3 lg:h-16 lg:py-0">
         <Button asChild variant="outline" size="icon" className="lg:hidden">
           <Link href="/chats" aria-label={c.back}>
             <ArrowLeft aria-hidden="true" />
