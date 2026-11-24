@@ -19,3 +19,11 @@ test('de Bienvenue à Inscription', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: fr.signup.title })).toBeVisible();
   await expectAccessible(page);
 });
+
+test('de Bienvenue à Connexion', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: fr.welcome.login }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole('heading', { level: 1, name: fr.login.title })).toBeVisible();
+  await expectAccessible(page);
+});

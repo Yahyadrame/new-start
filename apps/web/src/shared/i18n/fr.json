@@ -101,6 +101,30 @@
       "resend": "Le nouveau code n'est pas parti. Réessaie dans un instant."
     }
   },
+  "login": {
+    "back": "Retour",
+    "title": "Content de te revoir",
+    "emailStep": "On t'envoie un code par e-mail pour te connecter.",
+    "email": "Adresse e-mail",
+    "sendCode": "Recevoir mon code",
+    "sending": "Envoi du code…",
+    "codeTitle": "Entre le code reçu par e-mail",
+    "sentTo": "On l'a envoyé à {email}.",
+    "code": "Code à 6 chiffres",
+    "submit": "Me connecter",
+    "verifying": "Connexion…",
+    "changeEmail": "Changer d'adresse e-mail",
+    "noAccount": "Pas encore de compte ?",
+    "signupLink": "Créer mon compte",
+    "errors": {
+      "email": "Entre une adresse e-mail valable.",
+      "format": "Le code a 6 chiffres.",
+      "invalid": "Ce code n'est pas valable. Vérifie-le ou demande-en un nouveau.",
+      "notFound": "Aucun compte avec cette adresse. Crée ton compte d'abord.",
+      "rateLimited": "Trop de demandes. Réessaie dans quelques minutes.",
+      "server": "Ça n'a pas marché. Vérifie ta connexion, puis réessaie."
+    }
+  },
   "level": {
     "stepLabel": "Étape 3 sur 3",
     "title": "Un petit test avec Jade",
