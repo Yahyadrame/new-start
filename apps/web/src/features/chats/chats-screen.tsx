@@ -71,7 +71,11 @@ export function ChatsScreen() {
             />
           </div>
 
-          <div role="group" aria-label={t.filtersLabel} className="flex gap-2 overflow-x-auto px-4">
+          <div
+            role="group"
+            aria-label={t.filtersLabel}
+            className="flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {FILTERS.map((f) => (
               <Button
                 key={f}
