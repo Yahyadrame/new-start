@@ -187,7 +187,7 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] Après connexion, retour à `/chats`. *Reste à faire, dans un ticket à part : renvoyer vers l'onboarding quand le niveau n'est pas évalué.*
 - [x] Erreurs lisibles : code faux, code expiré, trop de demandes.
 - [x] Tests unitaires, et e2e du parcours accueil, « J'ai déjà un compte », code, Discussions.
-- [ ] Vérifié sur staging après fusion : « J'ai déjà un compte » ouvre `/login`, le code arrive par e-mail, la connexion mène aux Discussions.
+- [x] Vérifié sur staging après fusion : « J'ai déjà un compte » ouvre `/login`, le code arrive par e-mail, la connexion mène aux Discussions.
 
 ## NS-032 — Icône de l'écran d'accueil iPhone et manifeste · S
 *Ajouté le 2026-11-24 : le lien épinglé sur l'écran d'accueil d'un iPhone montre une icône toute noire. Le site n'a que `icon.svg`, que l'iPhone n'utilise pas pour cet usage.*
@@ -195,7 +195,8 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] `manifest` avec nom, couleurs et icônes 192 et 512 px, dont une icône « maskable ».
 - [x] `theme-color` clair et sombre.
 - [x] Test unitaire du manifeste et de l'icône.
-- [ ] Vérifié après fusion sur un iPhone (Safari) et sur un Android (Chrome) : retirer l'ancien raccourci de l'écran d'accueil, rouvrir le lien, puis « Ajouter à l'écran d'accueil » ou « Installer l'application ».
+- [x] Vérifié sur un iPhone (Safari) le 2026-11-24 : l'icône est correcte avec le style d'icônes par défaut. En style « Sombre », iOS assombrit lui-même l'icône d'un raccourci web ; un site ne peut pas fournir de variante sombre.
+- [ ] Vérifié sur un Android (Chrome) : retirer l'ancien raccourci, rouvrir le lien, puis « Installer l'application ».
 
 ## NS-033 — Refonte de l'interface, maquettes façon WhatsApp · L
 *Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b).*
