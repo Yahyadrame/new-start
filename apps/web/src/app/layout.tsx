@@ -25,7 +25,13 @@ export const metadata: Metadata = {
   description: 'Apprends à parler anglais en discutant avec des contacts IA.',
 };
 
-export const viewport: Viewport = { colorScheme: 'light dark' };
+export const viewport: Viewport = {
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F2F2F2' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
