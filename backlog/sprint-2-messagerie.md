@@ -68,12 +68,15 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 
 ## NS-037 — Rechercher dans les messages · M
 *Ajouté le 2026-11-24 : les appels ne sont pas encore là, mais la recherche de messages doit l'être (maquette : loupe dans l'en-tête de la conversation).*
-- [ ] Choix de périmètre à trancher avec le porteur du projet (dans la conversation ouverte, ou dans toutes les discussions), noté dans `docs/decisions.md`.
-- [ ] Résultats avec le mot surligné ; un toucher mène au message.
-- [ ] Si la recherche passe par l'API : route documentée dans `docs/08-api.md`, sans contenu de message dans les logs.
+*Décidé le 2026-11-24 : la recherche porte sur toutes les discussions (option B).*
+- [ ] Route API de recherche, limitée aux messages de la personne connectée, documentée dans `docs/08-api.md`, avec un index adapté. Aucun contenu de message dans les logs.
+- [ ] Un champ de recherche depuis la liste des discussions ; chaque résultat montre le contact, l'extrait avec le mot surligné et la date. Un toucher ouvre la conversation au bon message.
+- [ ] Tests unitaires (service, route, écran), thèmes clair et sombre.
 
 ## NS-038 — Fonds de conversation au choix · M
 *Ajouté le 2026-11-24 : plusieurs motifs de fond, comme WhatsApp, pour rendre la conversation plus attirante.*
 - [ ] Plusieurs fonds (motifs et couleurs) qui respectent les thèmes clair et sombre et gardent les contrastes 4,5:1 sur les bulles.
-- [ ] Le choix se fait dans le Profil ; où il est gardé (appareil ou compte) est à trancher avec le porteur du projet.
+*Décidé le 2026-11-24 : le choix est gardé sur le compte (option B).*
+- [ ] Migration additive : un champ `chatBackground` sur `User`, avec une valeur par défaut. Route `PATCH` du profil mise à jour et documentée dans `docs/08-api.md`.
+- [ ] Le choix se fait dans le Profil et s'applique à toutes les conversations.
 - [ ] Le motif est décoratif, sans aucun texte dans l'image ; tests unitaires.
