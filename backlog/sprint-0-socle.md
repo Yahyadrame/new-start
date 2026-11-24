@@ -183,10 +183,11 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 
 ## NS-031 — Écran de connexion `/login` · S
 *Ajouté le 2026-11-24 : « J'ai déjà un compte » mène à `/login`, qui n'existe pas (404). L'API de connexion par code est prête depuis NS-102 (`POST /auth/otp/request` et `/verify`).*
-- [ ] Page `/login` : numéro ou e-mail, puis saisie du code à usage unique, mêmes composants et mêmes textes que l'inscription quand ils existent.
-- [ ] Après connexion, retour à `/chats` (ou à l'onboarding si le niveau n'est pas évalué).
-- [ ] Erreurs lisibles : code faux, code expiré, trop de demandes.
-- [ ] Tests unitaires, et e2e du parcours accueil, « J'ai déjà un compte », code, Discussions.
+- [x] Page `/login` : adresse e-mail, puis saisie du code à usage unique, avec les mêmes composants que l'inscription. Le canal SMS viendra avec son activation.
+- [x] Après connexion, retour à `/chats`. *Reste à faire, dans un ticket à part : renvoyer vers l'onboarding quand le niveau n'est pas évalué.*
+- [x] Erreurs lisibles : code faux, code expiré, trop de demandes.
+- [x] Tests unitaires, et e2e du parcours accueil, « J'ai déjà un compte », code, Discussions.
+- [ ] Vérifié sur staging après fusion : « J'ai déjà un compte » ouvre `/login`, le code arrive par e-mail, la connexion mène aux Discussions.
 
 ## NS-032 — Icône de l'écran d'accueil iPhone et manifeste · S
 *Ajouté le 2026-11-24 : le lien épinglé sur l'écran d'accueil d'un iPhone montre une icône toute noire. Le site n'a que `icon.svg`, que l'iPhone n'utilise pas pour cet usage.*
