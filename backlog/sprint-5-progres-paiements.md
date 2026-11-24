@@ -25,7 +25,7 @@
 - [ ] Demande de permission au bon moment (jamais au premier chargement), avec un texte clair ; refus respecté, sans relance.
 - [ ] Aucun contenu de message ni abonnement dans les logs. Tests unitaires du cas d'usage, de la route et du service worker ; test e2e de l'abonnement sur staging.
 - [ ] `docs/07-modele-de-donnees.md` et `docs/08-api.md` mis à jour.
-*À décider avec le porteur : le texte exact du rappel, et si la demande de permission passe par l'écran Profil ou par un encart sur l'écran Notifications.*
+*Décidé le 2026-11-24 : la demande de permission a deux endroits, un réglage au Profil et un encart sur l'écran Notifications (voir `docs/decisions.md`). Reste à décider : le texte exact du rappel (le texte actuel est gardé en attendant).*
 
 > Au lancement tout est gratuit : les tickets de paiement (NS-504 à NS-508) sont développés et testés en bac à sable, derrière le drapeau `payments.enabled = false`. Ils ne doivent rien afficher ni rien débiter tant que le porteur du projet n'a pas décidé de les activer.
 
