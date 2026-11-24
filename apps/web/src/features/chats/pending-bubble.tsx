@@ -13,8 +13,8 @@ export function PendingBubble({
   onRetry: () => void;
 }) {
   return (
-    <li className="flex max-w-[85%] flex-col items-end gap-1 self-end">
-      <p className="rounded-2xl rounded-br-md bg-accent px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap text-on-accent opacity-70">
+    <li className="flex max-w-[80%] flex-col items-end gap-1 self-end">
+      <p className="rounded-[18px] rounded-br-[6px] bg-accent px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap text-on-accent opacity-70">
         {message.text}
       </p>
       {message.status === 'sending' ? (

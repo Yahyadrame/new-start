@@ -20,7 +20,10 @@ export function Composer({ onSend }: { onSend: (text: string) => void }) {
   };
 
   return (
-    <form onSubmit={submit} className="sticky bottom-0 flex items-center gap-2 bg-bg py-3">
+    <form
+      onSubmit={submit}
+      className="sticky bottom-0 flex items-center gap-2 border-t border-line bg-bg px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+    >
       <label htmlFor="composer" className="sr-only">
         {c.composerLabel}
       </label>
@@ -32,7 +35,13 @@ export function Composer({ onSend }: { onSend: (text: string) => void }) {
         placeholder={c.composerPlaceholder}
         onChange={(e) => setText(e.target.value)}
       />
-      <Button type="submit" size="icon" disabled={empty} aria-label={c.send}>
+      <Button
+        type="submit"
+        size="icon"
+        disabled={empty}
+        aria-label={c.send}
+        className="rounded-full"
+      >
         <SendHorizontal aria-hidden="true" />
       </Button>
     </form>

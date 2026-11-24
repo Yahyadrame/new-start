@@ -145,9 +145,9 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   };
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-10 lg:max-w-2xl">
-      <header className="flex items-center gap-3">
-        <Button asChild variant="outline" size="icon">
+    <main className="flex min-h-dvh w-full flex-col bg-surface-1">
+      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-bg px-4 py-3">
+        <Button asChild variant="outline" size="icon" className="lg:hidden">
           <Link href="/chats" aria-label={c.back}>
             <ArrowLeft aria-hidden="true" />
           </Link>
@@ -158,7 +158,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
               <AvatarFallback>{item.agent.initials}</AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-col">
-              <h1 className="flex items-center gap-2 font-display text-xl font-bold">
+              <h1 className="flex items-center gap-2 font-display text-lg font-bold">
                 <span className="truncate">{item.agent.name}</span>
                 <Badge variant="neutral">{t.aiBadge}</Badge>
               </h1>
@@ -170,66 +170,65 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         )}
       </header>
 
-      {error && (
-        <div
-          role="alert"
-          className="flex flex-col items-start gap-3 rounded-2xl bg-surface-1 px-4 py-3"
-        >
-          <p className="text-[15px] text-danger">{item ? c.messagesError : t.error}</p>
-          <Button variant="outline" onClick={retry}>
-            {c.retry}
-          </Button>
-        </div>
-      )}
-      {item === undefined && !error && <Skeleton aria-busy="true" className="h-16 w-full" />}
-      {item === null && <p className="text-text-muted">{c.notFound}</p>}
-      {item && !error && !loaded && <Skeleton aria-busy="true" className="h-32 w-full" />}
-      {loaded && (
-        <>
-          {nextCursor && (
-            <Button
-              variant="outline"
-              disabled={older === 'loading'}
-              onClick={() => void loadOlder()}
-            >
-              {older === 'loading' ? c.olderLoading : c.older}
+      <div className="flex flex-1 flex-col gap-3 px-4 py-4">
+        {error && (
+          <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-bg px-4 py-3">
+            <p className="text-[15px] text-danger">{item ? c.messagesError : t.error}</p>
+            <Button variant="outline" onClick={retry}>
+              {c.retry}
             </Button>
-          )}
-          {older === 'error' && (
-            <p role="alert" className="text-[13px] text-danger">
-              {c.olderError}
-            </p>
-          )}
-          {messages.length === 0 && pending.length === 0 && !awaiting ? (
-            <p className="text-text-muted">{c.empty}</p>
-          ) : (
-            <ol aria-label={c.messagesLabel} className="flex flex-col gap-3">
-              {messages.map((m) => (
-                <MessageBubble
-                  key={m.id}
-                  message={m}
-                  onAddToNotebook={(id) => addToNotebook(token.current, id)}
-                  onTranslate={(id) => translateMessage(token.current, id)}
-                />
-              ))}
-              {pending.map((p) => (
-                <PendingBubble
-                  key={p.clientId}
-                  message={p}
-                  onRetry={() => item && void deliver(item.id, p)}
-                />
-              ))}
-              {awaiting && item && <TypingBubble name={item.agent.name} />}
-            </ol>
-          )}
-          <div ref={end} />
-        </>
-      )}
-      {limited && item && (
-        <p role="status" className="rounded-2xl bg-surface-1 px-4 py-3 text-[15px]">
-          {c.limitReached.replace('{name}', item.agent.name)}
-        </p>
-      )}
+          </div>
+        )}
+        {item === undefined && !error && <Skeleton aria-busy="true" className="h-16 w-full" />}
+        {item === null && <p className="text-text-muted">{c.notFound}</p>}
+        {item && !error && !loaded && <Skeleton aria-busy="true" className="h-32 w-full" />}
+        {loaded && (
+          <>
+            {nextCursor && (
+              <Button
+                variant="outline"
+                disabled={older === 'loading'}
+                onClick={() => void loadOlder()}
+              >
+                {older === 'loading' ? c.olderLoading : c.older}
+              </Button>
+            )}
+            {older === 'error' && (
+              <p role="alert" className="text-[13px] text-danger">
+                {c.olderError}
+              </p>
+            )}
+            {messages.length === 0 && pending.length === 0 && !awaiting ? (
+              <p className="text-text-muted">{c.empty}</p>
+            ) : (
+              <ol aria-label={c.messagesLabel} className="flex flex-col gap-3">
+                {messages.map((m) => (
+                  <MessageBubble
+                    key={m.id}
+                    message={m}
+                    onAddToNotebook={(id) => addToNotebook(token.current, id)}
+                    onTranslate={(id) => translateMessage(token.current, id)}
+                  />
+                ))}
+                {pending.map((p) => (
+                  <PendingBubble
+                    key={p.clientId}
+                    message={p}
+                    onRetry={() => item && void deliver(item.id, p)}
+                  />
+                ))}
+                {awaiting && item && <TypingBubble name={item.agent.name} />}
+              </ol>
+            )}
+            <div ref={end} />
+          </>
+        )}
+        {limited && item && (
+          <p role="status" className="rounded-2xl bg-bg px-4 py-3 text-[15px]">
+            {c.limitReached.replace('{name}', item.agent.name)}
+          </p>
+        )}
+      </div>
       {loaded && <Composer onSend={send} />}
     </main>
   );

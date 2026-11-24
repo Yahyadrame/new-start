@@ -84,6 +84,12 @@ describe('ConversationScreen', () => {
     );
   });
 
+  it('cache la flèche de retour dès 1024 px, où la liste reste à gauche', async () => {
+    render(<ConversationScreen agentSlug="jade" />);
+    const back = await screen.findByRole('link', { name: fr.conversation.back });
+    expect(back.className).toContain('lg:hidden');
+  });
+
   it('signale un contact inconnu', async () => {
     render(<ConversationScreen agentSlug="nobody" />);
     expect(await screen.findByText(fr.conversation.notFound)).toBeTruthy();

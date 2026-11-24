@@ -73,7 +73,7 @@ function Correction({
 }) {
   if (!correction.better) return <p className="px-1 text-xs text-text-muted">{c.perfect}</p>;
   return (
-    <aside className="flex flex-col gap-1 rounded-2xl border border-line bg-surface-1 px-4 py-3">
+    <aside className="flex flex-col gap-1 rounded-[18px] border border-line bg-bg px-4 py-3">
       <p className="text-xs font-semibold tracking-[0.08em] text-text-muted uppercase">
         {c.natural}
       </p>
@@ -101,12 +101,12 @@ export function MessageBubble({
   const mine = message.author === 'USER';
   return (
     <li
-      className={cn('flex max-w-[85%] flex-col gap-1', mine ? 'items-end self-end' : 'self-start')}
+      className={cn('flex max-w-[80%] flex-col gap-1', mine ? 'items-end self-end' : 'self-start')}
     >
       <p
         className={cn(
-          'rounded-2xl px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap',
-          mine ? 'rounded-br-md bg-accent text-on-accent' : 'rounded-bl-md bg-surface-2',
+          'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap',
+          mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
         )}
       >
         {message.text}
