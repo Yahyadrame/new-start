@@ -10,10 +10,14 @@ const exportMe = vi.fn();
 const deleteMe = vi.fn();
 const setSession = vi.fn();
 const listNotebook = vi.fn();
+const enable = vi.fn();
+const disable = vi.fn();
+let push = { status: 'off', busy: false, failed: false };
 // Un objet stable, comme le routeur de Next : sinon l'effet de chargement repart à chaque rendu.
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession, setSession }));
+vi.mock('../../shared/push/use-push', () => ({ usePush: () => ({ ...push, enable, disable }) }));
 vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe, listNotebook }));
 const { ProfileScreen } = await import('./profile-screen');
 
@@ -34,6 +38,7 @@ const me = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  push = { status: 'off', busy: false, failed: false };
   window.localStorage.clear();
   document.documentElement.removeAttribute('data-theme');
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
@@ -105,6 +110,45 @@ describe('ProfileScreen', () => {
     await open();
     fireEvent.click(screen.getByRole('switch', { name: t.reminders.reminder }));
     await waitFor(() => expect(patchMe).toHaveBeenCalledWith('tok', { reminderTime: null }));
+  });
+
+  it('active les rappels sur ce téléphone depuis le réglage', async () => {
+    await open();
+    const toggle = screen.getByRole('switch', { name: fr.push.label });
+    expect(toggle.getAttribute('aria-checked')).toBe('false');
+    fireEvent.click(toggle);
+    expect(enable).toHaveBeenCalledTimes(1);
+  });
+
+  it('désactive les rappels sur ce téléphone quand ils sont actifs', async () => {
+    push.status = 'on';
+    await open();
+    const toggle = screen.getByRole('switch', { name: fr.push.label });
+    expect(toggle.getAttribute('aria-checked')).toBe('true');
+    fireEvent.click(toggle);
+    expect(disable).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ['blocked', fr.push.blocked],
+    ['unsupported', fr.push.unsupported],
+    ['unconfigured', fr.push.unconfigured],
+  ] as const)('grise le réglage et dit pourquoi quand l’état est %s', async (status, text) => {
+    push.status = status;
+    await open();
+    expect(
+      (screen.getByRole('switch', { name: fr.push.label }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+    expect(screen.getByText(text)).toBeTruthy();
+  });
+
+  it('grise le réglage pendant la demande et signale un échec', async () => {
+    push = { status: 'off', busy: true, failed: true };
+    await open();
+    expect(
+      (screen.getByRole('switch', { name: fr.push.label }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+    expect(screen.getByText(fr.push.failed)).toBeTruthy();
   });
 
   it('active l’économie de données', async () => {
