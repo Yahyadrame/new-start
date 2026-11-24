@@ -212,5 +212,5 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 
 ## NS-035 — Accès au Profil depuis la navigation · S
 *Ajouté le 2026-11-24 : `/profile` existe mais aucun lien dans l'application n'y mène ; le porteur du projet ne voit pas le Profil. Le réglage « Rappels sur ce téléphone » (NS-611) est donc inaccessible.*
-- [ ] Entrée « Profil » dans la navigation actuelle, en attendant la refonte, puis reprise dans la nouvelle navigation de NS-034.
-- [ ] Test unitaire de la navigation.
+- [x] Entrée « Profil » dans la navigation actuelle (barre du bas, et barre ajoutée à l'écran Profil, qui n'en avait pas), en attendant la refonte, puis reprise dans la nouvelle navigation de NS-034.
+- [x] Test unitaire de la navigation.

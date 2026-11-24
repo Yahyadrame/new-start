@@ -18,6 +18,9 @@ const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession, setSession }));
 vi.mock('../../shared/push/use-push', () => ({ usePush: () => ({ ...push, enable, disable }) }));
+vi.mock('../../shared/navigation', () => ({
+  BottomNav: () => <nav aria-label="Navigation principale" />,
+}));
 vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe, listNotebook }));
 const { ProfileScreen } = await import('./profile-screen');
 
@@ -59,6 +62,12 @@ describe('ProfileScreen', () => {
     render(<ProfileScreen />);
     await waitFor(() => expect(replace).toHaveBeenCalledWith('/'));
     expect(getMe).not.toHaveBeenCalled();
+  });
+
+  it('affiche la navigation du bas, pour pouvoir quitter le profil', async () => {
+    render(<ProfileScreen />);
+    await screen.findByText('Awa');
+    expect(screen.getByRole('navigation', { name: fr.nav.label })).toBeTruthy();
   });
 
   it('montre le prénom, le niveau et les réglages du compte', async () => {

@@ -3,7 +3,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
 afterEach(cleanup);
-vi.mock('next/navigation', () => ({ useRouter: () => ({ replace: vi.fn() }) }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: vi.fn() }),
+  usePathname: () => '/profile',
+}));
 vi.mock('../../shared/auth/session', () => ({ ensureSession: () => new Promise(() => {}) }));
 const { default: ProfilePage } = await import('./page');
 

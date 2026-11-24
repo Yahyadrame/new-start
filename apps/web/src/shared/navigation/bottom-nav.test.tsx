@@ -12,12 +12,12 @@ const { BottomNav } = await import('./bottom-nav');
 afterEach(cleanup);
 
 describe('BottomNav', () => {
-  it('propose les quatre onglets vers leurs routes', () => {
+  it('propose les cinq onglets vers leurs routes', () => {
     usePathname.mockReturnValue('/chats');
     render(<BottomNav />);
     const nav = screen.getByRole('navigation', { name: fr.nav.label });
     const hrefs = [...nav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/chats', '/series', '/games', '/progress']);
+    expect(hrefs).toEqual(['/chats', '/series', '/games', '/progress', '/profile']);
   });
 
   it("marque l'onglet de la page courante", () => {
@@ -35,6 +35,14 @@ describe('BottomNav', () => {
     usePathname.mockReturnValue('/chats/jade');
     render(<BottomNav />);
     expect(screen.getByRole('link', { name: fr.nav.chats }).getAttribute('aria-current')).toBe(
+      'page',
+    );
+  });
+
+  it("marque l'onglet Profil sur la page du profil", () => {
+    usePathname.mockReturnValue('/profile');
+    render(<BottomNav />);
+    expect(screen.getByRole('link', { name: fr.nav.profile }).getAttribute('aria-current')).toBe(
       'page',
     );
   });
