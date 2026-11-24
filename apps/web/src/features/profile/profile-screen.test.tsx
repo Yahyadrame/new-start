@@ -82,6 +82,21 @@ describe('ProfileScreen', () => {
     expect(screen.queryByLabelText(t.reminders.reminderTime)).toBeNull();
   });
 
+  it('reprend la mise en page des maquettes : avatar de 72 px, niveau en texte, lignes de 72 px', async () => {
+    await open();
+    const initial = screen.getByText('A');
+    expect(initial.className).toContain('bg-accent');
+    expect(initial.closest('[class*="size-[72px]"]')).not.toBeNull();
+    expect(screen.getByText('Niveau B1').className).toContain('text-text-muted');
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-[28px]');
+    expect(screen.getByRole('heading', { name: t.learning.title }).className).toContain(
+      'uppercase',
+    );
+    const row = screen.getByLabelText(t.learning.dailyGoal).closest('div[class*="min-h-"]');
+    expect(row?.className).toContain('min-h-[72px]');
+    expect(row?.className).toContain('border-b');
+  });
+
   it('applique le thème du compte dès le chargement', async () => {
     getMe.mockResolvedValue({ ...me, theme: 'DARK' });
     await open();
