@@ -32,6 +32,9 @@ export function BottomNav() {
         className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:inset-y-0 lg:right-auto lg:w-[72px] lg:border-t-0 lg:border-r lg:pb-0"
       >
         <ul className="mx-auto flex max-w-md justify-around px-2 pt-2 pb-2 lg:h-full lg:max-w-none lg:flex-col lg:justify-start lg:gap-3 lg:px-0 lg:py-4">
+          <li aria-hidden="true" className="hidden lg:mb-2 lg:flex lg:justify-center">
+            <img src="/logo-icon.svg" alt="" width={36} height={36} />
+          </li>
           {TABS.map(({ href, label, Icon }, index) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             return (

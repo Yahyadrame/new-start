@@ -29,3 +29,25 @@ export function formatWhen(iso: string, now = new Date()): string {
     ? date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     : date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 }
+
+/** L'heure d'un message ("09:14"), sans le jour : le séparateur de la conversation le donne. */
+export function formatHour(iso: string): string {
+  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+/** Le jour d'un message pour le séparateur : "Aujourd'hui", "Hier", sinon "17 nov." (avec l'année si ce n'est pas la même). */
+export function dayLabel(iso: string, now = new Date()): string {
+  const date = new Date(iso);
+  const days = Math.round(
+    (new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() -
+      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()) /
+      86_400_000,
+  );
+  if (days === 0) return "Aujourd'hui";
+  if (days === 1) return 'Hier';
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    ...(date.getFullYear() === now.getFullYear() ? {} : { year: 'numeric' }),
+  });
+}

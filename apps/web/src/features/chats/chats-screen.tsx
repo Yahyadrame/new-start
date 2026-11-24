@@ -2,7 +2,7 @@
 
 import type { ConversationItem } from '@newstart/shared';
 import { Avatar, AvatarFallback, Badge, Button, cn, Input, Skeleton } from '@newstart/ui';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -46,7 +46,7 @@ export function ChatsScreen() {
         <Link
           href="/explore"
           aria-label={t.explore}
-          className="fixed right-5 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-10 flex size-14 items-center justify-center rounded-full bg-accent text-on-accent shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text lg:static lg:size-11 lg:shadow-none"
+          className="fixed right-5 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-10 flex size-14 items-center justify-center rounded-full border border-line bg-surface-1 text-text shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text lg:static lg:size-11 lg:border-0 lg:bg-accent lg:text-on-accent lg:shadow-none"
         >
           <Plus aria-hidden="true" />
         </Link>
@@ -60,9 +60,14 @@ export function ChatsScreen() {
 
       {items && items.length > 0 && (
         <>
-          <div className="px-4">
+          <div className="relative px-4">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-8 size-4 -translate-y-1/2 text-text-muted"
+            />
             <Input
               type="search"
+              className="pl-10"
               aria-label={t.searchLabel}
               placeholder={t.searchPlaceholder}
               value={query}
@@ -108,7 +113,7 @@ export function ChatsScreen() {
         {shown.map((c) => (
           <li
             key={c.id}
-            className="after:ml-[76px] after:block after:border-b after:border-line last:after:hidden"
+            className="after:mr-4 after:ml-[76px] after:block after:border-b after:border-line last:after:hidden"
           >
             <Link
               href={`/chats/${c.agent.slug}`}
