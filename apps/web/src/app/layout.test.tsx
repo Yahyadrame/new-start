@@ -5,7 +5,7 @@ const localFont = vi.hoisted(() =>
   vi.fn((o: { src: string; variable: string }) => ({ variable: `class${o.variable}` })),
 );
 vi.mock('next/font/local', () => ({ default: localFont }));
-const { default: RootLayout, metadata } = await import('./layout');
+const { default: RootLayout, metadata, viewport } = await import('./layout');
 // Les polices se déclarent au chargement du module : on garde les appels avant tout nettoyage de mocks.
 const fontCalls = [...localFont.mock.calls];
 
@@ -19,5 +19,12 @@ describe('RootLayout', () => {
     expect(html).toContain('ns-theme');
     expect(html).toContain('contenu');
     expect(metadata.title).toBe('new start');
+  });
+
+  it('donne la couleur de la barre du navigateur pour chaque thème', () => {
+    expect(viewport.themeColor).toEqual([
+      { media: '(prefers-color-scheme: light)', color: '#F2F2F2' },
+      { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    ]);
   });
 });

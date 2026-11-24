@@ -191,10 +191,11 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 
 ## NS-032 — Icône de l'écran d'accueil iPhone et manifeste · S
 *Ajouté le 2026-11-24 : le lien épinglé sur l'écran d'accueil d'un iPhone montre une icône toute noire. Le site n'a que `icon.svg`, que l'iPhone n'utilise pas pour cet usage.*
-- [ ] Icône PNG 180 × 180 (`apple-icon`) générée depuis `logo-icon.svg` : fond #CCFF00 plein, sans transparence.
-- [ ] `manifest` avec nom, couleurs et icônes 192 et 512 px, dont une icône « maskable ».
-- [ ] `theme-color` clair et sombre.
-- [ ] Test unitaire du manifeste ; vérifié sur un iPhone après fusion.
+- [x] Icône PNG 180 × 180 (`apple-icon`) : fond #CCFF00 plein, sans coins arrondis ni transparence (l'iPhone remplit la transparence en noir).
+- [x] `manifest` avec nom, couleurs et icônes 192 et 512 px, dont une icône « maskable ».
+- [x] `theme-color` clair et sombre.
+- [x] Test unitaire du manifeste et de l'icône.
+- [ ] Vérifié sur un iPhone après fusion : retirer l'ancien raccourci de l'écran d'accueil, ouvrir le lien dans Safari, « Ajouter à l'écran d'accueil ».
 
 ## NS-033 — Refonte de l'interface, maquettes façon WhatsApp · L
 *Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b).*
