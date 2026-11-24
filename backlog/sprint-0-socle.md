@@ -165,3 +165,12 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] Les routes du site (`/api/sentry-test`) passent avant le relais (rewrites après le système de fichiers).
 - [x] Test unitaire du relais mis à jour.
 - [ ] Vérifié sur staging après fusion : `/api/conversations` renvoie 401 sans connexion, l'écran Discussions se charge, le test de niveau va jusqu'au résultat.
+## NS-028 — IA : signaler la configuration manquante et journaliser les échecs · S
+*Ajouté le 2026-11-24 après un test sur staging : à la dernière question du test de niveau, la personne voit « Jade n'arrive pas à évaluer ton niveau » (503 `AI_UNAVAILABLE`). En local, l'évaluation marche avec `LLM_PROVIDER=groq` et échoue à l'identique sans fournisseur. Cause probable : `LLM_PROVIDER` et `GROQ_API_KEY` absents de Render (à confirmer par le porteur du projet). Aujourd'hui rien ne le dit : `createAiProviders` retombe en silence sur l'adaptateur factice, et le `catch` de `evaluateLevel` avale l'erreur.*
+- [ ] Au démarrage de l'API, un log d'avertissement dit quel adaptateur sert pour le LLM, le STT et le TTS. Sur staging et en production, un adaptateur factice déclenche un avertissement visible (jamais de clé ni de valeur dans le log).
+- [ ] `/health/ready` ou un champ dédié indique si l'IA est réelle ou factice, sans exposer de secret.
+- [ ] `evaluateLevel` (et la traduction, la voix) journalise la cause d'un échec avec pino : type d'erreur, code HTTP du fournisseur, nombre d'essais. Jamais le contenu des réponses ni des messages.
+- [ ] Tests unitaires : avertissement avec adaptateur factice, aucun avertissement avec un vrai fournisseur, log de l'échec sans contenu.
+- [ ] `docs/10-devops.md` : liste des variables IA à poser sur Render (`LLM_PROVIDER`, `GROQ_API_KEY`, `STT_PROVIDER`, `GEMINI_API_KEY`, `TTS_PROVIDER`, `AI_MAX_CALLS_PER_MONTH`).
+*À décider avec le porteur du projet : faut-il refuser de démarrer en production avec un adaptateur factice, ou seulement avertir.*
+
