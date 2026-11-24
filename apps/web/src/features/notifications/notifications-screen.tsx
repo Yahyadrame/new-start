@@ -9,6 +9,7 @@ import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import { groupNotifications } from './group-notifications';
 import { fetchNotifications, markAllRead } from './notifications-api';
+import { PushBanner } from './push-banner';
 
 const t = fr.notifications;
 
@@ -73,6 +74,7 @@ export function NotificationsScreen() {
       <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>
+      <PushBanner />
       {error && <p role="alert">{t.error}</p>}
       {!error && !items && <Skeleton className="h-40 w-full" />}
       {items && today.length === 0 && week.length === 0 && <p>{t.empty}</p>}

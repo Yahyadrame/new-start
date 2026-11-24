@@ -9,6 +9,7 @@ const markAllRead = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ replace }) }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 vi.mock('./notifications-api', () => ({ fetchNotifications, markAllRead }));
+vi.mock('./push-banner', () => ({ PushBanner: () => <aside>encart push</aside> }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { NotificationsScreen } = await import('./notifications-screen');
 
@@ -43,6 +44,13 @@ describe('NotificationsScreen', () => {
     expect(screen.getByRole('heading', { name: t.week })).toBeTruthy();
     expect(screen.getByText('Rappel b')).toBeTruthy();
     expect(fetchNotifications).toHaveBeenCalledWith('tok');
+  });
+
+  it('affiche l’encart des rappels sur ce téléphone', async () => {
+    fetchNotifications.mockResolvedValue([]);
+    render(<NotificationsScreen />);
+    expect(await screen.findByText(t.empty)).toBeTruthy();
+    expect(screen.getByText('encart push')).toBeTruthy();
   });
 
   it('marque tout comme lu après l’affichage, sans bloquer si ça échoue', async () => {
