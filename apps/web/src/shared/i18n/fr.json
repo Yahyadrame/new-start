@@ -283,6 +283,17 @@
       "title": "Progrès"
     }
   },
+  "push": {
+    "label": "Rappels sur ce téléphone",
+    "hint": "Une notification à l'heure du rappel, même quand l'appli est fermée.",
+    "blocked": "Les notifications sont bloquées pour ce site. Autorise-les dans les réglages de ton navigateur.",
+    "unsupported": "Ce navigateur ne sait pas envoyer de notifications.",
+    "unconfigured": "Pas encore disponible sur ce serveur.",
+    "failed": "Ça n'a pas marché. Réessaie dans un instant.",
+    "bannerTitle": "Reçois ton rappel sur ce téléphone",
+    "bannerBody": "Une notification à l'heure que tu as choisie, même quand l'appli est fermée.",
+    "bannerAction": "Activer les notifications"
+  },
   "notifications": {
     "title": "Notifications",
     "today": "Aujourd'hui",
