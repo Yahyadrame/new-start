@@ -32,9 +32,12 @@ for (const path of SCREENS) {
   test(`au clavier, ${path} s'atteint avec un focus visible et sans piège`, async ({ page }) => {
     await signedIn(page);
     await page.goto(path);
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
     // L'écran a affiché au moins un élément qu'on peut atteindre au clavier.
-    await page.locator('a[href], button, input, select, textarea').first().waitFor();
+    await page
+      .locator('a[href]:visible, button:visible, input:visible, select:visible, textarea:visible')
+      .first()
+      .waitFor();
 
     const seen: string[] = [];
     const hidden: string[] = [];
