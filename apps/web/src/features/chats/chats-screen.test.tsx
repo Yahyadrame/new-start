@@ -110,6 +110,14 @@ describe('ChatsScreen', () => {
     expect(screen.getByText(t.emptyFilter)).toBeTruthy();
   });
 
+  it('masque la barre de défilement de la rangée de filtres', async () => {
+    render(<ChatsScreen />);
+    await screen.findByText('Heyyy!');
+    expect(screen.getByRole('group', { name: t.filtersLabel }).className).toContain(
+      '[scrollbar-width:none]',
+    );
+  });
+
   it('invite à choisir un contact quand il n’y a aucune conversation', async () => {
     listConversations.mockResolvedValue([]);
     render(<ChatsScreen />);
