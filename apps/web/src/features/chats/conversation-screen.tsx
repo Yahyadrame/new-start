@@ -1,12 +1,13 @@
 'use client';
 
-import type { ConversationItem, MessageItem } from '@newstart/shared';
+import type { ChatBackground, ConversationItem, MessageItem } from '@newstart/shared';
 import { Avatar, AvatarFallback, Badge, Button, Skeleton } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
+import { ChatBackdrop } from '../../shared/chat-background';
 import fr from '../../shared/i18n/fr.json';
 import {
   addToNotebook,
@@ -16,6 +17,7 @@ import {
   markConversationRead,
   sendMessage,
 } from './chats-api';
+import { getMe } from '../profile/profile-api';
 import { dayLabel } from './chats-format';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
@@ -40,6 +42,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   const [attempt, setAttempt] = useState(0);
   // La limite du jour est atteinte : le message n'est pas parti et réessayer ne sert à rien avant demain.
   const [limited, setLimited] = useState(false);
+  const [background, setBackground] = useState<ChatBackground>('NONE');
   const token = useRef('');
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
@@ -54,6 +57,10 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
       const session = await ensureSession();
       if (!session) return router.replace('/');
       token.current = session.accessToken;
+      // Le fond est un confort : s'il ne vient pas, la conversation reste sur le fond uni.
+      void getMe(token.current)
+        .then((me) => setBackground(me.chatBackground))
+        .catch(() => undefined);
       try {
         const items = await listConversations(token.current);
         const found = items.find((i) => i.agent.slug === agentSlug) ?? null;
@@ -169,7 +176,8 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         )}
       </header>
 
-      <div className="flex flex-1 flex-col gap-3 px-4 py-4">
+      <div className="relative isolate flex flex-1 flex-col gap-3 px-4 py-4">
+        <ChatBackdrop value={background} />
         {error && (
           <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-bg px-4 py-3">
             <p className="text-[15px] text-danger">{item ? c.messagesError : t.error}</p>

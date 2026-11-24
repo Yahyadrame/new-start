@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ensureSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
+import { ChatBackgroundPicker } from '../../shared/chat-background';
 import { BottomNav } from '../../shared/navigation';
 import type { PushStatus } from '../../shared/push/subscription';
 import { usePush } from '../../shared/push/use-push';
@@ -180,6 +181,15 @@ export function ProfileScreen() {
                 </Select>
               )}
             </Row>
+          </Group>
+
+          <Group title={fr.chatBackground.title}>
+            <div className="py-3">
+              <ChatBackgroundPicker
+                value={me.chatBackground}
+                onChange={(chatBackground) => save({ chatBackground })}
+              />
+            </div>
           </Group>
 
           <Group title={t.reminders.title}>
