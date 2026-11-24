@@ -15,4 +15,13 @@ export class PrismaPushSubscriptionsStore implements PushSubscriptionsStore {
       update: data,
     });
   }
+
+  async forUser(userId: string): Promise<PushSubscriptionInput[]> {
+    const rows = await this.prisma.pushSubscription.findMany({ where: { userId } });
+    return rows.map((r) => ({ endpoint: r.endpoint, keys: { p256dh: r.p256dh, auth: r.auth } }));
+  }
+
+  async remove(endpoint: string): Promise<void> {
+    await this.prisma.pushSubscription.deleteMany({ where: { endpoint } });
+  }
 }

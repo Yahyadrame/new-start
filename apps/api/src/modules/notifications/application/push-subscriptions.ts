@@ -5,6 +5,10 @@ export const PUSH_SUBSCRIPTIONS_STORE = Symbol('PUSH_SUBSCRIPTIONS_STORE');
 export interface PushSubscriptionsStore {
   /** Crée l'abonnement, ou le met à jour s'il existe déjà : l'endpoint est unique, et un appareil passe à la personne connectée. */
   save(userId: string, subscription: PushSubscriptionInput): Promise<void>;
+  /** Les appareils abonnés de la personne. */
+  forUser(userId: string): Promise<PushSubscriptionInput[]>;
+  /** Supprime l'abonnement d'un appareil (expiré côté navigateur). */
+  remove(endpoint: string): Promise<void>;
 }
 
 export class PushSubscriptionsService {

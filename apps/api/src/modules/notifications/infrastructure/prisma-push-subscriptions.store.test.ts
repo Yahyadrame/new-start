@@ -19,3 +19,27 @@ describe('PrismaPushSubscriptionsStore.save', () => {
     });
   });
 });
+
+describe('PrismaPushSubscriptionsStore.forUser et remove', () => {
+  it('rend les appareils de la personne au format du port', async () => {
+    const findMany = vi
+      .fn()
+      .mockResolvedValue([{ endpoint: 'https://push.test/a', p256dh: 'k', auth: 'a' }]);
+    const store = new PrismaPushSubscriptionsStore({
+      pushSubscription: { findMany },
+    } as unknown as PrismaService);
+    expect(await store.forUser('u1')).toEqual([
+      { endpoint: 'https://push.test/a', keys: { p256dh: 'k', auth: 'a' } },
+    ]);
+    expect(findMany).toHaveBeenCalledWith({ where: { userId: 'u1' } });
+  });
+
+  it('supprime l’abonnement par endpoint, sans erreur s’il n’existe plus', async () => {
+    const deleteMany = vi.fn().mockResolvedValue({ count: 0 });
+    const store = new PrismaPushSubscriptionsStore({
+      pushSubscription: { deleteMany },
+    } as unknown as PrismaService);
+    await store.remove('https://push.test/a');
+    expect(deleteMany).toHaveBeenCalledWith({ where: { endpoint: 'https://push.test/a' } });
+  });
+});
