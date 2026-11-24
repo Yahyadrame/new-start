@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ensureSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
+import type { PushStatus } from '../../shared/push/subscription';
+import { usePush } from '../../shared/push/use-push';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
 import { DeleteAccountDialog } from './delete-account-dialog';
 import { NotebookSection } from './notebook-section';
@@ -32,6 +34,7 @@ export function ProfileScreen() {
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const push = usePush();
 
   useEffect(() => {
     void (async () => {
@@ -194,6 +197,16 @@ export function ProfileScreen() {
                 )}
               </Row>
             )}
+            <Row label={fr.push.label} hint={pushHint(push.status, push.failed)}>
+              {(id) => (
+                <Switch
+                  id={id}
+                  checked={push.status === 'on'}
+                  disabled={push.busy || (push.status !== 'on' && push.status !== 'off')}
+                  onCheckedChange={(on) => void (on ? push.enable() : push.disable())}
+                />
+              )}
+            </Row>
             <Row label={t.reminders.pause} hint={t.reminders.pauseHint}>
               {(id) => (
                 <Switch
@@ -267,6 +280,15 @@ export function ProfileScreen() {
       )}
     </main>
   );
+}
+
+/** Le texte sous le réglage : la raison quand il est grisé, l'échec du dernier essai, sinon l'explication. */
+function pushHint(status: PushStatus | null, failed: boolean) {
+  if (failed) return fr.push.failed;
+  if (status === 'blocked') return fr.push.blocked;
+  if (status === 'unsupported') return fr.push.unsupported;
+  if (status === 'unconfigured') return fr.push.unconfigured;
+  return fr.push.hint;
 }
 
 const toApi = (theme: Theme) => theme.toUpperCase() as Me['theme'];
