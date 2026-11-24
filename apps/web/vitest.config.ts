@@ -11,7 +11,7 @@ export default defineConfig({
       include: [
         'src/**/*.{ts,tsx}',
         'e2e/config.ts',
-        'auth-rewrites.mjs',
+        'api-rewrites.mjs',
         'security-headers.mjs',
         'public/sw.js',
       ],
