@@ -72,8 +72,8 @@ export function GamesScreen() {
   }, []);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-14 pb-28">
-      <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 pt-12 pb-28 lg:max-w-2xl lg:pb-10">
+      <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>
       {streak !== null && (
@@ -137,20 +137,25 @@ export function GamesScreen() {
         </TabsContent>
       </Tabs>
       <section aria-labelledby="upcoming-title" className="flex flex-col gap-3">
-        <h2 id="upcoming-title" className="font-display text-xl font-bold">
+        <h2
+          id="upcoming-title"
+          className="text-xs font-semibold tracking-[0.08em] text-text-muted uppercase"
+        >
           {t.upcoming.title}
         </h2>
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className="flex flex-col">
           {t.upcoming.items.map((game) => (
             <li
               key={game.name}
-              className="flex flex-col gap-1 rounded-2xl border border-line bg-surface-1 p-3"
+              className="flex min-h-[72px] items-center gap-3 border-b border-line py-3 last:border-b-0"
             >
-              <Badge variant="neutral" className="self-start">
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <p className="text-[15px] font-semibold">{game.name}</p>
+                <p className="text-[13px] text-text-muted">{game.hint}</p>
+              </div>
+              <Badge variant="neutral" className="shrink-0">
                 {t.upcoming.badge}
               </Badge>
-              <p className="text-[15px] font-semibold">{game.name}</p>
-              <p className="text-[13px] text-text-muted">{game.hint}</p>
             </li>
           ))}
         </ul>
