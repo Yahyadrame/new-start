@@ -145,7 +145,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   };
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-10 lg:max-w-2xl">
       <header className="flex items-center gap-3">
         <Button asChild variant="outline" size="icon">
           <Link href="/chats" aria-label={c.back}>
