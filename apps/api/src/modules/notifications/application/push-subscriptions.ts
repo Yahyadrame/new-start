@@ -9,6 +9,8 @@ export interface PushSubscriptionsStore {
   forUser(userId: string): Promise<PushSubscriptionInput[]>;
   /** Supprime l'abonnement d'un appareil (expiré côté navigateur). */
   remove(endpoint: string): Promise<void>;
+  /** Supprime l'abonnement de la personne pour cet appareil ; ne touche jamais à celui d'une autre. */
+  removeOwn(userId: string, endpoint: string): Promise<void>;
 }
 
 export class PushSubscriptionsService {
@@ -16,5 +18,9 @@ export class PushSubscriptionsService {
 
   subscribe(userId: string, subscription: PushSubscriptionInput): Promise<void> {
     return this.store.save(userId, subscription);
+  }
+
+  unsubscribe(userId: string, endpoint: string): Promise<void> {
+    return this.store.removeOwn(userId, endpoint);
   }
 }

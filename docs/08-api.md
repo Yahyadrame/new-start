@@ -49,6 +49,7 @@
 | POST | `/notifications/read-all` | Jeton d'accès exigé. Marque toutes les notifications de la personne comme lues ; répond 204 |
 | GET | `/notifications/unread-count` | Jeton d'accès exigé. Rend `{ count }`, le nombre de notifications non lues de la personne (point de la cloche) |
 | POST | `/push/subscriptions` | Jeton d'accès exigé. Corps `{ endpoint, keys: { p256dh, auth } }` (endpoint en https). Enregistre l'appareil ; le renvoyer ne crée pas de doublon, et un appareil déjà abonné passe à la personne connectée. Répond 204 |
+| DELETE | `/push/subscriptions` | Jeton d'accès exigé. Corps `{ endpoint }`. Désabonne cet appareil, et seulement s'il appartient à la personne connectée ; sans effet sinon. Répond 204 |
 | GET | `/plans?country=SN` | Jeton d'accès exigé. Rend les offres dans l'ordre d'affichage, avec `code`, `nameFr`, `periodDays`, `renews`, `currency` et `amountMinor` (unité mineure). Pays UEMOA : FCFA ; tout autre pays ou pas de pays : dollars |
 | POST | `/billing/checkout` | Démarre un paiement `{ plan, provider }` ; renvoie l'URL ou les instructions |
 | POST | `/billing/cancel` | Annule à la fin de la période |

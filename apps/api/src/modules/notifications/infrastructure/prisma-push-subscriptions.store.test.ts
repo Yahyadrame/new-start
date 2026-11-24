@@ -43,3 +43,16 @@ describe('PrismaPushSubscriptionsStore.forUser et remove', () => {
     expect(deleteMany).toHaveBeenCalledWith({ where: { endpoint: 'https://push.test/a' } });
   });
 });
+
+describe('PrismaPushSubscriptionsStore.removeOwn', () => {
+  it('ne supprime que l’abonnement de la personne, jamais celui d’une autre', async () => {
+    const deleteMany = vi.fn().mockResolvedValue({ count: 1 });
+    const store = new PrismaPushSubscriptionsStore({
+      pushSubscription: { deleteMany },
+    } as unknown as PrismaService);
+    await store.removeOwn('u1', 'https://push.test/a');
+    expect(deleteMany).toHaveBeenCalledWith({
+      where: { userId: 'u1', endpoint: 'https://push.test/a' },
+    });
+  });
+});

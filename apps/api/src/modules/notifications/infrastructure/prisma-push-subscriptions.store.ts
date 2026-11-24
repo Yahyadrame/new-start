@@ -24,4 +24,8 @@ export class PrismaPushSubscriptionsStore implements PushSubscriptionsStore {
   async remove(endpoint: string): Promise<void> {
     await this.prisma.pushSubscription.deleteMany({ where: { endpoint } });
   }
+
+  async removeOwn(userId: string, endpoint: string): Promise<void> {
+    await this.prisma.pushSubscription.deleteMany({ where: { userId, endpoint } });
+  }
 }
