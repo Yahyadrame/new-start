@@ -228,6 +228,7 @@
   },
   "chats": {
     "title": "Discussions",
+    "pick": "Choisis une discussion pour commencer.",
     "explore": "Explorer les thèmes",
     "statusesLabel": "Statuts de tes contacts",
     "filtersLabel": "Filtrer les discussions",
