@@ -32,7 +32,7 @@ export function NotebookSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold tracking-wide text-text-muted uppercase">{t.title}</h2>
+      <h2 className="text-xs font-bold tracking-[0.08em] text-text-muted uppercase">{t.title}</h2>
       {state.kind === 'loading' && <p className="text-text-muted">{t.loading}</p>}
       {state.kind === 'error' && (
         <div className="flex flex-col items-start gap-2">

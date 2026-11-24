@@ -1,7 +1,7 @@
 'use client';
 
 import { ACCENTS, type Me, type MePatch } from '@newstart/shared';
-import { Avatar, AvatarFallback, Badge, Button, Input, Select, Switch } from '@newstart/ui';
+import { Avatar, AvatarFallback, Button, Input, Select, Switch } from '@newstart/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ensureSession, setSession } from '../../shared/auth/session';
@@ -111,26 +111,33 @@ export function ProfileScreen() {
   const goals = me ? [...new Set([...GOALS, me.dailyGoalMin])].sort((a, b) => a - b) : GOALS;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-8 px-6 pt-10 pb-28">
-      <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-4 pt-12 pb-28 lg:max-w-2xl lg:pb-10">
+      <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>
 
       {error && (
-        <p role="alert" className="rounded-2xl bg-surface-1 px-4 py-3 text-[15px] text-danger">
+        <p
+          role="alert"
+          className="rounded-3xl border border-line bg-surface-1 px-4 py-3 text-[15px] text-danger"
+        >
           {error}
         </p>
       )}
 
       {me ? (
         <>
-          <div className="flex items-center gap-4">
-            <Avatar className="size-14">
-              <AvatarFallback>{me.firstName.slice(0, 1).toUpperCase()}</AvatarFallback>
+          <div className="flex items-center gap-4 px-1 py-2">
+            <Avatar className="size-[72px]">
+              <AvatarFallback className="bg-accent font-display text-[28px] font-bold text-on-accent">
+                {me.firstName.slice(0, 1).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col items-start gap-1">
+            <div className="flex flex-col gap-0.5">
               <span className="text-lg font-semibold">{me.firstName}</span>
-              <Badge>{t.levelBadge.replace('{level}', me.level)}</Badge>
+              <span className="text-sm text-text-muted">
+                {t.levelBadge.replace('{level}', me.level)}
+              </span>
             </div>
           </div>
 
@@ -297,8 +304,10 @@ const toApi = (theme: Theme) => theme.toUpperCase() as Me['theme'];
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-1">
-      <h2 className="text-sm font-semibold tracking-wide text-text-muted uppercase">{title}</h2>
+    <section className="flex flex-col">
+      <h2 className="mb-1 text-xs font-bold tracking-[0.08em] text-text-muted uppercase">
+        {title}
+      </h2>
       {children}
     </section>
   );
@@ -316,9 +325,9 @@ function Row({
 }) {
   const id = useId();
   return (
-    <div className="flex min-h-14 items-center justify-between gap-4 py-2">
+    <div className="flex min-h-[72px] items-center justify-between gap-4 border-b border-line px-1 py-2">
       <div className="flex flex-col">
-        <label htmlFor={id} className="text-base font-medium">
+        <label htmlFor={id} className="text-[15px] font-semibold">
           {label}
         </label>
         {hint && <span className="text-[13px] text-text-muted">{hint}</span>}
