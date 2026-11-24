@@ -25,15 +25,17 @@ const show = (m: MessageItem, onAddToNotebook?: (id: string) => Promise<void>) =
 describe('MessageBubble', () => {
   it('aligne un message du contact à gauche, sans correction', () => {
     show(message({ correction: { better: 'ignorée', whyFr: null } }));
-    expect(screen.getByText('Hello there').className).toContain('bg-surface-2');
+    expect(screen.getByText('Hello there').className).toContain('bg-bg');
     expect(screen.queryByText(fr.conversation.natural)).toBeNull();
     expect(screen.getByRole('listitem').className).toContain('self-start');
+    expect(screen.getByText('Hello there').className).toContain('rounded-bl-[6px]');
   });
 
   it('aligne un message de la personne à droite', () => {
     show(message({ author: 'USER' }));
     expect(screen.getByText('Hello there').className).toContain('bg-accent');
     expect(screen.getByRole('listitem').className).toContain('self-end');
+    expect(screen.getByText('Hello there').className).toContain('rounded-br-[6px]');
   });
 
   it('montre la carte « Plus naturel » avec son explication', () => {
