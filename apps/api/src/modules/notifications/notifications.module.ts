@@ -1,5 +1,6 @@
 import { Inject, Module, type OnApplicationBootstrap, type OnModuleDestroy } from '@nestjs/common';
 import { ENV, type Env } from '../../config/env.js';
+import { createPushSender } from '../../shared/push/push.js';
 import {
   NOTIFICATIONS_STORE,
   NotificationsService,
@@ -40,9 +41,9 @@ import { PushSubscriptionsController } from './interface/push-subscriptions.cont
     },
     {
       provide: RemindersScheduler,
-      inject: [REMINDERS_STORE, ENV],
-      useFactory: (store: RemindersStore, env: Env) => {
-        const send = new SendReminders(store);
+      inject: [REMINDERS_STORE, PUSH_SUBSCRIPTIONS_STORE, ENV],
+      useFactory: (store: RemindersStore, subscriptions: PushSubscriptionsStore, env: Env) => {
+        const send = new SendReminders(store, { sender: createPushSender(env), subscriptions });
         return new RemindersScheduler((now) => send.execute(now), env.REMINDERS_INTERVAL_SECONDS);
       },
     },

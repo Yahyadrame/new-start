@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { PushSender } from '../../../shared/push/push.js';
+import type { PushSubscriptionsStore } from './push-subscriptions.js';
 import {
+  REMINDER_URL,
   REMINDER_BODY,
   REMINDER_TITLE,
   SendReminders,
@@ -54,5 +57,58 @@ describe('SendReminders', () => {
     ]);
     await service.execute(now);
     expect(record.mock.calls[0]?.[1]).toBe('2026-11-22');
+  });
+});
+
+describe('SendReminders avec push', () => {
+  const sub = (n: string) => ({
+    endpoint: `https://push.test/${n}`,
+    keys: { p256dh: 'k', auth: 'a' },
+  });
+  const makePush = (results: ('sent' | 'gone' | 'failed')[]) => {
+    const send = vi.fn<PushSender['send']>();
+    for (const r of results) send.mockResolvedValueOnce(r);
+    const subscriptions = {
+      save: vi.fn(),
+      forUser: vi.fn().mockResolvedValue(results.map((_, i) => sub(String(i)))),
+      remove: vi.fn().mockResolvedValue(undefined),
+    } satisfies PushSubscriptionsStore;
+    const store: RemindersStore = {
+      candidates: async () => [candidate()],
+      record: vi.fn().mockResolvedValue(true),
+    };
+    return {
+      send,
+      subscriptions,
+      service: new SendReminders(store, { sender: { send }, subscriptions }),
+    };
+  };
+
+  it('envoie le rappel à chaque appareil de la personne', async () => {
+    const { service, send } = makePush(['sent', 'sent']);
+    await service.execute(now);
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send).toHaveBeenCalledWith(sub('0'), {
+      title: REMINDER_TITLE,
+      body: REMINDER_BODY,
+      url: REMINDER_URL,
+    });
+  });
+
+  it('supprime l’abonnement expiré (gone) et garde les autres, même après un échec', async () => {
+    const { service, subscriptions } = makePush(['failed', 'gone', 'sent']);
+    await service.execute(now);
+    expect(subscriptions.remove).toHaveBeenCalledTimes(1);
+    expect(subscriptions.remove).toHaveBeenCalledWith(sub('1').endpoint);
+  });
+
+  it('n’envoie rien si le rappel du jour existe déjà', async () => {
+    const { send, subscriptions } = makePush(['sent']);
+    const store: RemindersStore = {
+      candidates: async () => [candidate()],
+      record: vi.fn().mockResolvedValue(false),
+    };
+    await new SendReminders(store, { sender: { send }, subscriptions }).execute(now);
+    expect(send).not.toHaveBeenCalled();
   });
 });
