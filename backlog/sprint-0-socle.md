@@ -180,3 +180,35 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] `@Inject(PrismaService)` et import normal dans `PrismaNotificationsStore`, `PrismaPushSubscriptionsStore` et `PrismaRemindersStore` (même écriture que les stores des conversations).
 - [x] Test qui fait construire les trois stores par Nest, comme au démarrage de l'API (échouait avant la correction).
 - [ ] Vérifié sur staging après fusion : l'écran Notifications se charge, l'abonnement push au Profil réussit, plus d'alerte Sentry sur ces routes.
+
+## NS-031 — Écran de connexion `/login` · S
+*Ajouté le 2026-11-24 : « J'ai déjà un compte » mène à `/login`, qui n'existe pas (404). L'API de connexion par code est prête depuis NS-102 (`POST /auth/otp/request` et `/verify`).*
+- [ ] Page `/login` : numéro ou e-mail, puis saisie du code à usage unique, mêmes composants et mêmes textes que l'inscription quand ils existent.
+- [ ] Après connexion, retour à `/chats` (ou à l'onboarding si le niveau n'est pas évalué).
+- [ ] Erreurs lisibles : code faux, code expiré, trop de demandes.
+- [ ] Tests unitaires, et e2e du parcours accueil, « J'ai déjà un compte », code, Discussions.
+
+## NS-032 — Icône de l'écran d'accueil iPhone et manifeste · S
+*Ajouté le 2026-11-24 : le lien épinglé sur l'écran d'accueil d'un iPhone montre une icône toute noire. Le site n'a que `icon.svg`, que l'iPhone n'utilise pas pour cet usage.*
+- [ ] Icône PNG 180 × 180 (`apple-icon`) générée depuis `logo-icon.svg` : fond #CCFF00 plein, sans transparence.
+- [ ] `manifest` avec nom, couleurs et icônes 192 et 512 px, dont une icône « maskable ».
+- [ ] `theme-color` clair et sombre.
+- [ ] Test unitaire du manifeste ; vérifié sur un iPhone après fusion.
+
+## NS-033 — Refonte de l'interface, maquettes façon WhatsApp · L
+*Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b).*
+- [ ] Ordinateur : barre latérale de navigation, liste des discussions à gauche, conversation à droite. Mobile : liste en plein écran, conversation au-dessus avec retour, barre de navigation en bas.
+- [ ] Maquettes de tous les écrans de `docs/05-ecrans.md`, thèmes clair et sombre, ordinateur et mobile. `docs/05-ecrans.md` et `docs/04-design-system.md` mis à jour avant tout code.
+- [ ] Le Profil est accessible depuis la navigation (voir NS-035).
+- [ ] Validation des maquettes par le porteur du projet avant NS-034.
+*Décidé le 2026-11-24 : on garde notre palette (#CCFF00, noir, gris, thèmes clair et sombre) et on reprend de WhatsApp les formes et la structure : disposition, liste, bulles, en-têtes, navigation.*
+
+## NS-034 — Refonte de l'interface, mise en œuvre · L (à découper par écran)
+- [ ] Coquille d'application : navigation adaptative (barre latérale sur ordinateur, barre du bas sur mobile) et disposition à deux colonnes pour Discussions.
+- [ ] Discussions et conversation, puis Série, Jeux, Progrès, Notifications, Profil, un écran par PR.
+- [ ] Accessibilité (cibles ≥ 44 px, contrastes 4,5:1), thèmes clair et sombre, tests unitaires et e2e à chaque PR.
+
+## NS-035 — Accès au Profil depuis la navigation · S
+*Ajouté le 2026-11-24 : `/profile` existe mais aucun lien dans l'application n'y mène ; le porteur du projet ne voit pas le Profil. Le réglage « Rappels sur ce téléphone » (NS-611) est donc inaccessible.*
+- [ ] Entrée « Profil » dans la navigation actuelle, en attendant la refonte, puis reprise dans la nouvelle navigation de NS-034.
+- [ ] Test unitaire de la navigation.
