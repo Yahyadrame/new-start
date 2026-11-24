@@ -7,6 +7,7 @@ import { PushSubscriptionsService } from '../application/push-subscriptions.js';
 import { PushSubscriptionsController } from './push-subscriptions.controller.js';
 
 const subscribe = vi.fn().mockResolvedValue(undefined);
+const unsubscribe = vi.fn().mockResolvedValue(undefined);
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 const body = { endpoint: 'https://push.test/a', keys: { p256dh: 'k', auth: 'a' } };
 let app: INestApplication;
@@ -14,7 +15,7 @@ beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [PushSubscriptionsController],
     providers: [
-      { provide: PushSubscriptionsService, useValue: { subscribe } },
+      { provide: PushSubscriptionsService, useValue: { subscribe, unsubscribe } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -47,5 +48,33 @@ describe('POST /push/subscriptions', () => {
       .send({ endpoint: 'http://push.test/a', keys: {} });
     expect(res.status).toBe(400);
     expect(subscribe).not.toHaveBeenCalled();
+  });
+});
+
+describe('DELETE /push/subscriptions', () => {
+  it('refuse sans jeton (401)', async () => {
+    const res = await request(app.getHttpServer())
+      .delete('/push/subscriptions')
+      .send({ endpoint: body.endpoint });
+    expect(res.status).toBe(401);
+  });
+
+  it('désabonne l’appareil de la personne connectée (204)', async () => {
+    const res = await request(app.getHttpServer())
+      .delete('/push/subscriptions')
+      .set({ Authorization: 'Bearer tok-u1' })
+      .send({ endpoint: body.endpoint });
+    expect(res.status).toBe(204);
+    expect(unsubscribe).toHaveBeenCalledWith('u1', body.endpoint);
+  });
+
+  it('refuse un endpoint absent (400) sans rien supprimer', async () => {
+    unsubscribe.mockClear();
+    const res = await request(app.getHttpServer())
+      .delete('/push/subscriptions')
+      .set({ Authorization: 'Bearer tok-u1' })
+      .send({});
+    expect(res.status).toBe(400);
+    expect(unsubscribe).not.toHaveBeenCalled();
   });
 });

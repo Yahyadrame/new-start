@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PushSubscriptionInput } from './push.js';
+import { PushSubscriptionInput, PushUnsubscribeInput } from './push.js';
 
 const valid = {
   endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
@@ -28,5 +28,13 @@ describe('PushSubscriptionInput', () => {
     expect(
       PushSubscriptionInput.safeParse({ ...valid, keys: { p256dh: '', auth: 'a' } }).success,
     ).toBe(false);
+  });
+});
+
+describe('PushUnsubscribeInput', () => {
+  it('ne garde que l’endpoint, qui doit être en https', () => {
+    expect(PushUnsubscribeInput.parse(valid)).toEqual({ endpoint: valid.endpoint });
+    expect(PushUnsubscribeInput.safeParse({ endpoint: 'http://x.test/a' }).success).toBe(false);
+    expect(PushUnsubscribeInput.safeParse({}).success).toBe(false);
   });
 });

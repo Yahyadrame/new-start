@@ -72,6 +72,7 @@ describe('SendReminders avec push', () => {
       save: vi.fn(),
       forUser: vi.fn().mockResolvedValue(results.map((_, i) => sub(String(i)))),
       remove: vi.fn().mockResolvedValue(undefined),
+      removeOwn: vi.fn(),
     } satisfies PushSubscriptionsStore;
     const store: RemindersStore = {
       candidates: async () => [candidate()],

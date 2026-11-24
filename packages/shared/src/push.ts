@@ -9,3 +9,7 @@ export const PushSubscriptionInput = z.object({
   }),
 });
 export type PushSubscriptionInput = z.infer<typeof PushSubscriptionInput>;
+
+/** Corps de `DELETE /push/subscriptions` : l'appareil à désabonner. */
+export const PushUnsubscribeInput = PushSubscriptionInput.pick({ endpoint: true });
+export type PushUnsubscribeInput = z.infer<typeof PushUnsubscribeInput>;
