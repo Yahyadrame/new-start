@@ -65,6 +65,7 @@ model User {
   dailyGoalMin    Int       @default(15)
   preferredAccent String    @default("en-US")
   dataSaver       Boolean   @default(false)
+  chatBackground  String    @default("NONE")  // fond des conversations, voir CHAT_BACKGROUNDS dans packages/shared
   pausedUntil     DateTime?
   xp              Int       @default(0)
   streakDays      Int       @default(0)

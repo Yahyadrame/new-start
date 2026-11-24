@@ -75,7 +75,7 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 
 ## NS-038 — Fonds de conversation au choix · M
 *Ajouté le 2026-11-24 : plusieurs motifs de fond, comme WhatsApp, pour rendre la conversation plus attirante.*
-- [ ] Plusieurs fonds (motifs et couleurs) qui respectent les thèmes clair et sombre et gardent les contrastes 4,5:1 sur les bulles.
+- [ ] Dix fonds (liste dans `docs/decisions.md`) qui respectent les thèmes clair et sombre et gardent les contrastes 4,5:1 sur les bulles.
 *Décidé le 2026-11-24 : le choix est gardé sur le compte (option B).*
 - [ ] Migration additive : un champ `chatBackground` sur `User`, avec une valeur par défaut. Route `PATCH` du profil mise à jour et documentée dans `docs/08-api.md`.
 - [ ] Le choix se fait depuis le menu « ⋮ » de l'en-tête de la conversation (maquette), et aussi au Profil ; il s'applique à toutes les conversations.
