@@ -15,6 +15,18 @@
 - [x] Écran Notifications.
 - [x] Tranche 6 : cloche en haut à droite de toutes les pages avec la barre du bas, avec un point quand il y a du non-lu (décidé le 2026-11-21). Compteur `GET /notifications/unread-count` (#232) ; l'heure du rappel reste au Profil seulement. À aligner avec les maquettes de l'en-tête.
 
+## NS-611 — Abonnement et envoi des notifications push · M
+*Suite de NS-503. Le port `PushSender` et l'adaptateur `web-push` existent (#257) ; rien ne les appelle encore. Les clés `VAPID_*` sont déjà sur staging. Dépend du service worker de NS-305 pour la réception côté navigateur.*
+- [ ] Table `PushSubscription` (personne, `endpoint` unique, clés `p256dh` et `auth`, date de création), migration additive (« étendre puis contracter »).
+- [ ] `POST /push/subscriptions` (jeton d'accès exigé, schéma Zod partagé) enregistre l'abonnement ; le renvoyer deux fois ne crée pas de doublon. Une route de désabonnement retire l'abonnement de l'appareil.
+- [ ] `SendReminders` envoie un push aux abonnements de la personne en plus de la ligne `NotificationLog`, sans casser la limite d'un rappel par jour.
+- [ ] Un résultat `gone` du `PushSender` supprime l'abonnement ; un résultat `failed` ne supprime rien et ne bloque pas les autres envois.
+- [ ] Service worker : affiche la notification et ouvre l'URL du message au clic (à faire avec NS-305).
+- [ ] Demande de permission au bon moment (jamais au premier chargement), avec un texte clair ; refus respecté, sans relance.
+- [ ] Aucun contenu de message ni abonnement dans les logs. Tests unitaires du cas d'usage, de la route et du service worker ; test e2e de l'abonnement sur staging.
+- [ ] `docs/07-modele-de-donnees.md` et `docs/08-api.md` mis à jour.
+*À décider avec le porteur : le texte exact du rappel, et si la demande de permission passe par l'écran Profil ou par un encart sur l'écran Notifications.*
+
 > Au lancement tout est gratuit : les tickets de paiement (NS-504 à NS-508) sont développés et testés en bac à sable, derrière le drapeau `payments.enabled = false`. Ils ne doivent rien afficher ni rien débiter tant que le porteur du projet n'a pas décidé de les activer.
 
 ## NS-509 — Limites d'usage du lancement · S
