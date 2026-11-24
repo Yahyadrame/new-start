@@ -23,6 +23,7 @@ Base : PostgreSQL 16. ORM : Prisma. Identifiants : UUID v7 (triables dans le tem
 | `Plan`, `Subscription`, `Payment` | Offres, abonnements, paiements | n–1 User |
 | `UsageCounter` | Compteurs de quota par jour | n–1 User |
 | `NotificationLog` | Notifications envoyées (pour limiter à 1/jour) | n–1 User |
+| `PushSubscription` | Appareils abonnés aux notifications push (`endpoint` unique, clés `p256dh` et `auth`) | n–1 User |
 | `AuditLog` | Actions sensibles (admin, paiement, suppression) | — |
 
 ## Schéma Prisma (extrait de référence)
