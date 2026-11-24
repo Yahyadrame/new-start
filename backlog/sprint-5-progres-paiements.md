@@ -21,8 +21,8 @@
 - [x] `POST /push/subscriptions` (jeton d'accès exigé, schéma Zod partagé) enregistre l'abonnement ; le renvoyer deux fois ne crée pas de doublon. Une route de désabonnement retire l'abonnement de l'appareil.
 - [x] `SendReminders` envoie un push aux abonnements de la personne en plus de la ligne `NotificationLog`, sans casser la limite d'un rappel par jour.
 - [x] Un résultat `gone` du `PushSender` supprime l'abonnement ; un résultat `failed` ne supprime rien et ne bloque pas les autres envois.
-- [ ] Service worker : affiche la notification et ouvre l'URL du message au clic (à faire avec NS-305).
-- [ ] Demande de permission au bon moment (jamais au premier chargement), avec un texte clair ; refus respecté, sans relance.
+- [x] Service worker : affiche la notification et ouvre l'URL du message au clic (`public/sw.js` à la main, sans Serwist ; NS-305 le déplacera).
+- [x] Demande de permission au bon moment (jamais au premier chargement), avec un texte clair ; refus respecté, sans relance.
 - [ ] Aucun contenu de message ni abonnement dans les logs. Tests unitaires du cas d'usage, de la route et du service worker ; test e2e de l'abonnement sur staging.
 - [ ] `docs/07-modele-de-donnees.md` et `docs/08-api.md` mis à jour.
 *Décidé le 2026-11-24 : la demande de permission a deux endroits, un réglage au Profil et un encart sur l'écran Notifications (voir `docs/decisions.md`). Reste à décider : le texte exact du rappel (le texte actuel est gardé en attendant).*
