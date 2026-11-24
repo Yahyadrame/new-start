@@ -46,4 +46,15 @@ describe('BottomNav', () => {
       'page',
     );
   });
+
+  it('devient un rail à gauche dès 1024 px, avec Profil en bas', () => {
+    usePathname.mockReturnValue('/chats');
+    render(<BottomNav />);
+    const nav = screen.getByRole('navigation', { name: fr.nav.label });
+    expect(nav.className).toContain('lg:w-[72px]');
+    expect(nav.hasAttribute('data-shell-nav')).toBe(true);
+    const items = nav.querySelectorAll('li');
+    expect(items[items.length - 1]?.className).toContain('lg:mt-auto');
+    expect(items[0]?.className).not.toContain('lg:mt-auto');
+  });
 });
