@@ -159,6 +159,12 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [x] `GET /` répond 200 en local avec `pnpm dev`.
 - [ ] Vérifié sur staging : une erreur serveur arrive toujours dans Sentry (après fusion).
 
+## NS-029 — Relais de toutes les routes `/api/*` du site vers l'API · S
+*Ajouté le 2026-11-24 : sur staging, `/api/conversations`, `/api/me`, `/api/progress`, `/api/notifications/*` répondaient 404 sur le site Vercel, alors que l'API de Render répond (401 sans connexion). Le site ne relayait que `/api/auth/*` et `/api/onboarding/*` ; l'écran Discussions affichait « Impossible de charger tes discussions », et l'abonnement push de NS-611 ne pouvait pas aboutir.*
+- [x] Un seul relais `/api/:path*` vers l'API (`NEXT_PUBLIC_API_URL`), à la place de la liste auth et onboarding. Le cookie de rafraîchissement reste sur le domaine du site (décision du 2026-11-15).
+- [x] Les routes du site (`/api/sentry-test`) passent avant le relais (rewrites après le système de fichiers).
+- [x] Test unitaire du relais mis à jour.
+- [ ] Vérifié sur staging après fusion : `/api/conversations` renvoie 401 sans connexion, l'écran Discussions se charge, le test de niveau va jusqu'au résultat.
 ## NS-028 — IA : signaler la configuration manquante et journaliser les échecs · S
 *Ajouté le 2026-11-24 après un test sur staging : à la dernière question du test de niveau, la personne voit « Jade n'arrive pas à évaluer ton niveau » (503 `AI_UNAVAILABLE`). En local, l'évaluation marche avec `LLM_PROVIDER=groq` et échoue à l'identique sans fournisseur. Cause probable : `LLM_PROVIDER` et `GROQ_API_KEY` absents de Render (à confirmer par le porteur du projet). Aujourd'hui rien ne le dit : `createAiProviders` retombe en silence sur l'adaptateur factice, et le `catch` de `evaluateLevel` avale l'erreur.*
 - [ ] Au démarrage de l'API, un log d'avertissement dit quel adaptateur sert pour le LLM, le STT et le TTS. Sur staging et en production, un adaptateur factice déclenche un avertissement visible (jamais de clé ni de valeur dans le log).
