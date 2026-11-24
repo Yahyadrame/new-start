@@ -42,37 +42,38 @@ enum MessageKind {
 }
 
 model User {
-  id              String            @id @default(uuid(7)) @db.Uuid
-  firstName       String
-  goal            Goal
-  level           Cefr              @default(A1)
-  birthYear       Int? // pour restreindre les thèmes réservés aux majeurs
-  phoneE164       String?           @unique // format international (+221…), demandé à l'inscription
-  phoneVerifiedAt DateTime? // rempli quand la vérification par SMS sera activée
-  smsOptIn        Boolean           @default(false) // consentement séparé aux SMS
-  voiceConsentAt  DateTime? // consentement aux enregistrements vocaux ; null = pas de consentement
-  locale          String            @default("fr")
-  countryCode     String? // ISO 3166-1 alpha-2, pour la devise
-  theme           ThemePref         @default(SYSTEM)
-  reminderTime    String? // "19:00"
-  timezone        String            @default("Africa/Dakar")
-  dailyGoalMin    Int               @default(15)
-  preferredAccent String            @default("en-US")
-  dataSaver       Boolean           @default(false)
-  pausedUntil     DateTime?
-  xp              Int               @default(0)
-  streakDays      Int               @default(0)
-  lastActiveDay   DateTime?         @db.Date
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  identities      AuthIdentity[]
-  refreshTokens   RefreshToken[]
-  conversations   Conversation[]
-  levelAnswers    LevelTestAnswer[]
-  notebook        NotebookEntry[]
-  reviewCards     ReviewCard[]
-  activities      DailyActivity[]
-  notifications   NotificationLog[]
+  id                String             @id @default(uuid(7)) @db.Uuid
+  firstName         String
+  goal              Goal
+  level             Cefr               @default(A1)
+  birthYear         Int? // pour restreindre les thèmes réservés aux majeurs
+  phoneE164         String?            @unique // format international (+221…), demandé à l'inscription
+  phoneVerifiedAt   DateTime? // rempli quand la vérification par SMS sera activée
+  smsOptIn          Boolean            @default(false) // consentement séparé aux SMS
+  voiceConsentAt    DateTime? // consentement aux enregistrements vocaux ; null = pas de consentement
+  locale            String             @default("fr")
+  countryCode       String? // ISO 3166-1 alpha-2, pour la devise
+  theme             ThemePref          @default(SYSTEM)
+  reminderTime      String? // "19:00"
+  timezone          String             @default("Africa/Dakar")
+  dailyGoalMin      Int                @default(15)
+  preferredAccent   String             @default("en-US")
+  dataSaver         Boolean            @default(false)
+  pausedUntil       DateTime?
+  xp                Int                @default(0)
+  streakDays        Int                @default(0)
+  lastActiveDay     DateTime?          @db.Date
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  identities        AuthIdentity[]
+  refreshTokens     RefreshToken[]
+  conversations     Conversation[]
+  levelAnswers      LevelTestAnswer[]
+  notebook          NotebookEntry[]
+  reviewCards       ReviewCard[]
+  activities        DailyActivity[]
+  notifications     NotificationLog[]
+  pushSubscriptions PushSubscription[]
 }
 
 model AuthIdentity {
@@ -305,6 +306,20 @@ model NotificationLog {
 
   @@unique([userId, kind, day])
   @@index([userId, createdAt])
+}
+
+/// Un appareil abonné aux notifications push. L'`endpoint` est unique : le même appareil ne compte qu'une fois, même si la personne change.
+model PushSubscription {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  userId    String   @db.Uuid
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 /// Une offre d'abonnement (docs/14-paiements.md). Les prix sont dans `PlanPrice`, jamais dans le code.

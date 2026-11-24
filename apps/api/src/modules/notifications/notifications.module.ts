@@ -5,6 +5,11 @@ import {
   NotificationsService,
   type NotificationsStore,
 } from './application/notifications.js';
+import {
+  PUSH_SUBSCRIPTIONS_STORE,
+  PushSubscriptionsService,
+  type PushSubscriptionsStore,
+} from './application/push-subscriptions.js';
 import { RemindersScheduler } from './application/reminders-scheduler.js';
 import {
   REMINDERS_STORE,
@@ -12,14 +17,22 @@ import {
   type RemindersStore,
 } from './application/send-reminders.js';
 import { PrismaNotificationsStore } from './infrastructure/prisma-notifications.store.js';
+import { PrismaPushSubscriptionsStore } from './infrastructure/prisma-push-subscriptions.store.js';
 import { PrismaRemindersStore } from './infrastructure/prisma-reminders.store.js';
 import { NotificationsController } from './interface/notifications.controller.js';
+import { PushSubscriptionsController } from './interface/push-subscriptions.controller.js';
 
 @Module({
-  controllers: [NotificationsController],
+  controllers: [NotificationsController, PushSubscriptionsController],
   providers: [
     { provide: NOTIFICATIONS_STORE, useClass: PrismaNotificationsStore },
     { provide: REMINDERS_STORE, useClass: PrismaRemindersStore },
+    { provide: PUSH_SUBSCRIPTIONS_STORE, useClass: PrismaPushSubscriptionsStore },
+    {
+      provide: PushSubscriptionsService,
+      inject: [PUSH_SUBSCRIPTIONS_STORE],
+      useFactory: (store: PushSubscriptionsStore) => new PushSubscriptionsService(store),
+    },
     {
       provide: NotificationsService,
       inject: [NOTIFICATIONS_STORE],
