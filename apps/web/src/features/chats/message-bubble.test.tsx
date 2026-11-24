@@ -157,6 +157,14 @@ describe('MessageBubble', () => {
     });
   });
 
+  it('montre les doubles coches seulement sur les messages de la personne', () => {
+    show(message({ author: 'USER' }));
+    expect(document.querySelector('svg.lucide-check-check')).not.toBeNull();
+    cleanup();
+    show(message({}));
+    expect(document.querySelector('svg.lucide-check-check')).toBeNull();
+  });
+
   it('centre un message système, sans bulle ni heure', () => {
     show(message({ author: 'SYSTEM', text: 'Nouvelle conversation' }));
     expect(screen.getByText('Nouvelle conversation').className).toContain('self-center');

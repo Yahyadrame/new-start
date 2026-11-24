@@ -1,6 +1,6 @@
 import type { ConversationItem } from '@newstart/shared';
 import { describe, expect, it } from 'vitest';
-import { applyFilter, formatWhen, matchesQuery } from './chats-format';
+import { applyFilter, dayLabel, formatHour, formatWhen, matchesQuery } from './chats-format';
 
 const item = (id: string, category: string, unreadCount: number) =>
   ({ id, unreadCount, agent: { category } }) as ConversationItem;
@@ -40,5 +40,23 @@ describe('matchesQuery', () => {
     expect(matchesQuery(chats, 'YOU').map((i) => i.id)).toEqual(['a']);
     expect(matchesQuery(chats, 'sam').map((i) => i.id)).toEqual(['b']);
     expect(matchesQuery(chats, 'zzz')).toEqual([]);
+  });
+});
+
+describe('dayLabel', () => {
+  const now = new Date(2026, 10, 24, 15, 0);
+  it("dit Aujourd'hui, Hier, puis la date", () => {
+    expect(dayLabel(new Date(2026, 10, 24, 8, 0).toISOString(), now)).toBe("Aujourd'hui");
+    expect(dayLabel(new Date(2026, 10, 23, 23, 0).toISOString(), now)).toBe('Hier');
+    expect(dayLabel(new Date(2026, 10, 17, 9, 0).toISOString(), now)).toContain('17');
+  });
+  it("ajoute l'année quand ce n'est pas la même", () => {
+    expect(dayLabel(new Date(2025, 10, 17, 9, 0).toISOString(), now)).toContain('2025');
+  });
+});
+
+describe('formatHour', () => {
+  it("donne l'heure sur deux chiffres", () => {
+    expect(formatHour(new Date(2026, 10, 24, 9, 5).toISOString())).toBe('09:05');
   });
 });

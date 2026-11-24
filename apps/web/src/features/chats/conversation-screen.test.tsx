@@ -51,7 +51,7 @@ const texts = () =>
   screen
     .getAllByRole('listitem')
     .map((li) => li.querySelector('p'))
-    .filter((p) => p?.getAttribute('role') !== 'status')
+    .filter((p) => p && p.getAttribute('role') !== 'status')
     .map((p) => p?.textContent);
 
 beforeEach(() => {
@@ -78,10 +78,26 @@ describe('ConversationScreen', () => {
   it('montre l’en-tête du contact et un retour vers les discussions', async () => {
     render(<ConversationScreen agentSlug="jade" />);
     expect((await screen.findByRole('heading', { level: 1 })).textContent).toContain('Jade');
-    expect(screen.getByText('AMIE DU QUOTIDIEN', { exact: false })).toBeTruthy();
+    expect(screen.getByText(fr.conversation.online)).toBeTruthy();
     expect(screen.getByRole('link', { name: fr.conversation.back }).getAttribute('href')).toBe(
       '/chats',
     );
+  });
+
+  it('place un séparateur de jour avant chaque nouvelle journée', async () => {
+    listMessages.mockResolvedValue({
+      items: [
+        msg('m2', 'AGENT', 'Second'),
+        { ...msg('m1', 'USER', 'First'), createdAt: '2026-11-19T10:00:00.000Z' },
+      ],
+      nextCursor: null,
+    });
+    render(<ConversationScreen agentSlug="jade" />);
+    await screen.findByText('First');
+    const separators = screen
+      .getAllByRole('listitem')
+      .filter((li) => li.className.includes('rounded-full'));
+    expect(separators).toHaveLength(2);
   });
 
   it('cache la flèche de retour dès 1024 px, où la liste reste à gauche', async () => {

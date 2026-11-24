@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { MessageItem } from '@newstart/shared';
 import { cn } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
-import { formatWhen } from './chats-format';
+import { CheckCheck } from 'lucide-react';
+import { formatHour } from './chats-format';
 
 const c = fr.conversation;
 
@@ -111,9 +112,10 @@ export function MessageBubble({
       >
         {message.text}
       </p>
-      <time dateTime={message.createdAt} className="px-1 text-xs text-text-muted">
-        {formatWhen(message.createdAt)}
-      </time>
+      <span className="flex items-center gap-1 px-1 text-xs text-text-muted">
+        <time dateTime={message.createdAt}>{formatHour(message.createdAt)}</time>
+        {mine && <CheckCheck aria-hidden="true" className="size-3.5" />}
+      </span>
       {!mine && (
         <Translation
           initial={message.translationFr}

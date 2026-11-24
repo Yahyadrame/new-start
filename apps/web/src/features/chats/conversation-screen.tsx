@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, Badge, Button, Skeleton } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import {
@@ -16,6 +16,7 @@ import {
   markConversationRead,
   sendMessage,
 } from './chats-api';
+import { dayLabel } from './chats-format';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
 import { MessageBubble } from './message-bubble';
@@ -162,9 +163,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
                 <span className="truncate">{item.agent.name}</span>
                 <Badge variant="neutral">{t.aiBadge}</Badge>
               </h1>
-              <p className="text-xs font-semibold tracking-[0.08em] text-text-muted uppercase">
-                {item.agent.roleFr}
-              </p>
+              <p className="text-xs text-text-muted">{c.online}</p>
             </div>
           </>
         )}
@@ -202,13 +201,21 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
               <p className="text-text-muted">{c.empty}</p>
             ) : (
               <ol aria-label={c.messagesLabel} className="flex flex-col gap-3">
-                {messages.map((m) => (
-                  <MessageBubble
-                    key={m.id}
-                    message={m}
-                    onAddToNotebook={(id) => addToNotebook(token.current, id)}
-                    onTranslate={(id) => translateMessage(token.current, id)}
-                  />
+                {messages.map((m, i) => (
+                  <Fragment key={m.id}>
+                    {(i === 0 ||
+                      new Date(m.createdAt).toDateString() !==
+                        new Date(messages[i - 1]?.createdAt ?? m.createdAt).toDateString()) && (
+                      <li className="self-center rounded-full bg-bg px-3 py-1 text-xs font-semibold text-text-muted">
+                        {dayLabel(m.createdAt)}
+                      </li>
+                    )}
+                    <MessageBubble
+                      message={m}
+                      onAddToNotebook={(id) => addToNotebook(token.current, id)}
+                      onTranslate={(id) => translateMessage(token.current, id)}
+                    />
+                  </Fragment>
                 ))}
                 {pending.map((p) => (
                   <PendingBubble

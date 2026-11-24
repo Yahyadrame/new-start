@@ -231,11 +231,11 @@
     "pick": "Choisis une discussion pour commencer.",
     "explore": "Explorer les thèmes",
     "searchLabel": "Chercher dans tes discussions",
-    "searchPlaceholder": "Chercher",
+    "searchPlaceholder": "Rechercher un contact",
     "filtersLabel": "Filtrer les discussions",
     "filters": {
-      "all": "Tous",
-      "unread": "Non lus"
+      "all": "Toutes",
+      "unread": "Non lues"
     },
     "aiBadge": "IA",
     "you": "Toi : ",
@@ -267,6 +267,7 @@
   },
   "conversation": {
     "back": "Retour aux discussions",
+    "online": "en ligne",
     "notFound": "Ce contact n'existe pas dans tes discussions.",
     "messagesLabel": "Messages",
     "empty": "Aucun message pour l'instant.",

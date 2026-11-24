@@ -57,4 +57,12 @@ describe('BottomNav', () => {
     expect(items[items.length - 1]?.className).toContain('lg:mt-auto');
     expect(items[0]?.className).not.toContain('lg:mt-auto');
   });
+
+  it('met le logo en haut du rail, caché sur mobile et des lecteurs d’écran', () => {
+    usePathname.mockReturnValue('/chats');
+    render(<BottomNav />);
+    const logo = document.querySelector('img[src="/logo-icon.svg"]');
+    expect(logo?.parentElement?.className).toContain('hidden');
+    expect(logo?.parentElement?.getAttribute('aria-hidden')).toBe('true');
+  });
 });
