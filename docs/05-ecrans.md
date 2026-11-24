@@ -2,6 +2,12 @@
 
 Maquettes complètes, en sombre et en clair : <https://claude.ai/artifact/7WBnVmUHi25D7ttJimWESu> (17 écrans + planche logo). Format de référence : 390 × 844 px (téléphone). Sur ordinateur, l'appli s'affiche en deux colonnes (liste à gauche, contenu à droite) au-delà de 1024 px de large.
 
+Refonte façon WhatsApp (NS-033), formes et structure de WhatsApp avec notre palette, ordinateur et mobile, clair et sombre : <https://claude.ai/artifact/8kyDKhtBZfyaKVew3cuKYY>. Elle remplace la disposition des maquettes ci-dessus pour Discussions, Conversation, Série, Jeux, Progrès et Profil. Les autres écrans gardent leur contenu et prennent la nouvelle coquille.
+
+- **Mobile (390 px)** : titre de l'écran en haut, recherche, pastilles de filtre, liste avec séparateurs décalés, bouton rond « nouvelle discussion », barre du bas à 5 onglets (Discussions, Série, Jeux, Progrès, Profil). La conversation s'ouvre en plein écran avec une flèche de retour.
+- **Ordinateur (≥ 1024 px)** : rail de navigation à gauche (72 px), liste des discussions (400 px), conversation à droite. Le Profil se place en bas du rail ; Notifications y a sa propre entrée.
+- **Conversation** : bulles de 18 px avec un coin de 6 px côté auteur, fond de conversation légèrement distinct, zone de saisie en pilule, bouton micro vert, carte « Plus naturel » pour les corrections.
+
 | # | Écran | Route | Éléments clés | Notes |
 | --- | --- | --- | --- | --- |
 | 1 | Bienvenue | `/` (déconnecté) | Logo, bulles empilées, « Parle anglais. Pour de vrai. », « Commencer gratuitement », « J'ai déjà un compte » | |

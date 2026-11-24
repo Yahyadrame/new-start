@@ -200,9 +200,9 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 
 ## NS-033 — Refonte de l'interface, maquettes façon WhatsApp · L
 *Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b).*
-- [ ] Ordinateur : barre latérale de navigation, liste des discussions à gauche, conversation à droite. Mobile : liste en plein écran, conversation au-dessus avec retour, barre de navigation en bas.
-- [ ] Maquettes de tous les écrans de `docs/05-ecrans.md`, thèmes clair et sombre, ordinateur et mobile. `docs/05-ecrans.md` et `docs/04-design-system.md` mis à jour avant tout code.
-- [ ] Le Profil est accessible depuis la navigation (voir NS-035).
+- [x] Ordinateur : barre latérale de navigation, liste des discussions à gauche, conversation à droite. Mobile : liste en plein écran, conversation au-dessus avec retour, barre de navigation en bas.
+- [x] Maquettes de tous les écrans de `docs/05-ecrans.md`, thèmes clair et sombre, ordinateur et mobile. `docs/05-ecrans.md` et `docs/04-design-system.md` mis à jour avant tout code.
+- [x] Le Profil est accessible depuis la navigation (voir NS-035).
 - [ ] Validation des maquettes par le porteur du projet avant NS-034.
 *Décidé le 2026-11-24 : on garde notre palette (#CCFF00, noir, gris, thèmes clair et sombre) et on reprend de WhatsApp les formes et la structure : disposition, liste, bulles, en-têtes, navigation.*
 

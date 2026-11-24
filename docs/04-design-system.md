@@ -55,7 +55,9 @@ Polices chargées avec `next/font` (auto-hébergées, pas d'appel à Google en p
 
 | Composant | Description | Écrans |
 | --- | --- | --- |
-| `BottomNav` | 4 onglets : Discussions, Série, Jeux, Progrès ; onglet actif = pilule verte derrière l'icône | 3, 6, 7, 9 |
+| `BottomNav` | Mobile : 5 onglets (Discussions, Série, Jeux, Progrès, Profil) ; onglet actif = pilule verte derrière l'icône | 3, 6, 7, 9 |
+| `SideRail` | Ordinateur : rail de 72 px à gauche, mêmes entrées que `BottomNav`, plus Notifications ; Profil en bas | tous |
+| `ChatListRow` | Avatar 52 px, nom + badge IA, aperçu sur une ligne, heure, pastille verte des non lus ; séparateur décalé sous l'avatar | 3 |
 | `ContactRow` | Avatar + point « en ligne », nom, rôle en capitales, dernier message, heure, badge non lus | 3 |
 | `StoryRing` | Avatar dans un anneau vert (non vu) ou gris (vu) | 3 |
 | `ChatBubble` | Contact : surface-1 à gauche ; moi : accent à droite, coches de lecture | 4 |
