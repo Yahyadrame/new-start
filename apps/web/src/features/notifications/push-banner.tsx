@@ -17,7 +17,7 @@ export function PushBanner() {
   return (
     <section
       aria-labelledby="push-banner-title"
-      className="flex flex-col gap-3 rounded-2xl bg-surface-1 p-4"
+      className="flex flex-col gap-3 rounded-3xl border border-line bg-surface-1 p-4"
     >
       <div className="flex flex-col gap-1">
         <h2 id="push-banner-title" className="font-semibold">

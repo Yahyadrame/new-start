@@ -46,6 +46,16 @@ describe('NotificationsScreen', () => {
     expect(fetchNotifications).toHaveBeenCalledWith('tok');
   });
 
+  it('présente les rappels en cartes arrondies, titres de groupe en capitales', async () => {
+    fetchNotifications.mockResolvedValue([item('a', new Date())]);
+    render(<NotificationsScreen />);
+    const card = (await screen.findByText('Rappel a')).closest('li');
+    expect(card?.className).toContain('rounded-3xl');
+    expect(card?.className).toContain('border-line');
+    expect(screen.getByRole('heading', { name: t.today }).className).toContain('uppercase');
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-[28px]');
+  });
+
   it('affiche l’encart des rappels sur ce téléphone', async () => {
     fetchNotifications.mockResolvedValue([]);
     render(<NotificationsScreen />);

@@ -29,17 +29,20 @@ function Group({
   if (items.length === 0) return null;
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-text-muted">{title}</h2>
+      <h2 className="text-xs font-semibold tracking-[0.08em] text-text-muted uppercase">{title}</h2>
       <ul className="flex flex-col gap-3">
         {items.map((n) => (
-          <li key={n.id} className="flex flex-col gap-1 rounded-2xl bg-surface-1 p-4">
+          <li
+            key={n.id}
+            className="flex flex-col gap-1 rounded-3xl border border-line bg-surface-1 p-4"
+          >
             <div className="flex items-baseline justify-between gap-3">
               <p className={n.read ? 'font-medium' : 'font-bold'}>{n.title}</p>
               <time dateTime={n.createdAt} className="text-sm text-text-muted">
                 {label(n.createdAt)}
               </time>
             </div>
-            <p className="text-text-muted">{n.body}</p>
+            <p className="text-[15px] text-text-muted">{n.body}</p>
           </li>
         ))}
       </ul>
@@ -70,14 +73,16 @@ export function NotificationsScreen() {
   const { today, week } = groupNotifications(items ?? [], new Date());
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-10 pb-28">
-      <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-4 pt-12 pb-28 lg:max-w-2xl lg:pb-10">
+      <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>
       <PushBanner />
       {error && <p role="alert">{t.error}</p>}
-      {!error && !items && <Skeleton className="h-40 w-full" />}
-      {items && today.length === 0 && week.length === 0 && <p>{t.empty}</p>}
+      {!error && !items && <Skeleton className="h-40 w-full rounded-3xl" />}
+      {items && today.length === 0 && week.length === 0 && (
+        <p className="text-text-muted">{t.empty}</p>
+      )}
       <Group title={t.today} items={today} label={hour} />
       <Group title={t.week} items={week} label={weekday} />
       <BottomNav />
