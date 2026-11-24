@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
@@ -102,12 +102,47 @@ describe('ChatsScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: t.filters.unread }));
     expect(screen.getByText('Heyyy!')).toBeTruthy();
     expect(screen.queryByText(`${t.you}See you`)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: t.filters.moreLabel }));
     fireEvent.click(screen.getByRole('button', { name: 'Pro' }));
     expect(screen.getByText(`${t.you}See you`)).toBeTruthy();
     expect(screen.queryByText('Heyyy!')).toBeNull();
-    expect(screen.getByRole('button', { name: 'Pro' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Pro' }));
     fireEvent.click(screen.getByRole('button', { name: 'Voyage' }));
     expect(screen.getByText(t.emptyFilter)).toBeTruthy();
+  });
+
+  it('ne montre que trois filtres, le reste est dans le menu « Plus »', async () => {
+    render(<ChatsScreen />);
+    await screen.findByText('Heyyy!');
+    const row = screen.getByRole('group', { name: t.filtersLabel });
+    const names = within(row)
+      .getAllByRole('button')
+      .map((b) => b.textContent);
+    expect(names).toEqual([t.filters.all, t.filters.unread, 'Quotidien', t.filters.more]);
+    expect(screen.queryByRole('button', { name: 'Business' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: t.filters.moreLabel }));
+    for (const name of ['Pro', 'Business', 'Voyage']) {
+      expect(screen.getByRole('button', { name })).toBeTruthy();
+    }
+  });
+
+  it('garde visible dans la rangée la catégorie choisie dans le menu', async () => {
+    render(<ChatsScreen />);
+    await screen.findByText('Heyyy!');
+    fireEvent.click(screen.getByRole('button', { name: t.filters.moreLabel }));
+    fireEvent.click(screen.getByRole('button', { name: 'Pro' }));
+    expect(screen.queryByRole('button', { name: 'Voyage' })).toBeNull();
+    const row = screen.getByRole('group', { name: t.filtersLabel });
+    const chosen = within(row).getByRole('button', { name: 'Pro' });
+    expect(chosen.className).toContain('bg-accent');
+    expect(within(row).queryByRole('button', { name: t.filters.more })).toBeNull();
+  });
+
+  it('aligne l’en-tête sur 64 px à côté de la conversation sur ordinateur', async () => {
+    render(<ChatsScreen />);
+    await screen.findByText('Heyyy!');
+    expect(screen.getByRole('banner').className).toContain('lg:h-16');
+    expect(screen.getByRole('main').className).toContain('lg:pt-0');
   });
 
   it('masque la barre de défilement de la rangée de filtres', async () => {

@@ -1,6 +1,10 @@
 import type { ConversationItem } from '@newstart/shared';
 
-export const FILTERS = ['all', 'unread', 'Quotidien', 'Pro', 'Business', 'Voyage'] as const;
+/** Les trois filtres toujours visibles dans la rangée. */
+export const MAIN_FILTERS = ['all', 'unread', 'Quotidien'] as const;
+/** Les autres catégories, rangées dans le menu « Plus ». */
+export const MORE_FILTERS = ['Pro', 'Business', 'Voyage'] as const;
+export const FILTERS = [...MAIN_FILTERS, ...MORE_FILTERS] as const;
 export type Filter = (typeof FILTERS)[number];
 
 export function applyFilter(items: ConversationItem[], filter: Filter): ConversationItem[] {

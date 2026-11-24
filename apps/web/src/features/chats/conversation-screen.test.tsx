@@ -106,6 +106,12 @@ describe('ConversationScreen', () => {
     expect(back.className).toContain('lg:hidden');
   });
 
+  it('aligne l’en-tête sur 64 px comme celui de la liste sur ordinateur', async () => {
+    render(<ConversationScreen agentSlug="jade" />);
+    await screen.findByRole('link', { name: fr.conversation.back });
+    expect(screen.getByRole('banner').className).toContain('lg:h-16');
+  });
+
   it('signale un contact inconnu', async () => {
     render(<ConversationScreen agentSlug="nobody" />);
     expect(await screen.findByText(fr.conversation.notFound)).toBeTruthy();

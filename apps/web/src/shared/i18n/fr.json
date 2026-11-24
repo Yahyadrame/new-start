@@ -235,7 +235,9 @@
     "filtersLabel": "Filtrer les discussions",
     "filters": {
       "all": "Toutes",
-      "unread": "Non lues"
+      "unread": "Non lues",
+      "more": "Plus",
+      "moreLabel": "Plus de catégories"
     },
     "aiBadge": "IA",
     "you": "Toi : ",

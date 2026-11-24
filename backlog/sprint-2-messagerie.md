@@ -59,3 +59,24 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 ## NS-211 — Pages provisoires des onglets · S
 *Ajouté le 2026-11-20 : les onglets Série, Jeux et Progrès de la barre du bas menaient à une page introuvable (404).*
 - [x] Écran « Bientôt » sur `/series`, `/games` et `/progress`, avec la barre d'onglets et un retour vers les discussions ; tests. Chaque page sera remplacée par son vrai écran (NS-402, NS-301 et suivants, progrès).
+
+## NS-036 — Discussions : en-têtes alignés et filtres sur trois choix · S
+*Ajouté le 2026-11-24 par le porteur du projet, en regardant l'aperçu de NS-034.*
+- [ ] Sur ordinateur, le logo du rail, le titre « Discussions », le bouton « + » et l'en-tête de la conversation sont sur la même ligne, à la même hauteur. Le logo est plus grand.
+- [ ] La rangée de filtres montre trois choix (Toutes, Non lues, Quotidien) et un bouton « Plus » qui ouvre la liste des autres (Pro, Business, Voyage). Le filtre choisi dans la liste reste visible dans la rangée.
+- [ ] Tests unitaires, thèmes clair et sombre.
+
+## NS-037 — Rechercher dans les messages · M
+*Ajouté le 2026-11-24 : les appels ne sont pas encore là, mais la recherche de messages doit l'être (maquette : loupe dans l'en-tête de la conversation).*
+*Décidé le 2026-11-24 : la recherche porte sur toutes les discussions (option B).*
+- [ ] Route API de recherche, limitée aux messages de la personne connectée, documentée dans `docs/08-api.md`, avec un index adapté. Aucun contenu de message dans les logs.
+- [ ] Un champ de recherche depuis la liste des discussions ; chaque résultat montre le contact, l'extrait avec le mot surligné et la date. Un toucher ouvre la conversation au bon message.
+- [ ] Tests unitaires (service, route, écran), thèmes clair et sombre.
+
+## NS-038 — Fonds de conversation au choix · M
+*Ajouté le 2026-11-24 : plusieurs motifs de fond, comme WhatsApp, pour rendre la conversation plus attirante.*
+- [ ] Plusieurs fonds (motifs et couleurs) qui respectent les thèmes clair et sombre et gardent les contrastes 4,5:1 sur les bulles.
+*Décidé le 2026-11-24 : le choix est gardé sur le compte (option B).*
+- [ ] Migration additive : un champ `chatBackground` sur `User`, avec une valeur par défaut. Route `PATCH` du profil mise à jour et documentée dans `docs/08-api.md`.
+- [ ] Le choix se fait dans le Profil et s'applique à toutes les conversations.
+- [ ] Le motif est décoratif, sans aucun texte dans l'image ; tests unitaires.
