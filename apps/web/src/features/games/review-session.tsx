@@ -115,7 +115,7 @@ export function ReviewSession() {
   return (
     <section
       aria-labelledby="review-title"
-      className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-1 p-4"
+      className="flex flex-col gap-3 rounded-3xl border border-line bg-surface-1 p-4"
     >
       <h2 id="review-title" className="font-display text-xl font-bold">
         {t.title}

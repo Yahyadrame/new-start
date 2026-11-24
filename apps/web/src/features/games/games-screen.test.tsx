@@ -64,6 +64,15 @@ describe('GamesScreen', () => {
     for (const card of cards) expect(within(card).getByText(t.upcoming.badge)).toBeTruthy();
   });
 
+  it('présente les jeux à venir en lignes séparées, comme les maquettes', async () => {
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    const rows = within(screen.getByRole('region', { name: t.upcoming.title })).getAllByRole(
+      'listitem',
+    );
+    for (const row of rows) expect(row.className).toContain('border-b');
+  });
+
   it('montre la série de jours', async () => {
     fetchStreak.mockResolvedValue(4);
     render(<GamesScreen />);
