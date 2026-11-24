@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { ReminderCandidate, RemindersStore } from '../application/send-reminders.js';
 
 const KIND = 'reminder';
@@ -7,7 +7,7 @@ const isoDay = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : null);
 
 @Injectable()
 export class PrismaRemindersStore implements RemindersStore {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   // ponytail: lit toutes les personnes avec un rappel ; à paginer quand elles seront des milliers.
   async candidates(): Promise<ReminderCandidate[]> {

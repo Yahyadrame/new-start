@@ -174,3 +174,9 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [ ] `docs/10-devops.md` : liste des variables IA à poser sur Render (`LLM_PROVIDER`, `GROQ_API_KEY`, `STT_PROVIDER`, `GEMINI_API_KEY`, `TTS_PROVIDER`, `AI_MAX_CALLS_PER_MONTH`).
 *À décider avec le porteur du projet : faut-il refuser de démarrer en production avec un adaptateur factice, ou seulement avertir.*
 
+
+## NS-030 — Notifications : `PrismaService` non injecté dans les trois stores · S
+*Ajouté le 2026-11-24 : deux alertes Sentry sur staging (`GET /notifications` : « reading 'notificationLog' » ; `POST /push/subscriptions` : « reading 'pushSubscription' »). Les stores de notifications importaient `PrismaService` avec `import type` et sans `@Inject` : Nest n'avait aucun jeton, `this.prisma` valait `undefined`. Les tests unitaires construisaient les stores à la main avec un faux Prisma et ne le voyaient pas. Le store des rappels avait le même défaut : le rappel quotidien ne pouvait pas partir.*
+- [x] `@Inject(PrismaService)` et import normal dans `PrismaNotificationsStore`, `PrismaPushSubscriptionsStore` et `PrismaRemindersStore` (même écriture que les stores des conversations).
+- [x] Test qui fait construire les trois stores par Nest, comme au démarrage de l'API (échouait avant la correction).
+- [ ] Vérifié sur staging après fusion : l'écran Notifications se charge, l'abonnement push au Profil réussit, plus d'alerte Sentry sur ces routes.
