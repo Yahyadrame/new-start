@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ensureSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
+import { BottomNav } from '../../shared/navigation';
 import type { PushStatus } from '../../shared/push/subscription';
 import { usePush } from '../../shared/push/use-push';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
@@ -110,7 +111,7 @@ export function ProfileScreen() {
   const goals = me ? [...new Set([...GOALS, me.dailyGoalMin])].sort((a, b) => a - b) : GOALS;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-8 px-6 pt-10 pb-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-8 px-6 pt-10 pb-28">
       <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
         {t.title}
       </h1>
@@ -278,6 +279,7 @@ export function ProfileScreen() {
       ) : (
         !error && <p className="text-text-muted">{t.loading}</p>
       )}
+      <BottomNav />
     </main>
   );
 }
