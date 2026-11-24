@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { NotificationItem } from '@newstart/shared';
-import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
+import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { NotificationsStore } from '../application/notifications.js';
 
 @Injectable()
 export class PrismaNotificationsStore implements NotificationsStore {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async recent(userId: string, limit: number): Promise<NotificationItem[]> {
     const rows = await this.prisma.notificationLog.findMany({
