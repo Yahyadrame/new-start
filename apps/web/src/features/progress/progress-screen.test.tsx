@@ -29,8 +29,10 @@ describe('ProgressScreen', () => {
     expect(bar.getAttribute('aria-valuenow')).toBe('50');
     expect(bar.getAttribute('aria-valuemax')).toBe('100');
     expect(screen.getByText('Encore 50 XP pour passer au niveau 4.')).toBeTruthy();
-    expect(screen.getByText('250 XP au total')).toBeTruthy();
-    expect(screen.getByText('6 jours de suite')).toBeTruthy();
+    expect(screen.getByText(t.totalLabel)).toBeTruthy();
+    expect(screen.getByText('250')).toBeTruthy();
+    expect(screen.getByText(t.streakLabel)).toBeTruthy();
+    expect(screen.getByText('6 jours')).toBeTruthy();
     expect(screen.getByText(t.figuresTitle)).toBeTruthy();
     expect(fetchProgress).toHaveBeenCalledWith('tok');
   });
@@ -39,6 +41,14 @@ describe('ProgressScreen', () => {
     fetchProgress.mockResolvedValue(summarize(0, 0, [], '2026-11-21'));
     render(<ProgressScreen />);
     expect(await screen.findByText(t.noStreak)).toBeTruthy();
+    expect(screen.getByText('0 jour')).toBeTruthy();
+  });
+
+  it('présente les chiffres en cartes arrondies, comme les maquettes', async () => {
+    render(<ProgressScreen />);
+    const card = (await screen.findByText(t.streakLabel)).closest('section');
+    expect(card?.className).toContain('rounded-3xl');
+    expect(card?.className).toContain('border-line');
   });
 
   it('renvoie à l’accueil sans session', async () => {
