@@ -23,6 +23,13 @@ describe('PushBanner', () => {
     expect(enable).toHaveBeenCalledTimes(1);
   });
 
+  it('prend la forme d’une carte arrondie comme les autres écrans', () => {
+    render(<PushBanner />);
+    const card = screen.getByRole('heading', { name: t.bannerTitle }).closest('section');
+    expect(card?.className).toContain('rounded-3xl');
+    expect(card?.className).toContain('border-line');
+  });
+
   it('ne demande rien tant qu’on ne clique pas', () => {
     render(<PushBanner />);
     expect(enable).not.toHaveBeenCalled();
