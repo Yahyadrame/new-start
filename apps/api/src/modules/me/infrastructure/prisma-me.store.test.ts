@@ -13,6 +13,7 @@ const row = {
   dailyGoalMin: 15,
   preferredAccent: 'en-US',
   dataSaver: false,
+  chatBackground: 'NONE',
   pausedUntil: new Date('2026-12-01T10:00:00.000Z'),
 };
 
@@ -52,8 +53,10 @@ describe('PrismaMeStore', () => {
       where: { id: 'u' },
       data: { dataSaver: true, pausedUntil: new Date('2026-12-01T10:00:00.000Z') },
     });
+    await store.update('u', { chatBackground: 'DOTS' });
+    expect(db.user.updateMany.mock.calls[1]?.[0].data).toEqual({ chatBackground: 'DOTS' });
     await store.update('u', { pausedUntil: null });
-    expect(db.user.updateMany.mock.calls[1]?.[0].data).toEqual({ pausedUntil: null });
+    expect(db.user.updateMany.mock.calls[2]?.[0].data).toEqual({ pausedUntil: null });
   });
 
   it("ne touche pas à la pause quand elle n'est pas envoyée, et rend null si le compte a disparu", async () => {

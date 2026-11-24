@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MePatch } from './settings.js';
+import { CHAT_BACKGROUNDS, MePatch } from './settings.js';
 
 const future = new Date(Date.now() + 86_400_000).toISOString();
 
@@ -16,6 +16,15 @@ describe('MePatch', () => {
         pausedUntil: future,
       }).success,
     ).toBe(true);
+  });
+
+  it('accepte chaque fond de conversation et refuse les autres', () => {
+    for (const chatBackground of CHAT_BACKGROUNDS) {
+      expect(MePatch.safeParse({ chatBackground }).success).toBe(true);
+    }
+    expect(CHAT_BACKGROUNDS[0]).toBe('NONE');
+    expect(MePatch.safeParse({ chatBackground: 'MATISSE' }).success).toBe(false);
+    expect(MePatch.safeParse({ chatBackground: 'dots' }).success).toBe(false);
   });
 
   it('accepte de retirer le rappel et la pause', () => {

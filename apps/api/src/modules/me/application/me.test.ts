@@ -12,6 +12,7 @@ const me = {
   dailyGoalMin: 15,
   preferredAccent: 'en-US' as const,
   dataSaver: false,
+  chatBackground: 'NONE' as const,
   pausedUntil: null,
 };
 

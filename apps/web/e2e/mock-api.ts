@@ -94,6 +94,7 @@ export async function signedIn(page: Page) {
         dailyGoalMin: 15,
         preferredAccent: 'en-US',
         dataSaver: false,
+        chatBackground: 'NONE',
         pausedUntil: null,
       }),
     ),

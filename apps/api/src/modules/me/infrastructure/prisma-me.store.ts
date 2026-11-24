@@ -15,6 +15,7 @@ const select = {
   dailyGoalMin: true,
   preferredAccent: true,
   dataSaver: true,
+  chatBackground: true,
   pausedUntil: true,
 } as const;
 
