@@ -63,6 +63,22 @@
       "FRIENDS": {
         "label": "Me faire des amis",
         "hint": "Discuter, plaisanter, sortir"
+      },
+      "STUDIES": {
+        "label": "Mes études",
+        "hint": "Cours, exposés, lectures"
+      },
+      "EXAMS": {
+        "label": "Réussir un examen",
+        "hint": "TOEIC, IELTS, TOEFL"
+      },
+      "BUSINESS": {
+        "label": "Mon activité",
+        "hint": "Clients, devis, négociation"
+      },
+      "CULTURE": {
+        "label": "Films et culture",
+        "hint": "Séries, musique, livres"
       }
     },
     "acceptTerms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
