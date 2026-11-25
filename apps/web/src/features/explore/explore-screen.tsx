@@ -1,10 +1,11 @@
 'use client';
 
 import { recommendedTopics, type AgentCard, type TopicItem } from '@newstart/shared';
-import { Avatar, AvatarFallback, Badge, Button, Input, Skeleton } from '@newstart/ui';
+import { Badge, Button, Input, Skeleton } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { ContactAvatar } from '../../shared/avatar/contact-avatar';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
@@ -189,9 +190,7 @@ export function ExploreScreen() {
         <ul aria-label={t.contactsLabel} className="flex flex-col divide-y divide-line">
           {agents.map((a) => (
             <li key={a.slug} className="flex min-h-16 items-center gap-3 py-3">
-              <Avatar>
-                <AvatarFallback>{a.initials}</AvatarFallback>
-              </Avatar>
+              <ContactAvatar slug={a.slug} name={a.name} />
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="flex items-center gap-2">
                   <span className="truncate font-semibold">{a.name}</span>

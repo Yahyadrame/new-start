@@ -279,9 +279,10 @@ _Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/av
 - [ ] Repli du composant Avatar de shadcn/ui : jamais de carré vide quand une photo ne se charge pas.
 - [x] Partie 2 (API) : `User.avatar` (JSON facultatif, migration additive), `GET /me` et `PATCH /me` le portent (`AvatarChoice` dans `packages/shared`, `null` pour le retirer).
 - [x] Partie 3a (#330) : écran de choix (silhouette, palette, style) dans Mon compte, avatar sur l’accueil du profil.
-- [ ] Partie 3b : avatar dans les listes, la conversation et Explorer, repli de l’Avatar.
+- [x] Partie 3b : avatar des contacts dans les listes, la conversation, la recherche et Explorer (silhouette propre aux 12 contacts, sinon une de la bibliothèque, toujours la même pour un contact).
+- [ ] Repli du composant Avatar de shadcn/ui (plus utilisé dans l’appli, à retirer ou garder pour les photos).
 - [ ] Partie 4 : choix par contact (table dédiée) et silhouettes des 11 contacts NS-058.
-- [ ] Avatar par défaut à l'inscription.
+- [x] Avatar par défaut à l’inscription : aucun choix enregistré = silhouette grise (rien à ajouter).
 - [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
 - [ ] Les 11 contacts ajoutés par NS-058 n'ont pas de silhouette dans le jeu fourni : le porteur les fournit. En attendant, on code les 12 contacts existants et les autres gardent leurs initiales.
 - [ ] Tests unitaires, tests visuels clair et sombre, accessibilité.

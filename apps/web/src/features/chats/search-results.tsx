@@ -1,9 +1,10 @@
 'use client';
 
 import type { SearchHit } from '@newstart/shared';
-import { Avatar, AvatarFallback, Skeleton } from '@newstart/ui';
+import { Skeleton } from '@newstart/ui';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { ContactAvatar } from '../../shared/avatar/contact-avatar';
 import fr from '../../shared/i18n/fr.json';
 import { searchMessages } from './chats-api';
 import { formatWhen, splitMatch } from './chats-format';
@@ -65,9 +66,7 @@ export function SearchResults({ token, query }: { token: string; query: string }
                 href={`/chats/${hit.agent.slug}?message=${hit.messageId}`}
                 className="flex min-h-[72px] items-center gap-3 px-4 py-3 hover:bg-surface-1 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-text"
               >
-                <Avatar className="size-[44px]">
-                  <AvatarFallback>{hit.agent.initials}</AvatarFallback>
-                </Avatar>
+                <ContactAvatar slug={hit.agent.slug} name={hit.agent.name} />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="truncate text-base font-semibold">{hit.agent.name}</span>
