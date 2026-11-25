@@ -278,7 +278,8 @@ _Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/av
 - [x] Composant `NeutralAvatar` (identifiant, variante, forme, thème, palette) : SVG dans un `<img>` en URI de données (pas de HTML injecté, pas d'identifiant `clipPath` à rendre unique), `alt` = nom. Partie 1.
 - [ ] Repli du composant Avatar de shadcn/ui : jamais de carré vide quand une photo ne se charge pas.
 - [x] Partie 2 (API) : `User.avatar` (JSON facultatif, migration additive), `GET /me` et `PATCH /me` le portent (`AvatarChoice` dans `packages/shared`, `null` pour le retirer).
-- [ ] Partie 3 : écran de choix (silhouette, palette, variante), repli de l'Avatar, bouton photo du profil.
+- [x] Partie 3a (#330) : écran de choix (silhouette, palette, style) dans Mon compte, avatar sur l’accueil du profil.
+- [ ] Partie 3b : avatar dans les listes, la conversation et Explorer, repli de l’Avatar.
 - [ ] Partie 4 : choix par contact (table dédiée) et silhouettes des 11 contacts NS-058.
 - [ ] Avatar par défaut à l'inscription.
 - [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
