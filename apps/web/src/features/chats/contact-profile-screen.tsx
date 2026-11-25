@@ -42,6 +42,7 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
   const rows = agent
     ? [
         [t.accent, accents[agent.accent] ?? agent.accent],
+        [t.level, agent.level],
         [t.topic, agent.category],
       ]
     : [];
@@ -79,6 +80,25 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
               <Link href={`${back}/avatar`}>{t.changeAvatar}</Link>
             </Button>
           </div>
+          <section aria-labelledby="contact-about" className="flex flex-col gap-2 px-1">
+            <h3
+              id="contact-about"
+              className="text-xs font-semibold tracking-wide text-text-muted uppercase"
+            >
+              {t.about}
+            </h3>
+            <p>{agent.bioFr}</p>
+            <h3 className="pt-2 text-xs font-semibold tracking-wide text-text-muted uppercase">
+              {t.interests}
+            </h3>
+            <ul className="flex flex-wrap gap-2">
+              {agent.interests.map((interest) => (
+                <li key={interest}>
+                  <Badge variant="neutral">{interest}</Badge>
+                </li>
+              ))}
+            </ul>
+          </section>
           <section
             aria-labelledby="contact-speech"
             className="rounded-2xl border border-line bg-surface-1 px-4 py-1"

@@ -15,6 +15,9 @@ const AgentSeed = z.strictObject({
   style: text,
   voiceId: text,
   accent: text,
+  bioFr: text,
+  interests: z.array(text).min(3).max(4),
+  level: z.enum(['A2', 'B1', 'B2', 'C1']),
   firstMessage: text,
   suggestions: z.array(text).min(3),
 });

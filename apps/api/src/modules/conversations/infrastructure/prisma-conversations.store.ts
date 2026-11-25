@@ -12,7 +12,17 @@ const select = {
   lastMessageAt: true,
   unreadCount: true,
   agent: {
-    select: { slug: true, name: true, initials: true, roleFr: true, category: true, accent: true },
+    select: {
+      slug: true,
+      name: true,
+      initials: true,
+      roleFr: true,
+      category: true,
+      accent: true,
+      bioFr: true,
+      interests: true,
+      level: true,
+    },
   },
   messages: {
     where: { deletedAt: null },

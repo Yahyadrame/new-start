@@ -7,6 +7,9 @@ const jade = {
   roleFr: 'Amie',
   category: 'DAILY',
   accent: 'en-US',
+  bioFr: 'Ta colocataire.',
+  interests: ['Séries'],
+  level: 'B1',
 };
 const day = (n: number) => `2026-11-${String(15 + n).padStart(2, '0')}`;
 

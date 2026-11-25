@@ -103,7 +103,14 @@
         "Yes, I'll be home at 7.",
         "What kind of pasta?",
         "Can I help?"
-      ]
+      ],
+      "bioFr": "Ta colocataire. Elle parle vite, plaisante tout le temps et dit les choses franchement.",
+      "interests": [
+        "Séries",
+        "Sorties entre amis",
+        "Vie en coloc"
+      ],
+      "level": "B1"
     },
     {
       "slug": "sam",
@@ -121,7 +128,14 @@
         "I'll have a coffee, please.",
         "What do you recommend?",
         "Something new, please."
-      ]
+      ],
+      "bioFr": "Il tient un café de quartier à Londres. Poli et patient, il te laisse finir tes phrases.",
+      "interests": [
+        "Thé et café",
+        "Météo",
+        "Vie de quartier"
+      ],
+      "level": "A2"
     },
     {
       "slug": "leo",
@@ -139,7 +153,14 @@
         "Watch me.",
         "I'm well prepared.",
         "What is your topic?"
-      ]
+      ],
+      "bioFr": "Il aime débattre, avec une pointe d'ironie. Il te pousse à défendre ton avis.",
+      "interests": [
+        "Débats",
+        "Actualité",
+        "Humour"
+      ],
+      "level": "B2"
     },
     {
       "slug": "carter",
@@ -157,7 +178,14 @@
         "My name is…",
         "I am studying…",
         "I would like to study abroad."
-      ]
+      ],
+      "bioFr": "Professeure d'économie. Elle t'explique la bourse avec des mots précis, sur un ton formel.",
+      "interests": [
+        "Bourse",
+        "Économie",
+        "Épargne"
+      ],
+      "level": "C1"
     },
     {
       "slug": "emma",
@@ -175,7 +203,14 @@
         "I have two years of experience.",
         "I worked as…",
         "My main skill is…"
-      ]
+      ],
+      "bioFr": "Recruteuse dans une grande entreprise. Elle te fait passer des entretiens d'embauche pour t'entraîner.",
+      "interests": [
+        "Entretiens",
+        "CV",
+        "Carrière"
+      ],
+      "level": "B2"
     },
     {
       "slug": "daniel",
@@ -193,7 +228,14 @@
         "Yes, I'm looking for one.",
         "How much is it?",
         "I'm just looking."
-      ]
+      ],
+      "bioFr": "Commercial expérimenté. Il t'entraîne à convaincre et à négocier.",
+      "interests": [
+        "Vente",
+        "Négociation",
+        "Présentations"
+      ],
+      "level": "B2"
     },
     {
       "slug": "grant",
@@ -211,7 +253,14 @@
         "I'm here for tourism.",
         "I'm visiting family.",
         "I'm here to study."
-      ]
+      ],
+      "bioFr": "Agent d'aéroport, direct et officiel. Il pose les questions du contrôle comme au vrai guichet.",
+      "interests": [
+        "Aéroports",
+        "Voyage",
+        "Douane"
+      ],
+      "level": "B1"
     },
     {
       "slug": "maya",
@@ -229,7 +278,14 @@
         "Dating, please.",
         "I need advice about a friend.",
         "I feel a bit lost."
-      ]
+      ],
+      "bioFr": "Elle écoute et conseille sur les histoires de couple, avec bienveillance. Elle reste une IA, jamais ta partenaire.",
+      "interests": [
+        "Couple",
+        "Amitié",
+        "Communication"
+      ],
+      "level": "B1"
     },
     {
       "slug": "kofi",
@@ -247,7 +303,14 @@
         "It was tiring.",
         "Pretty good, thanks!",
         "I want to talk about something."
-      ]
+      ],
+      "bioFr": "Un ami confident et chaleureux, avec l'accent nigérian. Il écoute sans juger. Il reste une IA.",
+      "interests": [
+        "Amitié",
+        "Musique",
+        "Famille"
+      ],
+      "level": "B1"
     },
     {
       "slug": "marcus",
@@ -265,7 +328,14 @@
         "Yes, it was amazing!",
         "No, who won?",
         "I prefer another team."
-      ]
+      ],
+      "bioFr": "Fan de foot, toujours enthousiaste, avec l'accent britannique.",
+      "interests": [
+        "Football",
+        "Matchs",
+        "Équipes"
+      ],
+      "level": "B1"
     },
     {
       "slug": "nina",
@@ -283,7 +353,14 @@
         "Yes, please.",
         "What happened?",
         "Can you say it slower?"
-      ]
+      ],
+      "bioFr": "Journaliste. Elle résume l'actualité en phrases claires.",
+      "interests": [
+        "Actualité",
+        "Médias",
+        "Société"
+      ],
+      "level": "B2"
     },
     {
       "slug": "prof-ade",
@@ -301,7 +378,14 @@
         "I study economics.",
         "I'm preparing an exam.",
         "I want to improve my English."
-      ]
+      ],
+      "bioFr": "Professeur pédagogue. Il t'aide à préparer tes études et tes examens.",
+      "interests": [
+        "Études",
+        "Méthode de travail",
+        "Examens"
+      ],
+      "level": "B2"
     },
     {
       "slug": "dr-amara",
@@ -319,7 +403,14 @@
         "I have a headache.",
         "I can't sleep well.",
         "I need a check-up."
-      ]
+      ],
+      "bioFr": "Médecin rassurante. Elle t'apprend les mots de la santé pour te faire comprendre chez le médecin.",
+      "interests": [
+        "Santé",
+        "Bien-être",
+        "Rendez-vous médicaux"
+      ],
+      "level": "B1"
     },
     {
       "slug": "zoe",
@@ -337,7 +428,14 @@
         "Yes, every day.",
         "Which app is it?",
         "I'm learning about AI."
-      ]
+      ],
+      "bioFr": "Curieuse de tout ce qui touche à la tech et à l'IA.",
+      "interests": [
+        "Technologie",
+        "Intelligence artificielle",
+        "Applis"
+      ],
+      "level": "B2"
     },
     {
       "slug": "theo",
@@ -355,7 +453,14 @@
         "I like action movies.",
         "I prefer music.",
         "Tell me about the film."
-      ]
+      ],
+      "bioFr": "Passionné de cinéma et de musique, avec l'accent britannique.",
+      "interests": [
+        "Cinéma",
+        "Musique",
+        "Concerts"
+      ],
+      "level": "B1"
     },
     {
       "slug": "finn",
@@ -373,7 +478,14 @@
         "I play football games.",
         "Mostly on my phone.",
         "What do you play?"
-      ]
+      ],
+      "bioFr": "Il parle de jeux vidéo comme un pote, sans prise de tête.",
+      "interests": [
+        "Jeux vidéo",
+        "Streaming",
+        "Consoles"
+      ],
+      "level": "B1"
     },
     {
       "slug": "chef-ama",
@@ -391,7 +503,14 @@
         "I want to cook rice.",
         "What do you recommend?",
         "I love spicy food."
-      ]
+      ],
+      "bioFr": "Cheffe gourmande. Elle parle de recettes et de cuisine du monde.",
+      "interests": [
+        "Recettes",
+        "Cuisine du monde",
+        "Courses"
+      ],
+      "level": "A2"
     },
     {
       "slug": "lola",
@@ -409,7 +528,14 @@
         "I need a jacket.",
         "What's your size?",
         "How much is it?"
-      ]
+      ],
+      "bioFr": "Passionnée de mode. Elle suit les tendances et aime en parler.",
+      "interests": [
+        "Mode",
+        "Tendances",
+        "Shopping"
+      ],
+      "level": "B1"
     },
     {
       "slug": "iris",
@@ -427,7 +553,14 @@
         "I see a river.",
         "The colours are strong.",
         "I like it a lot."
-      ]
+      ],
+      "bioFr": "Inspirée par l'art, elle t'emmène dans les musées et les ateliers.",
+      "interests": [
+        "Peinture",
+        "Musées",
+        "Photographie"
+      ],
+      "level": "B2"
     },
     {
       "slug": "dr-ravi",
@@ -445,7 +578,14 @@
         "Because of the sun?",
         "I don't know.",
         "Please explain."
-      ]
+      ],
+      "bioFr": "Scientifique curieux. Il explique simplement des idées compliquées.",
+      "interests": [
+        "Sciences",
+        "Espace",
+        "Expériences"
+      ],
+      "level": "B2"
     },
     {
       "slug": "hannah",
@@ -463,7 +603,14 @@
         "We celebrate Tabaski.",
         "I love family dinners.",
         "Tell me about yours."
-      ]
+      ],
+      "bioFr": "Elle parle de spiritualité avec respect et n'impose jamais de croyance.",
+      "interests": [
+        "Spiritualité",
+        "Méditation",
+        "Traditions"
+      ],
+      "level": "B1"
     },
     {
       "slug": "tess",
@@ -481,7 +628,14 @@
         "Yes, I love it.",
         "I like animals.",
         "Where can we go?"
-      ]
+      ],
+      "bioFr": "Calme, elle parle de nature et de randonnée.",
+      "interests": [
+        "Nature",
+        "Randonnée",
+        "Animaux"
+      ],
+      "level": "A2"
     },
     {
       "slug": "milo",
@@ -499,7 +653,14 @@
         "I read a novel.",
         "I prefer short stories.",
         "I want to read more."
-      ]
+      ],
+      "bioFr": "Posé et grand lecteur. Il aime parler de livres et d'écriture.",
+      "interests": [
+        "Livres",
+        "Écriture",
+        "Bibliothèques"
+      ],
+      "level": "B2"
     }
   ]
 }

@@ -112,6 +112,9 @@ model Agent {
   style        String
   voiceId      String   // voix TTS fixe
   accent       String   // "en-US", "en-GB", "en-NG"…
+  bioFr        String   @default("") // présentation affichée sur la fiche
+  interests    String[] // centres d'intérêt affichés sur la fiche
+  level        String   @default("B1") // niveau de langue du contact : A2, B1, B2 ou C1
   firstMessage String
   suggestions  String[]
   isPremium    Boolean  @default(false)

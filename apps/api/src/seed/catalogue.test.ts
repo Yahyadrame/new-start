@@ -66,6 +66,12 @@ describe('parseCatalogue', () => {
     const bad = { ...valid, agents: [{ ...valid.agents[0], persona: '' }] };
     expect(() => parseCatalogue(JSON.stringify(bad))).toThrow();
   });
+  it('refuse une fiche sans présentation, sans intérêts ou au niveau inconnu', () => {
+    for (const patch of [{ bioFr: '' }, { interests: ['a', 'b'] }, { level: 'Z9' }]) {
+      const bad = { ...valid, agents: [{ ...valid.agents[0], ...patch }] };
+      expect(() => parseCatalogue(JSON.stringify(bad))).toThrow();
+    }
+  });
   it('refuse moins de 3 suggestions', () => {
     const bad = { ...valid, agents: [{ ...valid.agents[0], suggestions: ['a'] }] };
     expect(() => parseCatalogue(JSON.stringify(bad))).toThrow();
