@@ -233,7 +233,7 @@
       },
       "notifications": {
         "title": "Notifications et rappels",
-        "hint": "Rappel du jour, rappels sur ce téléphone, pause"
+        "hint": "Rappel du jour et pause"
       },
       "appearance": {
         "title": "Apparence et conversations",
@@ -245,7 +245,7 @@
       },
       "data": {
         "title": "Données et compte",
-        "hint": "Économie de données, export, suppression"
+        "hint": "Export et suppression"
       }
     },
     "openSection": "Ouvrir {title}"
