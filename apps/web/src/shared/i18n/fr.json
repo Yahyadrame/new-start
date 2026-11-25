@@ -34,8 +34,7 @@
   },
   "signup": {
     "back": "Retour",
-    "stepLabel": "Étape 1 sur 3",
-    "title": "Comment tes contacts vont-ils t'appeler ?",
+    "stepLabel": "Étape {n} sur {total}",
     "firstName": "Prénom",
     "phone": "Numéro de téléphone",
     "phoneHint": "Choisis ton pays, puis écris ton numéro sans l'indicatif.",
@@ -96,6 +95,39 @@
       "goal": "Choisis un objectif.",
       "acceptTerms": "Il faut accepter les conditions pour continuer.",
       "server": "On n'a pas pu envoyer le code. Vérifie ta connexion, puis réessaie."
+    },
+    "titles": {
+      "identity": "Comment tes contacts vont-ils t'appeler ?",
+      "goals": "Pourquoi apprends-tu l'anglais ?",
+      "interests": "Qu'est-ce qui te passionne ?",
+      "consent": "Dernière étape avant ton code"
+    },
+    "subtitles": {
+      "goals": "Coche jusqu'à 4 objectifs. Tu pourras les changer plus tard.",
+      "interests": "Coche jusqu'à 8 sujets. Tes contacts en parleront avec toi."
+    },
+    "next": "Continuer",
+    "skip": "Passer cette étape",
+    "chosen": "{n} sur {max} choisis",
+    "interestsLabel": "Tes centres d'intérêt",
+    "goalsLabel": "Tes objectifs",
+    "interests": {
+      "MUSIC": "Musique",
+      "FOOTBALL": "Football",
+      "SPORT": "Sport",
+      "MOVIES": "Films et séries",
+      "GAMING": "Jeux vidéo",
+      "TECH": "Technologie",
+      "BUSINESS": "Affaires",
+      "HEALTH": "Santé",
+      "COOKING": "Cuisine",
+      "TRAVEL": "Voyages",
+      "FASHION": "Mode",
+      "ART": "Art",
+      "SCIENCE": "Sciences",
+      "FAITH": "Spiritualité",
+      "NATURE": "Nature",
+      "BOOKS": "Lecture"
     }
   },
   "code": {
