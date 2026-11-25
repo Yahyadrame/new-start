@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
-import { ChatBackdrop } from '../../shared/chat-background';
+import { ChatBackdrop, getChatBackground } from '../../shared/chat-background';
 import fr from '../../shared/i18n/fr.json';
 import {
   addToNotebook,
@@ -17,7 +17,6 @@ import {
   markConversationRead,
   sendMessage,
 } from './chats-api';
-import { getMe } from '../profile/profile-api';
 import { dayLabel } from './chats-format';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
@@ -58,8 +57,8 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
       if (!session) return router.replace('/');
       token.current = session.accessToken;
       // Le fond est un confort : s'il ne vient pas, la conversation reste sur le fond uni.
-      void getMe(token.current)
-        .then((me) => setBackground(me.chatBackground))
+      void getChatBackground(token.current)
+        .then(setBackground)
         .catch(() => undefined);
       try {
         const items = await listConversations(token.current);
