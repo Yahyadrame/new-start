@@ -246,3 +246,28 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Partie 1 : 8 thèmes et 11 contacts ajoutés (17 thèmes, 23 contacts), statuts et tests à jour.
 - [x] Partie 2 : section « Pour toi » dans Explorer, selon `interests` et `goals` du compte.
 - [x] Partie 3 : `agent-reply` transmet les centres d'intérêt au contact (aujourd'hui seulement `goal`).
+
+## NS-059 — Barre d'écriture façon WhatsApp, avec stickers et GIF · L
+**Besoin** (porteur, 2026-11-25, captures WhatsApp et New Start sur iPhone) : adapter la barre d'écriture à celle de WhatsApp, sur mobile et sur ordinateur.
+- [ ] Maquette d'abord (clair et sombre) : champ en pilule, bouton « + » à gauche, micro à droite qui devient « envoyer » quand il y a du texte. À valider avant le code.
+- [ ] On retire le bouton émoji de la barre. À la place, un bouton « stickers et GIF ».
+- [ ] Mobile : le bouton ouvre un panneau en bas, à la place du clavier, avec deux onglets : stickers et GIF. Les émojis viennent du clavier du téléphone.
+- [ ] Ordinateur : le même panneau avec trois onglets : émojis, stickers et GIF.
+- [ ] Le panneau garde les récents et un champ de recherche ; fermeture au toucher en dehors ou avec Échap ; focus géré au clavier.
+- [ ] Source des stickers et des GIF à choisir avec le porteur (options, licence, coût) avant de coder. Aucune dépense sans accord.
+- [ ] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+
+## NS-060 — Masquer la barre de suggestions au-dessus du clavier iPhone · S
+**Besoin** : au-dessus du champ de saisie, iOS affiche sa barre (flèches haut/bas, validation, mots proposés) qui gêne.
+- [ ] Vérifier sur iPhone ce que le navigateur permet : `autocomplete="off"`, `autocorrect="off"`, `spellcheck="false"`, champ hors de tout `<form>`, `enterkeyhint`.
+- [ ] Appliquer ce qui marche. La barre système elle-même n'est pas contrôlable par une page web : si elle reste, le dire au porteur avec ce qui l'explique (réglages du clavier, version iOS).
+- [ ] Attention : couper la correction automatique a un coût pour une personne qui apprend. Proposer le choix au porteur avant de la désactiver.
+- [ ] Test unitaire sur les attributs du champ.
+
+## NS-061 — Les contacts envoient stickers, GIF et vrais médias · L
+**Besoin** : les contacts IA peuvent répondre avec un sticker, un émoji ou un GIF, et aussi donner de vrais contenus : images, liens, documents, médias.
+- [ ] Dépend de NS-047 (stockage des pièces jointes, choix et coût à décider) et de NS-059 (source des stickers et GIF).
+- [ ] Les contacts piochent dans la bibliothèque de stickers et de GIF : le prompt ne propose que des identifiants existants, jamais une URL inventée.
+- [ ] Liens : seulement des sources fiables ; images et documents vérifiés, jamais générés au hasard. Pas de contenu sexuel ni violent (règle de `docs/09-ia-agents.md`).
+- [ ] Affichage dans la conversation : aperçu de lien, image ouvrable, document téléchargeable.
+- [ ] Tests unitaires (choix d'un sticker valide, rejet d'un identifiant inconnu, rendu des types de message).
