@@ -33,6 +33,7 @@ Ce dossier contient tout ce qu'il faut pour réaliser le projet avec Claude Code
 | `docs/15-processus-equipe.md` | Façon de travailler : Git, PR, rituels, rôles |
 | `docs/16-delegation-supervision.md` | Claude Code fait tout, le porteur du projet supervise : questions de choix, validations, déploiement dès le début |
 | `docs/17-ecran-demarrage.md` | Écran de démarrage animé : choix, minutage, règles, ticket NS-041 |
+| `docs/18-avatars.md` | Avatars : silhouettes neutres, avatar personnalisé de l'utilisateur, portraits des contacts IA, tickets NS-062 à NS-064 |
 | `docs/decisions.md` | Journal des décisions du porteur du projet |
 | `backlog/` | Épopées et tickets prêts à développer |
 | `data/` | Le noyau : 1 000 mots et 339 expressions orales (CSV) |

@@ -186,13 +186,7 @@ _Ajouté le 2026-11-25 : aucun bouton de déconnexion dans le Profil._
 
 ## NS-049 — Plusieurs avatars au choix · M
 
-_Ajouté le 2026-11-25 à la demande du porteur du projet (« comme Synapse »)._
-
-- [x] Source décidée (2026-11-25) : DiceBear, styles CC0 uniquement (Open Peeps, Notionists, Lorelei, Thumbs). Voir `docs/decisions.md`.
-- [ ] Partie 1, maquette : sélecteur d'avatar (styles, variantes, initiale en repli), clair et sombre, validée par le porteur avant le code.
-- [ ] Partie 2, données : `avatarStyle` et `avatarSeed` sur `User` (migration « étendre »), `Me` et `MePatch`, schémas Zod partagés, tests.
-- [ ] Partie 3, interface : composant `UserAvatar` (SVG généré, initiale en repli), sélecteur dans Profil > Mon compte et à l'inscription, affichage partout (liste, conversation, profil).
-- [ ] Contacts IA : leurs portraits restent ceux de `docs/04-design-system.md` ; les variantes d'avatar d'un contact relèvent de NS-051.
+_Ajouté le 2026-11-25 à la demande du porteur du projet (« comme Synapse »). Remplacé le jour même par NS-062, NS-063 et NS-064 (maquettes et SVG fournis par le porteur, `docs/18-avatars.md`). Rien à coder ici._
 
 ## NS-050 — Modifier son profil · M
 
@@ -275,3 +269,30 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [ ] Liens : seulement des sources fiables ; images et documents vérifiés, jamais générés au hasard. Pas de contenu sexuel ni violent (règle de `docs/09-ia-agents.md`).
 - [ ] Affichage dans la conversation : aperçu de lien, image ouvrable, document téléchargeable.
 - [ ] Tests unitaires (choix d'un sticker valide, rejet d'un identifiant inconnu, rendu des types de message).
+
+## NS-062 — Silhouettes neutres · M
+
+_Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/avatars/`. Style par défaut décidé le 2026-11-25 : `duo` pour les contacts, `gris` pour les personnes, forme `carre`._
+
+- [ ] Porter `design/avatars/avatars.js` en TypeScript dans `packages/ui` (`neutral-avatar.ts`), sans changer les tracés ni les couleurs.
+- [ ] Composant `NeutralAvatar` (contact, variante, forme, taille) : SVG en ligne, `clipPath` à identifiant unique, thème clair ou sombre, `role="img"` et `aria-label`.
+- [ ] Repli du composant Avatar de shadcn/ui : jamais de carré vide quand une photo ne se charge pas.
+- [ ] Avatar par défaut à l'inscription ; profil avec le bouton photo.
+- [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
+- [ ] Les 11 contacts ajoutés par NS-058 n'ont pas de silhouette dans le jeu fourni : le porteur les fournit. En attendant, on code les 12 contacts existants et les autres gardent leurs initiales.
+- [ ] Tests unitaires, tests visuels clair et sombre, accessibilité.
+
+## NS-063 — Éditeur d'avatar et stickers · L
+
+_Ajouté le 2026-11-25. Après NS-062, et lié à NS-059 (stickers)._
+
+- [ ] Éditeur « Crée ton avatar » avec DiceBear `avataaars` côté client, choix enregistrés en petit JSON.
+- [ ] 8 stickers en anglais (Thanks!, Got it!, Well done!, Hmm…, Oops!, Sorry!, No way!, See you!) envoyables ; les agents les comprennent et y répondent.
+- [ ] Licence d'`avataaars` à reconfirmer avant l'intégration (« libre pour usage personnel et commercial »).
+
+## NS-064 — Portraits illustrés des contacts IA · M
+
+_Ajouté le 2026-11-25. Contenu ; générer les images coûte des crédits : accord du porteur d'abord._
+
+- [ ] 8 portraits restants plus la correction du teint du Prof. Adeyemi, puis remplacement des silhouettes des contacts.
+- [ ] Les 11 contacts de NS-058 s'ajoutent à la liste.
