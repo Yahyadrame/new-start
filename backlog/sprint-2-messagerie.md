@@ -201,7 +201,8 @@ _Ajouté le 2026-11-25._
 
 _Ajouté le 2026-11-25._
 
-- [ ] Fiche d'un contact (depuis l'en-tête de la conversation) : photo ou avatar, présentation, centres d'intérêt, niveau de langue.
+- [x] Partie 1 (#337) : fiche d'un contact depuis l'en-tête de la conversation (avatar, nom, rôle, accent, thème, accès au choix d'avatar).
+- [ ] Partie 2 : présentation, centres d'intérêt, niveau de langue (nouvelles données, accord du porteur).
 - [ ] Plusieurs variantes d'un même contact (ton, accent, niveau de difficulté, avatar) choisies et modifiables par la personne. Cadre dans `docs/09-ia-agents.md` : un agent ne se présente jamais comme un humain.
 - [ ] À découper en deux ou trois PR après maquette.
 
