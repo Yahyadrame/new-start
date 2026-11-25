@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
 const jwt = vi.hoisted(() => ({ verify: vi.fn() }));
-vi.mock('jose', () => ({ createRemoteJWKSet: vi.fn(() => 'jwks'), jwtVerify: jwt.verify }));
+vi.mock('jose', async (original) => ({
+  ...(await original<typeof import('jose')>()),
+  createRemoteJWKSet: vi.fn(() => 'jwks'),
+  jwtVerify: jwt.verify,
+}));
 
 import type { SignupProfile } from '@newstart/shared';
 import { createAccessSigner } from '../domain/tokens.js';
