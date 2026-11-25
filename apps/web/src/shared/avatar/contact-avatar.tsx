@@ -2,11 +2,12 @@
 
 import { CONTACT_AVATARS, LIBRARY_IDS, NeutralAvatar } from '@newstart/ui';
 import { AVATAR_SHAPE, CONTACT_STYLE } from './config';
+import { useContactChoice } from './contact-avatars';
 import { useColorScheme } from './use-color-scheme';
 
 /**
  * Silhouette d'un contact : celle qui lui est propre si elle existe, sinon une de la bibliothèque,
- * toujours la même pour un même contact (en attendant le choix par contact, NS-062 partie 4).
+ * toujours la même pour un même contact. La personne peut en choisir une autre (NS-062, partie 4b).
  */
 export function contactAvatarId(slug: string): string {
   if (slug in CONTACT_AVATARS) return slug;
@@ -25,11 +26,13 @@ export function ContactAvatar({
   name: string;
   className?: string;
 }) {
+  const choice = useContactChoice(slug);
   return (
     <NeutralAvatar
-      avatarId={contactAvatarId(slug)}
+      avatarId={choice?.id ?? contactAvatarId(slug)}
       name={name}
-      variant={CONTACT_STYLE}
+      palette={choice?.palette}
+      variant={choice ? (choice.variant ?? CONTACT_STYLE) : CONTACT_STYLE}
       shape={AVATAR_SHAPE}
       theme={useColorScheme()}
       className={className}

@@ -56,3 +56,50 @@ describe('AvatarPicker', () => {
     expect(onSave).toHaveBeenCalledWith(null);
   });
 });
+
+describe('AvatarPicker pour un contact', () => {
+  const openContact = (value = null as Parameters<typeof AvatarPicker>[0]['value']) => {
+    const onSave = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <AvatarPicker
+        value={value}
+        name="Jade"
+        original={{ id: 'jade', style: 'duo' }}
+        onSave={onSave}
+        onClose={onClose}
+      />,
+    );
+    return { onSave, onClose };
+  };
+
+  it('propose l’original en premier et « Revenir à l’original »', () => {
+    openContact();
+    const first = screen.getAllByRole('button', { pressed: true })[0];
+    expect(first?.getAttribute('aria-label')).toBe(t.original);
+    expect(screen.getByRole('button', { name: t.resetContact })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: t.remove })).toBeNull();
+  });
+
+  it('enregistre une autre silhouette', async () => {
+    const { onSave } = openContact();
+    fireEvent.click(sil('007'));
+    fireEvent.click(screen.getByRole('button', { name: t.save }));
+    await vi.waitFor(() => expect(onSave).toHaveBeenCalledWith({ id: 'a007', variant: 'duo' }));
+  });
+
+  it('garder l’original ne choisit rien', async () => {
+    const { onSave, onClose } = openContact({ id: 'a007' });
+    fireEvent.click(screen.getByRole('button', { name: t.original }));
+    fireEvent.click(screen.getByRole('button', { name: t.save }));
+    await vi.waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onSave).toHaveBeenCalledWith(null);
+  });
+
+  it('« Revenir à l’original » efface le choix', async () => {
+    const { onSave, onClose } = openContact({ id: 'a007' });
+    fireEvent.click(screen.getByRole('button', { name: t.resetContact }));
+    await vi.waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onSave).toHaveBeenCalledWith(null);
+  });
+});
