@@ -14,13 +14,13 @@ export function WelcomeScreen() {
       </div>
 
       <ul aria-label={t.bubblesLabel} className="flex flex-1 flex-col justify-center">
-        <li className="w-75 rounded-full bg-accent px-7 pt-5.5 pb-10 text-base font-semibold text-on-accent">
+        <li className="w-75 max-w-full rounded-full bg-accent px-7 pt-5.5 pb-10 text-base font-semibold text-on-accent">
           {t.bubbles.first}
         </li>
-        <li className="-mt-6.5 ml-10 w-75 rounded-full bg-surface-2 px-7 pt-5.5 pb-10 text-base font-medium">
+        <li className="-mt-6.5 ml-10 w-75 max-w-[calc(100%-2.5rem)] rounded-full bg-surface-2 px-7 pt-5.5 pb-10 text-base font-medium">
           {t.bubbles.second}
         </li>
-        <li className="-mt-6.5 flex w-75 items-center gap-2.5 rounded-full border border-line bg-surface-1 px-7 py-5.5 text-base font-medium">
+        <li className="-mt-6.5 flex w-75 max-w-full items-center gap-2.5 rounded-full border border-line bg-surface-1 px-7 py-5.5 text-base font-medium">
           <span aria-hidden="true" className="size-2.5 rounded-full bg-accent" />
           <span>
             {t.bubbles.meLabel} : {t.bubbles.me}
