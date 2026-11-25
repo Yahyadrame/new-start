@@ -23,7 +23,15 @@ function fake(rows: unknown[]) {
     dailyActivity: { upsert: vi.fn(), findUnique: vi.fn() },
     $transaction: vi.fn(),
     $queryRaw: vi.fn(),
-    message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), updateMany: vi.fn() },
+    message: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      updateMany: vi.fn(),
+    },
+    correction: { deleteMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
   };
   return { db, store: new PrismaConversationsStore(db as unknown as PrismaService) };
@@ -165,6 +173,32 @@ describe('PrismaConversationsStore', () => {
       expect(db.conversation.update.mock.calls[0]?.[0]).toMatchObject({
         where: { id: 'c1' },
         data: { unreadCount: 0 },
+      });
+      expect(db.$transaction).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('deleteMessage', () => {
+    it('ne touche à rien quand le message n’est pas à cette personne ou est déjà supprimé', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue(null);
+      expect(await store.deleteMessage('u1', 'm9')).toBe(false);
+      expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
+        id: 'm9',
+        deletedAt: null,
+        conversation: { userId: 'u1' },
+      });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('efface le texte, la traduction et la correction, et date la suppression', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue({ id: 'm1' });
+      expect(await store.deleteMessage('u1', 'm1')).toBe(true);
+      expect(db.correction.deleteMany).toHaveBeenCalledWith({ where: { messageId: 'm1' } });
+      expect(db.message.update.mock.calls[0]?.[0]).toMatchObject({
+        where: { id: 'm1' },
+        data: { text: '', translationFr: null, deletedAt: expect.any(Date) },
       });
       expect(db.$transaction).toHaveBeenCalledTimes(1);
     });

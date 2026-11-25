@@ -15,7 +15,9 @@ const scrollIntoView = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
+const deleteMessage = vi.fn();
 vi.mock('./chats-api', () => ({
+  deleteMessage,
   listConversations,
   listMessages,
   sendMessage,
@@ -47,6 +49,7 @@ const msg = (id: string, author: 'USER' | 'AGENT', text: string) => ({
   translationFr: null,
   createdAt: '2026-11-20T10:00:00.000Z',
   correction: null,
+  deleted: false,
 });
 // La bulle « en train d'écrire… » est testée à part : ici, seulement les messages.
 const texts = () =>
@@ -162,6 +165,21 @@ describe('ConversationScreen', () => {
     expect(scrollIntoView).toHaveBeenLastCalledWith({ block: 'end' });
     expect(scrollIntoView).toHaveBeenCalledTimes(2);
     Object.defineProperty(window, 'visualViewport', { value: undefined, configurable: true });
+  });
+
+  it('supprime un message et le remplace par « Message supprimé »', async () => {
+    deleteMessage.mockResolvedValue(undefined);
+    render(<ConversationScreen agentSlug="jade" />);
+    await screen.findByText('First');
+    const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+    if (!trigger) throw new Error('menu absent');
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+    fireEvent.click(await screen.findByRole('button', { name: fr.conversation.delete }));
+    fireEvent.click(screen.getByRole('button', { name: fr.conversation.deleteConfirm }));
+    expect(await screen.findByText(fr.conversation.deleted)).toBeTruthy();
+    expect(deleteMessage).toHaveBeenCalledWith('tok', 'm1');
+    expect(screen.queryByText('First')).toBeNull();
   });
 
   it('dit quand la conversation est vide', async () => {

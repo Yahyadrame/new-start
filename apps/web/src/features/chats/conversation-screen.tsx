@@ -11,6 +11,7 @@ import { ChatBackdrop, getChatBackground } from '../../shared/chat-background';
 import fr from '../../shared/i18n/fr.json';
 import {
   addToNotebook,
+  deleteMessage,
   translateMessage,
   listConversations,
   listMessages,
@@ -281,6 +282,22 @@ export function ConversationScreen({
                       highlighted={m.id === flash}
                       onAddToNotebook={(id) => addToNotebook(token.current, id)}
                       onTranslate={(id) => translateMessage(token.current, id)}
+                      onDelete={async (id) => {
+                        await deleteMessage(token.current, id);
+                        setMessages((prev) =>
+                          prev?.map((x) =>
+                            x.id === id
+                              ? {
+                                  ...x,
+                                  text: '',
+                                  translationFr: null,
+                                  correction: null,
+                                  deleted: true,
+                                }
+                              : x,
+                          ),
+                        );
+                      }}
                     />
                   </Fragment>
                 ))}

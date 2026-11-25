@@ -97,3 +97,10 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 | 2026-11-25 | Cloche des notifications (NS-044) | Plus d'icône flottante : mobile, la cloche est dans l'en-tête de chaque écran, à droite du titre ; ordinateur, entrée de la barre latérale. Le point de non-lu est conservé. | Choix du porteur du projet | — |
 | 2026-11-25 | Profil en sous-pages (NS-045) | Le Profil montre un en-tête (avatar, nom) puis des lignes qui ouvrent chacune leur page de réglages. Les nouveaux réglages viendront en tickets séparés. | Choix du porteur du projet | — |
 | 2026-11-25 | Barre d'écriture complète (NS-039, NS-046, NS-047) | Barre façon WhatsApp avec + (photos, fichiers), micro (vocaux) et envoi, et envoi réel de bout en bout. | Choix du porteur du projet | Stockage des fichiers à choisir avant NS-047 (Cloudinary proposé par le porteur du projet) et coût à valider ; l'IA pour la prononciation n'est pas décidée |
+
+## 2026-11-25 — Actions sur un message (NS-054)
+
+- Supprimer : le texte est effacé en base, la bulle reste et devient « Message supprimé » des deux côtés (recommandation acceptée par le porteur). Colonne `deletedAt`.
+- Modifier : seulement ses propres messages, mention « modifié », la réponse du contact ne change pas, la correction est refaite sur le nouveau texte.
+- Transférer : vers une autre conversation, avec la mention « transféré ».
+- Copier : ajouté à la demande du porteur, avec la suppression.

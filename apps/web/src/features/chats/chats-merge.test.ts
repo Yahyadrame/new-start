@@ -9,6 +9,7 @@ const m = (id: string, author: MessageItem['author'], createdAt: string): Messag
   translationFr: null,
   createdAt,
   correction: null,
+  deleted: false,
 });
 
 describe('mergeLatest', () => {

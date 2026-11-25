@@ -7,6 +7,8 @@ export const MessageItem = z.object({
   text: z.string(),
   translationFr: z.string().nullable(),
   createdAt: z.string(),
+  /** Message supprimé par la personne : `text` est vide, la bulle devient « Message supprimé ». */
+  deleted: z.boolean(),
   /** La correction « Plus naturel » d'un message de la personne, ou null. */
   correction: z.object({ better: z.string().nullable(), whyFr: z.string().nullable() }).nullable(),
 });
