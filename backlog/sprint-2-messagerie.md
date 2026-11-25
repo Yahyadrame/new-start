@@ -99,3 +99,7 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 - [ ] Un toucher, Entrée ou Échap saute l'animation ; `prefers-reduced-motion` : icône et mot pendant 0,4 s.
 - [ ] Durées dans `features/splash/timeline.ts` ; tests unitaires et test e2e (durée maximale, enchaînement).
 - [ ] Réduction à 0,8 s « si les données sont prêtes » : non faite, aucun signal de chargement n'existe encore.
+## NS-042 — La liste des discussions reste en place quand on fait défiler une conversation · S
+*Ajouté le 2026-11-25 par le porteur du projet : l'onglet des discussions bouge quand il parcourt les messages.*
+- [ ] Dès 1024 px, la liste reste fixe à gauche pendant que les messages défilent ; elle défile seule si elle est plus haute que l'écran.
+- [ ] Test unitaire de la mise en page.
