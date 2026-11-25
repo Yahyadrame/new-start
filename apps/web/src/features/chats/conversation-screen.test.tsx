@@ -77,9 +77,7 @@ afterEach(cleanup);
 describe('ConversationScreen', () => {
   it('ouvre la fiche du contact depuis l’en-tête', async () => {
     render(<ConversationScreen agentSlug="jade" />);
-    const link = await screen.findByRole('link', {
-      name: fr.contact.open.replace('{name}', 'Jade'),
-    });
+    const link = await screen.findByRole('link', { name: /Jade/ });
     expect(link.getAttribute('href')).toBe('/chats/jade/profile');
   });
 

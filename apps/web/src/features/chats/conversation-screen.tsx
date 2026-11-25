@@ -228,7 +228,6 @@ export function ConversationScreen({
         {item && (
           <Link
             href={`/chats/${item.agent.slug}/profile`}
-            aria-label={fr.contact.open.replace('{name}', item.agent.name)}
             className="flex min-h-11 min-w-0 items-center gap-3 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
           >
             <ContactAvatar slug={item.agent.slug} name="" />

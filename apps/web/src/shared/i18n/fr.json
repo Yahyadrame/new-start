@@ -737,7 +737,6 @@
     "accent": "Accent",
     "topic": "Thème",
     "aiNote": "{name} est une IA. Ce n'est pas une personne.",
-    "open": "Voir la fiche de {name}",
     "error": "Impossible de charger la fiche. Réessaie dans un instant."
   }
 }
