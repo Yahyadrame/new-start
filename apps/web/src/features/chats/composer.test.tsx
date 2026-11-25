@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
-import { Composer, MAX_FILE_BYTES } from './composer';
+import { Composer, EMOJIS, MAX_FILE_BYTES } from './composer';
 
 const recorder = vi.hoisted(() => ({
   recording: false,
@@ -149,5 +149,24 @@ describe('Composer', () => {
     fireEvent.click(screen.getByRole('button', { name: c.attach }));
     expect(await screen.findByRole('button', { name: c.attachPhoto })).toBeTruthy();
     expect(screen.getByRole('button', { name: c.attachFile })).toBeTruthy();
+  });
+
+  it('insère un émoji choisi dans le message', async () => {
+    render(<Composer onSend={vi.fn()} />);
+    fireEvent.change(field(), { target: { value: 'Hi ' } });
+    fireEvent.pointerDown(screen.getByRole('button', { name: c.emoji }), {
+      button: 0,
+      ctrlKey: false,
+    });
+    fireEvent.click(screen.getByRole('button', { name: c.emoji }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: c.emojiInsert.replace('{emoji}', '👍') }),
+    );
+    expect(field().value).toBe('Hi 👍');
+  });
+
+  it('propose une quarantaine d’émojis, tous entiers', () => {
+    expect(EMOJIS.length).toBeGreaterThan(35);
+    expect(new Set(EMOJIS).size).toBe(EMOJIS.length);
   });
 });
