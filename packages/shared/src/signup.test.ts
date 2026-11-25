@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { PhoneE164, SIGNUP_GOALS, SIGNUP_INTERESTS, SignupProfile } from './signup.js';
+import {
+  GOAL_TOPIC,
+  INTEREST_TOPIC,
+  PhoneE164,
+  recommendedTopics,
+  SIGNUP_GOALS,
+  SIGNUP_INTERESTS,
+  SignupProfile,
+} from './signup.js';
 
 const valid = {
   firstName: 'Awa',
@@ -75,5 +83,16 @@ describe('objectifs et centres d\u2019intérêt multiples', () => {
       SignupProfile.safeParse({ ...valid, interests: SIGNUP_INTERESTS.slice(0, 9) }).success,
     ).toBe(false);
     expect(SignupProfile.safeParse({ ...valid, interests: ['MAGIC'] }).success).toBe(false);
+  });
+});
+
+describe('recommendedTopics', () => {
+  it('donne un thème à chaque centre d’intérêt, et à chaque objectif sauf se faire des amis', () => {
+    for (const i of SIGNUP_INTERESTS) expect(INTEREST_TOPIC[i]).toBeTruthy();
+    expect(SIGNUP_GOALS.filter((g) => !GOAL_TOPIC[g])).toEqual(['FRIENDS']);
+  });
+  it('met l’objectif en premier et retire les doublons', () => {
+    expect(recommendedTopics('WORK', ['BUSINESS', 'MUSIC', 'MOVIES'])).toEqual(['work', 'culture']);
+    expect(recommendedTopics('FRIENDS', [])).toEqual([]);
   });
 });

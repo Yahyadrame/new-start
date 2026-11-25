@@ -35,6 +35,46 @@ export const SIGNUP_INTERESTS = [
 ] as const;
 export type SignupInterest = (typeof SIGNUP_INTERESTS)[number];
 
+/** Thème du catalogue qui répond à chaque centre d'intérêt (`data/catalogue.json`). */
+export const INTEREST_TOPIC: Readonly<Record<SignupInterest, string>> = {
+  MUSIC: 'culture',
+  FOOTBALL: 'sport',
+  SPORT: 'sport',
+  MOVIES: 'culture',
+  GAMING: 'gaming',
+  TECH: 'tech',
+  BUSINESS: 'work',
+  HEALTH: 'health',
+  COOKING: 'cooking',
+  TRAVEL: 'travel',
+  FASHION: 'fashion',
+  ART: 'art',
+  SCIENCE: 'science',
+  FAITH: 'faith',
+  NATURE: 'nature',
+  BOOKS: 'books',
+};
+
+/** Thème qui répond à chaque objectif ; « se faire des amis » n'en a pas, les contacts du quotidien suffisent. */
+export const GOAL_TOPIC: Readonly<Partial<Record<SignupGoal, string>>> = {
+  SCHOLARSHIP: 'studies',
+  WORK: 'work',
+  TRAVEL: 'travel',
+  STUDIES: 'studies',
+  EXAMS: 'studies',
+  BUSINESS: 'work',
+  CULTURE: 'culture',
+};
+
+/** Thèmes à mettre en avant pour une personne : son objectif d'abord, puis ses centres d'intérêt, sans doublon. */
+export function recommendedTopics(
+  goal: SignupGoal,
+  interests: readonly SignupInterest[],
+): string[] {
+  const slugs = [GOAL_TOPIC[goal], ...interests.map((i) => INTEREST_TOPIC[i])];
+  return [...new Set(slugs.filter((s): s is string => s !== undefined))];
+}
+
 /** Numéro validé et ramené au format E.164 ; sans indicatif, on suppose le Sénégal (+221). */
 export const PhoneE164 = z.string().transform((value, ctx) => {
   const phone = parsePhoneNumberFromString(value, 'SN');

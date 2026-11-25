@@ -1,6 +1,6 @@
 'use client';
 
-import type { AgentCard, TopicItem } from '@newstart/shared';
+import { recommendedTopics, type AgentCard, type TopicItem } from '@newstart/shared';
 import { Avatar, AvatarFallback, Badge, Button, Input, Skeleton } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
-import { ExploreError, listAgents, listTopics, startConversation } from './explore-api';
+import { ExploreError, getTastes, listAgents, listTopics, startConversation } from './explore-api';
 
 const t = fr.explore;
 const SEARCH_DELAY_MS = 300;
@@ -18,12 +18,14 @@ export function ExploreScreen() {
   const router = useRouter();
   const [topics, setTopics] = useState<TopicItem[] | null>(null);
   const [agents, setAgents] = useState<AgentCard[] | null>(null);
+  const [forYou, setForYou] = useState<string[]>([]);
   const [topic, setTopic] = useState<TopicItem | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [writing, setWriting] = useState<string | null>(null);
 
   const q = query.trim();
+  const suggested = (topics ?? []).filter((x) => x.agentCount > 0 && forYou.includes(x.slug));
   const browsing = topic !== null || q !== '';
 
   useEffect(() => {
@@ -34,6 +36,13 @@ export function ExploreScreen() {
         setTopics(await listTopics(session.accessToken));
       } catch {
         setError(t.error);
+      }
+      // Les propositions sont un plus : sans elles, la liste des thèmes reste complète.
+      try {
+        const { goal, interests } = await getTastes(session.accessToken);
+        setForYou(recommendedTopics(goal, interests));
+      } catch {
+        setForYou([]);
       }
     })();
   }, [router]);
@@ -113,6 +122,26 @@ export function ExploreScreen() {
             <Skeleton key={n} className="h-24 w-full" />
           ))}
         </div>
+      )}
+
+      {!browsing && suggested.length > 0 && (
+        <section aria-labelledby="for-you" className="flex flex-col gap-3">
+          <h2
+            id="for-you"
+            className="text-sm font-semibold tracking-[0.08em] text-text-muted uppercase"
+          >
+            {t.forYou}
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {suggested.map((item) => (
+              <li key={item.slug}>
+                <Button variant="outline" onClick={() => setTopic(item)}>
+                  {item.nameFr}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {!browsing && topics && (

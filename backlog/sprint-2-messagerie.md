@@ -244,5 +244,5 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 ## NS-058 — Domaines élargis et contacts IA selon les centres d'intérêt · L
 **Besoin** : le catalogue ne couvre pas les 16 centres d'intérêt de l'inscription.
 - [x] Partie 1 : 8 thèmes et 11 contacts ajoutés (17 thèmes, 23 contacts), statuts et tests à jour.
-- [ ] Partie 2 : section « Pour toi » dans Explorer, selon `interests` et `goals` du compte.
+- [x] Partie 2 : section « Pour toi » dans Explorer, selon `interests` et `goals` du compte.
 - [ ] Partie 3 : `agent-reply` transmet les centres d'intérêt au contact (aujourd'hui seulement `goal`).

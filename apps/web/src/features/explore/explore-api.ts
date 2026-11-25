@@ -1,4 +1,4 @@
-import type { AgentCard, ConversationItem, TopicItem } from '@newstart/shared';
+import type { AgentCard, ConversationItem, Me, TopicItem } from '@newstart/shared';
 
 export class ExploreError extends Error {
   constructor(readonly status: number) {
@@ -15,6 +15,11 @@ async function read<T>(res: Response): Promise<T> {
 
 export async function listTopics(token: string): Promise<TopicItem[]> {
   return read(await fetch('/api/topics', { headers: auth(token) }));
+}
+
+/** Objectif et centres d'intérêt de la personne, pour lui proposer des thèmes. */
+export async function getTastes(token: string): Promise<Pick<Me, 'goal' | 'interests'>> {
+  return read(await fetch('/api/me', { headers: auth(token) }));
 }
 
 export async function listAgents(

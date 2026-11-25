@@ -8,6 +8,7 @@ const select = {
   id: true,
   firstName: true,
   goal: true,
+  interests: true,
   level: true,
   theme: true,
   reminderTime: true,

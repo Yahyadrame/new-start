@@ -8,6 +8,7 @@ const ensureSession = vi.fn();
 const listTopics = vi.fn();
 const listAgents = vi.fn();
 const startConversation = vi.fn();
+const getTastes = vi.fn();
 const router = { replace, push };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
@@ -16,6 +17,7 @@ vi.mock('./explore-api', () => ({
   listTopics,
   listAgents,
   startConversation,
+  getTastes,
   ExploreError: class ExploreError extends Error {
     constructor(readonly status: number) {
       super(String(status));
@@ -46,6 +48,7 @@ beforeEach(() => {
   listTopics.mockResolvedValue(topics);
   listAgents.mockResolvedValue([card('sam', 'Sam'), card('lea', 'Léa')]);
   startConversation.mockResolvedValue({ id: 'c1' });
+  getTastes.mockResolvedValue({ goal: 'FRIENDS', interests: [] });
 });
 afterEach(cleanup);
 
@@ -130,5 +133,31 @@ describe('ExploreScreen', () => {
     render(<ExploreScreen />);
     fireEvent.click(await screen.findByRole('button', { name: /Voyage/ }));
     expect((await screen.findByRole('alert')).textContent).toBe(t.error);
+  });
+
+  it('met en avant les thèmes de son objectif et de ses centres d’intérêt, sans « Bientôt »', async () => {
+    listTopics.mockResolvedValue([
+      { slug: 'travel', nameFr: 'Voyage', agentCount: 2 },
+      { slug: 'gaming', nameFr: 'Jeux vidéo', agentCount: 1 },
+      { slug: 'health', nameFr: 'Santé', agentCount: 0 },
+    ]);
+    getTastes.mockResolvedValue({ goal: 'TRAVEL', interests: ['GAMING', 'HEALTH'] });
+    render(<ExploreScreen />);
+    const section = (await screen.findByRole('heading', { name: t.forYou })).closest('section');
+    const names = Array.from(section?.querySelectorAll('button') ?? []).map((b) => b.textContent);
+    expect(names).toEqual(['Voyage', 'Jeux vidéo']);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Jeux vidéo' })[0] as HTMLElement);
+    await waitFor(() => expect(listAgents).toHaveBeenCalledWith('tok', { topic: 'gaming', q: '' }));
+  });
+
+  it('n’affiche pas « Pour toi » sans préférence, ni quand le profil ne charge pas', async () => {
+    render(<ExploreScreen />);
+    await screen.findByText('Voyage');
+    expect(screen.queryByRole('heading', { name: t.forYou })).toBeNull();
+    cleanup();
+    getTastes.mockRejectedValue(new Error('réseau'));
+    render(<ExploreScreen />);
+    await screen.findByText('Voyage');
+    expect(screen.queryByRole('heading', { name: t.forYou })).toBeNull();
   });
 });
