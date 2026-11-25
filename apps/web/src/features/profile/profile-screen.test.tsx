@@ -7,6 +7,7 @@ const ensureSession = vi.fn();
 const getMe = vi.fn();
 const patchMe = vi.fn();
 const exportMe = vi.fn();
+const logoutApi = vi.fn();
 const deleteMe = vi.fn();
 const setSession = vi.fn();
 const listNotebook = vi.fn();
@@ -22,7 +23,14 @@ vi.mock('../../shared/navigation', () => ({
   BottomNav: () => <nav aria-label="Navigation principale" />,
   NotificationsBell: () => <span>cloche</span>,
 }));
-vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe, listNotebook }));
+vi.mock('./profile-api', () => ({
+  getMe,
+  patchMe,
+  exportMe,
+  deleteMe,
+  listNotebook,
+  logout: logoutApi,
+}));
 const { ProfileScreen } = await import('./profile-screen');
 import type { Section } from './sections';
 
@@ -133,6 +141,15 @@ describe('ProfileScreen', () => {
     const setting = screen.getByLabelText(t.learning.dailyGoal).closest('div[class*="min-h-"]');
     expect(setting?.className).toContain('min-h-[72px]');
     expect(setting?.className).toContain('border-b');
+  });
+
+  it('se déconnecte depuis l’accueil : ferme la session et renvoie à l’accueil du site', async () => {
+    logoutApi.mockResolvedValue(undefined);
+    await open();
+    fireEvent.click(screen.getByRole('button', { name: t.signOut }));
+    await waitFor(() => expect(logoutApi).toHaveBeenCalled());
+    expect(setSession).toHaveBeenCalledWith(null);
+    expect(replace).toHaveBeenCalledWith('/');
   });
 
   it('garde la navigation du bas dans une rubrique', async () => {

@@ -176,3 +176,33 @@ _Ajouté le 2026-11-25. Dépend de NS-046 et d'une décision sur le stockage de 
 - [ ] Stockage, taille et types limités, URL signées, suppression avec le compte. Piste proposée par le porteur du projet : Cloudinary (images et audio). Comparer avec un bucket compatible S3, vérifier les tarifs, puis demander.
 - [ ] Lecture des vocaux et affichage des images dans la conversation.
 - [ ] Ce que les contacts IA font d'un vocal (transcription, prononciation) : à décider avant.
+
+## NS-048 — Se déconnecter · S
+
+_Ajouté le 2026-11-25 : aucun bouton de déconnexion dans le Profil._
+
+- [x] Bouton « Se déconnecter » en bas de l'accueil du profil : ferme la session (cookie effacé par `/auth/logout`) et renvoie à l'accueil. Sans confirmation, on se reconnecte avec un code.
+- [x] Tests unitaires (API et écran).
+
+## NS-049 — Plusieurs avatars au choix · M
+
+_Ajouté le 2026-11-25 à la demande du porteur du projet (« comme Synapse »)._
+
+- [ ] Bibliothèque d'avatars illustrés (visages, animaux, personnages) au choix, en plus de l'initiale, pour la personne et pour les contacts IA.
+- [ ] Source des images à décider (création maison, pack libre de droits, générateur type DiceBear) : proposer 2 à 4 options avec licence et coût, puis demander.
+- [ ] Le choix se fait dans Profil et à l'inscription ; l'avatar s'affiche partout (liste, conversation, profil).
+
+## NS-050 — Modifier son profil · M
+
+_Ajouté le 2026-11-25._
+
+- [ ] Page « Mon compte » (Profil) : modifier prénom, photo ou avatar, année de naissance, numéro, e-mail (avec nouveau code de confirmation).
+- [ ] Schémas Zod partagés, tests unitaires, deux thèmes.
+
+## NS-051 — Profil d'un contact et variantes · L
+
+_Ajouté le 2026-11-25._
+
+- [ ] Fiche d'un contact (depuis l'en-tête de la conversation) : photo ou avatar, présentation, centres d'intérêt, niveau de langue.
+- [ ] Plusieurs variantes d'un même contact (ton, accent, niveau de difficulté, avatar) choisies et modifiables par la personne. Cadre dans `docs/09-ia-agents.md` : un agent ne se présente jamais comme un humain.
+- [ ] À découper en deux ou trois PR après maquette.
