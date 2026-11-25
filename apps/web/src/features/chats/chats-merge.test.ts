@@ -10,6 +10,7 @@ const m = (id: string, author: MessageItem['author'], createdAt: string): Messag
   createdAt,
   correction: null,
   replyTo: null,
+  edited: false,
   deleted: false,
 });
 
