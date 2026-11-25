@@ -324,6 +324,8 @@
     "limitReached": "Tu as bien pratiqué aujourd'hui. Reviens demain, {name} t'attend.",
     "typing": "{name} est en train d'écrire…",
     "messageNotFound": "Ce message est trop ancien pour être retrouvé ici.",
+    "emoji": "Émojis",
+    "emojiInsert": "Insérer {emoji}",
     "attach": "Joindre un fichier",
     "attachPhoto": "Photo ou image",
     "attachFile": "Document",

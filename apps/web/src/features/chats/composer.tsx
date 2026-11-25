@@ -6,6 +6,7 @@ import {
   Image as ImageIcon,
   Mic,
   Plus,
+  Smile,
   SendHorizontal,
   Square,
   Trash2,
@@ -20,6 +21,50 @@ export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 /** Ce qui attend dans la barre avant l'envoi : un vocal enregistré ou un fichier choisi. */
 export type Draft = ({ kind: 'voice' } & VoiceClip) | { kind: 'file'; file: File; url?: undefined };
+
+/** Les émojis du quotidien, sans bibliothèque : de quoi réagir et se détendre en anglais comme en français. */
+export const EMOJIS = [
+  '😀',
+  '😂',
+  '🥹',
+  '😊',
+  '😍',
+  '🥰',
+  '😎',
+  '🤔',
+  '😅',
+  '😭',
+  '😮',
+  '😴',
+  '🙄',
+  '😬',
+  '🤝',
+  '🙏',
+  '👍',
+  '👎',
+  '👏',
+  '🙌',
+  '💪',
+  '👋',
+  '✌️',
+  '🤞',
+  '❤️',
+  '🔥',
+  '✨',
+  '🎉',
+  '🎶',
+  '☕',
+  '🍕',
+  '🌍',
+  '✈️',
+  '📚',
+  '💡',
+  '✅',
+  '❌',
+  '❓',
+  '💬',
+  '🎧',
+];
 
 const round =
   'grid size-11 shrink-0 place-items-center rounded-full transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text';
@@ -169,6 +214,33 @@ export function Composer({
                       fileInput.current?.click();
                     }}
                   />
+                </PopoverContent>
+              </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={c.emoji}
+                    className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+                  >
+                    <Smile aria-hidden="true" className="size-6" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72" side="top">
+                  <ul className="grid grid-cols-6 gap-1">
+                    {EMOJIS.map((emoji) => (
+                      <li key={emoji}>
+                        <button
+                          type="button"
+                          aria-label={c.emojiInsert.replace('{emoji}', emoji)}
+                          onClick={() => setText((t) => t + emoji)}
+                          className="grid size-11 w-full place-items-center rounded-xl text-2xl hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-accent-text"
+                        >
+                          {emoji}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </PopoverContent>
               </Popover>
               <label htmlFor="composer" className="sr-only">

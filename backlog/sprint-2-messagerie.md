@@ -229,5 +229,6 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 
 ## NS-055 — Émojis et stickers · M
 
-- [ ] Sélecteur d'émojis dans la barre d'écriture, réactions rapides sur un message.
+- [x] Sélecteur d'émojis dans la barre d'écriture (une quarantaine, sans bibliothèque).
+- [ ] Réactions rapides sur un message.
 - [ ] Stickers : source à décider (pack libre de droits, sans dépense), puis demander.
