@@ -80,7 +80,6 @@ export function NotificationsRailItem() {
     <li className="hidden lg:mt-auto lg:flex lg:justify-center">
       <Link
         href="/notifications"
-        aria-label={labelFor(unread)}
         aria-current={active ? 'page' : undefined}
         className="flex min-h-11 min-w-14 flex-col items-center gap-0.5 focus-visible:outline-2 focus-visible:outline-accent-text"
       >
@@ -95,6 +94,11 @@ export function NotificationsRailItem() {
         </span>
         <span className={cn('text-xs font-semibold', active ? 'text-text' : 'text-text-muted')}>
           {t.bellShort}
+          {unread > 0 && (
+            <span className="sr-only">
+              {unread === 1 ? t.bellSuffixOne : t.bellSuffixMany.replace('{count}', String(unread))}
+            </span>
+          )}
         </span>
       </Link>
     </li>

@@ -81,7 +81,7 @@ describe('NotificationsRailItem', () => {
 
   it('est une entrée du rail, cachée sur mobile, qui prend l’espace libre', async () => {
     renderRail();
-    const link = await screen.findByRole('link', { name: fr.nav.bell });
+    const link = await screen.findByRole('link', { name: fr.nav.bellShort });
     expect(link.getAttribute('href')).toBe('/notifications');
     expect(link.textContent).toBe(fr.nav.bellShort);
     expect(screen.getByRole('listitem').className).toContain('hidden');
@@ -92,7 +92,8 @@ describe('NotificationsRailItem', () => {
   it('annonce les non-lus avec un point', async () => {
     fetchUnreadCount.mockResolvedValue(2);
     renderRail();
-    expect(await screen.findByRole('link', { name: 'Notifications, 2 non lues' })).toBeTruthy();
+    // Le nom commence par le texte visible, comme l'exige l'accessibilité.
+    expect(await screen.findByRole('link', { name: 'Notifs, 2 non lues' })).toBeTruthy();
     expect(screen.getByTestId('unread-dot')).toBeTruthy();
   });
 
@@ -101,5 +102,11 @@ describe('NotificationsRailItem', () => {
     renderRail();
     const link = await screen.findByRole('link');
     expect(link.getAttribute('aria-current')).toBe('page');
+  });
+
+  it('annonce un non-lu au singulier', async () => {
+    fetchUnreadCount.mockResolvedValue(1);
+    renderRail();
+    expect(await screen.findByRole('link', { name: 'Notifs, 1 non lue' })).toBeTruthy();
   });
 });

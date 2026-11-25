@@ -478,6 +478,8 @@
     "profile": "Profil",
     "bell": "Notifications",
     "bellShort": "Notifs",
+    "bellSuffixOne": ", 1 non lue",
+    "bellSuffixMany": ", {count} non lues",
     "bellUnreadOne": "Notifications, 1 non lue",
     "bellUnreadMany": "Notifications, {count} non lues"
   },
