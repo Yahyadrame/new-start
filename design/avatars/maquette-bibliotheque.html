@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bibliothèque d'avatars New Start (NS-065)</title>
+<script src="avatars.js"></script>
+<script src="bibliotheque.js"></script>
+<style>
+  :root { --bg:#fff; --s1:#f4f4f2; --tx:#111; --mu:#5f5f5f; --ln:#dcdcd8; --ac:#128c4a; }
+  body.dark { --bg:#0d0d0d; --s1:#171717; --tx:#f2f2f2; --mu:#a0a0a0; --ln:#2a2a2a; --ac:#3ddc84; }
+  body { margin:0; background:var(--bg); color:var(--tx); font:16px/1.4 system-ui, sans-serif; }
+  header { position:sticky; top:0; background:var(--bg); border-bottom:1px solid var(--ln); padding:12px 16px; display:flex; flex-wrap:wrap; gap:12px; align-items:end; z-index:1; }
+  h1 { font-size:18px; margin:0 12px 0 0; align-self:center; }
+  label { display:grid; gap:4px; font-size:13px; color:var(--mu); }
+  select, button { min-height:44px; padding:0 12px; border-radius:12px; border:1px solid var(--ln); background:var(--s1); color:var(--tx); font:inherit; }
+  button[aria-pressed="true"] { border-color:var(--ac); }
+  p { margin:12px 16px 0; color:var(--mu); font-size:14px; }
+  main { display:grid; grid-template-columns:repeat(auto-fill, minmax(88px, 1fr)); gap:12px; padding:16px; }
+  figure { margin:0; text-align:center; font-size:11px; color:var(--mu); }
+  figure svg { width:100%; height:auto; display:block; }
+</style>
+<header>
+  <h1>Bibliothèque d'avatars</h1>
+  <label>Thème <button id="theme" aria-pressed="false">Clair</button></label>
+  <label>Forme <select id="shape"><option value="carre">Carré arrondi</option><option value="rond">Rond</option></select></label>
+  <label>Variante <select id="variant"></select></label>
+  <label>Palette <select id="palette"></select></label>
+</header>
+<p id="count"></p>
+<main id="grid"></main>
+<script>
+  const L = NSLibrary, N = NSNeutral;
+  /* les choix viennent des listes ci-dessous, par indice : jamais le texte d'un champ dans le SVG */
+  const SHAPES = ['carre', 'rond'];
+  const VARIANTS = N.VARIANTS.map((v) => v.id).filter((id) => id !== 'initiales');
+  const PALETTES = [undefined, ...L.PALETTES];
+  const $ = (id) => document.getElementById(id);
+  N.VARIANTS.filter((v) => v.id !== 'initiales').forEach((v) => $('variant').add(new Option(v.label, v.id, v.id === 'duo', v.id === 'duo')));
+  $('palette').add(new Option('Une par silhouette', ''));
+  L.PALETTES.forEach((p) => $('palette').add(new Option(p, p)));
+  function draw() {
+    const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+    const parser = new DOMParser();
+    const figures = L.LIBRARY.map((a) => {
+      const svg = parser.parseFromString(L.lib(a.slug, VARIANTS[$('variant').selectedIndex], theme, SHAPES[$('shape').selectedIndex], PALETTES[$('palette').selectedIndex]), 'image/svg+xml').documentElement;
+      const figure = document.createElement('figure');
+      figure.append(svg, a.slug);
+      return figure;
+    });
+    $('grid').replaceChildren(...figures);
+    $('count').textContent = `${L.LIBRARY.length} silhouettes, ${L.PALETTES.length} palettes, ${N.VARIANTS.length} variantes, 2 formes, 2 thèmes : ${(L.LIBRARY.length * L.PALETTES.length * N.VARIANTS.length * 2 * 2).toLocaleString('fr-FR')} combinaisons.`;
+  }
+  $('theme').onclick = () => { const d = document.body.classList.toggle('dark'); $('theme').textContent = d ? 'Sombre' : 'Clair'; $('theme').setAttribute('aria-pressed', d); draw(); };
+  ['shape', 'variant', 'palette'].forEach((id) => { $(id).onchange = draw; });
+  draw();
+</script>

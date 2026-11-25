@@ -296,3 +296,13 @@ _Ajouté le 2026-11-25. Contenu ; générer les images coûte des crédits : acc
 
 - [ ] 8 portraits restants plus la correction du teint du Prof. Adeyemi, puis remplacement des silhouettes des contacts.
 - [ ] Les 11 contacts de NS-058 s'ajoutent à la liste.
+
+## NS-065 — Bibliothèque de centaines d'avatars · M
+
+_Ajouté le 2026-11-25 à la demande du porteur du projet : les zip sont des exemples, il faut les multiplier dans le même style._
+
+- [ ] Étendre le générateur `design/avatars/avatars.js` avec de nouvelles pièces (coiffures, couvre-chefs, barbes, lunettes, tenues) dans le même trait monochrome, sans changer les tracés existants.
+- [ ] `design/avatars/bibliotheque.js` : au moins 300 silhouettes distinctes et 16 palettes, générées de façon déterministe (un identifiant suffit à les retrouver), avec les 7 variantes, 2 formes et 2 thèmes.
+- [ ] Planche de contact en HTML (`design/avatars/maquette-bibliotheque.html`), clair et sombre, validée par le porteur avant tout code dans l'appli.
+- [ ] Ensuite (NS-062) : chaque contact garde sa silhouette d'origine et la personne peut en choisir une autre dans la bibliothèque pour ce contact, et pour elle-même.
+

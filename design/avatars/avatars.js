@@ -66,6 +66,9 @@
     { id: 'vert', label: 'Vert New Start' },
     { id: 'initiales', label: 'Initiales' }
   ];
+  /* pièces posées devant la tête en deux tons ; les barbes forment un groupe à part */
+  const FRONT = { short: 1, quiff: 1, buzz: 1, bun: 1, ponytail: 1, grey: 1, officerCap: 1, afroShort: 1, curly: 1 };
+  const BEARDS = new Set(['beard', 'beardLight']);
   const SHAPES = [{ id: 'rond', label: 'Rond' }, { id: 'carre', label: 'Carré arrondi' }];
   const darken = (hex, k) => { const n = parseInt(hex.slice(1), 16); const c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v * k)); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
   const initials = n => n.replace(/^(Mrs\.|Prof\.|Officer) /, '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
@@ -99,11 +102,10 @@
   }
   /* en deux tons, la partie des cheveux posée sur le front doit passer devant la tête */
   function hairTop(c, beards) {
-    const isBeard = p => p === 'beard' || p === 'beardLight';
+    const isBeard = p => BEARDS.has(p);
     if (beards) return (c.parts || []).filter(isBeard).map(p => P[p]).join('');
-    const front = { short: 1, quiff: 1, buzz: 1, bun: 1, ponytail: 1, grey: 1, officerCap: 1, afroShort: 1, curly: 1 };
-    return (c.parts || []).filter(p => front[p]).map(p => P[p]).join('') + ((c.parts || []).some(p => p === 'bob' || p === 'long') ? '<path d="M34 40c0-12 7-19 16-19s16 7 16 19c-4-6-9-8-16-8s-12 2-16 8z"/>' : '');
+    return (c.parts || []).filter(p => FRONT[p]).map(p => P[p]).join('') + ((c.parts || []).some(p => p === 'bob' || p === 'long') ? '<path d="M34 40c0-12 7-19 16-19s16 7 16 19c-4-6-9-8-16-8s-12 2-16 8z"/>' : '');
   }
-  const api = { CONTACTS, VARIANTS, SHAPES, CAT, svg, initials };
+  const api = { CONTACTS, VARIANTS, SHAPES, CAT, P, CUT, FRONT, BEARDS, svg, initials };
   if (typeof module !== 'undefined') module.exports = api; else root.NSNeutral = api;
 })(this);
