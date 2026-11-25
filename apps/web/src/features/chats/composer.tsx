@@ -132,7 +132,7 @@ export function Composer({
   };
 
   const shell =
-    'sticky bottom-0 w-full min-w-0 bg-surface-1 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:px-4';
+    'sticky bottom-[var(--kb,0px)] w-full min-w-0 bg-surface-1 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:px-4';
   const note =
     notice ??
     (recorder.error ? (recorder.error === 'denied' ? c.micDenied : c.micUnavailable) : null);
