@@ -274,8 +274,8 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 
 _Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/avatars/`. Style par défaut décidé le 2026-11-25 : `duo` pour les contacts, `gris` pour les personnes, forme `carre`._
 
-- [ ] Porter `design/avatars/avatars.js` en TypeScript dans `packages/ui` (`neutral-avatar.ts`), sans changer les tracés ni les couleurs.
-- [ ] Composant `NeutralAvatar` (contact, variante, forme, taille) : SVG en ligne, `clipPath` à identifiant unique, thème clair ou sombre, `role="img"` et `aria-label`.
+- [x] Porter `design/avatars/avatars.js` et `bibliotheque.js` en TypeScript dans `packages/ui/src/avatars` (360 silhouettes, 16 palettes), sans changer les tracés ni les couleurs (rendu comparé au SVG d'origine, seul le cercle invisible de rayon 0 de l'anneau carré a disparu). Partie 1.
+- [x] Composant `NeutralAvatar` (identifiant, variante, forme, thème, palette) : SVG dans un `<img>` en URI de données (pas de HTML injecté, pas d'identifiant `clipPath` à rendre unique), `alt` = nom. Partie 1.
 - [ ] Repli du composant Avatar de shadcn/ui : jamais de carré vide quand une photo ne se charge pas.
 - [ ] Avatar par défaut à l'inscription ; profil avec le bouton photo.
 - [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
