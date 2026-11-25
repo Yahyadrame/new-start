@@ -21,7 +21,7 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
         conversation: {
           select: {
             agent: { select: { name: true, persona: true, style: true, accent: true } },
-            user: { select: { firstName: true, level: true, goal: true } },
+            user: { select: { firstName: true, level: true, goal: true, interests: true } },
           },
         },
       },
