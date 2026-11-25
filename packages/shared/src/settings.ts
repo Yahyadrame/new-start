@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SignupProfile, SIGNUP_GOALS } from './signup.js';
+import { SignupProfile, SIGNUP_GOALS, SIGNUP_INTERESTS } from './signup.js';
 
 export const THEMES = ['SYSTEM', 'LIGHT', 'DARK'] as const;
 export const ACCENTS = ['en-US', 'en-GB', 'en-NG'] as const;
@@ -26,6 +26,7 @@ export const Me = z.object({
   id: z.string(),
   firstName: z.string(),
   goal: z.enum(SIGNUP_GOALS),
+  interests: z.array(z.enum(SIGNUP_INTERESTS)),
   level: z.string(),
   theme: z.enum(THEMES),
   reminderTime: ReminderTime.nullable(),
