@@ -2,8 +2,6 @@
 
 import type { ConversationItem } from '@newstart/shared';
 import {
-  Avatar,
-  AvatarFallback,
   Badge,
   Button,
   cn,
@@ -17,6 +15,7 @@ import { ChevronDown, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { ContactAvatar } from '../../shared/avatar/contact-avatar';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav, NotificationsBell } from '../../shared/navigation';
@@ -173,9 +172,7 @@ export function ChatsScreen() {
               href={`/chats/${c.agent.slug}`}
               className="flex min-h-[72px] items-center gap-3 px-4 py-3 hover:bg-surface-1 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-text"
             >
-              <Avatar className="size-[52px]">
-                <AvatarFallback>{c.agent.initials}</AvatarFallback>
-              </Avatar>
+              <ContactAvatar slug={c.agent.slug} name={c.agent.name} className="size-[52px]" />
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="flex items-center gap-2">
                   <span className="truncate text-base font-semibold">{c.agent.name}</span>

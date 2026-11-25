@@ -4,6 +4,7 @@ export { Avatar, AvatarFallback, AvatarImage } from './components/avatar';
 export { NeutralAvatar, resolveAvatar, type NeutralAvatarProps } from './components/neutral-avatar';
 export {
   AVATAR_VARIANTS,
+  CONTACT_AVATARS,
   LIBRARY_IDS,
   PALETTE_NAMES,
   type AvatarShape,

@@ -1,11 +1,12 @@
 'use client';
 
 import type { ChatBackground, ConversationItem, MessageItem } from '@newstart/shared';
-import { Avatar, AvatarFallback, Badge, Button, Skeleton } from '@newstart/ui';
+import { Badge, Button, Skeleton } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { ContactAvatar } from '../../shared/avatar/contact-avatar';
 import { ensureSession } from '../../shared/auth/session';
 import { ChatBackdrop, getChatBackground } from '../../shared/chat-background';
 import fr from '../../shared/i18n/fr.json';
@@ -224,9 +225,7 @@ export function ConversationScreen({
         </Button>
         {item && (
           <>
-            <Avatar>
-              <AvatarFallback>{item.agent.initials}</AvatarFallback>
-            </Avatar>
+            <ContactAvatar slug={item.agent.slug} name={item.agent.name} />
             <div className="flex min-w-0 flex-col">
               <h1 className="flex items-center gap-2 font-display text-lg font-bold">
                 <span className="truncate">{item.agent.name}</span>
