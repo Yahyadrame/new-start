@@ -58,6 +58,25 @@ describe('MePatch', () => {
     });
     expect(MePatch.parse({ firstName: 'Awa' })).toEqual({ firstName: 'Awa' });
   });
+  it('accepte un avatar de la bibliothèque, ou null pour le retirer', () => {
+    expect(MePatch.parse({ avatar: { id: 'a042', palette: 'Corail', variant: 'duo' } })).toEqual({
+      avatar: { id: 'a042', palette: 'Corail', variant: 'duo' },
+    });
+    expect(MePatch.parse({ avatar: { id: 'a360' } })).toEqual({ avatar: { id: 'a360' } });
+    expect(MePatch.parse({ avatar: null })).toEqual({ avatar: null });
+  });
+  it.each([
+    { id: 'a000' },
+    { id: 'a361' },
+    { id: 'jade' },
+    { id: 'a42' },
+    { id: 'a042', palette: 'Fuchsia' },
+    { id: 'a042', variant: 'initiales' },
+    { id: 'a042', extra: 1 },
+    {},
+  ])('refuse l’avatar %j', (avatar) => {
+    expect(MePatch.safeParse({ avatar }).success).toBe(false);
+  });
   it('refuse moins de 13 ans, une année absurde, trop de centres d’intérêt ou un inconnu', () => {
     const year = new Date().getFullYear();
     expect(MePatch.safeParse({ birthYear: year - 12 }).success).toBe(false);

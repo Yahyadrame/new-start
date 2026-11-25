@@ -49,6 +49,7 @@ const me = {
   preferredAccent: 'en-US',
   dataSaver: false,
   chatBackground: 'NONE',
+  avatar: null,
   pausedUntil: null,
 };
 

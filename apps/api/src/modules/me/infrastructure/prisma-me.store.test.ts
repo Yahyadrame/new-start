@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { Prisma } from '../../../generated/prisma/client.js';
 import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import { PrismaMeStore } from './prisma-me.store.js';
 
@@ -14,6 +15,7 @@ const row = {
   preferredAccent: 'en-US',
   dataSaver: false,
   chatBackground: 'NONE',
+  avatar: null,
   pausedUntil: new Date('2026-12-01T10:00:00.000Z'),
 };
 
@@ -73,6 +75,23 @@ describe('PrismaMeStore', () => {
     });
     const select = db.user.findUnique.mock.calls[0]?.[0].select;
     expect(select).toMatchObject({ birthYear: true, interests: true });
+  });
+
+  it("enregistre le choix d'avatar, ou le retire avec DbNull", async () => {
+    const { db, store } = fake();
+    db.user.updateMany.mockResolvedValue({ count: 1 });
+    db.user.findUnique.mockResolvedValue({ ...row, avatar: { id: 'a042', palette: 'Corail' } });
+    expect(await store.update('u', { avatar: { id: 'a042', palette: 'Corail' } })).toMatchObject({
+      avatar: { id: 'a042', palette: 'Corail' },
+    });
+    expect(db.user.updateMany.mock.calls[0]?.[0].data).toEqual({
+      avatar: { id: 'a042', palette: 'Corail' },
+    });
+    await store.update('u', { avatar: null });
+    expect(db.user.updateMany.mock.calls[1]?.[0].data).toEqual({ avatar: Prisma.DbNull });
+    await store.update('u', { dataSaver: true });
+    expect(db.user.updateMany.mock.calls[2]?.[0].data).toEqual({ dataSaver: true });
+    expect(db.user.findUnique.mock.calls[0]?.[0].select).toMatchObject({ avatar: true });
   });
 
   it("ne touche pas à la pause quand elle n'est pas envoyée, et rend null si le compte a disparu", async () => {
