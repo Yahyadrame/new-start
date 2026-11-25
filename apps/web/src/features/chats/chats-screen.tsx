@@ -21,6 +21,7 @@ import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
 import { listConversations } from './chats-api';
+import { SearchResults } from './search-results';
 import {
   applyFilter,
   formatWhen,
@@ -40,11 +41,13 @@ export function ChatsScreen() {
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
   const [moreOpen, setMoreOpen] = useState(false);
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     void (async () => {
       const session = await ensureSession();
       if (!session) return router.replace('/');
+      setToken(session.accessToken);
       try {
         setItems(await listConversations(session.accessToken));
       } catch {
@@ -198,6 +201,7 @@ export function ChatsScreen() {
           </li>
         ))}
       </ul>
+      {token && items && items.length > 0 && <SearchResults token={token} query={query} />}
       <BottomNav />
     </main>
   );

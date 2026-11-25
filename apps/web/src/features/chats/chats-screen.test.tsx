@@ -5,11 +5,12 @@ import fr from '../../shared/i18n/fr.json';
 const replace = vi.fn();
 const ensureSession = vi.fn();
 const listConversations = vi.fn();
+const searchMessages = vi.fn();
 // Un objet stable, comme le routeur de Next : sinon l'effet de chargement repart à chaque rendu.
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
-vi.mock('./chats-api', () => ({ listConversations }));
+vi.mock('./chats-api', () => ({ listConversations, searchMessages }));
 vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
 const { ChatsScreen } = await import('./chats-screen');
 
@@ -164,5 +165,39 @@ describe('ChatsScreen', () => {
     listConversations.mockRejectedValue(new Error('x'));
     render(<ChatsScreen />);
     expect((await screen.findByRole('alert')).textContent).toBe(t.error);
+  });
+});
+
+describe('ChatsScreen : recherche dans les messages', () => {
+  beforeEach(() => {
+    ensureSession.mockResolvedValue({ accessToken: 'tok' });
+    listConversations.mockResolvedValue(items);
+    searchMessages.mockResolvedValue([
+      {
+        messageId: 'm1',
+        conversationId: 'c1',
+        author: 'AGENT',
+        excerpt: 'Heyyy, see you soon',
+        createdAt: when,
+        agent: agent('jade', 'Jade', 'Quotidien'),
+      },
+    ]);
+  });
+
+  it('cherche dans les messages avec le jeton et lie chaque résultat à son message', async () => {
+    render(<ChatsScreen />);
+    fireEvent.change(await screen.findByRole('searchbox', { name: t.searchLabel }), {
+      target: { value: 'see' },
+    });
+    await waitFor(() => expect(searchMessages).toHaveBeenCalledWith('tok', 'see'));
+    const section = await screen.findByRole('region', { name: t.searchMessages });
+    expect(within(section).getByRole('link').getAttribute('href')).toBe('/chats/jade?message=m1');
+  });
+
+  it('ne cherche pas dans les messages tant que le champ est vide', async () => {
+    render(<ChatsScreen />);
+    await screen.findByRole('searchbox', { name: t.searchLabel });
+    expect(screen.queryByRole('region', { name: t.searchMessages })).toBeNull();
+    expect(searchMessages).not.toHaveBeenCalled();
   });
 });

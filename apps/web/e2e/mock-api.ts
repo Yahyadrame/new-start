@@ -53,6 +53,22 @@ export async function signedIn(page: Page) {
       }),
     ),
   );
+  await page.route('**/api/conversations/search*', (r) =>
+    r.fulfill(
+      json({
+        items: [
+          {
+            messageId: 'm1',
+            conversationId: 'c1',
+            author: 'USER',
+            excerpt: 'I go to Dakar yesterday.',
+            createdAt: '2026-11-21T09:00:00Z',
+            agent: { slug: 'jade', name: 'Jade', initials: 'J' },
+          },
+        ],
+      }),
+    ),
+  );
   await page.route('**/api/conversations/c1/read', (r) => r.fulfill({ status: 204 }));
   await page.route('**/api/topics', (r) =>
     r.fulfill(json([{ slug: 'travel', nameFr: 'Voyage', agentCount: 1 }])),

@@ -9,6 +9,7 @@ import {
   MAIN_FILTERS,
   matchesQuery,
   MORE_FILTERS,
+  splitMatch,
 } from './chats-format';
 
 const item = (id: string, category: string, unreadCount: number) =>
@@ -75,5 +76,29 @@ describe('dayLabel', () => {
 describe('formatHour', () => {
   it("donne l'heure sur deux chiffres", () => {
     expect(formatHour(new Date(2026, 10, 24, 9, 5).toISOString())).toBe('09:05');
+  });
+});
+
+describe('splitMatch', () => {
+  it('marque chaque occurrence sans tenir compte de la casse', () => {
+    expect(splitMatch('Hello hello world', 'HELLO')).toEqual([
+      { text: 'Hello', match: true },
+      { text: ' ', match: false },
+      { text: 'hello', match: true },
+      { text: ' world', match: false },
+    ]);
+  });
+
+  it('prend les caractères spéciaux au pied de la lettre', () => {
+    expect(splitMatch('a (b) c', '(b)')).toEqual([
+      { text: 'a ', match: false },
+      { text: '(b)', match: true },
+      { text: ' c', match: false },
+    ]);
+  });
+
+  it('rend le texte entier quand la recherche est vide ou absente', () => {
+    expect(splitMatch('abc', '  ')).toEqual([{ text: 'abc', match: false }]);
+    expect(splitMatch('abc', 'z')).toEqual([{ text: 'abc', match: false }]);
   });
 });

@@ -377,3 +377,82 @@ describe('ConversationScreen', () => {
     });
   });
 });
+
+describe('ConversationScreen depuis la recherche', () => {
+  const older = (n: number) => msg(`o${n}`, 'AGENT', `Old ${n}`);
+
+  it('remonte les pages jusqu’au message, le montre entouré et s’y place', async () => {
+    listMessages
+      .mockResolvedValueOnce({ items: [msg('m9', 'AGENT', 'Latest')], nextCursor: 'p1' })
+      .mockResolvedValueOnce({ items: [older(2)], nextCursor: 'p2' })
+      .mockResolvedValueOnce({ items: [older(1)], nextCursor: null });
+    render(<ConversationScreen agentSlug="jade" focusMessageId="o1" />);
+    await screen.findByText('Old 1');
+    expect(listMessages).toHaveBeenCalledTimes(3);
+    const target = document.getElementById('message-o1');
+    await waitFor(() => expect(target?.querySelector('p')?.className).toContain('ring-2'));
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'center' });
+    expect(scrollIntoView).not.toHaveBeenCalledWith({ block: 'end' });
+    expect(screen.queryByText(fr.conversation.messageNotFound)).toBeNull();
+  });
+
+  it('retire l’entourage au bout de quelques secondes', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      render(<ConversationScreen agentSlug="jade" focusMessageId="m1" />);
+      await screen.findByText('First');
+      const bubble = document.getElementById('message-m1')?.querySelector('p');
+      await waitFor(() => expect(bubble?.className).toContain('ring-2'));
+      await act(() => vi.advanceTimersByTimeAsync(3100));
+      expect(bubble?.className).not.toContain('ring-2');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('ramène en bas quand un nouveau message arrive après avoir retrouvé le message', async () => {
+    listMessages.mockResolvedValue({ items: [msg('m1', 'USER', 'First')], nextCursor: null });
+    sendMessage.mockResolvedValue(msg('m3', 'USER', 'New one'));
+    render(<ConversationScreen agentSlug="jade" focusMessageId="m1" />);
+    await screen.findByText('First');
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'center' }));
+    scrollIntoView.mockClear();
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'New one' } });
+    fireEvent.click(screen.getByRole('button', { name: /envoyer/i }));
+    await screen.findByText('New one');
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'end' }));
+  });
+
+  it('le dit et reste en bas quand le message est introuvable', async () => {
+    render(<ConversationScreen agentSlug="jade" focusMessageId="inconnu" />);
+    expect((await screen.findByRole('status')).textContent).toBe(fr.conversation.messageNotFound);
+    expect(listMessages).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'end' }));
+  });
+
+  it('s’arrête après 20 pages sans le trouver', async () => {
+    let n = 0;
+    listMessages.mockImplementation(async () => ({ items: [older(n++)], nextCursor: 'next' }));
+    render(<ConversationScreen agentSlug="jade" focusMessageId="inconnu" />);
+    expect((await screen.findByRole('status', {}, { timeout: 10_000 })).textContent).toBe(
+      fr.conversation.messageNotFound,
+    );
+    expect(listMessages).toHaveBeenCalledTimes(21);
+  }, 15_000);
+
+  it('s’arrête quand une page plus ancienne ne se charge pas', async () => {
+    listMessages
+      .mockResolvedValueOnce({ items: [msg('m9', 'AGENT', 'Latest')], nextCursor: 'p1' })
+      .mockRejectedValueOnce(new Error('réseau'));
+    render(<ConversationScreen agentSlug="jade" focusMessageId="o1" />);
+    expect((await screen.findByText(fr.conversation.messageNotFound)).tagName).toBe('P');
+    expect(listMessages).toHaveBeenCalledTimes(2);
+  });
+
+  it('sans message demandé, ne remonte pas l’historique', async () => {
+    listMessages.mockResolvedValue({ items: [msg('m1', 'USER', 'First')], nextCursor: 'p1' });
+    render(<ConversationScreen agentSlug="jade" />);
+    await screen.findByText('First');
+    expect(listMessages).toHaveBeenCalledTimes(1);
+  });
+});
