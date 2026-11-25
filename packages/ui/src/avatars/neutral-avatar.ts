@@ -119,7 +119,7 @@ export function neutralSvg(
   );
 }
 
-/** Les 12 contacts d'origine, tels que le porteur les a dessinés. */
+/** Les 12 contacts d'origine, tels que le porteur les a dessinés, puis les 11 de NS-058 composés avec les pièces de la bibliothèque. */
 export const CONTACT_AVATARS: Record<string, AvatarSpec> = {
   jade: { palette: 'Quotidien', parts: ['bun'], cut: [] },
   sam: { palette: 'Quotidien', parts: ['short'], cut: ['apron'] },
@@ -133,4 +133,15 @@ export const CONTACT_AVATARS: Record<string, AvatarSpec> = {
   marcus: { palette: 'Sport', parts: ['buzz'], cut: ['jersey'] },
   nina: { palette: 'Actualité', parts: ['bob'], cut: ['mic'] },
   'prof-ade': { palette: 'Études', parts: ['grey', 'beard'], cut: ['glasses', 'mouth', 'collar'] },
+  'dr-amara': { palette: 'Études', parts: ['bob'], cut: ['stethoscope'] },
+  zoe: { palette: 'Indigo', parts: ['spaceBuns'], cut: ['glassesSquare', 'hoodie'] },
+  theo: { palette: 'Prune', parts: ['pompadour'], cut: ['headset', 'scarf'] },
+  finn: { palette: 'Ardoise', parts: ['beanie'], cut: ['headset', 'hoodie'] },
+  'chef-ama': { palette: 'Corail', parts: ['braids'], cut: ['chef'] },
+  lola: { palette: 'Lilas', parts: ['pixie'], cut: ['scarf', 'sunglasses'] },
+  iris: { palette: 'Ocre', parts: ['sidePart'], cut: ['glassesSquare', 'turtleneck'] },
+  'dr-ravi': { palette: 'Ciel', parts: ['short', 'mustache'], cut: ['glasses', 'collar', 'badge'] },
+  hannah: { palette: 'Pro', parts: ['wavy'], cut: ['vneck'] },
+  tess: { palette: 'Menthe', parts: ['cap'], cut: ['badge', 'scarf'] },
+  milo: { palette: 'Quotidien', parts: ['balding', 'beard'], cut: ['glasses', 'vneck'] },
 };

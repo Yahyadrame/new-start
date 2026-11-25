@@ -7,16 +7,19 @@ afterEach(cleanup);
 describe('contactAvatarId', () => {
   it('garde la silhouette propre à un contact connu', () => {
     expect(contactAvatarId('jade')).toBe('jade');
+    expect(contactAvatarId('chef-ama')).toBe('chef-ama');
   });
 
   it('donne toujours la même silhouette de la bibliothèque aux autres', () => {
-    const id = contactAvatarId('dr-amara');
+    const id = contactAvatarId('nouveau-contact');
     expect(id).toMatch(/^a\d{3}$/);
-    expect(contactAvatarId('dr-amara')).toBe(id);
+    expect(contactAvatarId('nouveau-contact')).toBe(id);
   });
 
   it('ne donne pas la même à tous les contacts sans silhouette', () => {
-    const ids = new Set(['zoe', 'theo', 'finn', 'lola', 'iris', 'milo'].map(contactAvatarId));
+    const ids = new Set(
+      ['alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot'].map(contactAvatarId),
+    );
     expect(ids.size).toBeGreaterThan(3);
   });
 });

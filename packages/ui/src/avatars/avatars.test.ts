@@ -123,8 +123,16 @@ describe('neutralSvg', () => {
     expect(svg).toContain('#DDE3E8');
   });
 
-  it('couvre les 12 contacts d’origine et les 16 palettes', () => {
-    expect(Object.keys(CONTACT_AVATARS)).toHaveLength(12);
+  it('couvre les 23 contacts et les 16 palettes', () => {
+    expect(Object.keys(CONTACT_AVATARS)).toHaveLength(23);
     expect(PALETTE_NAMES).toHaveLength(16);
+  });
+
+  it('dessine chacun des 23 contacts avec une palette connue, sans doublon', () => {
+    const svgs = Object.values(CONTACT_AVATARS).map((spec) => {
+      expect(PALETTE_NAMES).toContain(spec.palette);
+      return neutralSvg(spec, 'duo', 'light', 'carre');
+    });
+    expect(new Set(svgs).size).toBe(23);
   });
 });
