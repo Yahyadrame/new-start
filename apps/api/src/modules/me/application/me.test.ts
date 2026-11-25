@@ -13,6 +13,7 @@ const me = {
   preferredAccent: 'en-US' as const,
   dataSaver: false,
   chatBackground: 'NONE' as const,
+  avatar: null,
   pausedUntil: null,
 };
 

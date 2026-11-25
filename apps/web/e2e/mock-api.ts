@@ -115,6 +115,7 @@ export async function signedIn(page: Page) {
         preferredAccent: 'en-US',
         dataSaver: false,
         chatBackground: 'NONE',
+        avatar: null,
         pausedUntil: null,
       }),
     ),

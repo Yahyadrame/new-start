@@ -277,7 +277,10 @@ _Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/av
 - [x] Porter `design/avatars/avatars.js` et `bibliotheque.js` en TypeScript dans `packages/ui/src/avatars` (360 silhouettes, 16 palettes), sans changer les tracés ni les couleurs (rendu comparé au SVG d'origine, seul le cercle invisible de rayon 0 de l'anneau carré a disparu). Partie 1.
 - [x] Composant `NeutralAvatar` (identifiant, variante, forme, thème, palette) : SVG dans un `<img>` en URI de données (pas de HTML injecté, pas d'identifiant `clipPath` à rendre unique), `alt` = nom. Partie 1.
 - [ ] Repli du composant Avatar de shadcn/ui : jamais de carré vide quand une photo ne se charge pas.
-- [ ] Avatar par défaut à l'inscription ; profil avec le bouton photo.
+- [x] Partie 2 (API) : `User.avatar` (JSON facultatif, migration additive), `GET /me` et `PATCH /me` le portent (`AvatarChoice` dans `packages/shared`, `null` pour le retirer).
+- [ ] Partie 3 : écran de choix (silhouette, palette, variante), repli de l'Avatar, bouton photo du profil.
+- [ ] Partie 4 : choix par contact (table dédiée) et silhouettes des 11 contacts NS-058.
+- [ ] Avatar par défaut à l'inscription.
 - [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
 - [ ] Les 11 contacts ajoutés par NS-058 n'ont pas de silhouette dans le jeu fourni : le porteur les fournit. En attendant, on code les 12 contacts existants et les autres gardent leurs initiales.
 - [ ] Tests unitaires, tests visuels clair et sombre, accessibilité.

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Me, MePatch } from '@newstart/shared';
-import type { Prisma } from '../../../generated/prisma/client.js';
+import { Prisma } from '../../../generated/prisma/client.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { MeStore } from '../application/me.js';
 
@@ -10,6 +10,7 @@ const select = {
   goal: true,
   interests: true,
   birthYear: true,
+  avatar: true,
   level: true,
   theme: true,
   reminderTime: true,
@@ -40,11 +41,13 @@ export class PrismaMeStore implements MeStore {
   }
 
   async update(userId: string, patch: MePatch) {
-    const { pausedUntil, ...rest } = patch;
+    const { pausedUntil, avatar, ...rest } = patch;
     // exactOptionalPropertyTypes : on écarte les clés absentes au lieu de les passer à undefined.
     const data: Prisma.UserUpdateManyMutationInput = Object.fromEntries(
       Object.entries({
         ...rest,
+        // Une colonne JSON ne prend pas `null` : on passe par `DbNull` pour retirer l'avatar.
+        avatar: avatar === null ? Prisma.DbNull : avatar,
         pausedUntil:
           pausedUntil === undefined || pausedUntil === null ? pausedUntil : new Date(pausedUntil),
       }).filter(([, v]) => v !== undefined),

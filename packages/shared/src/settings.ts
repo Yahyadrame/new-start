@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AvatarChoice } from './avatar.js';
 import { MIN_AGE, SignupProfile, SIGNUP_GOALS, SIGNUP_INTERESTS } from './signup.js';
 
 export const THEMES = ['SYSTEM', 'LIGHT', 'DARK'] as const;
@@ -28,6 +29,7 @@ export const Me = z.object({
   goal: z.enum(SIGNUP_GOALS),
   interests: z.array(z.enum(SIGNUP_INTERESTS)),
   birthYear: z.number().int().nullable(),
+  avatar: AvatarChoice.nullable(),
   level: z.string(),
   theme: z.enum(THEMES),
   reminderTime: ReminderTime.nullable(),
@@ -48,6 +50,7 @@ export const MePatch = z
     // Pas de `.default([])` ici : une modification sans cette clé ne doit pas vider la liste.
     interests: z.array(z.enum(SIGNUP_INTERESTS)).max(8),
     birthYear: SignupProfile.shape.birthYear.max(new Date().getFullYear() - MIN_AGE),
+    avatar: AvatarChoice.nullable(),
     theme: z.enum(THEMES),
     reminderTime: ReminderTime.nullable(),
     dailyGoalMin: z.number().int().min(DAILY_GOAL_RANGE.min).max(DAILY_GOAL_RANGE.max),
