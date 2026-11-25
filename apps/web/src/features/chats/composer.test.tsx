@@ -6,7 +6,7 @@ import { Composer } from './composer';
 afterEach(cleanup);
 const c = fr.conversation;
 const form = () => field().closest('form') as HTMLFormElement;
-const field = () => screen.getByLabelText(c.composerLabel) as HTMLInputElement;
+const field = () => screen.getByLabelText(c.composerLabel) as HTMLTextAreaElement;
 
 describe('Composer', () => {
   it('garde le bouton désactivé tant que le champ est vide ou ne contient que des espaces', () => {
@@ -33,5 +33,16 @@ describe('Composer', () => {
     render(<Composer onSend={onSend} />);
     fireEvent.submit(form());
     expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it('envoie avec Entrée et passe à la ligne avec Maj+Entrée', () => {
+    const onSend = vi.fn();
+    render(<Composer onSend={onSend} />);
+    fireEvent.change(field(), { target: { value: 'Hello' } });
+    fireEvent.keyDown(field(), { key: 'Enter', shiftKey: true });
+    expect(onSend).not.toHaveBeenCalled();
+    fireEvent.keyDown(field(), { key: 'Enter' });
+    expect(onSend).toHaveBeenCalledWith('Hello');
+    expect(field().value).toBe('');
   });
 });

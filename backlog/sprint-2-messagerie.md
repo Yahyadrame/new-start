@@ -81,3 +81,9 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 - [ ] Le choix se fait depuis le menu « ⋮ » de l'en-tête de la conversation (maquette), et aussi au Profil ; il s'applique à toutes les conversations.
 - [ ] Le « ⋮ » est un vrai bouton (cible ≥ 44 px, menu au clavier) : il ouvre au minimum « Fond de la conversation ».
 - [ ] Le motif est décoratif, sans aucun texte dans l'image ; tests unitaires.
+
+## NS-039 — Messagerie responsive et barre d'écriture façon WhatsApp · M
+*Ajouté le 2026-11-25 par le porteur du projet, en testant l'application : elle n'est pas 100 % responsive et l'écran de conversation déborde quand on écrit.*
+- [ ] Plus aucun débordement horizontal dans la conversation (mots longs, clavier ouvert, petits écrans 320 px, tablette, ordinateur).
+- [ ] Barre d'écriture plus douce, style WhatsApp : champ arrondi qui grandit avec le texte, Entrée envoie, Maj+Entrée passe à la ligne, bouton d'envoi rond.
+- [ ] Tests unitaires, thèmes clair et sombre, cibles ≥ 44 px.

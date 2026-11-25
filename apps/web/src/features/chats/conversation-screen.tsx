@@ -152,7 +152,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   };
 
   return (
-    <main className="flex min-h-dvh w-full flex-col bg-surface-1">
+    <main className="flex min-h-dvh w-full min-w-0 flex-col overflow-x-hidden bg-surface-1">
       <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-bg px-4 py-3 lg:h-16 lg:py-0">
         <Button asChild variant="outline" size="icon" className="lg:hidden">
           <Link href="/chats" aria-label={c.back}>
@@ -175,7 +175,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
         )}
       </header>
 
-      <div className="relative isolate flex flex-1 flex-col gap-3 px-4 py-4">
+      <div className="relative isolate flex min-w-0 flex-1 flex-col gap-3 px-3 py-4 sm:px-4">
         <ChatBackdrop value={background} />
         {error && (
           <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl bg-bg px-4 py-3">
