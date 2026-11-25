@@ -224,7 +224,31 @@
       "body": "Ton profil, tes réponses au test de niveau et tes conversations sont effacés tout de suite, sans retour possible. Les sauvegardes disparaissent en 30 jours au plus.",
       "confirm": "Oui, supprimer mon compte",
       "cancel": "Garder mon compte"
-    }
+    },
+    "back": "Retour au profil",
+    "sections": {
+      "learning": {
+        "title": "Apprentissage",
+        "hint": "Objectif quotidien, accent"
+      },
+      "notifications": {
+        "title": "Notifications et rappels",
+        "hint": "Rappel du jour, rappels sur ce téléphone, pause"
+      },
+      "appearance": {
+        "title": "Apparence et conversations",
+        "hint": "Thème, fond des conversations"
+      },
+      "notebook": {
+        "title": "Mon carnet",
+        "hint": "Les tournures que tu as gardées"
+      },
+      "data": {
+        "title": "Données et compte",
+        "hint": "Économie de données, export, suppression"
+      }
+    },
+    "openSection": "Ouvrir {title}"
   },
   "chats": {
     "title": "Discussions",

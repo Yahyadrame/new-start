@@ -26,6 +26,8 @@ for (const [path, heading] of [
   ['/privacy', 'Politique de confidentialité'],
   ['/notifications', 'Notifications'],
   ['/profile', 'Profil'],
+  ['/profile/learning', 'Apprentissage'],
+  ['/profile/notifications', 'Notifications et rappels'],
 ] as const) {
   test(`l'écran ${heading} est accessible`, async ({ page }) => {
     await signedIn(page);

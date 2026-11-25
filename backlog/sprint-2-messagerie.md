@@ -157,8 +157,8 @@ _Ajouté le 2026-11-25 : l'icône flotte en haut à droite, sur le web comme sur
 
 _Ajouté le 2026-11-25 : la page Profil est « brute », tout y est regroupé. Référence : WhatsApp._
 
-- [ ] En-tête (avatar, nom, objectif), puis lignes qui ouvrent chacune une page : Compte, Apprentissage, Notifications, Apparence et conversations, Données et compte.
-- [ ] Rien ne disparaît : tous les réglages actuels se retrouvent. À découper en deux ou trois PR.
+- [x] En-tête (avatar, nom, niveau), puis lignes qui ouvrent chacune une page : Apprentissage, Notifications et rappels, Apparence et conversations, Mon carnet, Données et compte (`/profile/<rubrique>`).
+- [x] Rien ne disparaît : tous les réglages actuels se retrouvent. À découper en deux ou trois PR.
 - [ ] Les nouveaux réglages seront proposés dans des tickets à part. Maquette d'abord, tests unitaires, deux thèmes.
 
 ## NS-046 — Barre d'écriture : +, micro et envoi · M

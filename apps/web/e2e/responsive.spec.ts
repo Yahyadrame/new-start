@@ -10,6 +10,7 @@ const SCREENS = [
   '/series',
   '/notifications',
   '/profile',
+  '/profile/notifications',
   '/plans',
   '/terms',
   '/privacy',
