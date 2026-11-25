@@ -298,7 +298,20 @@
     "sendFailed": "Le message n'est pas parti. Touche pour réessayer.",
     "limitReached": "Tu as bien pratiqué aujourd'hui. Reviens demain, {name} t'attend.",
     "typing": "{name} est en train d'écrire…",
-    "messageNotFound": "Ce message est trop ancien pour être retrouvé ici."
+    "messageNotFound": "Ce message est trop ancien pour être retrouvé ici.",
+    "attach": "Joindre un fichier",
+    "attachPhoto": "Photo ou image",
+    "attachFile": "Document",
+    "record": "Enregistrer un message vocal",
+    "recording": "Enregistrement en cours",
+    "recordingCancel": "Annuler l'enregistrement",
+    "recordingStop": "Terminer l'enregistrement",
+    "micDenied": "Le micro est bloqué. Autorise-le dans les réglages du navigateur.",
+    "micUnavailable": "Ce navigateur ne peut pas enregistrer.",
+    "draftVoice": "Message vocal, {duration}",
+    "draftRemove": "Retirer la pièce jointe",
+    "fileTooBig": "Ce fichier dépasse 10 Mo.",
+    "mediaSoon": "L'envoi des vocaux et des fichiers arrive bientôt. Pour l'instant, écris ton message."
   },
   "comingSoon": {
     "badge": "Bientôt",
