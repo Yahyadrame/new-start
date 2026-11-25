@@ -24,16 +24,21 @@ export function AvatarPicker({
   name,
   onSave,
   onClose,
+  original,
 }: {
   value: AvatarChoice | null;
   name: string;
+  /** Pour un contact : sa silhouette d'origine, proposée en premier. Elle remplace « Retirer mon avatar ». */
+  original?: { id: string; style: Style };
   onSave: (choice: AvatarChoice | null) => Promise<void> | void;
   onClose: () => void;
 }) {
   const theme = useColorScheme();
-  const [id, setId] = useState(value?.id ?? LIBRARY_IDS[0] ?? 'a001');
+  const [id, setId] = useState(value?.id ?? original?.id ?? LIBRARY_IDS[0] ?? 'a001');
   const [palette, setPalette] = useState<string | undefined>(value?.palette);
-  const [style, setStyle] = useState<Style>((value?.variant as Style | undefined) ?? 'duo');
+  const [style, setStyle] = useState<Style>(
+    (value?.variant as Style | undefined) ?? original?.style ?? 'duo',
+  );
   const [shown, setShown] = useState(FIRST_PAGE);
   const preview = { palette, variant: style, theme, shape: AVATAR_SHAPE } as const;
 
@@ -52,12 +57,19 @@ export function AvatarPicker({
           {t.silhouette}
         </h2>
         <ul className="grid grid-cols-5 gap-2">
-          {LIBRARY_IDS.slice(0, shown).map((candidate) => (
-            <li key={candidate} className="flex">
+          {[
+            ...(original ? [original.id] : []),
+            ...LIBRARY_IDS.filter((x) => x !== original?.id).slice(0, shown),
+          ].map((candidate) => (
+            <li key={candidate} className="relative flex">
               <button
                 type="button"
                 aria-pressed={id === candidate}
-                aria-label={t.silhouetteN.replace('{id}', candidate.slice(1))}
+                aria-label={
+                  candidate === original?.id
+                    ? t.original
+                    : t.silhouetteN.replace('{id}', candidate.slice(1))
+                }
                 onClick={() => setId(candidate)}
                 className={`aspect-square min-h-11 w-full rounded-2xl ${ring} ${selected(id === candidate)}`}
               >
@@ -67,6 +79,11 @@ export function AvatarPicker({
                   className="size-full rounded-2xl"
                   {...preview}
                 />
+                {candidate === original?.id && (
+                  <small className="absolute inset-x-0 bottom-0.5 text-center text-[10px] font-semibold text-black">
+                    {t.originalShort}
+                  </small>
+                )}
               </button>
             </li>
           ))}
@@ -141,7 +158,12 @@ export function AvatarPicker({
         <button
           type="button"
           onClick={async () => {
-            await onSave({ id, ...(palette && { palette }), variant: style } as AvatarChoice);
+            // Garder la silhouette d'origine revient à ne rien choisir.
+            await onSave(
+              id === original?.id
+                ? null
+                : ({ id, ...(palette && { palette }), variant: style } as AvatarChoice),
+            );
             onClose();
           }}
           className={`min-h-12 rounded-full bg-accent font-semibold text-on-accent ${ring}`}
@@ -156,7 +178,7 @@ export function AvatarPicker({
           }}
           className={`min-h-11 rounded-full border border-line ${ring}`}
         >
-          {t.remove}
+          {original ? t.resetContact : t.remove}
         </button>
       </div>
     </div>

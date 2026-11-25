@@ -1,5 +1,5 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ContactAvatar, contactAvatarId } from './contact-avatar';
 
 afterEach(cleanup);
@@ -30,5 +30,21 @@ describe('ContactAvatar', () => {
     const img = screen.getByRole('img', { name: 'Jade' });
     expect(img.className).toContain('size-[52px]');
     expect(img.getAttribute('src')).toContain('data:image/svg+xml');
+  });
+});
+
+describe('ContactAvatar avec un choix de la personne', () => {
+  it('remplace la silhouette d’origine par le choix', async () => {
+    const { act } = await import('@testing-library/react');
+    const store = await import('./contact-avatars');
+    const api = await import('./contact-avatars-api');
+    const spy = vi.spyOn(api, 'saveContactAvatar').mockResolvedValue(undefined);
+    const { container } = render(<ContactAvatar slug="jade" name="Jade" />);
+    const before = container.querySelector('img')?.getAttribute('src');
+    await act(() => store.chooseContactAvatar('t', 'jade', { id: 'a050', palette: 'Corail' }));
+    expect(container.querySelector('img')?.getAttribute('src')).not.toBe(before);
+    await act(() => store.chooseContactAvatar('t', 'jade', null));
+    expect(container.querySelector('img')?.getAttribute('src')).toBe(before);
+    spy.mockRestore();
   });
 });

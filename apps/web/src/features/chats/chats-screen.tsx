@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ContactAvatar } from '../../shared/avatar/contact-avatar';
+import { loadContactAvatars } from '../../shared/avatar/contact-avatars';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav, NotificationsBell } from '../../shared/navigation';
@@ -47,6 +48,7 @@ export function ChatsScreen() {
       const session = await ensureSession();
       if (!session) return router.replace('/');
       setToken(session.accessToken);
+      void loadContactAvatars(session.accessToken);
       try {
         setItems(await listConversations(session.accessToken));
       } catch {

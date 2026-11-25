@@ -722,6 +722,11 @@
       "duo": "Duo",
       "anneau": "Anneau",
       "noir": "Noir"
-    }
+    },
+    "original": "Silhouette d'origine",
+    "originalShort": "Origine",
+    "resetContact": "Revenir à l'original",
+    "changeContact": "Changer l'avatar de {name}",
+    "contactTitle": "Avatar de {name}"
   }
 }

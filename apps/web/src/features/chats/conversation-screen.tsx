@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { ContactAvatar } from '../../shared/avatar/contact-avatar';
+import { loadContactAvatars } from '../../shared/avatar/contact-avatars';
 import { ensureSession } from '../../shared/auth/session';
 import { ChatBackdrop, getChatBackground } from '../../shared/chat-background';
 import fr from '../../shared/i18n/fr.json';
@@ -80,6 +81,7 @@ export function ConversationScreen({
       const session = await ensureSession();
       if (!session) return router.replace('/');
       token.current = session.accessToken;
+      void loadContactAvatars(token.current);
       // Le fond est un confort : s'il ne vient pas, la conversation reste sur le fond uni.
       void getChatBackground(token.current)
         .then(setBackground)
@@ -225,7 +227,13 @@ export function ConversationScreen({
         </Button>
         {item && (
           <>
-            <ContactAvatar slug={item.agent.slug} name={item.agent.name} />
+            <Link
+              href={`/chats/${item.agent.slug}/avatar`}
+              aria-label={fr.avatar.changeContact.replace('{name}', item.agent.name)}
+              className="shrink-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+            >
+              <ContactAvatar slug={item.agent.slug} name="" />
+            </Link>
             <div className="flex min-w-0 flex-col">
               <h1 className="flex items-center gap-2 font-display text-lg font-bold">
                 <span className="truncate">{item.agent.name}</span>

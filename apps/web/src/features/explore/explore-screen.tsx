@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ContactAvatar } from '../../shared/avatar/contact-avatar';
+import { loadContactAvatars } from '../../shared/avatar/contact-avatars';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav } from '../../shared/navigation';
@@ -33,6 +34,7 @@ export function ExploreScreen() {
     void (async () => {
       const session = await ensureSession();
       if (!session) return router.replace('/');
+      void loadContactAvatars(session.accessToken);
       try {
         setTopics(await listTopics(session.accessToken));
       } catch {
