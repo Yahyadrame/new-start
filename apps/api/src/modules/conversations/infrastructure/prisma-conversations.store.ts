@@ -11,7 +11,9 @@ const select = {
   id: true,
   lastMessageAt: true,
   unreadCount: true,
-  agent: { select: { slug: true, name: true, initials: true, roleFr: true, category: true } },
+  agent: {
+    select: { slug: true, name: true, initials: true, roleFr: true, category: true, accent: true },
+  },
   messages: {
     where: { deletedAt: null },
     select: { author: true, text: true },

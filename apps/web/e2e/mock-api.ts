@@ -1,6 +1,13 @@
 import type { Page } from '@playwright/test';
 
-const jade = { slug: 'jade', name: 'Jade', initials: 'J', roleFr: 'Amie', category: 'DAILY' };
+const jade = {
+  slug: 'jade',
+  name: 'Jade',
+  initials: 'J',
+  roleFr: 'Amie',
+  category: 'DAILY',
+  accent: 'en-US',
+};
 const day = (n: number) => `2026-11-${String(15 + n).padStart(2, '0')}`;
 
 /** Une session simulée et des réponses d'API fixes : on vérifie l'interface, pas le serveur. */

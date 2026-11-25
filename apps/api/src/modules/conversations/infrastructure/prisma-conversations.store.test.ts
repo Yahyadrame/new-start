@@ -9,6 +9,7 @@ const agent = {
   initials: 'J',
   roleFr: 'Coloc · familier',
   category: 'Quotidien',
+  accent: 'en-US',
 };
 
 function fake(rows: unknown[]) {
