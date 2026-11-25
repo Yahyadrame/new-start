@@ -706,5 +706,22 @@
       "profile": "Complète les étapes et accepte les conditions avant de continuer avec Google.",
       "server": "Ça n'a pas marché. Vérifie ta connexion, puis réessaie."
     }
+  },
+  "avatar": {
+    "change": "Changer d'avatar",
+    "silhouette": "Silhouette",
+    "silhouetteN": "Silhouette {id}",
+    "more": "Voir plus ({n})",
+    "color": "Couleur",
+    "style": "Style",
+    "save": "Enregistrer",
+    "remove": "Retirer mon avatar",
+    "styles": {
+      "gris": "Gris",
+      "theme": "Thème",
+      "duo": "Duo",
+      "anneau": "Anneau",
+      "noir": "Noir"
+    }
   }
 }
