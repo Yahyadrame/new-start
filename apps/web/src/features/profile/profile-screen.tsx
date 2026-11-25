@@ -2,6 +2,16 @@
 
 import { ACCENTS, type Me, type MePatch } from '@newstart/shared';
 import { Avatar, AvatarFallback, Button, Input, Select, Switch } from '@newstart/ui';
+import {
+  ArrowLeft,
+  BellRing,
+  BookOpen,
+  ChevronRight,
+  GraduationCap,
+  Palette,
+  ShieldCheck,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ensureSession, setSession } from '../../shared/auth/session';
@@ -12,10 +22,19 @@ import type { PushStatus } from '../../shared/push/subscription';
 import { usePush } from '../../shared/push/use-push';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
 import { DeleteAccountDialog } from './delete-account-dialog';
+import { SECTIONS, type Section } from './sections';
 import { NotebookSection } from './notebook-section';
 import { deleteMe, exportMe, getMe, patchMe } from './profile-api';
 
 const t = fr.profile;
+
+const SECTION_ICONS = {
+  learning: GraduationCap,
+  notifications: BellRing,
+  appearance: Palette,
+  notebook: BookOpen,
+  data: ShieldCheck,
+} as const;
 const GOALS = [5, 10, 15, 20, 30, 45, 60, 90, 120];
 const DEFAULT_REMINDER = '19:00';
 const DEFAULT_PAUSE_DAYS = 7;
@@ -29,8 +48,11 @@ const toDateValue = (iso: string) => {
 
 const isPaused = (me: Me) => me.pausedUntil !== null && new Date(me.pausedUntil) > new Date();
 
-/** Écran 16 des maquettes : chaque réglage s'enregistre dès qu'on le change. */
-export function ProfileScreen() {
+/**
+ * Écran 16 des maquettes, façon WhatsApp : l'accueil du profil liste des rubriques, chacune ouvre sa page
+ * (`section`). Chaque réglage s'enregistre dès qu'on le change.
+ */
+export function ProfileScreen({ section }: { section?: Section }) {
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -111,14 +133,196 @@ export function ProfileScreen() {
   const paused = me !== null && isPaused(me);
   const goals = me ? [...new Set([...GOALS, me.dailyGoalMin])].sort((a, b) => a - b) : GOALS;
 
+  const sections: Record<Section, ReactNode> = me
+    ? {
+        learning: (
+          <>
+            <Group>
+              <Row label={t.learning.dailyGoal}>
+                {(id) => (
+                  <Select
+                    id={id}
+                    className="w-auto"
+                    value={me.dailyGoalMin}
+                    onChange={(e) => save({ dailyGoalMin: Number(e.target.value) })}
+                  >
+                    {goals.map((n) => (
+                      <option key={n} value={n}>
+                        {t.learning.dailyGoalOption.replace('{n}', String(n))}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Row>
+              <Row label={t.learning.accent}>
+                {(id) => (
+                  <Select
+                    id={id}
+                    className="w-auto"
+                    value={me.preferredAccent}
+                    onChange={(e) =>
+                      save({ preferredAccent: e.target.value as Me['preferredAccent'] })
+                    }
+                  >
+                    {ACCENTS.map((accent) => (
+                      <option key={accent} value={accent}>
+                        {t.learning.accents[accent]}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Row>
+            </Group>
+          </>
+        ),
+        notifications: (
+          <>
+            <Group>
+              <Row label={t.reminders.reminder}>
+                {(id) => (
+                  <Switch
+                    id={id}
+                    checked={me.reminderTime !== null}
+                    onCheckedChange={(on) => save({ reminderTime: on ? DEFAULT_REMINDER : null })}
+                  />
+                )}
+              </Row>
+              {me.reminderTime !== null && (
+                <Row label={t.reminders.reminderTime}>
+                  {(id) => (
+                    <Input
+                      id={id}
+                      type="time"
+                      className="w-auto"
+                      value={me.reminderTime ?? ''}
+                      onChange={(e) => e.target.value && save({ reminderTime: e.target.value })}
+                    />
+                  )}
+                </Row>
+              )}
+              <Row label={fr.push.label} hint={pushHint(push.status, push.failed)}>
+                {(id) => (
+                  <Switch
+                    id={id}
+                    checked={push.status === 'on'}
+                    disabled={push.busy || (push.status !== 'on' && push.status !== 'off')}
+                    onCheckedChange={(on) => void (on ? push.enable() : push.disable())}
+                  />
+                )}
+              </Row>
+              <Row label={t.reminders.pause} hint={t.reminders.pauseHint}>
+                {(id) => (
+                  <Switch
+                    id={id}
+                    checked={paused}
+                    onCheckedChange={(on) =>
+                      save({
+                        pausedUntil: on
+                          ? new Date(Date.now() + DEFAULT_PAUSE_DAYS * DAY_MS).toISOString()
+                          : null,
+                      })
+                    }
+                  />
+                )}
+              </Row>
+              {paused && me.pausedUntil && (
+                <Row label={t.reminders.pauseUntil}>
+                  {(id) => (
+                    <Input
+                      id={id}
+                      type="date"
+                      className="w-auto"
+                      min={toDateValue(new Date().toISOString())}
+                      value={toDateValue(me.pausedUntil ?? '')}
+                      onChange={(e) =>
+                        e.target.value &&
+                        save({ pausedUntil: new Date(`${e.target.value}T23:59:59`).toISOString() })
+                      }
+                    />
+                  )}
+                </Row>
+              )}
+            </Group>
+          </>
+        ),
+        appearance: (
+          <>
+            <Group title={t.appearance.title}>
+              <ThemeSwitcher onChange={(theme: Theme) => save({ theme: toApi(theme) })} />
+            </Group>
+
+            <Group title={fr.chatBackground.title}>
+              <div className="py-3">
+                <ChatBackgroundPicker
+                  value={me.chatBackground}
+                  onChange={(chatBackground) => save({ chatBackground })}
+                />
+              </div>
+            </Group>
+          </>
+        ),
+        notebook: <NotebookSection />,
+        data: (
+          <>
+            <Group>
+              <Row label={t.data.saver} hint={t.data.saverHint}>
+                {(id) => (
+                  <Switch
+                    id={id}
+                    checked={me.dataSaver}
+                    onCheckedChange={(on) => save({ dataSaver: on })}
+                  />
+                )}
+              </Row>
+              <Row label={t.data.export} hint={t.data.exportHint}>
+                {(id) => (
+                  <Button id={id} variant="outline" onClick={exportData}>
+                    {t.data.exportAction}
+                  </Button>
+                )}
+              </Row>
+              <Row label={t.data.delete} hint={t.data.deleteHint}>
+                {(id) => (
+                  <Button id={id} variant="danger" onClick={() => setConfirmingDelete(true)}>
+                    {t.data.deleteAction}
+                  </Button>
+                )}
+              </Row>
+            </Group>
+            <DeleteAccountDialog
+              open={confirmingDelete}
+              busy={deleting}
+              onConfirm={deleteAccount}
+              onCancel={() => setConfirmingDelete(false)}
+            />
+          </>
+        ),
+      }
+    : ({} as Record<Section, ReactNode>);
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-4 pt-12 pb-28 lg:max-w-2xl lg:pb-10">
-      <header className="flex items-center justify-between">
-        <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
-          {t.title}
-        </h1>
-        <NotificationsBell />
-      </header>
+      {section ? (
+        <header className="flex items-center gap-3">
+          <Link
+            href="/profile"
+            aria-label={t.back}
+            className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface-1 focus-visible:outline-2 focus-visible:outline-accent-text"
+          >
+            <ArrowLeft aria-hidden="true" className="size-5" />
+          </Link>
+          <h1 className="font-display text-[24px] leading-tight font-bold tracking-[-0.02em]">
+            {t.sections[section].title}
+          </h1>
+        </header>
+      ) : (
+        <header className="flex items-center justify-between">
+          <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
+            {t.title}
+          </h1>
+          <NotificationsBell />
+        </header>
+      )}
 
       {error && (
         <p
@@ -131,176 +335,65 @@ export function ProfileScreen() {
 
       {me ? (
         <>
-          <div className="flex items-center gap-4 px-1 py-2">
-            <Avatar className="size-[72px]">
-              <AvatarFallback className="bg-accent font-display text-[28px] font-bold text-on-accent">
-                {me.firstName.slice(0, 1).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-lg font-semibold">{me.firstName}</span>
-              <span className="text-sm text-text-muted">
-                {t.levelBadge.replace('{level}', me.level)}
-              </span>
-            </div>
-          </div>
+          {section ? (
+            sections[section]
+          ) : (
+            <>
+              <div className="flex items-center gap-4 px-1 py-2">
+                <Avatar className="size-[72px]">
+                  <AvatarFallback className="bg-accent font-display text-[28px] font-bold text-on-accent">
+                    {me.firstName.slice(0, 1).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-lg font-semibold">{me.firstName}</span>
+                  <span className="text-sm text-text-muted">
+                    {t.levelBadge.replace('{level}', me.level)}
+                  </span>
+                </div>
+              </div>
 
-          <Group title={t.appearance.title}>
-            <ThemeSwitcher onChange={(theme: Theme) => save({ theme: toApi(theme) })} />
-          </Group>
-
-          <Group title={t.learning.title}>
-            <Row label={t.learning.dailyGoal}>
-              {(id) => (
-                <Select
-                  id={id}
-                  className="w-auto"
-                  value={me.dailyGoalMin}
-                  onChange={(e) => save({ dailyGoalMin: Number(e.target.value) })}
-                >
-                  {goals.map((n) => (
-                    <option key={n} value={n}>
-                      {t.learning.dailyGoalOption.replace('{n}', String(n))}
-                    </option>
+              <nav aria-label={t.title}>
+                <ul className="flex flex-col">
+                  {SECTIONS.map((key) => (
+                    <SectionRow key={key} section={key} />
                   ))}
-                </Select>
-              )}
-            </Row>
-            <Row label={t.learning.accent}>
-              {(id) => (
-                <Select
-                  id={id}
-                  className="w-auto"
-                  value={me.preferredAccent}
-                  onChange={(e) =>
-                    save({ preferredAccent: e.target.value as Me['preferredAccent'] })
-                  }
-                >
-                  {ACCENTS.map((accent) => (
-                    <option key={accent} value={accent}>
-                      {t.learning.accents[accent]}
-                    </option>
-                  ))}
-                </Select>
-              )}
-            </Row>
-          </Group>
-
-          <Group title={fr.chatBackground.title}>
-            <div className="py-3">
-              <ChatBackgroundPicker
-                value={me.chatBackground}
-                onChange={(chatBackground) => save({ chatBackground })}
-              />
-            </div>
-          </Group>
-
-          <Group title={t.reminders.title}>
-            <Row label={t.reminders.reminder}>
-              {(id) => (
-                <Switch
-                  id={id}
-                  checked={me.reminderTime !== null}
-                  onCheckedChange={(on) => save({ reminderTime: on ? DEFAULT_REMINDER : null })}
-                />
-              )}
-            </Row>
-            {me.reminderTime !== null && (
-              <Row label={t.reminders.reminderTime}>
-                {(id) => (
-                  <Input
-                    id={id}
-                    type="time"
-                    className="w-auto"
-                    value={me.reminderTime ?? ''}
-                    onChange={(e) => e.target.value && save({ reminderTime: e.target.value })}
-                  />
-                )}
-              </Row>
-            )}
-            <Row label={fr.push.label} hint={pushHint(push.status, push.failed)}>
-              {(id) => (
-                <Switch
-                  id={id}
-                  checked={push.status === 'on'}
-                  disabled={push.busy || (push.status !== 'on' && push.status !== 'off')}
-                  onCheckedChange={(on) => void (on ? push.enable() : push.disable())}
-                />
-              )}
-            </Row>
-            <Row label={t.reminders.pause} hint={t.reminders.pauseHint}>
-              {(id) => (
-                <Switch
-                  id={id}
-                  checked={paused}
-                  onCheckedChange={(on) =>
-                    save({
-                      pausedUntil: on
-                        ? new Date(Date.now() + DEFAULT_PAUSE_DAYS * DAY_MS).toISOString()
-                        : null,
-                    })
-                  }
-                />
-              )}
-            </Row>
-            {paused && me.pausedUntil && (
-              <Row label={t.reminders.pauseUntil}>
-                {(id) => (
-                  <Input
-                    id={id}
-                    type="date"
-                    className="w-auto"
-                    min={toDateValue(new Date().toISOString())}
-                    value={toDateValue(me.pausedUntil ?? '')}
-                    onChange={(e) =>
-                      e.target.value &&
-                      save({ pausedUntil: new Date(`${e.target.value}T23:59:59`).toISOString() })
-                    }
-                  />
-                )}
-              </Row>
-            )}
-          </Group>
-
-          <NotebookSection />
-
-          <Group title={t.data.title}>
-            <Row label={t.data.saver} hint={t.data.saverHint}>
-              {(id) => (
-                <Switch
-                  id={id}
-                  checked={me.dataSaver}
-                  onCheckedChange={(on) => save({ dataSaver: on })}
-                />
-              )}
-            </Row>
-            <Row label={t.data.export} hint={t.data.exportHint}>
-              {(id) => (
-                <Button id={id} variant="outline" onClick={exportData}>
-                  {t.data.exportAction}
-                </Button>
-              )}
-            </Row>
-            <Row label={t.data.delete} hint={t.data.deleteHint}>
-              {(id) => (
-                <Button id={id} variant="danger" onClick={() => setConfirmingDelete(true)}>
-                  {t.data.deleteAction}
-                </Button>
-              )}
-            </Row>
-          </Group>
-          <DeleteAccountDialog
-            open={confirmingDelete}
-            busy={deleting}
-            onConfirm={deleteAccount}
-            onCancel={() => setConfirmingDelete(false)}
-          />
+                </ul>
+              </nav>
+            </>
+          )}
         </>
       ) : (
         !error && <p className="text-text-muted">{t.loading}</p>
       )}
       <BottomNav />
     </main>
+  );
+}
+
+/** Une rubrique de l'accueil du profil : icône, titre, résumé et flèche, sur toute la largeur. */
+function SectionRow({ section }: { section: Section }) {
+  const Icon = SECTION_ICONS[section];
+  const { title, hint } = t.sections[section];
+  return (
+    <li>
+      <Link
+        href={`/profile/${section}`}
+        className="flex min-h-[72px] items-center gap-4 border-b border-line px-1 py-2 focus-visible:outline-2 focus-visible:outline-accent-text"
+      >
+        <span
+          aria-hidden="true"
+          className="grid size-11 shrink-0 place-items-center rounded-full bg-surface-2"
+        >
+          <Icon className="size-5" />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="text-[15px] font-semibold">{title}</span>
+          <span className="truncate text-[13px] text-text-muted">{hint}</span>
+        </span>
+        <ChevronRight aria-hidden="true" className="size-5 shrink-0 text-text-muted" />
+      </Link>
+    </li>
   );
 }
 
@@ -315,12 +408,14 @@ function pushHint(status: PushStatus | null, failed: boolean) {
 
 const toApi = (theme: Theme) => theme.toUpperCase() as Me['theme'];
 
-function Group({ title, children }: { title: string; children: ReactNode }) {
+function Group({ title, children }: { title?: string; children: ReactNode }) {
   return (
     <section className="flex flex-col">
-      <h2 className="mb-1 text-xs font-bold tracking-[0.08em] text-text-muted uppercase">
-        {title}
-      </h2>
+      {title && (
+        <h2 className="mb-1 text-xs font-bold tracking-[0.08em] text-text-muted uppercase">
+          {title}
+        </h2>
+      )}
       {children}
     </section>
   );
