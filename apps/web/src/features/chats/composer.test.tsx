@@ -22,7 +22,6 @@ vi.mock('./use-voice-recorder', () => ({
 
 beforeEach(() => {
   Object.assign(recorder, { recording: false, seconds: 0, error: null });
-  URL.createObjectURL = vi.fn(() => 'blob:preview');
   URL.revokeObjectURL = vi.fn();
 });
 afterEach(cleanup);
@@ -118,7 +117,7 @@ describe('Composer', () => {
     render(<Composer onSend={vi.fn()} onSendMedia={onSendMedia} />);
     const photo = new File(['x'], 'plage.png', { type: 'image/png' });
     choose('photo-input', photo);
-    expect(screen.getByAltText('plage.png').getAttribute('src')).toBe('blob:preview');
+    expect(screen.getByText('plage.png')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: c.send }));
     expect(onSendMedia).toHaveBeenCalledWith(
       expect.objectContaining({ kind: 'file', file: photo }),
@@ -130,15 +129,6 @@ describe('Composer', () => {
     render(<Composer onSend={vi.fn()} />);
     choose('file-input', new File(['x'], 'cv.pdf', { type: 'application/pdf' }));
     expect(screen.getByText('cv.pdf')).toBeTruthy();
-    expect(URL.createObjectURL).not.toHaveBeenCalled();
-  });
-
-  it("n'affiche pas d'aperçu pour un SVG, qui peut contenir du code", () => {
-    render(<Composer onSend={vi.fn()} />);
-    choose('photo-input', new File(['<svg/>'], 'logo.svg', { type: 'image/svg+xml' }));
-    expect(screen.getByText('logo.svg')).toBeTruthy();
-    expect(screen.queryByRole('img')).toBeNull();
-    expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
 
   it('refuse un fichier de plus de 10 Mo', () => {

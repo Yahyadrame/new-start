@@ -17,14 +17,9 @@ import { formatDuration, useVoiceRecorder, type VoiceClip } from './use-voice-re
 
 const c = fr.conversation;
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const PREVIEWABLE = /^image\/(png|jpe?g|webp|gif|heic|heif|avif)$/;
-
-/** Aperçu local seulement : une URL `blob:` créée ici, jamais le SVG ni une adresse venue d'ailleurs. */
-const isLocalBlob = (url: string | null): url is string => url !== null && url.startsWith('blob:');
 
 /** Ce qui attend dans la barre avant l'envoi : un vocal enregistré ou un fichier choisi. */
-export type Draft =
-  ({ kind: 'voice' } & VoiceClip) | { kind: 'file'; file: File; url: string | null };
+export type Draft = ({ kind: 'voice' } & VoiceClip) | { kind: 'file'; file: File; url?: undefined };
 
 const round =
   'grid size-11 shrink-0 place-items-center rounded-full transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text';
@@ -88,11 +83,7 @@ export function Composer({
     if (!file) return;
     if (file.size > MAX_FILE_BYTES) return setNotice(c.fileTooBig);
     setNotice(null);
-    setDraft({
-      kind: 'file',
-      file,
-      url: PREVIEWABLE.test(file.type) ? URL.createObjectURL(file) : null,
-    });
+    setDraft({ kind: 'file', file });
   };
 
   const shell =
@@ -273,12 +264,8 @@ function DraftPreview({ draft, onRemove }: { draft: Draft; onRemove: () => void 
         </>
       ) : (
         <>
-          {isLocalBlob(draft.url) ? (
-            <img
-              src={draft.url}
-              alt={draft.file.name}
-              className="size-9 shrink-0 rounded-lg object-cover"
-            />
+          {draft.file.type.startsWith('image/') ? (
+            <ImageIcon aria-hidden="true" className="size-6 shrink-0 text-text-muted" />
           ) : (
             <FileText aria-hidden="true" className="size-6 shrink-0 text-text-muted" />
           )}
