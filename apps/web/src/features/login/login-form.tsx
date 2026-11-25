@@ -3,6 +3,7 @@
 import { Button, Input } from '@newstart/ui';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
+import { GoogleButton } from '../../shared/auth/google-button';
 import { setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { LoginError, requestLoginCode, verifyLoginCode } from './login-api';
@@ -85,6 +86,7 @@ export function LoginForm() {
         <Button type="submit" disabled={busy}>
           {busy ? t.sending : t.sendCode}
         </Button>
+        <GoogleButton redirectTo="/chats" onError={setError} />
       </form>
     );
   }

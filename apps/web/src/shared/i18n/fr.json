@@ -679,5 +679,17 @@
     "wrongWord": "am",
     "wrongAfter": " agree",
     "right": "I agree"
+  },
+  "google": {
+    "or": "ou",
+    "loading": "Chargement du bouton Google…",
+    "errors": {
+      "notFound": "Aucun compte New Start avec ce compte Google. Crée ton compte d'abord.",
+      "conflict": "Cette adresse est déjà liée à un autre compte Google. Connecte-toi avec un code reçu par e-mail.",
+      "unavailable": "La connexion avec Google n'est pas disponible pour l'instant. Utilise le code par e-mail.",
+      "rejected": "Google n'a pas pu confirmer ton identité. Réessaie.",
+      "profile": "Complète les étapes et accepte les conditions avant de continuer avec Google.",
+      "server": "Ça n'a pas marché. Vérifie ta connexion, puis réessaie."
+    }
   }
 }

@@ -4,8 +4,13 @@ import fr from '../../shared/i18n/fr.json';
 
 const push = vi.hoisted(() => vi.fn());
 const requestCode = vi.hoisted(() => vi.fn());
+const signInWithGoogle = vi.hoisted(() => vi.fn());
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 vi.mock('./request-code', () => ({ requestCode }));
+vi.mock('../../shared/auth/google-api', async (orig) => ({
+  ...(await orig<typeof import('../../shared/auth/google-api')>()),
+  signInWithGoogle,
+}));
 const { SignupForm } = await import('./signup-form');
 const { loadPendingSignup } = await import('./pending-signup');
 const t = fr.signup;
@@ -166,5 +171,30 @@ describe('SignupForm : choix guidés', () => {
     expect(screen.getByRole('link', { name: fr.signup.privacyLink }).getAttribute('href')).toBe(
       '/privacy',
     );
+  });
+  it('crée le compte avec Google à partir du profil saisi', async () => {
+    vi.stubEnv('NEXT_PUBLIC_GOOGLE_CLIENT_ID', 'cid');
+    const initialize = vi.fn();
+    (window as unknown as { google: unknown }).google = {
+      accounts: {
+        id: {
+          initialize,
+          renderButton: vi.fn(),
+        },
+      },
+    };
+    signInWithGoogle.mockResolvedValue({ accessToken: 'a' });
+    render(<SignupForm />);
+    await fillAll();
+    await waitFor(() => expect(screen.getByTestId('google-button')).toBeTruthy());
+    await waitFor(() => expect(initialize).toHaveBeenCalled());
+    await initialize.mock.calls[0]?.[0].callback({ credential: 'tok' });
+    expect(signInWithGoogle).toHaveBeenCalledWith(
+      'tok',
+      expect.objectContaining({ firstName: 'Awa', acceptTerms: true }),
+    );
+    expect(push).toHaveBeenCalledWith('/onboarding/level');
+    vi.unstubAllEnvs();
+    delete (window as unknown as { google?: unknown }).google;
   });
 });

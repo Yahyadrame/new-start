@@ -14,8 +14,8 @@
 ## NS-103 — Connexion Google · M
 
 - [x] `POST /auth/google` (vérification de l'idToken), rattachement à un compte existant si même e-mail vérifié.
-- [ ] Bouton « Continuer avec Google » sur Connexion et Inscription (affiché seulement si `NEXT_PUBLIC_GOOGLE_CLIENT_ID` est posé).
-- [ ] Le porteur crée le client OAuth Google et pose `GOOGLE_CLIENT_ID` (API) et `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (web).
+- [x] Bouton « Continuer avec Google » sur Connexion et Inscription (affiché seulement si `NEXT_PUBLIC_GOOGLE_CLIENT_ID` est posé). _À l'inscription, il se trouve à la dernière étape et crée le compte avec le profil saisi._
+- [x] Client OAuth Google créé ; `GOOGLE_CLIENT_ID` posé sur Render et `NEXT_PUBLIC_GOOGLE_CLIENT_ID` sur Vercel. _L'application Google est en mode test : seuls les comptes de test peuvent se connecter, jusqu'à la publication._
 
 ## NS-104 — Écran Bienvenue (1) · S
 
