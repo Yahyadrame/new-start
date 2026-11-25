@@ -10,7 +10,6 @@ const matchMedia = (reduced: boolean) =>
 beforeEach(() => {
   vi.useFakeTimers();
   localStorage.clear();
-  sessionStorage.clear();
   vi.stubGlobal('matchMedia', matchMedia(false));
 });
 afterEach(() => {
@@ -43,10 +42,15 @@ describe('SplashScreen', () => {
     expect(splash()).toBeNull();
   });
 
-  it("ne se rejoue pas dans la même ouverture de l'appli", () => {
-    sessionStorage.setItem('ns.splashShown', '1');
+  it('se rejoue à chaque rechargement de la page', () => {
     render(<SplashScreen />);
+    advance(2700);
+    advance(200);
     expect(splash()).toBeNull();
+    cleanup();
+    render(<SplashScreen />);
+    expect(splash()?.className).toContain('play');
+    expect(splash()?.className).not.toContain('first');
   });
 
   it('ne se joue pas quand le réglage « off » est posé', () => {
@@ -62,7 +66,6 @@ describe('SplashScreen', () => {
     expect(splash()).toBeNull();
 
     cleanup();
-    sessionStorage.clear();
     render(<SplashScreen />);
     fireEvent.keyDown(window, { key: 'Escape' });
     advance(200);
@@ -84,5 +87,68 @@ describe('SplashScreen', () => {
     render(<SplashScreen />);
     expect(screen.getByRole('img', { name: 'New Start' })).toBeTruthy();
     vi.restoreAllMocks();
+  });
+
+  describe('retour dans l’appli', () => {
+    const setVisibility = (state: 'hidden' | 'visible') => {
+      Object.defineProperty(document, 'visibilityState', { value: state, configurable: true });
+      act(() => void document.dispatchEvent(new Event('visibilitychange')));
+    };
+    const playOnce = () => {
+      render(<SplashScreen />);
+      advance(2700);
+      advance(200);
+      expect(splash()).toBeNull();
+    };
+    afterEach(() => setVisibility('visible'));
+
+    it('se rejoue (piste courte) après 5 minutes en arrière-plan', () => {
+      playOnce();
+      setVisibility('hidden');
+      advance(5 * 60 * 1000);
+      setVisibility('visible');
+      expect(splash()?.className).toContain('play');
+      expect(splash()?.className).not.toContain('first');
+      advance(1300);
+      advance(200);
+      expect(splash()).toBeNull();
+    });
+
+    it('ne se rejoue pas après une absence courte', () => {
+      playOnce();
+      setVisibility('hidden');
+      advance(4 * 60 * 1000);
+      setVisibility('visible');
+      expect(splash()).toBeNull();
+    });
+
+    it('ne se rejoue pas quand le réglage « off » est posé', () => {
+      playOnce();
+      localStorage.setItem('ns.splash', 'off');
+      setVisibility('hidden');
+      advance(6 * 60 * 1000);
+      setVisibility('visible');
+      expect(splash()).toBeNull();
+    });
+
+    it('ne coupe pas l’animation en cours quand l’appli revient au premier plan', () => {
+      render(<SplashScreen />);
+      setVisibility('hidden');
+      advance(6 * 60 * 1000);
+      setVisibility('visible');
+      expect(splash()?.className).toContain('first');
+    });
+
+    it('se rejoue au retour depuis le cache du navigateur (pageshow)', () => {
+      playOnce();
+      act(() => void window.dispatchEvent(new Event('pagehide')));
+      advance(5 * 60 * 1000);
+      act(() => {
+        const e = new Event('pageshow') as PageTransitionEvent;
+        Object.defineProperty(e, 'persisted', { value: true });
+        window.dispatchEvent(e);
+      });
+      expect(splash()?.className).toContain('play');
+    });
   });
 });

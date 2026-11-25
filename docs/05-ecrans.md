@@ -8,25 +8,25 @@ Refonte façon WhatsApp (NS-033), formes et structure de WhatsApp avec notre pal
 - **Ordinateur (≥ 1024 px)** : rail de navigation à gauche (72 px), liste des discussions (400 px), conversation à droite. Le Profil se place en bas du rail ; Notifications y a sa propre entrée.
 - **Conversation** : bulles de 18 px avec un coin de 6 px côté auteur, fond de conversation légèrement distinct, zone de saisie en pilule, bouton micro vert, carte « Plus naturel » pour les corrections.
 
-| # | Écran | Route | Éléments clés | Notes |
-| --- | --- | --- | --- | --- |
-| 1 | Bienvenue | `/` (déconnecté) | Logo, bulles empilées, « Parle anglais. Pour de vrai. », « Commencer gratuitement », « J'ai déjà un compte » | |
-| 11 | Inscription | `/signup` | Prénom, numéro de téléphone (indicatif +221 par défaut, liste des pays), objectif, puis Google ou e-mail | Numéro obligatoire, non vérifié tant que les SMS sont désactivés ; case séparée « J'accepte de recevoir des SMS de New Start » |
-| 2 | Test de niveau | `/onboarding/level` | Conversation avec Jade, 5 questions, micro, « Écrire plutôt » | Résultat : niveau CECR estimé |
-| 3 | Discussions | `/chats` | Statuts, filtres, liste des contacts, bouton « + » vers Explorer | Onglet par défaut une fois connecté |
-| 12 | Explorer les thèmes | `/explore` | Recherche, 9 thèmes, contacts du thème avec « Écrire » (« Appel vidéo » reporté en V3, décision du 2026-11-20) | |
-| 4 | Conversation | `/chats/[agentSlug]` | Bulles, correction « Plus naturel », Écouter, Traduire, note vocale, suggestions, micro | Temps réel (WebSocket) |
-| 5 | Appel vocal | `/call/[agentSlug]` | Minuteur, avatar, sous-titres en direct EN/FR, astuce, micro, FR, haut-parleur, raccrocher | V2 (offre Pro) |
-| 13 | Appel vidéo | `/video/[agentSlug]` | Avatar plein écran, vignette « Toi », sous-titres, expression du moment | V3 |
-| 6 | Série | `/series` | Épisode du jour, liste des 7 épisodes de la semaine (fait, en cours, verrouillé) | |
-| 14 | Lecteur d'épisode | `/series/[episodeId]` | Scène, sous-titres EN+FR, vitesse 0,75×, revoir, barre des 5 étapes | |
-| 7 | Jeux | `/games` | Série de jours, défi du jour, grille de jeux | |
-| 8 | Jeu en cours | `/games/[gameId]` | Anneau minuteur, score, record, combo, question, 4 réponses, retour immédiat | |
-| 9 | Progrès | `/progress` | Niveau et XP, 4 chiffres clés, minutes parlées par jour, classement entre amis | Amis en V2 : masquer le bloc au MVP |
-| 15 | Notifications | `/notifications` | Aujourd'hui / Cette semaine, réglage du rappel unique | |
-| 16 | Profil et réglages | `/profile` | Abonnement, thème Système/Clair/Sombre, rappel, objectif quotidien, accent, économie de données, mode pause | |
-| 10 | Abonnement | `/plans` | Avantages, 4 offres, Wave / Orange Money / Carte, « Continuer » | |
-| 17 | Hors connexion | état global | Bandeau « Pas de connexion », révisions et jeux hors ligne | Service worker (PWA) |
+| #   | Écran               | Route                 | Éléments clés                                                                                                  | Notes                                                                                                                          |
+| --- | ------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Bienvenue           | `/` (déconnecté)      | Logo, bulles empilées, « Parle anglais. Pour de vrai. », « Commencer gratuitement », « J'ai déjà un compte »   |                                                                                                                                |
+| 11  | Inscription         | `/signup`             | Prénom, numéro de téléphone (indicatif +221 par défaut, liste des pays), objectif, puis Google ou e-mail       | Numéro obligatoire, non vérifié tant que les SMS sont désactivés ; case séparée « J'accepte de recevoir des SMS de New Start » |
+| 2   | Test de niveau      | `/onboarding/level`   | Conversation avec Jade, 5 questions, micro, « Écrire plutôt »                                                  | Résultat : niveau CECR estimé                                                                                                  |
+| 3   | Discussions         | `/chats`              | Statuts, filtres, liste des contacts, bouton « + » vers Explorer                                               | Onglet par défaut une fois connecté                                                                                            |
+| 12  | Explorer les thèmes | `/explore`            | Recherche, 9 thèmes, contacts du thème avec « Écrire » (« Appel vidéo » reporté en V3, décision du 2026-11-20) |                                                                                                                                |
+| 4   | Conversation        | `/chats/[agentSlug]`  | Bulles, correction « Plus naturel », Écouter, Traduire, note vocale, suggestions, micro                        | Temps réel (WebSocket)                                                                                                         |
+| 5   | Appel vocal         | `/call/[agentSlug]`   | Minuteur, avatar, sous-titres en direct EN/FR, astuce, micro, FR, haut-parleur, raccrocher                     | V2 (offre Pro)                                                                                                                 |
+| 13  | Appel vidéo         | `/video/[agentSlug]`  | Avatar plein écran, vignette « Toi », sous-titres, expression du moment                                        | V3                                                                                                                             |
+| 6   | Série               | `/series`             | Épisode du jour, liste des 7 épisodes de la semaine (fait, en cours, verrouillé)                               |                                                                                                                                |
+| 14  | Lecteur d'épisode   | `/series/[episodeId]` | Scène, sous-titres EN+FR, vitesse 0,75×, revoir, barre des 5 étapes                                            |                                                                                                                                |
+| 7   | Jeux                | `/games`              | Série de jours, défi du jour, grille de jeux                                                                   |                                                                                                                                |
+| 8   | Jeu en cours        | `/games/[gameId]`     | Anneau minuteur, score, record, combo, question, 4 réponses, retour immédiat                                   |                                                                                                                                |
+| 9   | Progrès             | `/progress`           | Niveau et XP, 4 chiffres clés, minutes parlées par jour, classement entre amis                                 | Amis en V2 : masquer le bloc au MVP                                                                                            |
+| 15  | Notifications       | `/notifications`      | Aujourd'hui / Cette semaine, réglage du rappel unique                                                          |                                                                                                                                |
+| 16  | Profil et réglages  | `/profile`            | Abonnement, thème Système/Clair/Sombre, rappel, objectif quotidien, accent, économie de données, mode pause    |                                                                                                                                |
+| 10  | Abonnement          | `/plans`              | Avantages, 4 offres, Wave / Orange Money / Carte, « Continuer »                                                |                                                                                                                                |
+| 17  | Hors connexion      | état global           | Bandeau « Pas de connexion », révisions et jeux hors ligne                                                     | Service worker (PWA)                                                                                                           |
 
 ## États à prévoir pour chaque écran
 

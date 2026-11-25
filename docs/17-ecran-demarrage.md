@@ -7,10 +7,10 @@ Ce document fait foi pour cet écran. Choix validé par le porteur du projet le 
 
 ## Décision
 
-| Moment | Animation | Durée |
-| --- | --- | --- |
-| Toute première ouverture (avant l'inscription) | Piste 3 « La correction » | 2,7 s |
-| Toutes les autres ouvertures | Piste 1 « La bulle s'ouvre » | 1,3 s (0,8 s si l'appli est déjà prête) |
+| Moment                                         | Animation                    | Durée                                   |
+| ---------------------------------------------- | ---------------------------- | --------------------------------------- |
+| Toute première ouverture (avant l'inscription) | Piste 3 « La correction »    | 2,7 s                                   |
+| Toutes les autres ouvertures                   | Piste 1 « La bulle s'ouvre » | 1,3 s (0,8 s si l'appli est déjà prête) |
 
 ## Enchaînement
 
@@ -35,7 +35,7 @@ Ce document fait foi pour cet écran. Choix validé par le porteur du projet le 
 
 ## Règles
 
-- **Une fois par ouverture** de l'appli (`sessionStorage`, clé `ns.splashShown`), jamais en changeant d'écran.
+- **À chaque chargement ou rechargement** de la page, et **au retour dans l'appli après 5 minutes ou plus** en arrière-plan (`visibilitychange`, `pageshow`). Jamais en changeant d'écran. Mêmes durées dans tous les cas (décision NS-043).
 - **Première ouverture** détectée par un drapeau local (`localStorage`, clé `ns.firstLaunchDone`) ; en cas d'erreur de stockage, jouer la piste 1.
 - **Raccourcie** à 0,8 s si les données sont déjà prêtes : **pas encore faite**, l'animation dure toujours 1,3 s. **Jamais plus longue** que la durée prévue : si le chargement continue, l'écran suivant affiche ses squelettes.
 - **Un toucher ou la touche Entrée/Échap** saute l'animation.

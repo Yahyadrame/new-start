@@ -5,6 +5,7 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 **Ordre imposé** : NS-000 → NS-001 → NS-003 (environnement local conteneurisé) → NS-005 et NS-006 (CI + SonarQube) → NS-014 (règles d'architecture) → NS-002 (squelettes) → NS-013 (composants) → NS-004 → NS-008 (staging en ligne) → NS-011, NS-012, NS-009, NS-010 → NS-007 (fichiers Kubernetes préparés pour la phase 2). Aucun ticket de fonctionnalité avant que CI, quality gate et déploiement automatique sur staging soient verts.
 
 ## NS-000 — Mise en place GitHub et premières décisions · M
+
 - [x] Poser au porteur du projet, en une seule fois, les choix de départ avec options et coûts : nom et visibilité du dépôt, confirmation de la pile gratuite de la phase 1 de `docs/10-devops.md` après revérification des limites du moment (Vercel Hobby, Render Free, Neon, pg-boss, Upstash facultatif, SonarQube Cloud, Sentry, Brevo, Cloudinary, UptimeRobot), région (Render : Francfort conseillé pour la latence depuis Dakar, à confirmer), garder ou non l'API éveillée par une sonde, sous-domaines gratuits, dépôt public ou privé (impact sur les minutes GitHub Actions et sur SonarQube Cloud), budget mensuel maximum pour l'IA.
 - [ ] Ouvrir avec le porteur du projet les comptes gratuits, tous connectables avec son compte GitHub quand c'est possible (Vercel, Render, Neon, SonarQube Cloud, Sentry, Brevo, Cloudinary, UptimeRobot ; Upstash et Grafana Cloud plus tard si besoin) ; il saisit lui-même les clés dans les secrets. Aucun compte payant, aucune carte bancaire.
 - [x] Consigner les réponses dans `docs/decisions.md`.
@@ -14,34 +15,40 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Lister les accès à fournir (jetons, comptes fournisseurs) sans jamais demander de valeur secrète dans la conversation : expliquer où la saisir (secrets GitHub, coffre de l'hébergeur).
 
 ## NS-001 — Monorepo et outils · M
+
 - [x] pnpm + Turborepo, Node 22, TypeScript strict, structure de `docs/06-architecture.md`.
 - [x] `packages/config` : ESLint, Prettier, tsconfig partagés ; Husky, lint-staged, Commitlint.
 - [x] Scripts racine : `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`.
 - [x] `.env.example` complet, sans valeurs réelles.
 
 ## NS-002 — Squelettes des applications · M
+
 - [x] `apps/web` : Next.js 15, Tailwind avec les jetons de `docs/04-design-system.md`, thème Système/Clair/Sombre, page d'accueil avec le logo.
 - [x] `apps/api` : NestJS 11, Prisma, routes `/health/live` et `/health/ready` (vérifie base et Redis), logs pino JSON, arrêt propre sur `SIGTERM`.
 - [x] `apps/worker` : NestJS standalone, job de démonstration, interface `Queue` et file en mémoire. Décision du porteur (2026-11-13) : les adaptateurs pg-boss et BullMQ sont reportés aux tickets NS-016 et NS-017 ; `RUN_JOBS=inline` dans l'API attend que la file vive dans un paquet partagé.
 - [x] `/health/ready` vérifie la base, et Redis seulement s'il est configuré.
 
 ## NS-013 — Bibliothèque de composants et Storybook · M
+
 - [x] `packages/ui` avec shadcn/ui + Radix, Tailwind, `cva`, Lucide, Sonner, Vaul, Motion (liste de `docs/04-design-system.md`).
 - [x] Jetons de couleur clair et sombre, typographie, rayons, espacements.
 - [x] Primitives : Button, Input, Dialog, Sheet, Avatar, Badge, Tabs, Switch, Skeleton, Toast ; chacune avec story clair et sombre et test d'accessibilité.
 - [x] Storybook publié en ligne (projet Vercel séparé ou GitHub Pages) pour que le porteur du projet voie les composants.
 
 ## NS-014 — Règles d'architecture vérifiées en CI · S
+
 - [x] `dependency-cruiser` et `eslint-plugin-boundaries` configurés selon `docs/06-architecture.md` ; un import interdit fait échouer la CI.
 - [x] Modèle de module back et de fonctionnalité front générés par une commande : reporté au ticket NS-015.
 
 ## NS-015 — Générateurs de module et de fonctionnalité · S
+
 - [x] `pnpm gen:module <nom>` crée un module back (`domain`, `application`, `infrastructure`, `interface`, `<nom>.module.ts`) dans `apps/api`.
 - [x] `pnpm gen:feature <nom>` crée une fonctionnalité front (`components/`, `hooks/`, `api/`, `store/`, `index.ts`) dans `apps/web`.
 - [x] Le code généré respecte les règles de NS-014 et vient avec son test unitaire.
 - Dépend de NS-002 (dossiers `apps/api` et `apps/web`).
 
 ## NS-003 — Environnement local conteneurisé · M
+
 - [x] `infra/compose/docker-compose.yml` de `docs/10-devops.md` : PostgreSQL et Mailpit par défaut ; profil `dev` (web et api en conteneurs avec rechargement automatique, code monté en volume) ; profil `prod` (images des Dockerfiles de production) ; profils `redis` et `quality` facultatifs. Versions d'images épinglées.
 - [x] Limites de mémoire par conteneur ; RAM du profil `dev` mesurée le 2026-11-13 : environ 860 Mo (cible : moins de 2 Go).
 - [x] Adaptateurs factices pour l'IA (`packages/ai`), Brevo (`Mailer`) et Cloudinary (`MediaStore`) dans `apps/api/src/shared`, afin de développer sans clé. Les vrais adaptateurs Brevo et Cloudinary viennent avec le premier ticket qui s'en sert (code de connexion par e-mail, sprint 1 ; avatars et audio).
@@ -50,20 +57,24 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [ ] Le porteur du projet lance la commande sur sa machine et confirme que ça marche avant de clore le ticket.
 
 ## NS-004 — Images Docker · M
+
 - [x] Dockerfiles multi-étapes pour web, api, worker, exécution non root, `HEALTHCHECK`.
 - [ ] Taille cible : < 250 Mo par image.
 
 ## NS-005 — CI GitHub Actions · M
+
 - [x] Workflows en place : `ci.yml`, `cd-staging.yml` (build des images, scan Trivy, publication), `codeql.yml` et `storybook.yml`. Les autres suivent le sprint où ils servent (2026-11-15) : `e2e.yml` au sprint 1 (NS-109), `release.yml` et `nightly.yml` au sprint 6 (NS-608, NS-609), `preview.yml` avec NS-021 (sprint 6).
 - [x] `ci.yml` : format, lint, typecheck, contrôle des imports, tests avec couverture, SonarQube + quality gate. Le build des images et le scan Trivy (échec sur `CRITICAL`) tournent dans `cd-staging.yml`, à chaque fusion.
 - [x] Protection de `main` : PR, `quality` et SonarCloud verts, branche à jour. Aucune approbation exigée : le porteur du projet est seul sur le dépôt et valide en disant « fusionne la N » (décision du 2026-11-15).
 - [x] Dependabot à la place de Renovate (NS-019).
 
 ## NS-006 — SonarQube · S
+
 - [x] Organisation et projet `newstart` sur SonarQube Cloud (offre Free), `sonar-project.properties`, analyse des PR avec commentaire.
 - [x] Quality gate « New Start » : 0 bug, 0 vulnérabilité, points sensibles revus, couverture ≥ 80 %, duplication ≤ 3 %, maintenabilité A.
 
 ## NS-007 — Fichiers Kubernetes et Helm prêts pour la phase 2 · M
+
 - [x] (PR 1) Rien n'est déployé : les fichiers sont écrits et vérifiés en CI (`helm lint`, `helm template` + `kubeconform`) pour que la phase 2 (VPS ou AWS) ne demande aucune réécriture.
 - [x] (PR 3) Valeurs par cible : `values-vps.yaml` (k3s) et `values-aws.yaml` (EC2 + k3s, ou EKS).
 - [x] (PR 1) Chart Helm `new-start` : déploiements web/api/worker, `RollingUpdate maxUnavailable: 0`, sondes, ressources.
@@ -72,7 +83,9 @@ Objectif : une page « Bonjour » déployée sur staging **en ligne** par la CI 
 - [x] (PR 3) Secrets via Sealed Secrets (manifestes seulement ; External Secrets si AWS).
 
 ## NS-011 — Environnements d'aperçu par PR · M
+
 Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md`), donc l'aperçu d'une PR est un front Vercel qui appelle l'API de staging.
+
 - [x] Front : aperçu Vercel automatique de chaque PR (intégration Git du projet `new-start`), avec `NEXT_PUBLIC_API_URL` définie aussi pour Preview.
 - [x] CORS : `CORS_ORIGINS` accepte un motif avec `*` (`https://new-start-*-yhd.vercel.app`), ce qui couvre les URL d'aperçu.
 - [x] Le lien d'aperçu est commenté dans la PR par Vercel.
@@ -80,10 +93,12 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [ ] Phase 2 seulement : Argo CD ApplicationSet avec générateur Pull Request.
 
 ## NS-012 — Données de démonstration · S
+
 - [x] Mécanisme de seed (`prisma db seed`, idempotent) et noyau d’anglais (mots et expressions) chargé sur staging par `cd-staging`.
 - [ ] Comptes de test, conversations et épisodes : ajoutés au seed par chaque ticket qui crée sa table ; SMS et paiements en mode test.
 
 ## NS-008 — Staging en ligne · M
+
 - [x] Projet Vercel `newstart-web` relié au dépôt (avec l'accord du porteur du projet pour installer l'application GitHub de Vercel).
 - [x] Service Render `newstart-api` (offre Free) déployé depuis l'image GHCR construite par la CI, avec `RUN_JOBS=inline` ; variables d'environnement saisies par le porteur du projet.
 - [x] `cd-staging.yml` : migration Prisma sur Neon (`prisma migrate deploy`) puis appel du deploy hook Render, puis tests de fumée sur `/health/ready` (avec attente du réveil).
@@ -91,45 +106,55 @@ Recadré le 2026-11-14 : pas d'API d'aperçu sur Render (voir `docs/decisions.md
 - [x] Le lien de staging est donné au porteur du projet et noté dans le `README`.
 
 ## NS-009 — Supervision · M
+
 - [x] Sentry côté API et côté navigateur, éteint tant que le DSN est vide, sans donnée personnelle ni contenu de message.
 - [x] Le porteur du projet crée le compte Sentry et saisit `SENTRY_DSN` (Render) et `NEXT_PUBLIC_SENTRY_DSN` (Vercel) ; Claude vérifie qu'une erreur de test arrive.
 - [x] Sonde sur `/health/live` : UptimeRobot refuse d'ouvrir le formulaire de création, remplacée par un workflow GitHub Actions (NS-025).
 - [x] Reporté au ticket NS-022 : OpenTelemetry, alerte 5xx, erreurs serveur de Next.js.
 
 ## NS-010 — Choix des fournisseurs IA (ADR) · M
+
 - [x] Comparer 2 fournisseurs LLM, STT et TTS sur 50 phrases réelles (qualité, latence depuis Dakar, prix).
 - [x] Rédiger `docs/adr/0001-fournisseurs-ia.md` (accepté ; STT sur voix réelles et choix du TTS restent à faire, voir l'ADR).
 - [x] Interfaces `LlmProvider`, `SttProvider`, `TtsProvider` dans `packages/ai`, avec un adaptateur factice et ses tests.
 
 ## NS-018 — Compose dev sans fichiers appartenant à root · S
+
 - [x] Les conteneurs du profil `dev` tournent avec l'UID et le GID de l'utilisateur (`user: "${UID}:${GID}"`), pour que `.next` et `apps/api/src/generated` restent à lui.
 - [x] `README` : comment exporter `UID` et `GID` (ou valeur par défaut 1000).
 - [x] Vérifié : après `docker compose --profile dev up`, `find apps -user root -not -path "*/node_modules/*"` ne renvoie rien.
 
 ## NS-019 — Actions GitHub épinglées par SHA · S
+
 - [x] `ci.yml` : `actions/checkout`, `actions/setup-node` et `pnpm/action-setup` épinglés par SHA de commit complet (avec le tag en commentaire), comme `storybook.yml`.
 - [x] Le test de `packages/config` exige un SHA, plus seulement un tag majeur (les trois workflows).
 - [x] Mise à jour des SHA par Dependabot (choix du porteur : `.github/dependabot.yml`, actions GitHub, chaque semaine, regroupées).
 
 ## NS-020 — Polices hébergées avec l'application · S
+
 - [x] `next/font/google` télécharge Space Grotesk et Inter à chaque `next build` : sans accès à Google, le build échoue (`Failed to fetch Space Grotesk`), ce qui rend le build de l'image web instable.
 - [x] Remplacer par des polices embarquées (`next/font/local` ou paquets `@fontsource`), mêmes graisses et mêmes variables CSS.
 - [x] Le build de l'image web réussit sans réseau vers Google ; tests à jour.
 
 ## NS-022 — OpenTelemetry et alerte d'erreurs · M
+
 - [x] OpenTelemetry branché mais désactivé par défaut ; activé vers Grafana Cloud quand le porteur du projet le demande.
 - [x] Alerte : taux d'échec > 2 % pendant 5 minutes (monitor Sentry « Failure Rate », traces à 10 % sur staging). Sentry compte aussi les 404 comme échecs.
 - [x] Erreurs serveur de Next.js (`apps/web`) envoyées à Sentry, avec le même nettoyage que le navigateur (vérifié sur staging le 2026-11-15, NEWSTART-WEB-2, sans en-tête ni jeton).
 
 ## NS-023 — Route de test pour Sentry côté API · S
+
 Sur staging, rien ne prouve aujourd'hui que `SENTRY_DSN` est bien lue par l'API : il faudrait attendre une vraie erreur 500.
+
 - [x] `GET /health/sentry-test` (module `health`) lève une erreur volontaire, uniquement si la variable `SENTRY_TEST_TOKEN` est définie et que l'en-tête `x-sentry-test-token` la contient ; sinon la route répond 404.
 - [x] `SENTRY_TEST_TOKEN` est ajoutée à `.env.example` sans valeur ; la valeur est posée sur Render par le porteur du projet.
 - [x] Vérifié sur staging : l'appel avec le bon jeton fait apparaître l'erreur dans le projet `newstart-api` de Sentry ; sans jeton, la route répond 404 et rien n'est envoyé.
 - [x] Tests unitaires : route absente sans variable, refus avec un mauvais jeton, erreur levée avec le bon jeton.
 
 ## NS-024 — Adaptateurs IA réels et banc de comparaison · M
+
 Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
+
 - [x] `GroqLlm` (`openai/gpt-oss-20b`) et `GeminiLlm` (`gemini-3.5-flash-lite`, secours) implémentent `LlmProvider` ; `GroqStt` (`whisper-large-v3-turbo`) implémente `SttProvider` ; `GeminiTts` implémente `TtsProvider`. `fetch` injecté, délai maximal, clé lue dans l'environnement, jamais journalisée.
 - [x] Validation Zod du JSON `{ reply, fix }` avec une nouvelle tentative, puis `reply` brut et `fix = null` (`docs/09-ia-agents.md`).
 - [x] Plafond d'usage codé et repli sur l'adaptateur factice quand le quota est épuisé (décision budget du 2026-11-13) ; réessai sur les erreurs 429 et 5xx, et sur l'erreur 400 « texte au lieu d'audio » de Gemini TTS.
@@ -138,7 +163,9 @@ Suite de NS-010 (ADR 0001). Sans eux, l'application ne parle à aucune vraie IA.
 - [x] Tests unitaires avec `fetch` simulé pour chaque adaptateur, couverture ≥ 80 %.
 
 ## NS-025 — Sonde de disponibilité par Better Stack · S
+
 Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas, puis un workflow GitHub Actions que GitHub n'a jamais déclenché (décisions du porteur du projet, 2026-11-15).
+
 - [x] Monitor Better Stack (offre gratuite) sur `https://newstart-api-staging.onrender.com/health/live`, vérifié toutes les 3 minutes.
 - [x] Alertes par e-mail à l'adresse du compte.
 - [x] La sonde n'appelle pas la base : Neon peut s'endormir.
@@ -146,51 +173,65 @@ Remplace UptimeRobot, dont le formulaire de création ne s'ouvre pas, puis un wo
 - [x] `.github/workflows/uptime.yml` supprimé : GitHub ne lançait aucune exécution planifiée (aucune en plus de 2 heures malgré les minutes décalées).
 
 ## NS-026 — Route de test pour Sentry côté web · S
+
 Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case de NS-022 ne peut pas être vérifiée.
+
 - [x] `GET /api/sentry-test` (apps/web) lève une erreur volontaire, uniquement si `SENTRY_TEST_TOKEN` est défini sur Vercel et que l'en-tête `x-sentry-test-token` le contient ; sinon elle répond 404.
 - [x] Tests unitaires : 404 sans jeton configuré, sans en-tête ou avec un mauvais jeton ; erreur avec le bon.
 - [x] Vérifié sur staging : l'erreur apparaît dans Sentry (projet `newstart-web`, NEWSTART-WEB-2) ; case « erreurs serveur de Next.js » de NS-022 cochée.
 - [x] `SENTRY_TEST_TOKEN` retiré de Vercel le 2026-11-15 (le jeton a été écrit dans la conversation : ne pas le réutiliser). Le déploiement en cours le garde jusqu'au prochain déploiement.
 
 ## NS-027 — Le site web ne démarre pas en mode dev · S
+
 `pnpm dev` dans `apps/web` répond 500 : `instrumentation.ts` importe Sentry Node en statique, et le mode dev compile aussi ce fichier pour l'edge, qui ne connaît pas `node:child_process`. Staging n'est pas touché.
+
 - [x] Sentry serveur chargé par import dynamique dans un `if` sur `NEXT_RUNTIME === 'nodejs'`, pour `register()` et `onRequestError()`.
 - [x] Tests unitaires mis à jour : runtime Node et hors Node pour les deux fonctions.
 - [x] `GET /` répond 200 en local avec `pnpm dev`.
 - [ ] Vérifié sur staging : une erreur serveur arrive toujours dans Sentry (après fusion).
 
 ## NS-029 — Relais de toutes les routes `/api/*` du site vers l'API · S
-*Ajouté le 2026-11-24 : sur staging, `/api/conversations`, `/api/me`, `/api/progress`, `/api/notifications/*` répondaient 404 sur le site Vercel, alors que l'API de Render répond (401 sans connexion). Le site ne relayait que `/api/auth/*` et `/api/onboarding/*` ; l'écran Discussions affichait « Impossible de charger tes discussions », et l'abonnement push de NS-611 ne pouvait pas aboutir.*
+
+_Ajouté le 2026-11-24 : sur staging, `/api/conversations`, `/api/me`, `/api/progress`, `/api/notifications/*` répondaient 404 sur le site Vercel, alors que l'API de Render répond (401 sans connexion). Le site ne relayait que `/api/auth/*` et `/api/onboarding/*` ; l'écran Discussions affichait « Impossible de charger tes discussions », et l'abonnement push de NS-611 ne pouvait pas aboutir._
+
 - [x] Un seul relais `/api/:path*` vers l'API (`NEXT_PUBLIC_API_URL`), à la place de la liste auth et onboarding. Le cookie de rafraîchissement reste sur le domaine du site (décision du 2026-11-15).
 - [x] Les routes du site (`/api/sentry-test`) passent avant le relais (rewrites après le système de fichiers).
 - [x] Test unitaire du relais mis à jour.
 - [ ] Vérifié sur staging après fusion : `/api/conversations` renvoie 401 sans connexion, l'écran Discussions se charge, le test de niveau va jusqu'au résultat.
+
 ## NS-028 — IA : signaler la configuration manquante et journaliser les échecs · S
-*Ajouté le 2026-11-24 après un test sur staging : à la dernière question du test de niveau, la personne voit « Jade n'arrive pas à évaluer ton niveau » (503 `AI_UNAVAILABLE`). En local, l'évaluation marche avec `LLM_PROVIDER=groq` et échoue à l'identique sans fournisseur. Cause probable : `LLM_PROVIDER` et `GROQ_API_KEY` absents de Render (à confirmer par le porteur du projet). Aujourd'hui rien ne le dit : `createAiProviders` retombe en silence sur l'adaptateur factice, et le `catch` de `evaluateLevel` avale l'erreur.*
+
+_Ajouté le 2026-11-24 après un test sur staging : à la dernière question du test de niveau, la personne voit « Jade n'arrive pas à évaluer ton niveau » (503 `AI_UNAVAILABLE`). En local, l'évaluation marche avec `LLM_PROVIDER=groq` et échoue à l'identique sans fournisseur. Cause probable : `LLM_PROVIDER` et `GROQ_API_KEY` absents de Render (à confirmer par le porteur du projet). Aujourd'hui rien ne le dit : `createAiProviders` retombe en silence sur l'adaptateur factice, et le `catch` de `evaluateLevel` avale l'erreur._
+
 - [ ] Au démarrage de l'API, un log d'avertissement dit quel adaptateur sert pour le LLM, le STT et le TTS. Sur staging et en production, un adaptateur factice déclenche un avertissement visible (jamais de clé ni de valeur dans le log).
 - [ ] `/health/ready` ou un champ dédié indique si l'IA est réelle ou factice, sans exposer de secret.
 - [ ] `evaluateLevel` (et la traduction, la voix) journalise la cause d'un échec avec pino : type d'erreur, code HTTP du fournisseur, nombre d'essais. Jamais le contenu des réponses ni des messages.
 - [ ] Tests unitaires : avertissement avec adaptateur factice, aucun avertissement avec un vrai fournisseur, log de l'échec sans contenu.
 - [ ] `docs/10-devops.md` : liste des variables IA à poser sur Render (`LLM_PROVIDER`, `GROQ_API_KEY`, `STT_PROVIDER`, `GEMINI_API_KEY`, `TTS_PROVIDER`, `AI_MAX_CALLS_PER_MONTH`).
-*À décider avec le porteur du projet : faut-il refuser de démarrer en production avec un adaptateur factice, ou seulement avertir.*
-
+      _À décider avec le porteur du projet : faut-il refuser de démarrer en production avec un adaptateur factice, ou seulement avertir._
 
 ## NS-030 — Notifications : `PrismaService` non injecté dans les trois stores · S
-*Ajouté le 2026-11-24 : deux alertes Sentry sur staging (`GET /notifications` : « reading 'notificationLog' » ; `POST /push/subscriptions` : « reading 'pushSubscription' »). Les stores de notifications importaient `PrismaService` avec `import type` et sans `@Inject` : Nest n'avait aucun jeton, `this.prisma` valait `undefined`. Les tests unitaires construisaient les stores à la main avec un faux Prisma et ne le voyaient pas. Le store des rappels avait le même défaut : le rappel quotidien ne pouvait pas partir.*
+
+_Ajouté le 2026-11-24 : deux alertes Sentry sur staging (`GET /notifications` : « reading 'notificationLog' » ; `POST /push/subscriptions` : « reading 'pushSubscription' »). Les stores de notifications importaient `PrismaService` avec `import type` et sans `@Inject` : Nest n'avait aucun jeton, `this.prisma` valait `undefined`. Les tests unitaires construisaient les stores à la main avec un faux Prisma et ne le voyaient pas. Le store des rappels avait le même défaut : le rappel quotidien ne pouvait pas partir._
+
 - [x] `@Inject(PrismaService)` et import normal dans `PrismaNotificationsStore`, `PrismaPushSubscriptionsStore` et `PrismaRemindersStore` (même écriture que les stores des conversations).
 - [x] Test qui fait construire les trois stores par Nest, comme au démarrage de l'API (échouait avant la correction).
 - [ ] Vérifié sur staging après fusion : l'écran Notifications se charge, l'abonnement push au Profil réussit, plus d'alerte Sentry sur ces routes.
 
 ## NS-031 — Écran de connexion `/login` · S
-*Ajouté le 2026-11-24 : « J'ai déjà un compte » mène à `/login`, qui n'existe pas (404). L'API de connexion par code est prête depuis NS-102 (`POST /auth/otp/request` et `/verify`).*
+
+_Ajouté le 2026-11-24 : « J'ai déjà un compte » mène à `/login`, qui n'existe pas (404). L'API de connexion par code est prête depuis NS-102 (`POST /auth/otp/request` et `/verify`)._
+
 - [x] Page `/login` : adresse e-mail, puis saisie du code à usage unique, avec les mêmes composants que l'inscription. Le canal SMS viendra avec son activation.
-- [x] Après connexion, retour à `/chats`. *Reste à faire, dans un ticket à part : renvoyer vers l'onboarding quand le niveau n'est pas évalué.*
+- [x] Après connexion, retour à `/chats`. _Reste à faire, dans un ticket à part : renvoyer vers l'onboarding quand le niveau n'est pas évalué._
 - [x] Erreurs lisibles : code faux, code expiré, trop de demandes.
 - [x] Tests unitaires, et e2e du parcours accueil, « J'ai déjà un compte », code, Discussions.
 - [x] Vérifié sur staging après fusion : « J'ai déjà un compte » ouvre `/login`, le code arrive par e-mail, la connexion mène aux Discussions.
 
 ## NS-032 — Icône de l'écran d'accueil iPhone et manifeste · S
-*Ajouté le 2026-11-24 : le lien épinglé sur l'écran d'accueil d'un iPhone montre une icône toute noire. Le site n'a que `icon.svg`, que l'iPhone n'utilise pas pour cet usage.*
+
+_Ajouté le 2026-11-24 : le lien épinglé sur l'écran d'accueil d'un iPhone montre une icône toute noire. Le site n'a que `icon.svg`, que l'iPhone n'utilise pas pour cet usage._
+
 - [x] Icône PNG 180 × 180 (`apple-icon`) : fond #CCFF00 plein, sans coins arrondis ni transparence (l'iPhone remplit la transparence en noir).
 - [x] `manifest` avec nom, couleurs et icônes 192 et 512 px, dont une icône « maskable ».
 - [x] `theme-color` clair et sombre.
@@ -199,19 +240,24 @@ Rien ne déclenche aujourd'hui `onRequestError` sur staging : la dernière case 
 - [ ] Vérifié sur un Android (Chrome) : retirer l'ancien raccourci, rouvrir le lien, puis « Installer l'application ».
 
 ## NS-033 — Refonte de l'interface, maquettes façon WhatsApp · L
-*Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b).*
+
+_Ajouté le 2026-11-24 : le porteur du projet juge l'interface actuelle trop médiocre, sur ordinateur comme sur mobile. Il veut le rendu de WhatsApp Web sur ordinateur et celui de l'application WhatsApp sur mobile. Portée choisie : toute l'application (option b)._
+
 - [x] Ordinateur : barre latérale de navigation, liste des discussions à gauche, conversation à droite. Mobile : liste en plein écran, conversation au-dessus avec retour, barre de navigation en bas.
 - [x] Maquettes de tous les écrans de `docs/05-ecrans.md`, thèmes clair et sombre, ordinateur et mobile. `docs/05-ecrans.md` et `docs/04-design-system.md` mis à jour avant tout code.
 - [x] Le Profil est accessible depuis la navigation (voir NS-035).
 - [x] Validation des maquettes par le porteur du projet avant NS-034 (2026-11-24).
-*Décidé le 2026-11-24 : on garde notre palette (#CCFF00, noir, gris, thèmes clair et sombre) et on reprend de WhatsApp les formes et la structure : disposition, liste, bulles, en-têtes, navigation.*
+      _Décidé le 2026-11-24 : on garde notre palette (#CCFF00, noir, gris, thèmes clair et sombre) et on reprend de WhatsApp les formes et la structure : disposition, liste, bulles, en-têtes, navigation._
 
 ## NS-034 — Refonte de l'interface, mise en œuvre · L (à découper par écran)
+
 - [ ] Coquille d'application : navigation adaptative (barre latérale sur ordinateur, barre du bas sur mobile) et disposition à deux colonnes pour Discussions.
 - [ ] Discussions et conversation, puis Série, Jeux, Progrès, Notifications, Profil, un écran par PR.
 - [ ] Accessibilité (cibles ≥ 44 px, contrastes 4,5:1), thèmes clair et sombre, tests unitaires et e2e à chaque PR.
 
 ## NS-035 — Accès au Profil depuis la navigation · S
-*Ajouté le 2026-11-24 : `/profile` existe mais aucun lien dans l'application n'y mène ; le porteur du projet ne voit pas le Profil. Le réglage « Rappels sur ce téléphone » (NS-611) est donc inaccessible.*
+
+_Ajouté le 2026-11-24 : `/profile` existe mais aucun lien dans l'application n'y mène ; le porteur du projet ne voit pas le Profil. Le réglage « Rappels sur ce téléphone » (NS-611) est donc inaccessible._
+
 - [x] Entrée « Profil » dans la navigation actuelle (barre du bas, et barre ajoutée à l'écran Profil, qui n'en avait pas), en attendant la refonte, puis reprise dans la nouvelle navigation de NS-034.
 - [x] Test unitaire de la navigation.

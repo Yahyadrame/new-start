@@ -2,12 +2,12 @@
 
 ## Briques
 
-| Brique | Usage | Exigences |
-| --- | --- | --- |
-| LLM | Réponses des agents, corrections, traductions, génération de variantes | Sortie JSON fiable, bon français et bon anglais, coût faible par message |
-| STT (reconnaissance vocale) | Dictée, notes vocales, test de niveau, appels | Anglais avec accent francophone et africain, horodatage des mots |
-| TTS (synthèse vocale) | « Écouter », voix des personnages, appels | Plusieurs accents (US, UK, nigérian, indien), voix stables par personnage |
-| Évaluation de prononciation | Note des répétitions (V2) | Score par mot et par phonème |
+| Brique                      | Usage                                                                  | Exigences                                                                 |
+| --------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| LLM                         | Réponses des agents, corrections, traductions, génération de variantes | Sortie JSON fiable, bon français et bon anglais, coût faible par message  |
+| STT (reconnaissance vocale) | Dictée, notes vocales, test de niveau, appels                          | Anglais avec accent francophone et africain, horodatage des mots          |
+| TTS (synthèse vocale)       | « Écouter », voix des personnages, appels                              | Plusieurs accents (US, UK, nigérian, indien), voix stables par personnage |
+| Évaluation de prononciation | Note des répétitions (V2)                                              | Score par mot et par phonème                                              |
 
 Tous passent par `packages/ai` avec une interface par brique (`LlmProvider`, `SttProvider`, `TtsProvider`). Le fournisseur se choisit par variable d'environnement. Ticket du sprint 0 : comparer 2 fournisseurs par brique sur 50 phrases réelles (qualité, latence, prix) et consigner le choix dans `docs/adr/`.
 
@@ -28,7 +28,13 @@ Le LLM doit répondre **uniquement** ce JSON, validé par Zod :
 ou
 
 ```json
-{ "reply": "…", "fix": { "better": "version naturelle du dernier message", "why": "explication en français, 15 mots maximum" } }
+{
+  "reply": "…",
+  "fix": {
+    "better": "version naturelle du dernier message",
+    "why": "explication en français, 15 mots maximum"
+  }
+}
 ```
 
 Si le JSON est invalide : une nouvelle tentative avec un rappel du format ; sinon, on garde `reply` brut et `fix = null`.
@@ -61,12 +67,12 @@ Le gabarit est versionné (`packages/ai/prompts/agent.v1.txt`) ; chaque réponse
 
 ## Thèmes sensibles et sécurité
 
-| Thème | Règle |
-| --- | --- |
+| Thème              | Règle                                                                                                                                                                                                                                                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Amour et relations | Réservé aux utilisateurs majeurs (âge déclaré à l'inscription ; `Topic.adultOnly`). Conversations sur les sentiments, les rendez-vous, l'amitié. **Aucun contenu sexuel, aucun jeu de rôle romantique avec l'utilisateur** : l'agent conseille ou joue une scène de vie (inviter quelqu'un au café), il n'est jamais le partenaire de l'utilisateur. |
-| Santé | Vocabulaire et situations (chez le médecin, à la pharmacie). Aucun diagnostic. |
-| Actualité | Faits récents fournis par une source contrôlée (flux d'actualité choisi), pas d'opinion politique de l'agent, présentation équilibrée. |
-| Détresse | Si l'utilisateur exprime une détresse ou des idées suicidaires : l'agent sort du jeu, répond avec bienveillance en français et affiche les ressources d'aide du pays. Ce cas est testé en CI. |
+| Santé              | Vocabulaire et situations (chez le médecin, à la pharmacie). Aucun diagnostic.                                                                                                                                                                                                                                                                       |
+| Actualité          | Faits récents fournis par une source contrôlée (flux d'actualité choisi), pas d'opinion politique de l'agent, présentation équilibrée.                                                                                                                                                                                                               |
+| Détresse           | Si l'utilisateur exprime une détresse ou des idées suicidaires : l'agent sort du jeu, répond avec bienveillance en français et affiche les ressources d'aide du pays. Ce cas est testé en CI.                                                                                                                                                        |
 
 Garde-fous techniques :
 
@@ -82,13 +88,13 @@ Garde-fous techniques :
 
 ## Coûts et maîtrise
 
-| Levier | Règle |
-| --- | --- |
-| Historique | 16 derniers messages + résumé, jamais toute la conversation |
-| Modèle | Modèle rapide et économique pour les conversations ; modèle plus puissant seulement pour le test de niveau et l'entretien final |
-| Cache | Traductions et audio TTS mis en cache par empreinte du texte |
-| Quotas | Vérifiés dans Redis avant chaque appel |
-| Suivi | Coût par utilisateur et par jour dans Grafana ; alerte si le coût moyen dépasse 30 % du prix de l'offre |
+| Levier     | Règle                                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Historique | 16 derniers messages + résumé, jamais toute la conversation                                                                     |
+| Modèle     | Modèle rapide et économique pour les conversations ; modèle plus puissant seulement pour le test de niveau et l'entretien final |
+| Cache      | Traductions et audio TTS mis en cache par empreinte du texte                                                                    |
+| Quotas     | Vérifiés dans Redis avant chaque appel                                                                                          |
+| Suivi      | Coût par utilisateur et par jour dans Grafana ; alerte si le coût moyen dépasse 30 % du prix de l'offre                         |
 
 ## Mesures à suivre
 

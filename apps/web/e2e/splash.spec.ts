@@ -2,9 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test("l'écran de démarrage se joue une fois, se saute et laisse la place à Bienvenue", async ({
-  page,
-}) => {
+test("l'écran de démarrage se joue, puis revient à chaque rechargement", async ({ page }) => {
   const start = Date.now();
   await page.goto('/');
   const splash = page.getByTestId('splash');
@@ -13,10 +11,11 @@ test("l'écran de démarrage se joue une fois, se saute et laisse la place à Bi
   expect(Date.now() - start).toBeLessThan(4000);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-  // Même ouverture de l'appli : il ne revient pas.
+  // Chaque rechargement le rejoue, en piste courte (NS-043).
   await page.reload();
+  await expect(page.getByTestId('splash')).toBeVisible();
+  await expect(page.getByTestId('splash')).toBeHidden({ timeout: 3000 });
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(splash).toHaveCount(0);
 });
 
 test('un toucher saute la seconde ouverture', async ({ page }) => {

@@ -10,19 +10,19 @@
 
 Palette de base : `#CCFF00`, `#000000`, `#999999`, `#F2F2F2`. Les nuances de surface sont dérivées pour la lisibilité.
 
-| Jeton | Sombre | Clair | Usage |
-| --- | --- | --- | --- |
-| `--color-bg` | `#000000` | `#FFFFFF` | Fond des écrans |
-| `--color-surface-1` | `#121212` | `#F2F2F2` | Cartes, bulles des contacts, champs |
-| `--color-surface-2` | `#1F1F1F` | `#E4E4E4` | Avatars, éléments secondaires |
-| `--color-line` | `#2A2A2A` | `#E2E2E2` | Séparateurs, bordures |
-| `--color-text` | `#F2F2F2` | `#000000` | Texte principal |
-| `--color-text-muted` | `#999999` | `#666666` | Texte secondaire |
-| `--color-accent` | `#CCFF00` | `#CCFF00` | Bouton principal, mes bulles, badges, onglet actif |
-| `--color-on-accent` | `#000000` | `#000000` | Texte et icônes posés sur l'accent |
-| `--color-accent-text` | `#CCFF00` | `#000000` | Liens et mots mis en valeur |
-| `--color-danger` | `#E5484D` | `#C8363B` | Texte d'erreur, bordure d'un champ en erreur (4,5:1 sur le fond de chaque thème) |
-| `--color-danger-solid` | `#C8363B` | `#C8363B` | Fond des boutons « Raccrocher » et suppressions, texte blanc dessus (5,19:1) |
+| Jeton                  | Sombre    | Clair     | Usage                                                                            |
+| ---------------------- | --------- | --------- | -------------------------------------------------------------------------------- |
+| `--color-bg`           | `#000000` | `#FFFFFF` | Fond des écrans                                                                  |
+| `--color-surface-1`    | `#121212` | `#F2F2F2` | Cartes, bulles des contacts, champs                                              |
+| `--color-surface-2`    | `#1F1F1F` | `#E4E4E4` | Avatars, éléments secondaires                                                    |
+| `--color-line`         | `#2A2A2A` | `#E2E2E2` | Séparateurs, bordures                                                            |
+| `--color-text`         | `#F2F2F2` | `#000000` | Texte principal                                                                  |
+| `--color-text-muted`   | `#999999` | `#666666` | Texte secondaire                                                                 |
+| `--color-accent`       | `#CCFF00` | `#CCFF00` | Bouton principal, mes bulles, badges, onglet actif                               |
+| `--color-on-accent`    | `#000000` | `#000000` | Texte et icônes posés sur l'accent                                               |
+| `--color-accent-text`  | `#CCFF00` | `#000000` | Liens et mots mis en valeur                                                      |
+| `--color-danger`       | `#E5484D` | `#C8363B` | Texte d'erreur, bordure d'un champ en erreur (4,5:1 sur le fond de chaque thème) |
+| `--color-danger-solid` | `#C8363B` | `#C8363B` | Fond des boutons « Raccrocher » et suppressions, texte blanc dessus (5,19:1)     |
 
 Règles :
 
@@ -33,14 +33,14 @@ Règles :
 
 ## Typographie
 
-| Rôle | Police | Graisse | Taille |
-| --- | --- | --- | --- |
-| Titre d'écran | Space Grotesk | 700 | 30 px, interlettrage −0,02 em |
-| Grand titre (bienvenue, abonnement) | Space Grotesk | 700 | 34 à 44 px |
-| Corps | Inter | 400 à 500 | 15 à 16 px, interligne 1,45 |
-| Nom de contact, bouton | Inter | 600 à 700 | 15 à 17 px |
-| Libellé en capitales | Inter | 700 | 12 px, +0,08 em |
-| Méta (heure, compteur) | Inter | 400 | 11 à 13 px, chiffres tabulaires |
+| Rôle                                | Police        | Graisse   | Taille                          |
+| ----------------------------------- | ------------- | --------- | ------------------------------- |
+| Titre d'écran                       | Space Grotesk | 700       | 30 px, interlettrage −0,02 em   |
+| Grand titre (bienvenue, abonnement) | Space Grotesk | 700       | 34 à 44 px                      |
+| Corps                               | Inter         | 400 à 500 | 15 à 16 px, interligne 1,45     |
+| Nom de contact, bouton              | Inter         | 600 à 700 | 15 à 17 px                      |
+| Libellé en capitales                | Inter         | 700       | 12 px, +0,08 em                 |
+| Méta (heure, compteur)              | Inter         | 400       | 11 à 13 px, chiffres tabulaires |
 
 Polices chargées avec `next/font` (auto-hébergées, pas d'appel à Google en production).
 
@@ -53,27 +53,27 @@ Polices chargées avec `next/font` (auto-hébergées, pas d'appel à Google en p
 
 ## Composants
 
-| Composant | Description | Écrans |
-| --- | --- | --- |
-| `BottomNav` | Mobile : 5 onglets (Discussions, Série, Jeux, Progrès, Profil) ; onglet actif = pilule verte derrière l'icône | 3, 6, 7, 9 |
-| `SideRail` | Ordinateur : rail de 72 px à gauche, mêmes entrées que `BottomNav`, plus Notifications ; Profil en bas | tous |
-| `ChatListRow` | Avatar 52 px, nom + badge IA, aperçu sur une ligne, heure, pastille verte des non lus ; séparateur décalé sous l'avatar | 3 |
-| `ContactRow` | Avatar + point « en ligne », nom, rôle en capitales, dernier message, heure, badge non lus | 3 |
-| `StoryRing` | Avatar dans un anneau vert (non vu) ou gris (vu) | 3 |
-| `ChatBubble` | Contact : surface-1 à gauche ; moi : accent à droite, coches de lecture | 4 |
-| `CorrectionCard` | Libellé « PLUS NATUREL », phrase corrigée, explication, boutons « Répéter à voix haute » et « Ajouter au carnet » | 4 |
-| `VoiceNote` | Bouton lecture, barres d'onde, durée | 2, 4 |
-| `SuggestionChips` | Pilules de réponses suggérées défilant à l'horizontale | 4 |
-| `Composer` | Champ arrondi + bouton micro vert (devient « Envoyer » quand on tape) | 4 |
-| `CallControls` | Boutons ronds 60 à 64 px : micro, caméra, FR, haut-parleur, raccrocher | 5, 13 |
-| `LiveCaption` | Carte sous-titre EN + traduction FR | 5, 13, 14 |
-| `EpisodeCard` | Carte verte de l'épisode du jour, grand numéro en filigrane | 6 |
-| `GameTile` | Icône, titre, compétence et durée, badge « Nouveau » | 7 |
-| `TimerRing` | Anneau de compte à rebours | 8 |
-| `StatTile`, `WeekBars` | Chiffre clé, barres des minutes par jour (jour courant en vert) | 9 |
-| `PlanOption` | Carte radio d'offre, badge « Le plus choisi » | 10 |
-| `ThemeSegmented` | Système / Clair / Sombre | 16 |
-| `EmptyState` | Illustration des bulles, titre, phrase, action | 17 |
+| Composant              | Description                                                                                                             | Écrans     |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `BottomNav`            | Mobile : 5 onglets (Discussions, Série, Jeux, Progrès, Profil) ; onglet actif = pilule verte derrière l'icône           | 3, 6, 7, 9 |
+| `SideRail`             | Ordinateur : rail de 72 px à gauche, mêmes entrées que `BottomNav`, plus Notifications ; Profil en bas                  | tous       |
+| `ChatListRow`          | Avatar 52 px, nom + badge IA, aperçu sur une ligne, heure, pastille verte des non lus ; séparateur décalé sous l'avatar | 3          |
+| `ContactRow`           | Avatar + point « en ligne », nom, rôle en capitales, dernier message, heure, badge non lus                              | 3          |
+| `StoryRing`            | Avatar dans un anneau vert (non vu) ou gris (vu)                                                                        | 3          |
+| `ChatBubble`           | Contact : surface-1 à gauche ; moi : accent à droite, coches de lecture                                                 | 4          |
+| `CorrectionCard`       | Libellé « PLUS NATUREL », phrase corrigée, explication, boutons « Répéter à voix haute » et « Ajouter au carnet »       | 4          |
+| `VoiceNote`            | Bouton lecture, barres d'onde, durée                                                                                    | 2, 4       |
+| `SuggestionChips`      | Pilules de réponses suggérées défilant à l'horizontale                                                                  | 4          |
+| `Composer`             | Champ arrondi + bouton micro vert (devient « Envoyer » quand on tape)                                                   | 4          |
+| `CallControls`         | Boutons ronds 60 à 64 px : micro, caméra, FR, haut-parleur, raccrocher                                                  | 5, 13      |
+| `LiveCaption`          | Carte sous-titre EN + traduction FR                                                                                     | 5, 13, 14  |
+| `EpisodeCard`          | Carte verte de l'épisode du jour, grand numéro en filigrane                                                             | 6          |
+| `GameTile`             | Icône, titre, compétence et durée, badge « Nouveau »                                                                    | 7          |
+| `TimerRing`            | Anneau de compte à rebours                                                                                              | 8          |
+| `StatTile`, `WeekBars` | Chiffre clé, barres des minutes par jour (jour courant en vert)                                                         | 9          |
+| `PlanOption`           | Carte radio d'offre, badge « Le plus choisi »                                                                           | 10         |
+| `ThemeSegmented`       | Système / Clair / Sombre                                                                                                | 16         |
+| `EmptyState`           | Illustration des bulles, titre, phrase, action                                                                          | 17         |
 
 Les composants vivent dans `packages/ui`, chacun avec une story (Storybook) en clair et en sombre.
 
@@ -81,24 +81,24 @@ Les composants vivent dans `packages/ui`, chacun avec une story (Storybook) en c
 
 On ne réinvente pas ce que les meilleures applis utilisent déjà. Tout composant de base vient d'une bibliothèque reconnue, habillée avec nos jetons.
 
-| Besoin | Bibliothèque (web) | Mobile V2 |
-| --- | --- | --- |
-| Composants de base (bouton, champ, modale, menu, onglets, bascule, case, radio, info-bulle, feuille du bas) | **shadcn/ui** sur **Radix UI** (accessibles, clavier, lecteurs d'écran) | **React Native Reusables** (mêmes API que shadcn) |
-| Styles | **Tailwind CSS** + `tailwind-merge` + `class-variance-authority` (variantes typées) | **NativeWind** |
-| Icônes | **Lucide** (`lucide-react`), trait 2 px, une seule famille dans toute l'appli | `lucide-react-native` |
-| Avatars | `Avatar` de shadcn/Radix : photo, puis initiales en repli | même composant natif |
-| Feuille du bas (mobile) | **Vaul** | `@gorhom/bottom-sheet` |
-| Notifications à l'écran (toasts) | **Sonner** | `sonner-native` |
-| Animations | **Motion** (ex-Framer Motion), courtes (150 à 250 ms), désactivées si `prefers-reduced-motion` | **Reanimated** |
-| Formulaires | **React Hook Form** + Zod | idem |
-| Données serveur, cache, synchronisation | **TanStack Query** | idem |
-| Listes longues (messages) | **TanStack Virtual** | `FlashList` |
-| État client léger | **Zustand** | idem |
-| Graphiques (progrès) | **Recharts** | `victory-native` |
-| Dates | **date-fns** (locale fr) | idem |
-| Traduction de l'interface | **next-intl** | `i18next` |
-| Lecteur audio, onde | **wavesurfer.js** | `react-native-audio-api` ou équivalent |
-| Polices | `next/font` (Space Grotesk, Inter auto-hébergées) | `expo-font` |
+| Besoin                                                                                                      | Bibliothèque (web)                                                                             | Mobile V2                                         |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Composants de base (bouton, champ, modale, menu, onglets, bascule, case, radio, info-bulle, feuille du bas) | **shadcn/ui** sur **Radix UI** (accessibles, clavier, lecteurs d'écran)                        | **React Native Reusables** (mêmes API que shadcn) |
+| Styles                                                                                                      | **Tailwind CSS** + `tailwind-merge` + `class-variance-authority` (variantes typées)            | **NativeWind**                                    |
+| Icônes                                                                                                      | **Lucide** (`lucide-react`), trait 2 px, une seule famille dans toute l'appli                  | `lucide-react-native`                             |
+| Avatars                                                                                                     | `Avatar` de shadcn/Radix : photo, puis initiales en repli                                      | même composant natif                              |
+| Feuille du bas (mobile)                                                                                     | **Vaul**                                                                                       | `@gorhom/bottom-sheet`                            |
+| Notifications à l'écran (toasts)                                                                            | **Sonner**                                                                                     | `sonner-native`                                   |
+| Animations                                                                                                  | **Motion** (ex-Framer Motion), courtes (150 à 250 ms), désactivées si `prefers-reduced-motion` | **Reanimated**                                    |
+| Formulaires                                                                                                 | **React Hook Form** + Zod                                                                      | idem                                              |
+| Données serveur, cache, synchronisation                                                                     | **TanStack Query**                                                                             | idem                                              |
+| Listes longues (messages)                                                                                   | **TanStack Virtual**                                                                           | `FlashList`                                       |
+| État client léger                                                                                           | **Zustand**                                                                                    | idem                                              |
+| Graphiques (progrès)                                                                                        | **Recharts**                                                                                   | `victory-native`                                  |
+| Dates                                                                                                       | **date-fns** (locale fr)                                                                       | idem                                              |
+| Traduction de l'interface                                                                                   | **next-intl**                                                                                  | `i18next`                                         |
+| Lecteur audio, onde                                                                                         | **wavesurfer.js**                                                                              | `react-native-audio-api` ou équivalent            |
+| Polices                                                                                                     | `next/font` (Space Grotesk, Inter auto-hébergées)                                              | `expo-font`                                       |
 
 Règles :
 
@@ -118,21 +118,21 @@ Règles :
 
 L'appli doit donner l'impression d'avoir été dessinée avec soin par une équipe, comme WhatsApp ou Revolut. À vérifier sur chaque écran avant fusion :
 
-| On enlève | On met à la place |
-| --- | --- |
-| Dégradés violets ou bleus, halos, effets « néon » gratuits | Aplats de la palette, un seul accent vert par écran |
-| Emojis utilisés comme icônes ou comme puces | Icônes Lucide, ou rien |
-| Icône « étincelles ✨ » pour signaler l'IA | Le badge texte « IA », sobre |
-| Cartes arrondies partout, ombres partout | Des listes et des séparateurs ; une carte seulement quand elle isole quelque chose |
-| Textes vagues (« Libérez votre potentiel », « Découvrez une expérience unique ») | Phrases concrètes et courtes (« Jade t'a écrit », « 12 expressions à revoir ») |
-| Faux chiffres, faux avis, « +10 000 utilisateurs » inventés | Seulement des chiffres réels |
-| Tout centré, tout de la même taille | Hiérarchie claire : un titre, une action principale, le reste discret |
-| Espacements irréguliers, alignements approximatifs | Grille de 4 px, mêmes marges sur tous les écrans |
-| Texte coupé, mots qui débordent, icônes de tailles différentes | Textes qui passent à la ligne, icônes en 20 ou 24 px uniquement |
-| Animations lentes ou rebondissantes partout | Une transition courte là où elle aide à comprendre (envoi d'un message, ouverture d'une feuille) |
-| Écrans vides ou blancs pendant le chargement | Squelettes, puis contenu |
-| Messages d'erreur techniques (« Error 500 ») | « Le message n'est pas parti. Touche pour réessayer. » |
-| Tutoiement et vouvoiement mélangés, majuscules au hasard | Tutoiement partout, majuscule seulement en début de phrase |
+| On enlève                                                                        | On met à la place                                                                                |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Dégradés violets ou bleus, halos, effets « néon » gratuits                       | Aplats de la palette, un seul accent vert par écran                                              |
+| Emojis utilisés comme icônes ou comme puces                                      | Icônes Lucide, ou rien                                                                           |
+| Icône « étincelles ✨ » pour signaler l'IA                                       | Le badge texte « IA », sobre                                                                     |
+| Cartes arrondies partout, ombres partout                                         | Des listes et des séparateurs ; une carte seulement quand elle isole quelque chose               |
+| Textes vagues (« Libérez votre potentiel », « Découvrez une expérience unique ») | Phrases concrètes et courtes (« Jade t'a écrit », « 12 expressions à revoir »)                   |
+| Faux chiffres, faux avis, « +10 000 utilisateurs » inventés                      | Seulement des chiffres réels                                                                     |
+| Tout centré, tout de la même taille                                              | Hiérarchie claire : un titre, une action principale, le reste discret                            |
+| Espacements irréguliers, alignements approximatifs                               | Grille de 4 px, mêmes marges sur tous les écrans                                                 |
+| Texte coupé, mots qui débordent, icônes de tailles différentes                   | Textes qui passent à la ligne, icônes en 20 ou 24 px uniquement                                  |
+| Animations lentes ou rebondissantes partout                                      | Une transition courte là où elle aide à comprendre (envoi d'un message, ouverture d'une feuille) |
+| Écrans vides ou blancs pendant le chargement                                     | Squelettes, puis contenu                                                                         |
+| Messages d'erreur techniques (« Error 500 »)                                     | « Le message n'est pas parti. Touche pour réessayer. »                                           |
+| Tutoiement et vouvoiement mélangés, majuscules au hasard                         | Tutoiement partout, majuscule seulement en début de phrase                                       |
 
 Détails qui font « vraie appli » :
 

@@ -106,11 +106,11 @@ Règles d'import : `app` → `features` → `entities` → `shared` → `package
 
 ### Bibliothèque de composants (`packages/ui`)
 
-| Niveau | Exemples | Règle |
-| --- | --- | --- |
+| Niveau     | Exemples                                                                              | Règle                                            |
+| ---------- | ------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | Primitives | `Button`, `Input`, `Dialog`, `Sheet`, `Avatar`, `Badge`, `Tabs`, `Switch`, `Skeleton` | Issues de shadcn/ui + Radix, variantes par `cva` |
-| Composants | `ChatBubble`, `CorrectionCard`, `ContactRow`, `VoiceNote`, `GameTile`, `PlanOption` | Composés de primitives, sans appel réseau |
-| Gabarits | `ChatLayout`, `TabLayout`, `CallLayout` | Mise en page des écrans |
+| Composants | `ChatBubble`, `CorrectionCard`, `ContactRow`, `VoiceNote`, `GameTile`, `PlanOption`   | Composés de primitives, sans appel réseau        |
+| Gabarits   | `ChatLayout`, `TabLayout`, `CallLayout`                                               | Mise en page des écrans                          |
 
 Chaque composant : un fichier, ses variantes typées, une story Storybook (clair et sombre), un test d'accessibilité. Aucun composant de `packages/ui` ne connaît l'API ni l'état global.
 
@@ -142,21 +142,21 @@ apps/api/src/modules/conversations/
 
 ## Modules de l'API (NestJS)
 
-| Module | Rôle |
-| --- | --- |
-| `auth` | OTP SMS, Google OAuth, JWT d'accès (15 min) + jeton de rafraîchissement rotatif (30 jours) |
-| `users` | Profil, objectif, niveau, réglages (thème, rappel, accent, économie de données, pause) |
-| `agents` | Catalogue des contacts IA, thèmes, fiches de personnalité |
-| `conversations` | Conversations, messages, corrections ; passerelle WebSocket |
-| `content` | Expressions, mots, épisodes, parcours 30 jours |
-| `games` | Parties, questions générées depuis le noyau, scores |
-| `reviews` | Révisions espacées (FSRS) |
-| `progress` | XP, niveau, séries de jours, statistiques |
-| `notifications` | Rappel quotidien, messages spontanés (≤ 1/jour), Web Push |
-| `billing` | Offres, abonnements, quotas, webhooks de paiement |
-| `media` | Téléversements signés vers Cloudinary (images, audio), transformations |
-| `admin` | Gestion du contenu et des agents (accès réservé) |
-| `health` | `/health/live`, `/health/ready` pour Kubernetes |
+| Module          | Rôle                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| `auth`          | OTP SMS, Google OAuth, JWT d'accès (15 min) + jeton de rafraîchissement rotatif (30 jours) |
+| `users`         | Profil, objectif, niveau, réglages (thème, rappel, accent, économie de données, pause)     |
+| `agents`        | Catalogue des contacts IA, thèmes, fiches de personnalité                                  |
+| `conversations` | Conversations, messages, corrections ; passerelle WebSocket                                |
+| `content`       | Expressions, mots, épisodes, parcours 30 jours                                             |
+| `games`         | Parties, questions générées depuis le noyau, scores                                        |
+| `reviews`       | Révisions espacées (FSRS)                                                                  |
+| `progress`      | XP, niveau, séries de jours, statistiques                                                  |
+| `notifications` | Rappel quotidien, messages spontanés (≤ 1/jour), Web Push                                  |
+| `billing`       | Offres, abonnements, quotas, webhooks de paiement                                          |
+| `media`         | Téléversements signés vers Cloudinary (images, audio), transformations                     |
+| `admin`         | Gestion du contenu et des agents (accès réservé)                                           |
+| `health`        | `/health/live`, `/health/ready` pour Kubernetes                                            |
 
 ## Flux clé : un message dans une conversation
 
@@ -198,25 +198,25 @@ sequenceDiagram
 
 ## Choix techniques et alternatives
 
-| Besoin | Choix | Pourquoi | Alternative |
-| --- | --- | --- | --- |
-| Front | Next.js 15 + Tailwind | Maîtrisé par l'équipe, SSR, PWA | Remix |
-| API | NestJS 11 | Modulaire, typé, WebSocket intégré | Fastify seul |
-| ORM | Prisma | Migrations, typage | Drizzle |
-| Base | PostgreSQL 16 | Fiable, JSONB, extensions | — |
-| Cache et files | Redis 7 + BullMQ (phase 2) ; pg-boss sur Postgres en phase 1, derrière la même interface `Queue` | Simple, éprouvé ; pg-boss évite un quota Redis gratuit | RabbitMQ |
-| Temps réel | Socket.IO (une instance en phase 1) + adaptateur Redis (plusieurs réplicas en phase 2) | Reconnexion, salles, multi-réplicas | WebSocket natif |
-| Appels | LiveKit (V2) | Open source, SDK web et mobile | Agora |
-| Mobile | Expo (V2) | Partage de code TypeScript | Flutter |
-| Recherche | PostgreSQL (trigram) | Suffisant au MVP | Meilisearch |
-| Médias (images, audio) | **Cloudinary** (derrière l'interface `MediaStorage`) | Transformations d'images, CDN, offre gratuite | Stockage S3 |
-| E-mails et SMS | **Brevo** (derrière les interfaces `Mailer` et `SmsSender`) | E-mails transactionnels et SMS OTP, offre gratuite pour les e-mails | Resend, Twilio |
+| Besoin                 | Choix                                                                                            | Pourquoi                                                            | Alternative     |
+| ---------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | --------------- |
+| Front                  | Next.js 15 + Tailwind                                                                            | Maîtrisé par l'équipe, SSR, PWA                                     | Remix           |
+| API                    | NestJS 11                                                                                        | Modulaire, typé, WebSocket intégré                                  | Fastify seul    |
+| ORM                    | Prisma                                                                                           | Migrations, typage                                                  | Drizzle         |
+| Base                   | PostgreSQL 16                                                                                    | Fiable, JSONB, extensions                                           | —               |
+| Cache et files         | Redis 7 + BullMQ (phase 2) ; pg-boss sur Postgres en phase 1, derrière la même interface `Queue` | Simple, éprouvé ; pg-boss évite un quota Redis gratuit              | RabbitMQ        |
+| Temps réel             | Socket.IO (une instance en phase 1) + adaptateur Redis (plusieurs réplicas en phase 2)           | Reconnexion, salles, multi-réplicas                                 | WebSocket natif |
+| Appels                 | LiveKit (V2)                                                                                     | Open source, SDK web et mobile                                      | Agora           |
+| Mobile                 | Expo (V2)                                                                                        | Partage de code TypeScript                                          | Flutter         |
+| Recherche              | PostgreSQL (trigram)                                                                             | Suffisant au MVP                                                    | Meilisearch     |
+| Médias (images, audio) | **Cloudinary** (derrière l'interface `MediaStorage`)                                             | Transformations d'images, CDN, offre gratuite                       | Stockage S3     |
+| E-mails et SMS         | **Brevo** (derrière les interfaces `Mailer` et `SmsSender`)                                      | E-mails transactionnels et SMS OTP, offre gratuite pour les e-mails | Resend, Twilio  |
 
 ## Budget de performance
 
-| Mesure | Cible |
-| --- | --- |
-| LCP sur mobile 3G rapide | < 2,5 s |
-| Poids JS initial | < 180 Ko compressés |
-| p95 des routes REST | < 300 ms (hors IA) |
+| Mesure                                 | Cible                  |
+| -------------------------------------- | ---------------------- |
+| LCP sur mobile 3G rapide               | < 2,5 s                |
+| Poids JS initial                       | < 180 Ko compressés    |
+| p95 des routes REST                    | < 300 ms (hors IA)     |
 | Délai de la réponse d'un agent (texte) | p50 < 2,5 s, p95 < 6 s |
