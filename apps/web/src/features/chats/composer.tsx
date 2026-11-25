@@ -17,6 +17,10 @@ import { formatDuration, useVoiceRecorder, type VoiceClip } from './use-voice-re
 
 const c = fr.conversation;
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const PREVIEWABLE = /^image\/(png|jpe?g|webp|gif|heic|heif|avif)$/;
+
+/** Aperçu local seulement : une URL `blob:` créée ici, jamais le SVG ni une adresse venue d'ailleurs. */
+const isLocalBlob = (url: string | null): url is string => url !== null && url.startsWith('blob:');
 
 /** Ce qui attend dans la barre avant l'envoi : un vocal enregistré ou un fichier choisi. */
 export type Draft =
@@ -87,7 +91,7 @@ export function Composer({
     setDraft({
       kind: 'file',
       file,
-      url: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+      url: PREVIEWABLE.test(file.type) ? URL.createObjectURL(file) : null,
     });
   };
 
@@ -269,7 +273,7 @@ function DraftPreview({ draft, onRemove }: { draft: Draft; onRemove: () => void 
         </>
       ) : (
         <>
-          {draft.url ? (
+          {isLocalBlob(draft.url) ? (
             <img
               src={draft.url}
               alt={draft.file.name}

@@ -133,6 +133,14 @@ describe('Composer', () => {
     expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
 
+  it("n'affiche pas d'aperçu pour un SVG, qui peut contenir du code", () => {
+    render(<Composer onSend={vi.fn()} />);
+    choose('photo-input', new File(['<svg/>'], 'logo.svg', { type: 'image/svg+xml' }));
+    expect(screen.getByText('logo.svg')).toBeTruthy();
+    expect(screen.queryByRole('img')).toBeNull();
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+  });
+
   it('refuse un fichier de plus de 10 Mo', () => {
     render(<Composer onSend={vi.fn()} />);
     const big = new File(['x'], 'gros.pdf');
