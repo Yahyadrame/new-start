@@ -21,6 +21,7 @@ import {
 import { dayLabel } from './chats-format';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
+import { useKeyboardInset } from './use-keyboard-inset';
 import { MessageBubble } from './message-bubble';
 import { PendingBubble, type PendingMessage } from './pending-bubble';
 import { TypingBubble } from './typing-bubble';
@@ -205,6 +206,8 @@ export function ConversationScreen({
     viewport.addEventListener('resize', stick);
     return () => viewport.removeEventListener('resize', stick);
   }, []);
+
+  useKeyboardInset();
 
   const retry = () => {
     setError(false);

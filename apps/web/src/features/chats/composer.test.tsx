@@ -170,3 +170,10 @@ describe('Composer', () => {
     expect(new Set(EMOJIS).size).toBe(EMOJIS.length);
   });
 });
+
+describe('Composer, clavier mobile', () => {
+  it('se colle au-dessus du clavier grâce à --kb', () => {
+    const { container } = render(<Composer onSend={vi.fn()} />);
+    expect((container.firstChild as HTMLElement).className).toContain('bottom-[var(--kb,0px)]');
+  });
+});
