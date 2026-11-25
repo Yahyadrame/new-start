@@ -36,7 +36,14 @@
   L.PALETTES.forEach((p) => $('palette').add(new Option(p, p)));
   function draw() {
     const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
-    $('grid').innerHTML = L.LIBRARY.map((a) => `<figure>${L.lib(a.slug, $('variant').value, theme, $('shape').value, $('palette').value || undefined)}${a.slug}</figure>`).join('');
+    const parser = new DOMParser();
+    const figures = L.LIBRARY.map((a) => {
+      const svg = parser.parseFromString(L.lib(a.slug, $('variant').value, theme, $('shape').value, $('palette').value || undefined), 'image/svg+xml').documentElement;
+      const figure = document.createElement('figure');
+      figure.append(svg, a.slug);
+      return figure;
+    });
+    $('grid').replaceChildren(...figures);
     $('count').textContent = `${L.LIBRARY.length} silhouettes, ${L.PALETTES.length} palettes, ${N.VARIANTS.length} variantes, 2 formes, 2 thèmes : ${(L.LIBRARY.length * L.PALETTES.length * N.VARIANTS.length * 2 * 2).toLocaleString('fr-FR')} combinaisons.`;
   }
   $('theme').onclick = () => { const d = document.body.classList.toggle('dark'); $('theme').textContent = d ? 'Sombre' : 'Clair'; $('theme').setAttribute('aria-pressed', d); draw(); };
