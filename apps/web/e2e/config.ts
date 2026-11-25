@@ -35,7 +35,20 @@ export function buildConfig(
     forbidOnly: Boolean(env.CI),
     retries: env.CI ? 1 : 0,
     reporter: env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
-    use: { baseURL: `http://localhost:${port}`, trace: 'on-first-retry' },
+    use: {
+      baseURL: `http://localhost:${port}`,
+      trace: 'on-first-retry',
+      // L'écran de démarrage est coupé par défaut ; son propre test l'active.
+      storageState: {
+        cookies: [],
+        origins: [
+          {
+            origin: `http://localhost:${port}`,
+            localStorage: [{ name: 'ns.splash', value: 'off' }],
+          },
+        ],
+      },
+    },
     projects,
     // Le site doit être construit avant (`pnpm build`) ; la CI le fait dans une étape à part.
     webServer: {
