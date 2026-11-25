@@ -31,6 +31,7 @@ function fake(rows: unknown[]) {
       findMany: vi.fn(),
       findFirst: vi.fn(),
       findUnique: vi.fn(),
+      findUniqueOrThrow: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
       updateMany: vi.fn(),
@@ -205,6 +206,49 @@ describe('PrismaConversationsStore', () => {
         data: { text: '', translationFr: null, deletedAt: expect.any(Date) },
       });
       expect(db.$transaction).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('editMessage', () => {
+    it('ne touche à rien quand le message n’est pas un message vivant de cette personne', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue(null);
+      expect(await store.editMessage('u1', 'm9', 'Hi')).toBeNull();
+      expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
+        id: 'm9',
+        author: 'USER',
+        deletedAt: null,
+        conversation: { userId: 'u1' },
+      });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('ne change rien quand le texte est le même', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue({ text: 'Hi', conversationId: 'c1' });
+      db.message.findUniqueOrThrow.mockResolvedValue({ id: 'm1' });
+      expect(await store.editMessage('u1', 'm1', 'Hi')).toEqual({
+        row: { id: 'm1' },
+        conversationId: 'c1',
+        changed: false,
+      });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('remplace le texte, date la modification et efface la correction', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue({ text: 'Hi', conversationId: 'c1' });
+      db.$transaction.mockResolvedValue([{ count: 1 }, { id: 'm1' }]);
+      expect(await store.editMessage('u1', 'm1', 'Hello')).toEqual({
+        row: { id: 'm1' },
+        conversationId: 'c1',
+        changed: true,
+      });
+      expect(db.correction.deleteMany).toHaveBeenCalledWith({ where: { messageId: 'm1' } });
+      expect(db.message.update.mock.calls[0]?.[0]).toMatchObject({
+        where: { id: 'm1' },
+        data: { text: 'Hello', editedAt: expect.any(Date) },
+      });
     });
   });
 

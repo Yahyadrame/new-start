@@ -39,6 +39,7 @@ const messageSelect = {
   translationFr: true,
   createdAt: true,
   deletedAt: true,
+  editedAt: true,
   correction: { select: { better: true, whyFr: true } },
   replyTo: { select: { id: true, author: true, text: true, deletedAt: true } },
 } as const;
@@ -162,6 +163,30 @@ export class PrismaConversationsStore implements ConversationsStore {
       take: limit,
       select: messageSelect,
     });
+  }
+
+  async editMessage(userId: string, messageId: string, text: string) {
+    const found = await this.db.message.findFirst({
+      where: { id: messageId, author: 'USER', deletedAt: null, conversation: { userId } },
+      select: { text: true, conversationId: true },
+    });
+    if (!found) return null;
+    if (found.text === text) {
+      const row = await this.db.message.findUniqueOrThrow({
+        where: { id: messageId },
+        select: messageSelect,
+      });
+      return { row, conversationId: found.conversationId, changed: false };
+    }
+    const [, row] = await this.db.$transaction([
+      this.db.correction.deleteMany({ where: { messageId } }),
+      this.db.message.update({
+        where: { id: messageId },
+        data: { text, editedAt: new Date() },
+        select: messageSelect,
+      }),
+    ]);
+    return { row, conversationId: found.conversationId, changed: true };
   }
 
   async deleteMessage(userId: string, messageId: string) {

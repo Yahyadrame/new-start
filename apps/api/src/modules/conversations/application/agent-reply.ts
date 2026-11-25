@@ -31,14 +31,24 @@ export interface AgentReplyStore {
   /** Null si le message n'existe plus ou a déjà reçu sa réponse (la correction en est la trace). */
   context(conversationId: string, messageId: string): Promise<ReplyContext | null>;
   /** Enregistre la correction du message, puis la réponse de l'agent, ensemble ; sans effet si déjà fait. */
-  saveReply(conversationId: string, messageId: string, reply: AgentReply): Promise<void>;
+  saveReply(
+    conversationId: string,
+    messageId: string,
+    reply: AgentReply,
+    options?: ReplyOptions,
+  ): Promise<void>;
   /** Ajoute le message système d'échec. */
   saveFailure(conversationId: string): Promise<void>;
 }
 
+/** `correctionOnly` : un message modifié reçoit une nouvelle correction, mais pas de nouvelle réponse. */
+export interface ReplyOptions {
+  correctionOnly?: boolean;
+}
+
 /** Ce que `ConversationsService` appelle après un envoi ; rend la main tout de suite. */
 export interface ReplyScheduler {
-  schedule(conversationId: string, messageId: string): void;
+  schedule(conversationId: string, messageId: string, options?: ReplyOptions): void;
 }
 
 const log = new Logger('AgentReply');
@@ -50,17 +60,18 @@ export class AgentReplyService implements ReplyScheduler {
     private readonly sleep?: (ms: number) => Promise<void>,
   ) {}
 
-  schedule(conversationId: string, messageId: string) {
-    this.reply(conversationId, messageId).catch((error: unknown) =>
+  schedule(conversationId: string, messageId: string, options: ReplyOptions = {}) {
+    this.reply(conversationId, messageId, options).catch((error: unknown) =>
       log.error(`La réponse de l'agent a échoué : ${error instanceof Error ? error.message : ''}`),
     );
   }
 
-  async reply(conversationId: string, messageId: string) {
+  async reply(conversationId: string, messageId: string, options: ReplyOptions = {}) {
     const context = await this.store.context(conversationId, messageId);
     if (!context) return;
     const last = context.history.at(-1);
     if (last?.author === 'USER' && detectDistress(last.text)) {
+      if (options.correctionOnly) return;
       // Cas de détresse : l'agent sort du jeu, sans appel à l'IA ni correction (docs/09-ia-agents.md).
       await this.store.saveReply(conversationId, messageId, {
         reply: DISTRESS_REPLY_FR,
@@ -93,10 +104,11 @@ export class AgentReplyService implements ReplyScheduler {
       );
     } catch (error) {
       log.warn(`Pas de réponse de l'IA (${AGENT_PROMPT_VERSION}) : ${String(error)}`);
-      await this.store.saveFailure(conversationId);
+      // Une correction manquée après une modification n'a rien à signaler : le message n'a simplement pas de correction.
+      if (!options.correctionOnly) await this.store.saveFailure(conversationId);
       return;
     }
-    await this.store.saveReply(conversationId, messageId, answer);
+    await this.store.saveReply(conversationId, messageId, answer, options);
     log.log(`Réponse enregistrée (${AGENT_PROMPT_VERSION}, ${answer.fix ? 'corrigé' : 'parfait'})`);
   }
 }

@@ -13,6 +13,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     send: vi.fn(),
     markRead: vi.fn(),
     deleteMessage: vi.fn(),
+    editMessage: vi.fn(),
     search: vi.fn().mockResolvedValue([]),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
@@ -69,6 +70,7 @@ describe('ConversationsService.messages', () => {
     createdAt: new Date(Date.UTC(2026, 10, 20, 10, 60 - n)),
     correction: null,
     replyTo: null,
+    editedAt: null,
     deletedAt: null,
   });
   const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
@@ -136,6 +138,7 @@ describe('ConversationsService.send', () => {
     createdAt: new Date('2026-11-20T10:00:00.000Z'),
     correction: null,
     replyTo: null,
+    editedAt: null,
     deletedAt: null,
   };
 
@@ -166,6 +169,7 @@ describe('ConversationsService.send', () => {
         correction: null,
         replyTo: null,
         deleted: false,
+        edited: false,
         createdAt: '2026-11-20T10:00:00.000Z',
       },
       created: true,
@@ -283,6 +287,52 @@ describe('ConversationsService.search', () => {
     expect(store.deleteMessage).toHaveBeenCalledWith('u1', ID);
   });
 
+  it('modifie le texte et relance la correction seule', async () => {
+    const { store } = setup(null);
+    const schedule = vi.fn();
+    const service = new ConversationsService(store, () => 2026, { schedule });
+    const row = {
+      id: ID,
+      author: 'USER',
+      text: 'I go home',
+      translationFr: null,
+      createdAt: new Date('2026-11-25T10:00:00Z'),
+      correction: null,
+      replyTo: null,
+      deletedAt: null,
+      editedAt: new Date('2026-11-25T10:05:00Z'),
+    };
+    vi.mocked(store.editMessage).mockResolvedValue({
+      row: row as never,
+      conversationId: 'c1',
+      changed: true,
+    });
+    const item = await service.edit('u1', ID, 'I went home');
+    expect(item.edited).toBe(true);
+    expect(schedule).toHaveBeenCalledWith('c1', ID, { correctionOnly: true });
+  });
+
+  it('ne relance rien quand le texte est le même', async () => {
+    const { store } = setup(null);
+    const schedule = vi.fn();
+    const service = new ConversationsService(store, () => 2026, { schedule });
+    vi.mocked(store.editMessage).mockResolvedValue({
+      row: { id: ID, author: 'USER', text: 'Hi', createdAt: new Date(), editedAt: null } as never,
+      conversationId: 'c1',
+      changed: false,
+    });
+    expect((await service.edit('u1', ID, 'Hi')).edited).toBe(false);
+    expect(schedule).not.toHaveBeenCalled();
+  });
+
+  it('répond 404 pour une modification sur un message inconnu ou un faux identifiant', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.editMessage).mockResolvedValue(null);
+    await expect(service.edit('u1', ID, 'x')).rejects.toMatchObject({ status: 404 });
+    await expect(service.edit('u1', 'nope', 'x')).rejects.toMatchObject({ status: 404 });
+    expect(store.editMessage).toHaveBeenCalledTimes(1);
+  });
+
   it('répond 404 pour un message absent, déjà supprimé ou qui n’est pas à elle', async () => {
     const { store, service } = setup(null);
     vi.mocked(store.deleteMessage).mockResolvedValue(false);
@@ -310,6 +360,7 @@ describe('ConversationsService.search', () => {
         deletedAt: new Date('2026-11-25T11:00:00Z'),
         correction: null,
         replyTo: null,
+        editedAt: null,
       },
     ]);
     const page = await service.messages('u1', ID);
