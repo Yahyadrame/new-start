@@ -13,6 +13,7 @@ const message = (over: Partial<MessageItem>): MessageItem => ({
   translationFr: null,
   createdAt: '2026-11-20T10:00:00.000Z',
   correction: null,
+  replyTo: null,
   deleted: false,
   ...over,
 });

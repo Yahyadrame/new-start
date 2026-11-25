@@ -9,6 +9,7 @@ const m = (id: string, author: MessageItem['author'], createdAt: string): Messag
   translationFr: null,
   createdAt,
   correction: null,
+  replyTo: null,
   deleted: false,
 });
 
