@@ -16,7 +16,9 @@ test('de Bienvenue à Inscription', async ({ page }) => {
 
   await page.getByRole('link', { name: fr.welcome.start }).click();
   await expect(page).toHaveURL(/\/signup$/);
-  await expect(page.getByRole('heading', { level: 1, name: fr.signup.title })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: fr.signup.titles.identity }),
+  ).toBeVisible();
   await expectAccessible(page);
 });
 

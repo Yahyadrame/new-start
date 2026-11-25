@@ -45,6 +45,8 @@ test("l'écran Code de l'inscription est accessible", async ({ page }) => {
         firstName: 'Awa',
         phone: '+221771234567',
         goal: 'TRAVEL',
+        goals: ['TRAVEL'],
+        interests: [],
         birthYear: 2000,
         acceptTerms: true,
         smsOptIn: false,

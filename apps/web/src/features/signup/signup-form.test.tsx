@@ -13,12 +13,28 @@ const t = fr.signup;
 function fill(label: string, value: string) {
   fireEvent.change(screen.getByLabelText(label), { target: { value } });
 }
-function fillAll() {
+const next = () => fireEvent.click(screen.getByRole('button', { name: t.next }));
+// Le nom accessible d'une carte contient aussi son aide : on cherche par le début.
+const chip = (label: string) =>
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${label}`) }));
+async function identity() {
   fill(t.firstName, 'Awa');
   fill(t.phone, '77 123 45 67');
   fill(t.birthYear, '2000');
   fill(t.email, 'awa@example.com');
-  fireEvent.click(screen.getByLabelText(t.goals.WORK.label, { exact: false }));
+  next();
+  await screen.findByText(t.titles.goals);
+}
+/** Mène la personne jusqu'à la dernière étape, avec un objectif et un centre d'intérêt. */
+async function fillAll() {
+  await identity();
+  chip(t.goals.WORK.label);
+  chip(t.goals.TRAVEL.label);
+  next();
+  await screen.findByText(t.titles.interests);
+  chip(t.interests.MUSIC);
+  next();
+  await screen.findByText(t.titles.consent);
   fireEvent.click(screen.getByLabelText(t.acceptTerms));
 }
 const submit = () => fireEvent.click(screen.getByRole('button', { name: t.submit }));
@@ -41,33 +57,88 @@ afterEach(cleanup);
 describe('SignupForm', () => {
   it('laisse les SMS et la voix décochés par défaut', () => {
     render(<SignupForm />);
-    expect((screen.getByLabelText(t.smsOptIn) as HTMLInputElement).checked).toBe(false);
-    expect((screen.getByLabelText(t.voiceConsent) as HTMLInputElement).checked).toBe(false);
+    expect(
+      (screen.getByLabelText(t.smsOptIn, { selector: 'input' }) as HTMLInputElement).checked,
+    ).toBe(false);
+    expect(
+      (screen.getByLabelText(t.voiceConsent, { selector: 'input' }) as HTMLInputElement).checked,
+    ).toBe(false);
   });
-  it('affiche les erreurs en français sans appeler l’API', async () => {
+  it('bloque la première étape et dit pourquoi, sans appeler l’API', async () => {
     render(<SignupForm />);
-    submit();
+    next();
     expect(await screen.findByText(t.errors.firstName)).toBeTruthy();
     expect(screen.getByText(t.errors.phone)).toBeTruthy();
-    expect(screen.getByText(t.errors.goal)).toBeTruthy();
-    expect(screen.getByText(t.errors.acceptTerms)).toBeTruthy();
+    expect(screen.getByText(t.errors.birthYear)).toBeTruthy();
+    expect(screen.getByText(t.errors.email)).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(t.titles.identity);
     expect(requestCode).not.toHaveBeenCalled();
   });
-  it('envoie le profil nettoyé puis passe au code', async () => {
+  it('demande au moins un objectif avant d’avancer', async () => {
+    render(<SignupForm />);
+    await identity();
+    next();
+    expect(await screen.findByText(t.errors.goal)).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(t.titles.goals);
+  });
+  it('refuse l’envoi sans les conditions', async () => {
+    render(<SignupForm />);
+    await fillAll();
+    fireEvent.click(screen.getByLabelText(t.acceptTerms));
+    submit();
+    expect(await screen.findByText(t.errors.acceptTerms)).toBeTruthy();
+    expect(requestCode).not.toHaveBeenCalled();
+  });
+  it('envoie le profil avec tous les choix, le premier objectif devenant le principal', async () => {
     requestCode.mockResolvedValue(undefined);
     render(<SignupForm />);
-    fillAll();
+    await fillAll();
     submit();
     await waitFor(() => expect(push).toHaveBeenCalledWith('/signup/code'));
     expect(loadPendingSignup()?.email).toBe('awa@example.com');
     expect(requestCode).toHaveBeenCalledWith(
-      expect.objectContaining({ phone: '+221771234567', birthYear: 2000, goal: 'WORK' }),
+      expect.objectContaining({
+        phone: '+221771234567',
+        birthYear: 2000,
+        goal: 'WORK',
+        goals: ['WORK', 'TRAVEL'],
+        interests: ['MUSIC'],
+      }),
     );
+  });
+  it('laisse passer l’étape des centres d’intérêt', async () => {
+    requestCode.mockResolvedValue(undefined);
+    render(<SignupForm />);
+    await identity();
+    chip(t.goals.FRIENDS.label);
+    next();
+    await screen.findByText(t.titles.interests);
+    fireEvent.click(screen.getByRole('button', { name: t.skip }));
+    fireEvent.click(await screen.findByLabelText(t.acceptTerms));
+    submit();
+    await waitFor(() => expect(requestCode).toHaveBeenCalled());
+    expect(requestCode).toHaveBeenCalledWith(
+      expect.objectContaining({ goal: 'FRIENDS', interests: [] }),
+    );
+  });
+  it('revient en arrière sans rien perdre, puis ramène à l’accueil depuis la première étape', async () => {
+    render(<SignupForm />);
+    await identity();
+    fireEvent.click(screen.getByRole('button', { name: t.back }));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(t.titles.identity);
+    expect((screen.getByLabelText(t.firstName) as HTMLInputElement).value).toBe('Awa');
+    expect(screen.getByRole('link', { name: t.back }).getAttribute('href')).toBe('/');
+  });
+  it('indique l’étape en cours', async () => {
+    render(<SignupForm />);
+    expect(screen.getByRole('img', { name: 'Étape 1 sur 4' })).toBeTruthy();
+    await identity();
+    expect(screen.getByRole('img', { name: 'Étape 2 sur 4' })).toBeTruthy();
   });
   it('garde la saisie et prévient quand l’envoi échoue', async () => {
     requestCode.mockRejectedValue(new Error('réseau'));
     render(<SignupForm />);
-    fillAll();
+    await fillAll();
     submit();
     expect(await screen.findByText(t.errors.server)).toBeTruthy();
     expect(push).not.toHaveBeenCalled();
@@ -86,14 +157,9 @@ describe('SignupForm : choix guidés', () => {
     expect(options[0]?.value).toBe(String(year - 13));
     expect(options.at(-1)?.value).toBe(String(year - 100));
   });
-  it('refuse l’envoi tant qu’aucune année n’est choisie', async () => {
+  it('renvoie vers les conditions et la politique de confidentialité', async () => {
     render(<SignupForm />);
-    submit();
-    expect(await screen.findByText(t.errors.birthYear)).toBeTruthy();
-  });
-
-  it('renvoie vers les conditions et la politique de confidentialité', () => {
-    render(<SignupForm />);
+    await fillAll();
     expect(screen.getByRole('link', { name: fr.signup.termsLink }).getAttribute('href')).toBe(
       '/terms',
     );

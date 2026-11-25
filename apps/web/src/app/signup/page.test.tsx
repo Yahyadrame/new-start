@@ -9,6 +9,6 @@ const { default: SignupPage } = await import('./page');
 describe('/signup', () => {
   it("affiche l'écran d'inscription", () => {
     render(<SignupPage />);
-    expect(screen.getByRole('button', { name: 'Recevoir mon code' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Continuer' })).toBeTruthy();
   });
 });

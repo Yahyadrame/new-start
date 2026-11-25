@@ -96,6 +96,6 @@ _Ajouté le 2026-11-17 : le jeton d'accès vit en mémoire ; recharger `/onboard
 _Ajouté le 2026-11-25 : le porteur trouve l'inscription trop basique et veut cocher plusieurs choix, comme sur TikTok ou Instagram (validé : « continuer avec l'inscription")._
 
 - [x] API et base : `goals` (4 au plus, 8 objectifs) et `interests` (8 au plus, 16 centres d'intérêt), facultatifs, migration additive, `goal` reste l'objectif principal.
-- [ ] Écran en étapes : 1 identité (prénom, pays et numéro, année de naissance, e-mail) ; 2 objectifs à cocher ; 3 centres d'intérêt à cocher ; 4 consentements et envoi. Barre de progression, bouton Retour, rien de perdu en revenant en arrière.
-- [ ] Puces à cocher façon réseaux sociaux (≥ 44 px, `aria-pressed`, compteur « 2 sur 4 »), thèmes clair et sombre, textes humanisés.
-- [ ] Tests unitaires de chaque étape et du parcours ; mise à jour de `docs/05-ecrans.md`.
+- [x] Écran en étapes : 1 identité (prénom, pays et numéro, année de naissance, e-mail) ; 2 objectifs à cocher ; 3 centres d'intérêt à cocher ; 4 consentements et envoi. Barre de progression, bouton Retour, rien de perdu en revenant en arrière.
+- [x] Puces à cocher façon réseaux sociaux (≥ 44 px, `aria-pressed`, compteur « 2 sur 4 »), thèmes clair et sombre, textes humanisés.
+- [x] Tests unitaires de chaque étape et du parcours ; mise à jour de `docs/05-ecrans.md`.
