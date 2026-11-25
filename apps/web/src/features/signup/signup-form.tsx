@@ -1,12 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SIGNUP_GOALS, SIGNUP_INTERESTS } from '@newstart/shared';
+import { SIGNUP_GOALS, SIGNUP_INTERESTS, SignupProfile } from '@newstart/shared';
 import { Button, Input, Select } from '@newstart/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { GoogleButton } from '../../shared/auth/google-button';
 import fr from '../../shared/i18n/fr.json';
 import { ChoiceChips } from './choice-chips';
 import { PhoneField } from './phone-field';
@@ -59,6 +60,7 @@ function FieldError({ id, children }: { id: string; children?: ReactNode }) {
 export function SignupForm() {
   const router = useRouter();
   const [failed, setFailed] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const {
     register,
@@ -66,6 +68,7 @@ export function SignupForm() {
     handleSubmit,
     trigger,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormInput, unknown, SignupFormValues>({
     resolver: zodResolver(SignupFormSchema),
@@ -266,9 +269,27 @@ export function SignupForm() {
 
         <FieldError id="server-note">{failed && t.errors.server}</FieldError>
         {last ? (
-          <Button type="submit" size="lg" disabled={isSubmitting}>
-            {isSubmitting ? t.sending : t.submit}
-          </Button>
+          <>
+            <Button type="submit" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? t.sending : t.submit}
+            </Button>
+            <GoogleButton
+              redirectTo="/onboarding/level"
+              getProfile={() => {
+                const form = SignupFormSchema.safeParse(getValues());
+                // Google fournit l'e-mail : le profil partagé (strict) ne le prend pas.
+                const rest = Object.entries(form.success ? form.data : {}).filter(
+                  ([key]) => key !== 'email',
+                );
+                const profile = form.success
+                  ? SignupProfile.safeParse(Object.fromEntries(rest))
+                  : null;
+                return profile?.success ? profile.data : null;
+              }}
+              onError={setGoogleError}
+            />
+            <FieldError id="google-note">{googleError}</FieldError>
+          </>
         ) : (
           <>
             <Button type="button" size="lg" onClick={() => void next()}>
