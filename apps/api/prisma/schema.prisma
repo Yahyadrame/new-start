@@ -77,6 +77,7 @@ model User {
   refreshTokens     RefreshToken[]
   conversations     Conversation[]
   contactAvatars    ContactAvatar[]
+  contactVariants   ContactVariant[]
   levelAnswers      LevelTestAnswer[]
   notebook          NotebookEntry[]
   reviewCards       ReviewCard[]
@@ -141,29 +142,30 @@ model Topic {
 }
 
 model Agent {
-  id             String          @id @default(uuid(7)) @db.Uuid
-  slug           String          @unique
-  name           String
-  initials       String
-  category       String // "Quotidien" | "Pro" | "Business" | "Voyage" | thème
-  topicId        String?         @db.Uuid
-  roleFr         String // "Coloc · familier"
-  persona        String // description utilisée dans le prompt
-  style          String
-  voiceId        String // voix TTS fixe
-  accent         String // "en-US", "en-GB", "en-NG"…
-  bioFr          String          @default("") // présentation affichée sur la fiche
-  interests      String[] // centres d'intérêt affichés sur la fiche
-  level          String          @default("B1") // niveau de langue du contact : A2, B1, B2 ou C1
-  firstMessage   String
-  suggestions    String[]
-  isPremium      Boolean         @default(false)
-  isActive       Boolean         @default(true)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  topic          Topic?          @relation(fields: [topicId], references: [id])
-  conversations  Conversation[]
-  contactAvatars ContactAvatar[]
+  id              String           @id @default(uuid(7)) @db.Uuid
+  slug            String           @unique
+  name            String
+  initials        String
+  category        String // "Quotidien" | "Pro" | "Business" | "Voyage" | thème
+  topicId         String?          @db.Uuid
+  roleFr          String // "Coloc · familier"
+  persona         String // description utilisée dans le prompt
+  style           String
+  voiceId         String // voix TTS fixe
+  accent          String // "en-US", "en-GB", "en-NG"…
+  bioFr           String           @default("") // présentation affichée sur la fiche
+  interests       String[] // centres d'intérêt affichés sur la fiche
+  level           String           @default("B1") // niveau de langue du contact : A2, B1, B2 ou C1
+  firstMessage    String
+  suggestions     String[]
+  isPremium       Boolean          @default(false)
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  topic           Topic?           @relation(fields: [topicId], references: [id])
+  conversations   Conversation[]
+  contactAvatars  ContactAvatar[]
+  contactVariants ContactVariant[]
 
   @@index([topicId])
 }
@@ -177,6 +179,20 @@ model ContactAvatar {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, agentId])
+}
+
+model ContactVariant {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  userId     String   @db.Uuid
+  agentId    String   @db.Uuid
+  tone       String? // ton choisi pour ce contact : familier, neutre ou soigne
+  difficulty String? // niveau choisi pour ce contact : A2, B1, B2 ou C1
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
 
   @@unique([userId, agentId])
 }
