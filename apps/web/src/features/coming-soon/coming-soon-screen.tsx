@@ -7,7 +7,7 @@ const t = fr.comingSoon;
 /** Écran provisoire des onglets Série, Jeux et Progrès : la barre du bas ne mène plus à une page introuvable. */
 export function ComingSoonScreen({ title }: Readonly<{ title: string }>) {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-14 pb-28">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 pt-12 pb-28">
       <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
           {title}

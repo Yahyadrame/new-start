@@ -19,6 +19,11 @@ describe('ComingSoonScreen', () => {
     );
   });
 
+  it('prend les mêmes marges que les autres écrans (16 px)', () => {
+    render(<ComingSoonScreen title="Série" />);
+    expect(screen.getByRole('main').className).toContain('px-4');
+  });
+
   it('garde la barre d’onglets du bas', () => {
     render(<ComingSoonScreen title="Série" />);
     expect(screen.getByRole('navigation', { name: 'Navigation principale' })).toBeTruthy();
