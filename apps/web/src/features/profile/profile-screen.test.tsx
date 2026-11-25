@@ -176,6 +176,12 @@ describe('ProfileScreen', () => {
     expect(screen.getByText(fr.push.failed)).toBeTruthy();
   });
 
+  it('enregistre le fond de conversation choisi', async () => {
+    await open();
+    fireEvent.click(screen.getByRole('button', { name: fr.chatBackground.names.GRID }));
+    await waitFor(() => expect(patchMe).toHaveBeenCalledWith('tok', { chatBackground: 'GRID' }));
+  });
+
   it('active l’économie de données', async () => {
     await open();
     fireEvent.click(screen.getByRole('switch', { name: t.data.saver }));

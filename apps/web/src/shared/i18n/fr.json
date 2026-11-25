@@ -551,5 +551,20 @@
         }
       ]
     }
+  },
+  "chatBackground": {
+    "title": "Fond des conversations",
+    "names": {
+      "NONE": "Uni",
+      "TINT": "Citron doux",
+      "DOTS": "Points",
+      "GRID": "Grille",
+      "RULED": "Cahier",
+      "DIAGONAL": "Diagonales",
+      "HONEYCOMB": "Alvéoles",
+      "WAVES": "Ondes",
+      "DIAMONDS": "Losanges",
+      "CIRCLES": "Cercles"
+    }
   }
 }

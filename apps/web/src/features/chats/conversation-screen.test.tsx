@@ -10,6 +10,7 @@ const sendMessage = vi.fn();
 const markConversationRead = vi.fn();
 const addToNotebook = vi.fn();
 const translateMessage = vi.fn();
+const getChatBackground = vi.fn();
 const scrollIntoView = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
@@ -22,6 +23,7 @@ vi.mock('./chats-api', () => ({
   addToNotebook,
   translateMessage,
 }));
+vi.mock('../../shared/chat-background/chat-background-api', () => ({ getChatBackground }));
 const { ConversationScreen } = await import('./conversation-screen');
 
 const jade = {
@@ -63,12 +65,27 @@ beforeEach(() => {
     nextCursor: null,
   });
   markConversationRead.mockResolvedValue(undefined);
+  getChatBackground.mockResolvedValue('NONE');
   Element.prototype.scrollIntoView = scrollIntoView;
 });
 
 afterEach(cleanup);
 
 describe('ConversationScreen', () => {
+  it('pose le fond choisi derrière les messages', async () => {
+    getChatBackground.mockResolvedValue('GRID');
+    const { container } = render(<ConversationScreen agentSlug="jade" />);
+    await screen.findByText('First');
+    await waitFor(() => expect(container.querySelector('svg[aria-hidden] pattern')).not.toBeNull());
+  });
+
+  it('reste sur le fond uni quand le fond ne se charge pas', async () => {
+    getChatBackground.mockRejectedValue(new Error('x'));
+    const { container } = render(<ConversationScreen agentSlug="jade" />);
+    await screen.findByText('First');
+    expect(container.querySelector('svg[aria-hidden] pattern')).toBeNull();
+  });
+
   it('renvoie vers l’accueil sans session', async () => {
     ensureSession.mockResolvedValue(null);
     render(<ConversationScreen agentSlug="jade" />);
