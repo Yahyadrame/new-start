@@ -9,6 +9,8 @@ export const ConversationItem = z.object({
     initials: z.string(),
     roleFr: z.string(),
     category: z.string(),
+    /** Accent de la voix du contact (`en-US`, `en-GB`, `en-NG`). */
+    accent: z.string(),
   }),
   /** Le dernier message, ou null si la conversation est encore vide. */
   lastMessage: z

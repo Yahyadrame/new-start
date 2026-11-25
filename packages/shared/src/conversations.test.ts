@@ -9,6 +9,7 @@ const item = {
     initials: 'J',
     roleFr: 'Coloc · familier',
     category: 'Quotidien',
+    accent: 'en-US',
   },
   lastMessage: { author: 'AGENT', text: 'Heyyy!' },
   lastMessageAt: '2026-11-18T10:00:00.000Z',

@@ -75,6 +75,12 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('ConversationScreen', () => {
+  it('ouvre la fiche du contact depuis l’en-tête', async () => {
+    render(<ConversationScreen agentSlug="jade" />);
+    const link = await screen.findByRole('link', { name: /Jade/ });
+    expect(link.getAttribute('href')).toBe('/chats/jade/profile');
+  });
+
   it('pose le fond choisi derrière les messages', async () => {
     getChatBackground.mockResolvedValue('GRID');
     const { container } = render(<ConversationScreen agentSlug="jade" />);

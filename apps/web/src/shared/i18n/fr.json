@@ -728,5 +728,15 @@
     "resetContact": "Revenir à l'original",
     "changeContact": "Changer l'avatar de {name}",
     "contactTitle": "Avatar de {name}"
+  },
+  "contact": {
+    "title": "Fiche du contact",
+    "write": "Écrire",
+    "changeAvatar": "Changer l'avatar",
+    "speech": "Façon de parler",
+    "accent": "Accent",
+    "topic": "Thème",
+    "aiNote": "{name} est une IA. Ce n'est pas une personne.",
+    "error": "Impossible de charger la fiche. Réessaie dans un instant."
   }
 }

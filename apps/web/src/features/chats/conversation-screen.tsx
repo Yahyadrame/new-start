@@ -226,14 +226,11 @@ export function ConversationScreen({
           </Link>
         </Button>
         {item && (
-          <>
-            <Link
-              href={`/chats/${item.agent.slug}/avatar`}
-              aria-label={fr.avatar.changeContact.replace('{name}', item.agent.name)}
-              className="shrink-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
-            >
-              <ContactAvatar slug={item.agent.slug} name="" />
-            </Link>
+          <Link
+            href={`/chats/${item.agent.slug}/profile`}
+            className="flex min-h-11 min-w-0 items-center gap-3 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+          >
+            <ContactAvatar slug={item.agent.slug} name="" />
             <div className="flex min-w-0 flex-col">
               <h1 className="flex items-center gap-2 font-display text-lg font-bold">
                 <span className="truncate">{item.agent.name}</span>
@@ -241,7 +238,7 @@ export function ConversationScreen({
               </h1>
               <p className="text-xs text-text-muted">{c.online}</p>
             </div>
-          </>
+          </Link>
         )}
       </header>
 
