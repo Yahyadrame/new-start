@@ -103,3 +103,31 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 *Ajouté le 2026-11-25 par le porteur du projet : l'onglet des discussions bouge quand il parcourt les messages.*
 - [ ] Dès 1024 px, la liste reste fixe à gauche pendant que les messages défilent ; elle défile seule si elle est plus haute que l'écran.
 - [ ] Test unitaire de la mise en page.
+
+## NS-043 — L'écran de démarrage vient à chaque ouverture · S
+*Ajouté le 2026-11-25 par le porteur du projet : l'écran est trop rapide à voir, il doit venir comme sur Instagram ou WhatsApp.*
+- [ ] Il joue à chaque chargement ou rechargement de la page, et au retour dans l'appli après 5 minutes ou plus en arrière-plan. Mêmes durées qu'aujourd'hui.
+- [ ] Mettre à jour `docs/17-ecran-demarrage.md` ; tests unitaires et e2e.
+
+## NS-044 — Cloche des notifications dans l'en-tête · S
+*Ajouté le 2026-11-25 : l'icône flotte en haut à droite, sur le web comme sur mobile.*
+- [ ] Mobile : cloche dans l'en-tête de chaque écran, alignée avec le titre. Ordinateur : entrée de la barre latérale. Point de non-lu conservé.
+- [ ] Plus de cloche flottante ; tests unitaires, thèmes clair et sombre, cible ≥ 44 px.
+
+## NS-045 — Profil organisé en sous-pages · L
+*Ajouté le 2026-11-25 : la page Profil est « brute », tout y est regroupé. Référence : WhatsApp.*
+- [ ] En-tête (avatar, nom, objectif), puis lignes qui ouvrent chacune une page : Compte, Apprentissage, Notifications, Apparence et conversations, Données et compte.
+- [ ] Rien ne disparaît : tous les réglages actuels se retrouvent. À découper en deux ou trois PR.
+- [ ] Les nouveaux réglages seront proposés dans des tickets à part. Maquette d'abord, tests unitaires, deux thèmes.
+
+## NS-046 — Barre d'écriture : +, micro et envoi · M
+*Ajouté le 2026-11-25 : tout dans un seul endroit, comme WhatsApp. Suite de NS-039.*
+- [ ] Champ arrondi, bouton + (photo, fichier), micro quand le champ est vide, envoi quand il y a du texte.
+- [ ] Enregistrement vocal avec durée affichée, annulation et aperçu avant envoi ; choix de fichier avec aperçu.
+- [ ] Tests unitaires, deux thèmes, accessibilité (libellés, cibles ≥ 44 px).
+
+## NS-047 — Envoi réel des vocaux et des pièces jointes · L
+*Ajouté le 2026-11-25. Dépend de NS-046 et d'une décision sur le stockage de fichiers (dépense).*
+- [ ] Stockage, taille et types limités, URL signées, suppression avec le compte. Piste proposée par le porteur du projet : Cloudinary (images et audio). Comparer avec un bucket compatible S3, vérifier les tarifs, puis demander.
+- [ ] Lecture des vocaux et affichage des images dans la conversation.
+- [ ] Ce que les contacts IA font d'un vocal (transcription, prononciation) : à décider avant.
