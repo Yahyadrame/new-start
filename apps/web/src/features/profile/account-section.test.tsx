@@ -5,7 +5,7 @@ import fr from '../../shared/i18n/fr.json';
 import { AccountSection } from './account-section';
 
 const t = fr.profile.account;
-const me = { firstName: 'Awa', birthYear: 2000, interests: ['MUSIC'] } as Me;
+const me = { firstName: 'Awa', birthYear: 2000, interests: ['MUSIC'], avatar: null } as Me;
 const year = new Date().getFullYear();
 
 afterEach(cleanup);
@@ -57,5 +57,21 @@ describe('AccountSection', () => {
     expect(onSave).toHaveBeenLastCalledWith({ interests: ['MUSIC', 'ART'] });
     fireEvent.click(screen.getByRole('button', { name: fr.signup.interests.MUSIC }));
     expect(onSave).toHaveBeenLastCalledWith({ interests: [] });
+  });
+});
+
+describe('AccountSection : avatar', () => {
+  it("ouvre le choix d'avatar et enregistre la silhouette choisie", async () => {
+    const onSave = vi.fn();
+    render(<AccountSection me={me} onSave={onSave} />);
+    fireEvent.click(screen.getByRole('button', { name: fr.avatar.change }));
+    fireEvent.click(
+      screen.getByRole('button', { name: fr.avatar.silhouetteN.replace('{id}', '002') }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: fr.avatar.save }));
+    await vi.waitFor(() =>
+      expect(onSave).toHaveBeenCalledWith({ avatar: { id: 'a002', variant: 'duo' } }),
+    );
+    await vi.waitFor(() => expect(screen.getByLabelText(t.firstName)).toBeTruthy());
   });
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import { ACCENTS, type Me, type MePatch } from '@newstart/shared';
-import { Avatar, AvatarFallback, Button, Input, Select, Switch } from '@newstart/ui';
+import { Button, Input, Select, Switch } from '@newstart/ui';
 import {
   ArrowLeft,
   BellRing,
@@ -23,6 +23,7 @@ import { BottomNav, NotificationsBell } from '../../shared/navigation';
 import type { PushStatus } from '../../shared/push/subscription';
 import { usePush } from '../../shared/push/use-push';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
+import { UserAvatar } from '../../shared/avatar/user-avatar';
 import { AccountSection } from './account-section';
 import { DeleteAccountDialog } from './delete-account-dialog';
 import { SECTIONS, type Section } from './sections';
@@ -352,11 +353,13 @@ export function ProfileScreen({ section }: { section?: Section }) {
           ) : (
             <>
               <div className="flex items-center gap-4 px-1 py-2">
-                <Avatar className="size-[72px]">
-                  <AvatarFallback className="bg-accent font-display text-[28px] font-bold text-on-accent">
-                    {me.firstName.slice(0, 1).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <Link href="/profile/account" aria-label={fr.avatar.change}>
+                  <UserAvatar
+                    avatar={me.avatar}
+                    name={me.firstName}
+                    className="size-[72px] rounded-3xl"
+                  />
+                </Link>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-lg font-semibold">{me.firstName}</span>
                   <span className="text-sm text-text-muted">

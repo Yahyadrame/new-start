@@ -133,9 +133,9 @@ describe('ProfileScreen', () => {
 
   it('reprend la mise en page des maquettes : avatar de 72 px, niveau en texte, lignes de 72 px', async () => {
     await open();
-    const initial = screen.getByText('A');
-    expect(initial.className).toContain('bg-accent');
-    expect(initial.closest('[class*="size-[72px]"]')).not.toBeNull();
+    const avatar = screen.getByRole('img', { name: 'Awa' });
+    expect(avatar.className).toContain('size-[72px]');
+    expect(avatar.closest('a')?.getAttribute('href')).toBe('/profile/account');
     expect(screen.getByText('Niveau B1').className).toContain('text-text-muted');
     expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-[28px]');
     const row = screen.getAllByRole('link', { name: new RegExp(t.sections.learning.title) })[0];

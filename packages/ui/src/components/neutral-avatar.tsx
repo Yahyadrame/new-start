@@ -20,8 +20,8 @@ export interface NeutralAvatarProps {
   shape?: AvatarShape;
   theme?: AvatarTheme;
   /** Palette imposée, à la place de celle de la silhouette. */
-  palette?: string;
-  className?: string;
+  palette?: string | undefined;
+  className?: string | undefined;
 }
 
 /** Silhouette de l'identifiant, ou la première de la bibliothèque si l'identifiant est inconnu. */

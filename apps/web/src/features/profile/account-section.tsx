@@ -3,10 +3,13 @@
 import { MIN_AGE, SIGNUP_INTERESTS, type Me, type MePatch } from '@newstart/shared';
 import { Button, Input, Select } from '@newstart/ui';
 import { useId, useState } from 'react';
+import { AvatarPicker } from '../../shared/avatar/avatar-picker';
+import { UserAvatar } from '../../shared/avatar/user-avatar';
 import { ChoiceChips } from '../../shared/choice-chips';
 import fr from '../../shared/i18n/fr.json';
 
 const t = fr.profile.account;
+const ta = fr.avatar;
 const MAX_INTERESTS = 8;
 const INTEREST_CHOICES = SIGNUP_INTERESTS.map((value) => ({
   value,
@@ -24,6 +27,7 @@ export function AccountSection({
   const nameId = useId();
   const yearId = useId();
   const [name, setName] = useState(me.firstName);
+  const [choosing, setChoosing] = useState(false);
   const trimmed = name.trim();
   const nameValid = trimmed.length >= 2 && trimmed.length <= 30;
   const thisYear = new Date().getFullYear();
@@ -31,8 +35,26 @@ export function AccountSection({
   // Une année déjà enregistrée reste choisissable même si elle sort de la liste.
   if (me.birthYear !== null && !years.includes(me.birthYear)) years.push(me.birthYear);
 
+  if (choosing) {
+    return (
+      <AvatarPicker
+        value={me.avatar}
+        name={me.firstName}
+        onSave={(avatar) => onSave({ avatar })}
+        onClose={() => setChoosing(false)}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-4">
+        <UserAvatar avatar={me.avatar} name={me.firstName} className="size-16 rounded-2xl" />
+        <Button type="button" variant="outline" onClick={() => setChoosing(true)}>
+          {ta.change}
+        </Button>
+      </div>
+
       <form
         className="flex flex-col gap-1.5"
         onSubmit={(e) => {
