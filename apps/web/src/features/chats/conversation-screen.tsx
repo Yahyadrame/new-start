@@ -194,6 +194,17 @@ export function ConversationScreen({
     end.current?.scrollIntoView({ block: 'end' });
   }, [loaded, focus, newest, pending.length, awaiting !== null]);
 
+  // Quand le clavier s'ouvre, la zone visible rétrécit : on garde les derniers messages au-dessus de la barre.
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const stick = () => {
+      if (document.activeElement?.id === 'composer') end.current?.scrollIntoView({ block: 'end' });
+    };
+    viewport.addEventListener('resize', stick);
+    return () => viewport.removeEventListener('resize', stick);
+  }, []);
+
   const retry = () => {
     setError(false);
     setAttempt((n) => n + 1);

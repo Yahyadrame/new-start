@@ -149,6 +149,21 @@ describe('ConversationScreen', () => {
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
   });
 
+  it('garde les derniers messages visibles quand le clavier réduit la zone visible', async () => {
+    const viewport = new EventTarget();
+    Object.defineProperty(window, 'visualViewport', { value: viewport, configurable: true });
+    render(<ConversationScreen agentSlug="jade" />);
+    const field = await screen.findByLabelText(fr.conversation.composerLabel);
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
+    viewport.dispatchEvent(new Event('resize'));
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    field.focus();
+    viewport.dispatchEvent(new Event('resize'));
+    expect(scrollIntoView).toHaveBeenLastCalledWith({ block: 'end' });
+    expect(scrollIntoView).toHaveBeenCalledTimes(2);
+    Object.defineProperty(window, 'visualViewport', { value: undefined, configurable: true });
+  });
+
   it('dit quand la conversation est vide', async () => {
     listMessages.mockResolvedValue({ items: [], nextCursor: null });
     render(<ConversationScreen agentSlug="jade" />);

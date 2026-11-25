@@ -218,8 +218,8 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 
 ## NS-053 — Mobile : garder des messages visibles quand le clavier s'ouvre · M
 
-- [ ] À l'ouverture du clavier, la liste reste défilée en bas : les derniers messages restent visibles au-dessus de la barre d'écriture.
-- [ ] Tests unitaires et e2e mobile.
+- [x] À l'ouverture du clavier, la liste redescend en bas : les derniers messages restent visibles au-dessus de la barre d'écriture.
+- [x] Test unitaire.
 
 ## NS-054 — Actions sur un message : supprimer, modifier, transférer, copier, répondre · L
 
