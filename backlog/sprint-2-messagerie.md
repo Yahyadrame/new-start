@@ -128,6 +128,6 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 
 ## NS-047 — Envoi réel des vocaux et des pièces jointes · L
 *Ajouté le 2026-11-25. Dépend de NS-046 et d'une décision sur le stockage de fichiers (dépense).*
-- [ ] Stockage, taille et types limités, URL signées, suppression avec le compte.
+- [ ] Stockage, taille et types limités, URL signées, suppression avec le compte. Piste proposée par le porteur du projet : Cloudinary (images et audio). Comparer avec un bucket compatible S3, vérifier les tarifs, puis demander.
 - [ ] Lecture des vocaux et affichage des images dans la conversation.
 - [ ] Ce que les contacts IA font d'un vocal (transcription, prononciation) : à décider avant.
