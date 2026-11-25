@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PhoneE164, SIGNUP_GOALS, SignupProfile } from './signup.js';
+import { PhoneE164, SIGNUP_GOALS, SIGNUP_INTERESTS, SignupProfile } from './signup.js';
 
 const valid = {
   firstName: 'Awa',
@@ -48,12 +48,32 @@ describe('SignupProfile', () => {
 });
 
 describe('SIGNUP_GOALS', () => {
-  it('liste les quatre objectifs de la maquette dans l\u2019ordre', () => {
-    expect([...SIGNUP_GOALS]).toEqual(['SCHOLARSHIP', 'WORK', 'TRAVEL', 'FRIENDS']);
+  it('garde les quatre objectifs d\u2019origine en tête de liste', () => {
+    expect([...SIGNUP_GOALS].slice(0, 4)).toEqual(['SCHOLARSHIP', 'WORK', 'TRAVEL', 'FRIENDS']);
   });
   it('accepte chacun d\u2019eux dans le profil', () => {
     for (const goal of SIGNUP_GOALS) {
       expect(SignupProfile.safeParse({ ...valid, goal }).success).toBe(true);
     }
+  });
+});
+
+describe('objectifs et centres d\u2019intérêt multiples', () => {
+  it('reste valable sans eux (anciens clients) : listes vides', () => {
+    expect(SignupProfile.parse(valid)).toMatchObject({ goals: [], interests: [] });
+  });
+  it('accepte jusqu\u2019à 4 objectifs et 8 centres d\u2019intérêt connus', () => {
+    const goals = SIGNUP_GOALS.slice(0, 4);
+    const interests = SIGNUP_INTERESTS.slice(0, 8);
+    expect(SignupProfile.parse({ ...valid, goals, interests })).toMatchObject({ goals, interests });
+  });
+  it('refuse trop de choix ou un choix inconnu', () => {
+    expect(SignupProfile.safeParse({ ...valid, goals: SIGNUP_GOALS.slice(0, 5) }).success).toBe(
+      false,
+    );
+    expect(
+      SignupProfile.safeParse({ ...valid, interests: SIGNUP_INTERESTS.slice(0, 9) }).success,
+    ).toBe(false);
+    expect(SignupProfile.safeParse({ ...valid, interests: ['MAGIC'] }).success).toBe(false);
   });
 });

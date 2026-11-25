@@ -51,7 +51,9 @@ enum PayStatus { PENDING SUCCEEDED FAILED REFUNDED }
 model User {
   id              String    @id @default(uuid(7)) @db.Uuid
   firstName       String
-  goal            Goal
+  goal            Goal      // objectif principal (le premier choisi)
+  goals           Goal[]    // tous les objectifs cochés à l'inscription (4 au plus)
+  interests       String[]  // centres d'intérêt cochés (8 au plus)
   level           Cefr      @default(A1)
   birthYear       Int?      // pour restreindre les thèmes réservés aux majeurs
   phoneE164       String?   @unique // numéro au format international (+221…), demandé à l'inscription

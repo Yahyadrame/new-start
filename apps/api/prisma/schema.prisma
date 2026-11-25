@@ -13,6 +13,10 @@ enum Goal {
   WORK
   TRAVEL
   FRIENDS
+  STUDIES
+  EXAMS
+  BUSINESS
+  CULTURE
 }
 
 enum Cefr {
@@ -44,7 +48,9 @@ enum MessageKind {
 model User {
   id                String             @id @default(uuid(7)) @db.Uuid
   firstName         String
-  goal              Goal
+  goal              Goal // objectif principal
+  goals             Goal[]             @default([])
+  interests         String[]           @default([])
   level             Cefr               @default(A1)
   birthYear         Int? // pour restreindre les thèmes réservés aux majeurs
   phoneE164         String?            @unique // format international (+221…), demandé à l'inscription

@@ -7,6 +7,8 @@ export const pending: SignupFormValues = {
   phone: '+221771234567',
   birthYear: 2000,
   goal: 'WORK',
+  goals: ['WORK'],
+  interests: [],
   acceptTerms: true,
   smsOptIn: false,
   voiceConsent: false,

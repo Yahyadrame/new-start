@@ -8,6 +8,8 @@ const profile: SignupProfile = {
   firstName: 'Awa',
   phone: '+221771234567',
   goal: 'WORK',
+  goals: ['WORK', 'TRAVEL'],
+  interests: ['MUSIC'],
   birthYear: 2000,
   acceptTerms: true,
   smsOptIn: true,
@@ -73,6 +75,9 @@ describe('PrismaAccountStore', () => {
       phoneE164: '+221771234567',
       phoneVerifiedAt: null,
       smsOptIn: true,
+      goal: 'WORK',
+      goals: ['WORK', 'TRAVEL'],
+      interests: ['MUSIC'],
     });
     expect(data.identities.create).toMatchObject({ provider: 'email', subject: 'a@test.dev' });
   });

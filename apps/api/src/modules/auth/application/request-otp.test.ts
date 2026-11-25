@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
+import type { SignupProfile } from '@newstart/shared';
 import { FakeMailer, type Mailer } from '../../../shared/mailer/mailer.js';
 import { FakeSmsSender } from '../../../shared/sms/sms.js';
 import { hashCode } from '../domain/otp.js';
@@ -59,15 +60,17 @@ describe('RequestOtp', () => {
   });
   it("garde le profil d'inscription avec le code", async () => {
     const { uc, rows } = setup();
-    const signup = {
+    const signup: SignupProfile = {
       firstName: 'Awa',
       phone: '+221771234567',
       goal: 'WORK',
+      goals: ['WORK', 'TRAVEL'],
+      interests: ['MUSIC'],
       birthYear: 2000,
       acceptTerms: true,
       smsOptIn: false,
       voiceConsent: false,
-    } as const;
+    };
     await uc.execute({ channel: 'email', destination: 'a@test.dev', signup });
     expect(rows[0]?.signup).toEqual(signup);
   });
