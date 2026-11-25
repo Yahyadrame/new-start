@@ -203,8 +203,9 @@ _Ajouté le 2026-11-25._
 
 - [x] Partie 1 (#337) : fiche d'un contact depuis l'en-tête de la conversation (avatar, nom, rôle, accent, thème, accès au choix d'avatar).
 - [x] Partie 2 (#339) : présentation, centres d'intérêt et niveau de langue, textes écrits à la main dans le catalogue.
-- [ ] Plusieurs variantes d'un même contact (ton, accent, niveau de difficulté, avatar) choisies et modifiables par la personne. Cadre dans `docs/09-ia-agents.md` : un agent ne se présente jamais comme un humain.
-- [ ] À découper en deux ou trois PR après maquette.
+- [x] Partie 3a (#341) : ton et difficulté par contact, côté API (table `ContactVariant`, routes `/me/contact-variants`, injection dans le prompt).
+- [x] Partie 3b : carte « Réglages pour toi » sur la fiche (ton, difficulté, avatar, retour aux réglages d'origine).
+- [ ] Accent par contact : demande une voix de plus par accent. Fournisseur et coût à confirmer avec le porteur avant de coder. Cadre dans `docs/09-ia-agents.md` : un agent ne se présente jamais comme un humain.
 
 ## NS-052 — La traduction ne doit jamais montrer une réponse factice · S
 

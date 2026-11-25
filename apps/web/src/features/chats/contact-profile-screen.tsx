@@ -1,6 +1,6 @@
 'use client';
 
-import type { ConversationItem } from '@newstart/shared';
+import type { ContactVariant, ConversationItem } from '@newstart/shared';
 import { Badge, Button } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -11,6 +11,8 @@ import { loadContactAvatars } from '../../shared/avatar/contact-avatars';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { listConversations } from './chats-api';
+import { ContactSettings } from './contact-settings';
+import { getContactVariants, saveContactVariant } from './contact-variants-api';
 
 const t = fr.contact;
 const accents: Record<string, string> = fr.profile.learning.accents;
@@ -20,6 +22,10 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
   const router = useRouter();
   const [agent, setAgent] = useState<ConversationItem['agent'] | null>(null);
   const [error, setError] = useState(false);
+  const [token, setToken] = useState('');
+  const [variant, setVariant] = useState<ContactVariant | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const back = `/chats/${agentSlug}`;
 
   useEffect(() => {
@@ -27,6 +33,10 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
       const session = await ensureSession();
       if (!session) return router.replace('/');
       void loadContactAvatars(session.accessToken);
+      setToken(session.accessToken);
+      getContactVariants(session.accessToken)
+        .then((all) => setVariant(all[agentSlug] ?? null))
+        .catch(() => undefined);
       try {
         const found = (await listConversations(session.accessToken)).find(
           (i) => i.agent.slug === agentSlug,
@@ -38,6 +48,20 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
       }
     })();
   }, [router, agentSlug]);
+
+  const save = async (next: ContactVariant | null) => {
+    const before = variant;
+    setVariant(next);
+    setSaved(false);
+    setSaveFailed(false);
+    try {
+      await saveContactVariant(token, agentSlug, next);
+      setSaved(true);
+    } catch {
+      setVariant(before);
+      setSaveFailed(true);
+    }
+  };
 
   const rows = agent
     ? [
@@ -76,9 +100,6 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
             <Button asChild className="flex-1">
               <Link href={back}>{t.write}</Link>
             </Button>
-            <Button asChild variant="outline" className="flex-1">
-              <Link href={`${back}/avatar`}>{t.changeAvatar}</Link>
-            </Button>
           </div>
           <section aria-labelledby="contact-about" className="flex flex-col gap-2 px-1">
             <h3
@@ -99,6 +120,15 @@ export function ContactProfileScreen({ agentSlug }: Readonly<{ agentSlug: string
               ))}
             </ul>
           </section>
+          <ContactSettings
+            name={agent.name}
+            avatarHref={`${back}/avatar`}
+            variant={variant}
+            saved={saved}
+            error={saveFailed}
+            onChange={(next) => void save(next)}
+            onReset={() => void save(null)}
+          />
           <section
             aria-labelledby="contact-speech"
             className="rounded-2xl border border-line bg-surface-1 px-4 py-1"
