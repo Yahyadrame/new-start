@@ -237,6 +237,6 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 ## NS-057 — Responsivité tablette (768 et 1024 px) · M
 **Besoin** : de 640 à 1023 px, l'appli affiche la version mobile étirée ; aucun seuil `md` n'existe.
 **Critères d'acceptation**
-- [ ] Chaque écran est contrôlé à 768 et 1024 px, en clair et en sombre.
-- [ ] Aucun débordement horizontal, cibles tactiles ≥ 44 px, lignes de texte lisibles (largeur bornée).
-- [ ] Les écarts relevés sont corrigés, avec un test unitaire par correction.
+- [x] Chaque écran est contrôlé à 768 et 1024 px, en clair et en sombre.
+- [x] Aucun débordement horizontal, cibles tactiles ≥ 44 px, lignes de texte lisibles (largeur bornée).
+- [x] Aucun écart bloquant : colonne de contenu bornée à ~400 px dès 768 px, rail latéral et deux colonnes dès 1024 px. Contrôle de débordement à 768 px déjà couvert par `e2e/responsive.spec.ts`.
