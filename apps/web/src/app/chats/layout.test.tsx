@@ -32,4 +32,17 @@ describe('ChatsLayout', () => {
     expect(list).toContain('lg:block');
     expect(screen.getByText('volet').parentElement?.className).not.toContain('hidden');
   });
+
+  it('garde la liste en place quand la conversation défile (ordinateur)', () => {
+    usePathname.mockReturnValue('/chats/jade');
+    render(
+      <ChatsLayout>
+        <p>volet</p>
+      </ChatsLayout>,
+    );
+    const list = screen.getByText('liste').parentElement?.className ?? '';
+    for (const c of ['lg:sticky', 'lg:top-0', 'lg:h-dvh', 'lg:self-start', 'lg:overflow-y-auto']) {
+      expect(list).toContain(c);
+    }
+  });
 });

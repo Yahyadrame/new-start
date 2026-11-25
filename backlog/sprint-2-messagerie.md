@@ -92,3 +92,8 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 *Ajouté le 2026-11-25 : le porteur du projet constate que l'application n'est pas 100 % responsive.*
 - [ ] Passer en revue Discussions, Profil, Notifications, connexion et inscription à 320, 375, 768 et 1280 px, sans débordement horizontal.
 - [ ] Tests unitaires pour chaque correction, thèmes clair et sombre.
+
+## NS-042 — La liste des discussions reste en place quand on fait défiler une conversation · S
+*Ajouté le 2026-11-25 par le porteur du projet : l'onglet des discussions bouge quand il parcourt les messages.*
+- [ ] Dès 1024 px, la liste reste fixe à gauche pendant que les messages défilent ; elle défile seule si elle est plus haute que l'écran.
+- [ ] Test unitaire de la mise en page.
