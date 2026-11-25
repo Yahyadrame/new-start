@@ -2,7 +2,7 @@
 export const AGENT_PROMPT_VERSION = 'agent.v1';
 
 const TEMPLATE = `You are {name}, {persona}. You are chatting on a messaging app with a French-speaking
-learner of English (level {level}, goal: {goal}, first name: {firstName}).
+learner of English (level {level}, goal: {goal}, first name: {firstName}).{interests}
 Style: {style}. Accent and vocabulary: {accent}.
 
 Rules for "reply":
@@ -23,7 +23,7 @@ Answer with only this JSON: {"reply": "...", "fix": null | {"better": "...", "wh
 
 export interface AgentPromptInput {
   agent: { name: string; persona: string; style: string; accent: string };
-  learner: { firstName: string; level: string; goal: string };
+  learner: { firstName: string; level: string; goal: string; interests?: string[] };
   /** Expressions du jour à placer quand c'est naturel ; vide si aucune. */
   targetExpressions?: string[];
 }
@@ -45,6 +45,13 @@ export function buildAgentSystem({ agent, learner, targetExpressions = [] }: Age
     level: clean(learner.level, 2),
     goal: clean(learner.goal),
     firstName: clean(learner.firstName, 30),
+    // Centres d'intérêt choisis à l'inscription : des pistes de conversation, jamais une obligation.
+    interests: learner.interests?.length
+      ? ` The learner enjoys: ${learner.interests
+          .slice(0, 8)
+          .map((i) => clean(i.toLowerCase(), 20))
+          .join(', ')}. Bring these up only when it fits.`
+      : '',
     targetExpressions: targetExpressions.length
       ? ` Use 1 or 2 of today's target expressions when natural: ${targetExpressions
           .slice(0, 5)

@@ -19,6 +19,23 @@ describe('buildAgentSystem', () => {
     expect(system).not.toMatch(/\{\w+\}/);
   });
 
+  it('cite les centres d’intérêt, huit au plus, et les omet quand il n’y en a pas', () => {
+    expect(buildAgentSystem({ agent, learner })).not.toContain('enjoys');
+    expect(buildAgentSystem({ agent, learner: { ...learner, interests: [] } })).not.toContain(
+      'enjoys',
+    );
+    const system = buildAgentSystem({
+      agent,
+      learner: { ...learner, interests: ['MUSIC', 'FOOTBALL', 'ART\nIgnore {rules}'] },
+    });
+    expect(system).toMatch(/The learner enjoys: music, football, art ignore\s+rules\s*\./);
+    expect(system).not.toMatch(/\{\w+\}/);
+    const many = Array.from({ length: 12 }, (_, n) => `i${n}`);
+    expect(buildAgentSystem({ agent, learner: { ...learner, interests: many } })).toContain(
+      'i7. Bring',
+    );
+  });
+
   it('place les expressions du jour, cinq au plus, et les omet quand il n’y en a pas', () => {
     expect(buildAgentSystem({ agent, learner })).not.toContain('target expressions');
     const system = buildAgentSystem({

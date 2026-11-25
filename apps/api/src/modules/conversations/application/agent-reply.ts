@@ -22,7 +22,7 @@ export const FAILURE_TEXT = "Le message n'est pas passé. Renvoie-le.";
 
 export interface ReplyContext {
   agent: { name: string; persona: string; style: string; accent: string };
-  learner: { firstName: string; level: string; goal: string };
+  learner: { firstName: string; level: string; goal: string; interests?: string[] };
   /** Du plus ancien au plus récent, le message de la personne en dernier. */
   history: { author: 'USER' | 'AGENT'; text: string }[];
 }
