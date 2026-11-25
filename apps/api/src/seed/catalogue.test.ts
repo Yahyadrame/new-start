@@ -1,7 +1,9 @@
+import { AGENT_STATUSES } from '@newstart/shared';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { parseCatalogue, seedCatalogue, type CatalogueDb } from './catalogue.js';
 
+const AGENTS_STATUS_SLUGS = Object.keys(AGENT_STATUSES);
 const FILE = readFileSync(new URL('../../../../data/catalogue.json', import.meta.url), 'utf8');
 const { topics: TOPICS, agents: AGENTS } = parseCatalogue(FILE);
 
@@ -26,9 +28,10 @@ function fakeDb() {
 }
 
 describe('data/catalogue.json', () => {
-  it('compte 9 thèmes et les 12 contacts de docs/03', () => {
-    expect(TOPICS).toHaveLength(9);
-    expect(AGENTS.map((a) => a.slug)).toEqual([
+  it('compte 17 thèmes et 23 contacts, les 12 de docs/03 en tête', () => {
+    expect(TOPICS).toHaveLength(17);
+    expect(AGENTS).toHaveLength(23);
+    expect(AGENTS.slice(0, 12).map((a) => a.slug)).toEqual([
       'jade',
       'sam',
       'leo',
@@ -42,6 +45,10 @@ describe('data/catalogue.json', () => {
       'nina',
       'prof-ade',
     ]);
+  });
+  it('donne un contact à chaque thème, et un statut à chaque contact', () => {
+    for (const t of TOPICS) expect(AGENTS.some((a) => a.topic === t.slug)).toBe(true);
+    for (const a of AGENTS) expect(AGENTS_STATUS_SLUGS).toContain(a.slug);
   });
   it('réserve aux majeurs le thème Amour et lui seul', () => {
     expect(TOPICS.filter((t) => t.adultOnly).map((t) => t.slug)).toEqual(['love']);
@@ -73,8 +80,8 @@ describe('seedCatalogue', () => {
   it('crée les thèmes avant les contacts et relie chaque contact à son thème', async () => {
     const { db, topics, agents } = fakeDb();
     const n = await seedCatalogue(db, FILE);
-    expect(n).toEqual({ topics: 9, agents: 12 });
-    expect(topics).toHaveLength(9);
+    expect(n).toEqual({ topics: 17, agents: 23 });
+    expect(topics).toHaveLength(17);
     expect(agents.find((a) => a.slug === 'maya')?.topicId).toBe('id-love');
     expect(agents.find((a) => a.slug === 'jade')?.topicId).toBeNull();
   });
@@ -82,7 +89,7 @@ describe('seedCatalogue', () => {
     const { db } = fakeDb();
     await seedCatalogue(db, FILE);
     const calls = vi.mocked(db.agent.upsert).mock.calls;
-    expect(calls).toHaveLength(12);
+    expect(calls).toHaveLength(23);
     for (const [args] of calls) expect(args.update).toEqual(args.create);
   });
 });
