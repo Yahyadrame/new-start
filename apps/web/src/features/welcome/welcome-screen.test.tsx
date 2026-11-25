@@ -29,4 +29,11 @@ describe('WelcomeScreen', () => {
       '/login',
     );
   });
+  it('garde les bulles dans la largeur de l’écran (320 px)', () => {
+    render(<WelcomeScreen />);
+    const bubbles = screen.getByRole('list', { name: 'Exemple de conversation en anglais' });
+    for (const li of bubbles.querySelectorAll('li')) {
+      expect(li.className).toMatch(/max-w-/);
+    }
+  });
 });
