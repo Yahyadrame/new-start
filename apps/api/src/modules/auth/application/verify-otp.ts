@@ -35,6 +35,8 @@ export interface AccountStore {
     channel: OtpChannel,
     destination: string,
   ): Promise<UserSummary | null>;
+  /** Rattache une identité (ex. Google) à un compte ; sans effet si elle existe déjà. */
+  linkIdentity(userId: string, provider: string, subject: string): Promise<void>;
   saveRefreshToken(row: {
     userId: string;
     tokenHash: string;
@@ -54,6 +56,28 @@ const fail = (status: number, code: string, message: string) =>
   new HttpException({ code, message }, status);
 const same = (a: string, b: string) =>
   a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
+
+/** Ouvre une session : jeton d'accès signé et jeton de rafraîchissement enregistré (nouvelle famille). */
+export async function issueSession(
+  store: AccountStore,
+  signer: AccessSigner,
+  user: UserSummary,
+  now: Date,
+): Promise<Session> {
+  const refreshToken = newRefreshToken();
+  await store.saveRefreshToken({
+    userId: user.id,
+    tokenHash: hashRefreshToken(refreshToken),
+    familyId: randomUUID(),
+    expiresAt: new Date(now.getTime() + REFRESH_TTL_MS),
+  });
+  return {
+    accessToken: await signer.sign(user.id),
+    expiresInSeconds: ACCESS_TTL_SECONDS,
+    refreshToken,
+    user,
+  };
+}
 
 export class VerifyOtp {
   constructor(
@@ -89,18 +113,6 @@ export class VerifyOtp {
       if (!user)
         throw fail(409, 'ACCOUNT_CONFLICT', 'Ce numéro ou cette adresse est déjà utilisé.');
     }
-    const refreshToken = newRefreshToken();
-    await this.store.saveRefreshToken({
-      userId: user.id,
-      tokenHash: hashRefreshToken(refreshToken),
-      familyId: randomUUID(),
-      expiresAt: new Date(now.getTime() + REFRESH_TTL_MS),
-    });
-    return {
-      accessToken: await this.signer.sign(user.id),
-      expiresInSeconds: ACCESS_TTL_SECONDS,
-      refreshToken,
-      user,
-    };
+    return issueSession(this.store, this.signer, user, now);
   }
 }

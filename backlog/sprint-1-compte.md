@@ -13,7 +13,9 @@
 
 ## NS-103 — Connexion Google · M
 
-- [ ] `POST /auth/google` (vérification de l'idToken), rattachement à un compte existant si même e-mail vérifié.
+- [x] `POST /auth/google` (vérification de l'idToken), rattachement à un compte existant si même e-mail vérifié.
+- [ ] Bouton « Continuer avec Google » sur Connexion et Inscription (affiché seulement si `NEXT_PUBLIC_GOOGLE_CLIENT_ID` est posé).
+- [ ] Le porteur crée le client OAuth Google et pose `GOOGLE_CLIENT_ID` (API) et `NEXT_PUBLIC_GOOGLE_CLIENT_ID` (web).
 
 ## NS-104 — Écran Bienvenue (1) · S
 

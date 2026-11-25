@@ -73,6 +73,14 @@ export class PrismaAccountStore implements AccountStore {
     }
   }
 
+  async linkIdentity(userId: string, provider: string, subject: string) {
+    await this.db.authIdentity.upsert({
+      where: { provider_subject: { provider, subject } },
+      create: { userId, provider, subject, verifiedAt: new Date() },
+      update: {},
+    });
+  }
+
   async saveRefreshToken(row: Parameters<AccountStore['saveRefreshToken']>[0]) {
     await this.db.refreshToken.create({ data: row });
   }

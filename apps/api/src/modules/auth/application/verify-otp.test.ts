@@ -48,6 +48,7 @@ function setup(
       state.created.push(channel);
       return opts.taken ? null : user;
     },
+    linkIdentity: async () => {},
     saveRefreshToken: async (row) => {
       state.tokens.push(row);
     },
