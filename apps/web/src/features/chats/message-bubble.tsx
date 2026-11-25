@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { MessageItem } from '@newstart/shared';
 import { cn, Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
-import { Ban, CheckCheck, Copy, MoreHorizontal, Reply, Trash2 } from 'lucide-react';
+import { Ban, CheckCheck, Copy, MoreHorizontal, Pencil, Reply, Trash2 } from 'lucide-react';
 import { QuotedMessage } from './quoted-message';
 import { formatHour } from './chats-format';
 
@@ -44,10 +44,12 @@ const item =
 function Actions({
   text,
   onReply,
+  onEdit,
   onDelete,
 }: {
   text: string;
   onReply: (() => void) | undefined;
+  onEdit: (() => void) | undefined;
   onDelete: (() => Promise<void>) | undefined;
 }) {
   const [open, setOpen] = useState(false);
@@ -112,6 +114,19 @@ function Actions({
               >
                 <Reply aria-hidden="true" className="size-5" />
                 {c.reply}
+              </button>
+            )}
+            {onEdit && (
+              <button
+                type="button"
+                className={item}
+                onClick={() => {
+                  close(false);
+                  onEdit();
+                }}
+              >
+                <Pencil aria-hidden="true" className="size-5" />
+                {c.edit}
               </button>
             )}
             <button type="button" className={item} onClick={() => void copy()}>
@@ -192,6 +207,7 @@ export function MessageBubble({
   onTranslate,
   onDelete,
   onReply,
+  onEdit,
   agentName = '',
 }: {
   message: MessageItem;
@@ -199,6 +215,8 @@ export function MessageBubble({
   agentName?: string;
   /** Répond en citant ce message ; sans elle, le menu n'a pas « Répondre ». */
   onReply?: (message: MessageItem) => void;
+  /** Modifie ce message (le sien) ; sans elle, le menu n'a pas « Modifier ». */
+  onEdit?: (message: MessageItem) => void;
   /** Entoure la bulle : le message qu'on vient de retrouver par la recherche. */
   highlighted?: boolean;
   /** Traduit un message du contact ; sans elle, pas de bouton. */
@@ -246,11 +264,13 @@ export function MessageBubble({
         <p>{message.text}</p>
       </div>
       <span className="flex items-center gap-1 px-1 text-xs text-text-muted">
+        {message.edited && <span>{c.edited}</span>}
         <time dateTime={message.createdAt}>{formatHour(message.createdAt)}</time>
         {mine && <CheckCheck aria-hidden="true" className="size-3.5" />}
         <Actions
           text={message.text}
           onReply={onReply && (() => onReply(message))}
+          onEdit={mine && onEdit ? () => onEdit(message) : undefined}
           onDelete={onDelete && (() => onDelete(message.id))}
         />
       </span>

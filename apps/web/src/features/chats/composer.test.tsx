@@ -203,3 +203,21 @@ describe('Composer, champ de saisie', () => {
     expect(field.className).not.toContain('focus-visible:outline-2');
   });
 });
+
+describe('Composer, modification', () => {
+  it('reprend le texte du message, l’envoie au même bouton et se vide à l’annulation', () => {
+    const onSend = vi.fn();
+    const onCancelEdit = vi.fn();
+    const { rerender } = render(
+      <Composer onSend={onSend} edit={{ id: 'm1', text: 'I go' }} onCancelEdit={onCancelEdit} />,
+    );
+    expect(screen.getByText(c.editing)).toBeTruthy();
+    expect((screen.getByLabelText(c.composerLabel) as HTMLTextAreaElement).value).toBe('I go');
+    expect(screen.queryByRole('button', { name: c.record })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: c.editCancel }));
+    expect(onCancelEdit).toHaveBeenCalled();
+    rerender(<Composer onSend={onSend} edit={null} />);
+    expect((screen.getByLabelText(c.composerLabel) as HTMLTextAreaElement).value).toBe('');
+    expect(screen.queryByText(c.editing)).toBeNull();
+  });
+});

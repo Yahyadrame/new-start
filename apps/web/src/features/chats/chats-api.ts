@@ -92,6 +92,21 @@ export async function deleteMessage(token: string, messageId: string): Promise<v
   if (!res.ok) throw new ChatsError(res.status);
 }
 
+/** Remplace le texte d'un message de la personne ; sa correction est refaite côté API. */
+export async function editMessage(
+  token: string,
+  messageId: string,
+  text: string,
+): Promise<MessageItem> {
+  const res = await fetch(`/api/messages/${messageId}`, {
+    method: 'PATCH',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+  return (await res.json()) as MessageItem;
+}
+
 /** Les messages de la personne qui contiennent `q` (2 caractères au moins), du plus récent au plus ancien. */
 export async function searchMessages(token: string, q: string): Promise<SearchHit[]> {
   const res = await fetch(`/api/conversations/search?q=${encodeURIComponent(q)}`, {

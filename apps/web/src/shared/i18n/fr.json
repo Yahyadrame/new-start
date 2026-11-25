@@ -415,7 +415,12 @@
     "reply": "Répondre",
     "replyingTo": "Réponse à {name}",
     "replyCancel": "Annuler la réponse",
-    "quoteYou": "Toi"
+    "quoteYou": "Toi",
+    "edit": "Modifier",
+    "edited": "modifié",
+    "editing": "Modifier le message",
+    "editCancel": "Annuler la modification",
+    "editFailed": "La modification n'a pas été enregistrée. Réessaie."
   },
   "comingSoon": {
     "badge": "Bientôt",

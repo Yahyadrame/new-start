@@ -228,6 +228,34 @@ describe('MessageBubble', () => {
     expect(onReply).toHaveBeenCalledWith(m);
   });
 
+  it('propose « Modifier » sur ses messages seulement, et montre « modifié »', async () => {
+    const onEdit = vi.fn();
+    const mine = message({ author: 'USER', edited: true });
+    const { unmount } = render(
+      <ol>
+        <MessageBubble message={mine} onEdit={onEdit} />
+      </ol>,
+    );
+    expect(screen.getByText(c.edited)).toBeTruthy();
+    const trigger = screen.getByRole('button', { name: c.messageActions });
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+    fireEvent.click(await screen.findByRole('button', { name: c.edit }));
+    expect(onEdit).toHaveBeenCalledWith(mine);
+    unmount();
+    render(
+      <ol>
+        <MessageBubble message={message({})} onEdit={onEdit} />
+      </ol>,
+    );
+    const other = screen.getByRole('button', { name: c.messageActions });
+    fireEvent.pointerDown(other, { button: 0, ctrlKey: false });
+    fireEvent.click(other);
+    await screen.findByRole('button', { name: c.copy });
+    expect(screen.queryByRole('button', { name: c.edit })).toBeNull();
+    expect(screen.queryByText(c.edited)).toBeNull();
+  });
+
   it('cite le message auquel il répond, avec son auteur', () => {
     const replyTo = { id: 'm0', author: 'USER' as const, text: 'See you', deleted: false };
     show(message({ replyTo }));

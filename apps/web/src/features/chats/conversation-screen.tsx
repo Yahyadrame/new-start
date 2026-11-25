@@ -14,6 +14,7 @@ import fr from '../../shared/i18n/fr.json';
 import {
   addToNotebook,
   deleteMessage,
+  editMessage,
   translateMessage,
   listConversations,
   listMessages,
@@ -55,6 +56,10 @@ export function ConversationScreen({
   const [older, setOlder] = useState<'idle' | 'loading' | 'error'>('idle');
   const [pending, setPending] = useState<PendingMessage[]>([]);
   const [replyTo, setReplyTo] = useState<MessageItem | null>(null);
+  const [editing, setEditing] = useState<MessageItem | null>(null);
+  const [editFailed, setEditFailed] = useState(false);
+  // Compte les modifications : chacune relance la relecture qui ramène la nouvelle correction.
+  const [edits, setEdits] = useState(0);
   // Date du dernier message envoyé tant que le contact n'a pas répondu ; null sinon.
   const [awaiting, setAwaiting] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -145,6 +150,7 @@ export function ConversationScreen({
   );
 
   const send = (text: string) => {
+    if (editing) return void saveEdit(editing, text);
     if (!item) return;
     const message: PendingMessage = {
       clientId: crypto.randomUUID(),
@@ -156,6 +162,32 @@ export function ConversationScreen({
     setPending((prev) => [...prev, message]);
     void deliver(item.id, message);
   };
+
+  const saveEdit = async (message: MessageItem, text: string) => {
+    setEditFailed(false);
+    if (text === message.text) return setEditing(null);
+    try {
+      const saved = await editMessage(token.current, message.id, text);
+      setMessages((prev) => prev?.map((m) => (m.id === saved.id ? saved : m)));
+      setEditing(null);
+      setEdits((n) => n + 1);
+    } catch {
+      setEditFailed(true);
+    }
+  };
+
+  // La correction est refaite en arrière-plan : on relit quelques fois pour la montrer quand elle arrive.
+  useEffect(() => {
+    if (edits === 0 || !item) return;
+    const timers = [3000, 8000, 15000].map((ms) =>
+      setTimeout(() => {
+        void listMessages(token.current, item.id)
+          .then((page) => setMessages((prev) => mergeLatest(prev ?? [], page.items)))
+          .catch(() => undefined);
+      }, ms),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [edits, item]);
 
   // Tant que le contact n'a pas répondu, on relit les derniers messages (la correction arrive avec la réponse).
   useEffect(() => {
@@ -299,7 +331,15 @@ export function ConversationScreen({
                       message={m}
                       highlighted={m.id === flash}
                       agentName={item?.agent.name ?? ''}
-                      onReply={setReplyTo}
+                      onReply={(m) => {
+                        setEditing(null);
+                        setReplyTo(m);
+                      }}
+                      onEdit={(m) => {
+                        setReplyTo(null);
+                        setEditFailed(false);
+                        setEditing(m);
+                      }}
                       onAddToNotebook={(id) => addToNotebook(token.current, id)}
                       onTranslate={(id) => translateMessage(token.current, id)}
                       onDelete={async (id) => {
@@ -339,6 +379,11 @@ export function ConversationScreen({
             {c.messageNotFound}
           </p>
         )}
+        {editFailed && (
+          <p role="alert" className="rounded-2xl bg-bg px-4 py-3 text-[15px] text-danger">
+            {c.editFailed}
+          </p>
+        )}
         {limited && item && (
           <p role="status" className="rounded-2xl bg-bg px-4 py-3 text-[15px]">
             {c.limitReached.replace('{name}', item.agent.name)}
@@ -355,6 +400,11 @@ export function ConversationScreen({
             }
           }
           onCancelReply={() => setReplyTo(null)}
+          edit={editing && { id: editing.id, text: editing.text }}
+          onCancelEdit={() => {
+            setEditing(null);
+            setEditFailed(false);
+          }}
         />
       )}
     </main>

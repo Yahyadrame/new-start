@@ -16,8 +16,10 @@ const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 const deleteMessage = vi.fn();
+const editMessage = vi.fn();
 vi.mock('./chats-api', () => ({
   deleteMessage,
+  editMessage,
   listConversations,
   listMessages,
   sendMessage,
@@ -268,6 +270,75 @@ describe('ConversationScreen', () => {
       await write('Yes');
       expect(sendMessage.mock.calls[0]?.[2]).toMatchObject({ text: 'Yes', replyToId: 'm1' });
       expect(screen.queryByText(/Réponse à/)).toBeNull();
+    });
+
+    const startEdit = async () => {
+      const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+      fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger as HTMLElement);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.edit }));
+    };
+
+    it('modifie un message : le champ reprend le texte, la bulle passe à « modifié »', async () => {
+      editMessage.mockResolvedValue({ ...msg('m1', 'USER', 'First!'), edited: true });
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      await startEdit();
+      const field = screen.getByLabelText(fr.conversation.composerLabel) as HTMLTextAreaElement;
+      expect(field.value).toBe('First');
+      await write('First!');
+      expect(editMessage).toHaveBeenCalledWith('tok', 'm1', 'First!');
+      expect(await screen.findByText('First!')).toBeTruthy();
+      expect(screen.getByText(fr.conversation.edited)).toBeTruthy();
+      expect(sendMessage).not.toHaveBeenCalled();
+      expect(screen.queryByText(fr.conversation.editing)).toBeNull();
+    });
+
+    it('n’appelle pas l’API quand le texte n’a pas changé', async () => {
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      await startEdit();
+      await write('First');
+      expect(editMessage).not.toHaveBeenCalled();
+      await waitFor(() => expect(screen.queryByText(fr.conversation.editing)).toBeNull());
+    });
+
+    it('garde la modification en cours et le dit quand l’enregistrement échoue', async () => {
+      editMessage.mockRejectedValue(new Error('réseau'));
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      await startEdit();
+      await write('First!');
+      expect(await screen.findByText(fr.conversation.editFailed)).toBeTruthy();
+      expect(screen.getByText(fr.conversation.editing)).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: fr.conversation.editCancel }));
+      expect(screen.queryByText(fr.conversation.editFailed)).toBeNull();
+    });
+
+    it('relit les messages pour montrer la nouvelle correction', async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      try {
+        editMessage.mockResolvedValue({ ...msg('m1', 'USER', 'First!'), edited: true });
+        render(<ConversationScreen agentSlug="jade" />);
+        await screen.findByText('First');
+        await startEdit();
+        listMessages.mockResolvedValue({
+          items: [
+            {
+              ...msg('m1', 'USER', 'First!'),
+              edited: true,
+              correction: { better: 'First one!', whyFr: 'Plus naturel' },
+            },
+          ],
+          nextCursor: null,
+        });
+        await write('First!');
+        await screen.findByText('First!');
+        await vi.advanceTimersByTimeAsync(3100);
+        expect(await screen.findByText('First one!')).toBeTruthy();
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('abandonne la réponse avec le bouton d’annulation', async () => {
