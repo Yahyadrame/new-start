@@ -26,6 +26,7 @@ for (const [path, heading] of [
   ['/privacy', 'Politique de confidentialité'],
   ['/notifications', 'Notifications'],
   ['/profile', 'Profil'],
+  ['/profile/account', 'Mon compte'],
   ['/profile/learning', 'Apprentissage'],
   ['/profile/notifications', 'Notifications et rappels'],
 ] as const) {

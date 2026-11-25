@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SignupProfile, SIGNUP_GOALS, SIGNUP_INTERESTS } from './signup.js';
+import { MIN_AGE, SignupProfile, SIGNUP_GOALS, SIGNUP_INTERESTS } from './signup.js';
 
 export const THEMES = ['SYSTEM', 'LIGHT', 'DARK'] as const;
 export const ACCENTS = ['en-US', 'en-GB', 'en-NG'] as const;
@@ -27,6 +27,7 @@ export const Me = z.object({
   firstName: z.string(),
   goal: z.enum(SIGNUP_GOALS),
   interests: z.array(z.enum(SIGNUP_INTERESTS)),
+  birthYear: z.number().int().nullable(),
   level: z.string(),
   theme: z.enum(THEMES),
   reminderTime: ReminderTime.nullable(),
@@ -44,6 +45,9 @@ export const MePatch = z
   .strictObject({
     firstName: SignupProfile.shape.firstName,
     goal: z.enum(SIGNUP_GOALS),
+    // Pas de `.default([])` ici : une modification sans cette clé ne doit pas vider la liste.
+    interests: z.array(z.enum(SIGNUP_INTERESTS)).max(8),
+    birthYear: SignupProfile.shape.birthYear.max(new Date().getFullYear() - MIN_AGE),
     theme: z.enum(THEMES),
     reminderTime: ReminderTime.nullable(),
     dailyGoalMin: z.number().int().min(DAILY_GOAL_RANGE.min).max(DAILY_GOAL_RANGE.max),

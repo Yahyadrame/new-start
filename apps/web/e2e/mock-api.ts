@@ -105,6 +105,8 @@ export async function signedIn(page: Page) {
         id: 'u1',
         firstName: 'Awa',
         goal: 'TRAVEL',
+        interests: ['MUSIC'],
+        birthYear: 2000,
         level: 'A2',
         theme: 'SYSTEM',
         reminderTime: null,

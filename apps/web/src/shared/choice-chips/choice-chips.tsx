@@ -1,7 +1,7 @@
 'use client';
 
 import { Check } from 'lucide-react';
-import fr from '../../shared/i18n/fr.json';
+import fr from '../i18n/fr.json';
 
 export type Choice = { value: string; label: string; hint?: string };
 

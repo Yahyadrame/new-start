@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Palette,
   ShieldCheck,
+  UserRound,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,7 @@ import { BottomNav, NotificationsBell } from '../../shared/navigation';
 import type { PushStatus } from '../../shared/push/subscription';
 import { usePush } from '../../shared/push/use-push';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
+import { AccountSection } from './account-section';
 import { DeleteAccountDialog } from './delete-account-dialog';
 import { SECTIONS, type Section } from './sections';
 import { NotebookSection } from './notebook-section';
@@ -30,6 +32,7 @@ import { deleteMe, exportMe, getMe, logout, patchMe } from './profile-api';
 const t = fr.profile;
 
 const SECTION_ICONS = {
+  account: UserRound,
   learning: GraduationCap,
   notifications: BellRing,
   appearance: Palette,
@@ -143,6 +146,7 @@ export function ProfileScreen({ section }: { section?: Section }) {
 
   const sections: Record<Section, ReactNode> = me
     ? {
+        account: <AccountSection me={me} onSave={save} />,
         learning: (
           <>
             <Group>

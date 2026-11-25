@@ -59,6 +59,22 @@ describe('PrismaMeStore', () => {
     expect(db.user.updateMany.mock.calls[2]?.[0].data).toEqual({ pausedUntil: null });
   });
 
+  it("enregistre l'année de naissance et les centres d'intérêt, et les relit avec le profil", async () => {
+    const { db, store } = fake();
+    db.user.updateMany.mockResolvedValue({ count: 1 });
+    db.user.findUnique.mockResolvedValue({ ...row, birthYear: 2000, interests: ['MUSIC'] });
+    expect(await store.update('u', { birthYear: 2000, interests: ['MUSIC'] })).toMatchObject({
+      birthYear: 2000,
+      interests: ['MUSIC'],
+    });
+    expect(db.user.updateMany.mock.calls[0]?.[0].data).toEqual({
+      birthYear: 2000,
+      interests: ['MUSIC'],
+    });
+    const select = db.user.findUnique.mock.calls[0]?.[0].select;
+    expect(select).toMatchObject({ birthYear: true, interests: true });
+  });
+
   it("ne touche pas à la pause quand elle n'est pas envoyée, et rend null si le compte a disparu", async () => {
     const { db, store } = fake();
     db.user.updateMany.mockResolvedValue({ count: 0 });
