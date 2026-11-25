@@ -1,6 +1,15 @@
 export { Button, buttonVariants, type ButtonProps } from './components/button';
 export { cn } from './lib/cn';
 export { Avatar, AvatarFallback, AvatarImage } from './components/avatar';
+export { NeutralAvatar, resolveAvatar, type NeutralAvatarProps } from './components/neutral-avatar';
+export {
+  AVATAR_VARIANTS,
+  LIBRARY_IDS,
+  PALETTE_NAMES,
+  type AvatarShape,
+  type AvatarTheme,
+  type AvatarVariant,
+} from './avatars';
 export { Badge, badgeVariants } from './components/badge';
 export { Input } from './components/input';
 export { Select } from './components/select';
