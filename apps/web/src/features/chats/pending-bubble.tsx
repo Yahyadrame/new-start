@@ -2,7 +2,13 @@ import fr from '../../shared/i18n/fr.json';
 
 const c = fr.conversation;
 
-export type PendingMessage = { clientId: string; text: string; status: 'sending' | 'failed' };
+export type PendingMessage = {
+  clientId: string;
+  text: string;
+  status: 'sending' | 'failed';
+  /** Le message cité, gardé pour que le nouvel essai parte avec la même citation. */
+  replyToId?: string;
+};
 
 /** Message de la personne pas encore confirmé par l'API : en cours d'envoi, ou parti en échec. */
 export function PendingBubble({

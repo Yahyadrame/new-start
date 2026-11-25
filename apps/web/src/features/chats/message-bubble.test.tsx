@@ -32,17 +32,17 @@ const show = (m: MessageItem, onAddToNotebook?: (id: string) => Promise<void>) =
 describe('MessageBubble', () => {
   it('aligne un message du contact à gauche, sans correction', () => {
     show(message({ correction: { better: 'ignorée', whyFr: null } }));
-    expect(screen.getByText('Hello there').className).toContain('bg-bg');
+    expect(screen.getByText('Hello there').parentElement?.className).toContain('bg-bg');
     expect(screen.queryByText(fr.conversation.natural)).toBeNull();
     expect(screen.getByRole('listitem').className).toContain('self-start');
-    expect(screen.getByText('Hello there').className).toContain('rounded-bl-[6px]');
+    expect(screen.getByText('Hello there').parentElement?.className).toContain('rounded-bl-[6px]');
   });
 
   it('aligne un message de la personne à droite', () => {
     show(message({ author: 'USER' }));
-    expect(screen.getByText('Hello there').className).toContain('bg-accent');
+    expect(screen.getByText('Hello there').parentElement?.className).toContain('bg-accent');
     expect(screen.getByRole('listitem').className).toContain('self-end');
-    expect(screen.getByText('Hello there').className).toContain('rounded-br-[6px]');
+    expect(screen.getByText('Hello there').parentElement?.className).toContain('rounded-br-[6px]');
   });
 
   it('montre la carte « Plus naturel » avec son explication', () => {
@@ -185,13 +185,13 @@ describe('MessageBubble', () => {
       </ol>,
     );
     expect(screen.getByRole('listitem').id).toBe('message-m7');
-    expect(screen.getByText('Hello there').className).not.toContain('ring-2');
+    expect(screen.getByText('Hello there').parentElement?.className).not.toContain('ring-2');
     rerender(
       <ol>
         <MessageBubble message={message({ id: 'm7' })} highlighted />
       </ol>,
     );
-    expect(screen.getByText('Hello there').className).toContain('ring-2');
+    expect(screen.getByText('Hello there').parentElement?.className).toContain('ring-2');
   });
 
   const c = fr.conversation;
@@ -210,6 +210,39 @@ describe('MessageBubble', () => {
     show(message({ deleted: true, text: '' }));
     expect(screen.getByText(c.deleted)).toBeTruthy();
     expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('propose « Répondre » et rend le message au parent', async () => {
+    const onReply = vi.fn();
+    const m = message({});
+    render(
+      <ol>
+        <MessageBubble message={m} onReply={onReply} />
+      </ol>,
+    );
+    const trigger = screen.getByRole('button', { name: c.messageActions });
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+    fireEvent.click(await screen.findByRole('button', { name: c.reply }));
+    expect(onReply).toHaveBeenCalledWith(m);
+  });
+
+  it('cite le message auquel il répond, avec son auteur', () => {
+    const replyTo = { id: 'm0', author: 'USER' as const, text: 'See you', deleted: false };
+    show(message({ replyTo }));
+    expect(screen.getByText(c.quoteYou)).toBeTruthy();
+    expect(screen.getByText('See you')).toBeTruthy();
+  });
+
+  it('montre « Message supprimé » quand le message cité a été effacé', () => {
+    const replyTo = { id: 'm0', author: 'AGENT' as const, text: '', deleted: true };
+    render(
+      <ol>
+        <MessageBubble message={message({ author: 'USER', replyTo })} agentName="Jade" />
+      </ol>,
+    );
+    expect(screen.getByText('Jade')).toBeTruthy();
+    expect(screen.getByText(c.deleted)).toBeTruthy();
   });
 
   it('copie le texte du message', async () => {

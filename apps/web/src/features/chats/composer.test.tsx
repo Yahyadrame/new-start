@@ -52,6 +52,21 @@ describe('Composer', () => {
     expect(field().value).toBe('');
   });
 
+  it('montre le message cité et laisse l’abandonner', () => {
+    const onCancelReply = vi.fn();
+    render(
+      <Composer
+        onSend={vi.fn()}
+        reply={{ name: 'Jade', text: 'See you' }}
+        onCancelReply={onCancelReply}
+      />,
+    );
+    expect(screen.getByText(c.replyingTo.replace('{name}', 'Jade'))).toBeTruthy();
+    expect(screen.getByText('See you')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: c.replyCancel }));
+    expect(onCancelReply).toHaveBeenCalled();
+  });
+
   it("n'envoie rien quand le champ est vide", () => {
     const onSend = vi.fn();
     render(<Composer onSend={onSend} />);

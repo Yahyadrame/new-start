@@ -54,6 +54,7 @@ export function ConversationScreen({
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [older, setOlder] = useState<'idle' | 'loading' | 'error'>('idle');
   const [pending, setPending] = useState<PendingMessage[]>([]);
+  const [replyTo, setReplyTo] = useState<MessageItem | null>(null);
   // Date du dernier message envoyé tant que le contact n'a pas répondu ; null sinon.
   const [awaiting, setAwaiting] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -118,12 +119,16 @@ export function ConversationScreen({
 
   // Le clientId reste le même à chaque nouvel essai : l'API ne crée jamais deux fois le message.
   const deliver = useCallback(
-    async (conversationId: string, { clientId, text }: PendingMessage) => {
+    async (conversationId: string, { clientId, text, replyToId }: PendingMessage) => {
       const mark = (status: PendingMessage['status']) =>
         setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
       mark('sending');
       try {
-        const sent = await sendMessage(token.current, conversationId, { clientId, text });
+        const sent = await sendMessage(token.current, conversationId, {
+          clientId,
+          text,
+          ...(replyToId && { replyToId }),
+        });
         setMessages((prev) => [...(prev ?? []), sent]);
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
         setAwaiting(sent.createdAt);
@@ -141,7 +146,13 @@ export function ConversationScreen({
 
   const send = (text: string) => {
     if (!item) return;
-    const message: PendingMessage = { clientId: crypto.randomUUID(), text, status: 'sending' };
+    const message: PendingMessage = {
+      clientId: crypto.randomUUID(),
+      text,
+      status: 'sending',
+      ...(replyTo && { replyToId: replyTo.id }),
+    };
+    setReplyTo(null);
     setPending((prev) => [...prev, message]);
     void deliver(item.id, message);
   };
@@ -287,6 +298,8 @@ export function ConversationScreen({
                     <MessageBubble
                       message={m}
                       highlighted={m.id === flash}
+                      agentName={item?.agent.name ?? ''}
+                      onReply={setReplyTo}
                       onAddToNotebook={(id) => addToNotebook(token.current, id)}
                       onTranslate={(id) => translateMessage(token.current, id)}
                       onDelete={async (id) => {
@@ -332,7 +345,18 @@ export function ConversationScreen({
           </p>
         )}
       </div>
-      {loaded && <Composer onSend={send} />}
+      {loaded && (
+        <Composer
+          onSend={send}
+          reply={
+            replyTo && {
+              name: replyTo.author === 'USER' ? fr.conversation.quoteYou : (item?.agent.name ?? ''),
+              text: replyTo.text,
+            }
+          }
+          onCancelReply={() => setReplyTo(null)}
+        />
+      )}
     </main>
   );
 }
