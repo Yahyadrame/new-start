@@ -12,7 +12,7 @@ vi.mock('./google-api', async (orig) => ({
   signInWithGoogle: signIn,
 }));
 vi.mock('./session', () => ({ setSession }));
-const { GoogleButton, googleMessage } = await import('./google-button');
+const { GoogleButton, googleMessage, isDarkTheme } = await import('./google-button');
 const t = fr.google;
 
 let callback: (r: { credential: string }) => Promise<void>;
@@ -46,6 +46,28 @@ describe('GoogleButton', () => {
     render(<GoogleButton redirectTo="/chats" onError={vi.fn()} />);
     await waitFor(() => expect(renderButton).toHaveBeenCalled());
     expect(screen.getByText(t.or)).toBeTruthy();
+  });
+
+  it('choisit le bouton sombre selon data-theme, puis selon le système', async () => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const { unmount } = render(<GoogleButton redirectTo="/chats" onError={vi.fn()} />);
+    await waitFor(() => expect(renderButton).toHaveBeenCalled());
+    expect(renderButton.mock.calls[0]?.[1]).toMatchObject({ theme: 'filled_black' });
+    unmount();
+    renderButton.mockClear();
+    document.documentElement.setAttribute('data-theme', 'light');
+    render(<GoogleButton redirectTo="/chats" onError={vi.fn()} />);
+    await waitFor(() => expect(renderButton).toHaveBeenCalled());
+    expect(renderButton.mock.calls[0]?.[1]).toMatchObject({ theme: 'outline' });
+    document.documentElement.removeAttribute('data-theme');
+  });
+
+  it('suit le réglage du système quand aucun thème n’est choisi', () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }));
+    expect(isDarkTheme()).toBe(true);
+    vi.stubGlobal('matchMedia', () => ({ matches: false }));
+    expect(isDarkTheme()).toBe(false);
+    vi.unstubAllGlobals();
   });
 
   it('ouvre la session puis redirige', async () => {
