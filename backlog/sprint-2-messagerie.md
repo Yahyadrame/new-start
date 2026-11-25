@@ -272,14 +272,14 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 
 ## NS-062 — Silhouettes neutres · M
 
-_Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/avatars/`. Dépend du choix du style par défaut (question posée au porteur)._
+_Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/avatars/`. Style par défaut décidé le 2026-11-25 : `duo` pour les contacts, `gris` pour les personnes, forme `carre`._
 
 - [ ] Porter `design/avatars/avatars.js` en TypeScript dans `packages/ui` (`neutral-avatar.ts`), sans changer les tracés ni les couleurs.
 - [ ] Composant `NeutralAvatar` (contact, variante, forme, taille) : SVG en ligne, `clipPath` à identifiant unique, thème clair ou sombre, `role="img"` et `aria-label`.
 - [ ] Repli du composant Avatar de shadcn/ui : jamais de carré vide quand une photo ne se charge pas.
 - [ ] Avatar par défaut à l'inscription ; profil avec le bouton photo.
 - [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
-- [ ] Les 11 contacts ajoutés par NS-058 n'ont pas de silhouette dans le jeu fourni : à demander au porteur ou à dessiner dans le même style.
+- [ ] Les 11 contacts ajoutés par NS-058 n'ont pas de silhouette dans le jeu fourni : le porteur les fournit. En attendant, on code les 12 contacts existants et les autres gardent leurs initiales.
 - [ ] Tests unitaires, tests visuels clair et sombre, accessibilité.
 
 ## NS-063 — Éditeur d'avatar et stickers · L
