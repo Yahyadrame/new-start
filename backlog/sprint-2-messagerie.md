@@ -240,3 +240,9 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Chaque écran est contrôlé à 768 et 1024 px, en clair et en sombre.
 - [x] Aucun débordement horizontal, cibles tactiles ≥ 44 px, lignes de texte lisibles (largeur bornée).
 - [x] Aucun écart bloquant : colonne de contenu bornée à ~400 px dès 768 px, rail latéral et deux colonnes dès 1024 px. Contrôle de débordement à 768 px déjà couvert par `e2e/responsive.spec.ts`.
+
+## NS-058 — Domaines élargis et contacts IA selon les centres d'intérêt · L
+**Besoin** : le catalogue ne couvre pas les 16 centres d'intérêt de l'inscription.
+- [x] Partie 1 : 8 thèmes et 11 contacts ajoutés (17 thèmes, 23 contacts), statuts et tests à jour.
+- [ ] Partie 2 : section « Pour toi » dans Explorer, selon `interests` et `goals` du compte.
+- [ ] Partie 3 : `agent-reply` transmet les centres d'intérêt au contact (aujourd'hui seulement `goal`).
