@@ -5,7 +5,7 @@ import type { MessageCursor } from '../application/message-cursor.js';
 import { recordActivity } from '../../../shared/progress/daily-activity.js';
 import { streakUpdate } from '../../../shared/progress/streak.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
-import type { ConversationsStore, MessageRow } from '../application/conversations.js';
+import type { ConversationsStore, MessageRow, SearchRow } from '../application/conversations.js';
 
 const select = {
   id: true,
@@ -53,6 +53,38 @@ export class PrismaConversationsStore implements ConversationsStore {
       select,
     });
     return rows.map(toItem);
+  }
+
+  async search(userId: string, like: string, limit: number): Promise<SearchRow[]> {
+    const rows = await this.db.$queryRaw<
+      {
+        id: string;
+        conversationId: string;
+        author: 'USER' | 'AGENT';
+        text: string;
+        createdAt: Date;
+        slug: string;
+        name: string;
+        initials: string;
+      }[]
+    >`SELECT m."id", m."conversationId", m."author"::text AS "author", m."text", m."createdAt",
+             a."slug", a."name", a."initials"
+        FROM "Message" m
+        JOIN "Conversation" c ON c."id" = m."conversationId"
+        JOIN "Agent" a ON a."id" = c."agentId"
+       WHERE c."userId" = ${userId}::uuid
+         AND m."author" <> 'SYSTEM'
+         AND m."text" ILIKE ${`%${like}%`}
+       ORDER BY m."createdAt" DESC, m."id" DESC
+       LIMIT ${limit}`;
+    return rows.map((r) => ({
+      messageId: r.id,
+      conversationId: r.conversationId,
+      author: r.author,
+      text: r.text,
+      createdAt: r.createdAt,
+      agent: { slug: r.slug, name: r.name, initials: r.initials },
+    }));
   }
 
   async birthYear(userId: string) {

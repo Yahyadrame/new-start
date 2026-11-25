@@ -31,3 +31,23 @@ export const SendMessage = z.object({
   text: z.string().trim().min(1).max(2000),
 });
 export type SendMessage = z.infer<typeof SendMessage>;
+
+/** Paramètres de `GET /conversations/search` : le texte cherché, sans espaces autour. */
+export const SearchQuery = z.object({ q: z.string().trim().min(2).max(100) });
+export type SearchQuery = z.infer<typeof SearchQuery>;
+
+/** Un message trouvé : `excerpt` est un extrait autour du premier mot trouvé, `…` aux bouts coupés. */
+export const SearchHit = z.object({
+  messageId: z.string(),
+  conversationId: z.string(),
+  author: z.enum(['USER', 'AGENT']),
+  excerpt: z.string(),
+  createdAt: z.string(),
+  agent: z.object({ slug: z.string(), name: z.string(), initials: z.string() }),
+});
+export type SearchHit = z.infer<typeof SearchHit>;
+
+export const SearchResults = z.object({ items: z.array(SearchHit) });
+export type SearchResults = z.infer<typeof SearchResults>;
+
+export const SEARCH_LIMIT = 30;

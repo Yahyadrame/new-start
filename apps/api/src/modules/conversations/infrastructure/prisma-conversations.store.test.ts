@@ -22,6 +22,7 @@ function fake(rows: unknown[]) {
     user: { findUnique: vi.fn(), update: vi.fn() },
     dailyActivity: { upsert: vi.fn(), findUnique: vi.fn() },
     $transaction: vi.fn(),
+    $queryRaw: vi.fn(),
     message: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), updateMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
   };
@@ -306,5 +307,37 @@ describe('PrismaConversationsStore', () => {
       db.$transaction.mockRejectedValue(new Error('base coupée'));
       await expect(store.send('u1', 'c1', message)).rejects.toThrow('base coupée');
     });
+  });
+});
+
+describe('PrismaConversationsStore.search', () => {
+  it('lit les messages du compte avec le texte protégé, sans ceux du système, et les remet en forme', async () => {
+    const { db, store } = fake([]);
+    db.$queryRaw.mockResolvedValue([
+      {
+        id: 'm1',
+        conversationId: 'c1',
+        author: 'USER',
+        text: 'hello there',
+        createdAt: new Date('2026-11-25T10:00:00.000Z'),
+        slug: 'jade',
+        name: 'Jade',
+        initials: 'J',
+      },
+    ]);
+    const rows = await store.search('u1', 'hel', 30);
+    const [strings, ...values] = db.$queryRaw.mock.calls[0] as [string[], ...unknown[]];
+    expect(strings.join('?')).toContain(`"author" <> 'SYSTEM'`);
+    expect(values).toEqual(['u1', '%hel%', 30]);
+    expect(rows).toEqual([
+      {
+        messageId: 'm1',
+        conversationId: 'c1',
+        author: 'USER',
+        text: 'hello there',
+        createdAt: new Date('2026-11-25T10:00:00.000Z'),
+        agent: { slug: 'jade', name: 'Jade', initials: 'J' },
+      },
+    ]);
   });
 });

@@ -10,7 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { MessagesQuery, SendMessage, StartConversation } from '@newstart/shared';
+import { MessagesQuery, SearchQuery, SendMessage, StartConversation } from '@newstart/shared';
 import { AccessGuard, CurrentUserId } from '../../../shared/auth/access.guard.js';
 import { parseBody } from '../../../shared/http/validate.js';
 import { ConversationsService } from '../application/conversations.js';
@@ -25,6 +25,12 @@ export class ConversationsController {
   @Get()
   list(@CurrentUserId() userId: string) {
     return this.conversations.list(userId);
+  }
+
+  /** Déclarée avant `:id/...` : « search » n'est jamais pris pour un identifiant. */
+  @Get('search')
+  search(@CurrentUserId() userId: string, @Query() query: unknown) {
+    return this.conversations.search(userId, parseBody(SearchQuery, query).q);
   }
 
   @Post()

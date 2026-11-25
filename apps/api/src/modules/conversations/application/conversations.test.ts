@@ -12,6 +12,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     messages: vi.fn(),
     send: vi.fn(),
     markRead: vi.fn(),
+    search: vi.fn().mockResolvedValue([]),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
 }
@@ -209,5 +210,38 @@ describe('ConversationsService.markRead', () => {
     const { store, service } = setup(null);
     await expect(service.markRead('u1', 'nope')).rejects.toMatchObject({ status: 404 });
     expect(store.markRead).not.toHaveBeenCalled();
+  });
+});
+
+describe('ConversationsService.search', () => {
+  it('protège le texte cherché, borne la liste et rend des extraits datés en ISO', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.search).mockResolvedValue([
+      {
+        messageId: 'm1',
+        conversationId: 'c1',
+        author: 'AGENT',
+        text: 'Say 100% hello',
+        createdAt: new Date('2026-11-25T10:00:00.000Z'),
+        agent: { slug: 'jade', name: 'Jade', initials: 'J' },
+      },
+    ]);
+    const res = await service.search('u1', '100%');
+    expect(store.search).toHaveBeenCalledWith('u1', '100\\%', 30);
+    expect(res.items).toEqual([
+      {
+        messageId: 'm1',
+        conversationId: 'c1',
+        author: 'AGENT',
+        excerpt: 'Say 100% hello',
+        createdAt: '2026-11-25T10:00:00.000Z',
+        agent: { slug: 'jade', name: 'Jade', initials: 'J' },
+      },
+    ]);
+  });
+
+  it('rend une liste vide quand rien ne correspond', async () => {
+    const { service } = setup(null);
+    expect(await service.search('u1', 'zzz')).toEqual({ items: [] });
   });
 });
