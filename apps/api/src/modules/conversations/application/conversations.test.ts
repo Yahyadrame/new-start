@@ -12,6 +12,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     messages: vi.fn(),
     send: vi.fn(),
     markRead: vi.fn(),
+    deleteMessage: vi.fn(),
     search: vi.fn().mockResolvedValue([]),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
@@ -67,6 +68,7 @@ describe('ConversationsService.messages', () => {
     translationFr: null,
     createdAt: new Date(Date.UTC(2026, 10, 20, 10, 60 - n)),
     correction: null,
+    deletedAt: null,
   });
   const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
   const serve = (found: ReturnType<typeof rows> | null) => {
@@ -132,13 +134,22 @@ describe('ConversationsService.send', () => {
     translationFr: null,
     createdAt: new Date('2026-11-20T10:00:00.000Z'),
     correction: null,
+    deletedAt: null,
   };
 
   it('rend le message avec sa date en texte et signale la création', async () => {
     const { store, service } = setup(null);
     vi.mocked(store.send).mockResolvedValue({ row, created: true });
     expect(await service.send('u1', ID, body)).toEqual({
-      message: { ...row, createdAt: '2026-11-20T10:00:00.000Z' },
+      message: {
+        id: 'm1',
+        author: 'USER',
+        text: 'Hello',
+        translationFr: null,
+        correction: null,
+        deleted: false,
+        createdAt: '2026-11-20T10:00:00.000Z',
+      },
       created: true,
     });
     expect(store.send).toHaveBeenCalledWith('u1', ID, body, 60);
@@ -243,5 +254,46 @@ describe('ConversationsService.search', () => {
   it('rend une liste vide quand rien ne correspond', async () => {
     const { service } = setup(null);
     expect(await service.search('u1', 'zzz')).toEqual({ items: [] });
+  });
+
+  const ID = '11111111-1111-4111-8111-111111111111';
+
+  it('efface le texte d’un message de la personne', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.deleteMessage).mockResolvedValue(true);
+    await service.remove('u1', ID);
+    expect(store.deleteMessage).toHaveBeenCalledWith('u1', ID);
+  });
+
+  it('répond 404 pour un message absent, déjà supprimé ou qui n’est pas à elle', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.deleteMessage).mockResolvedValue(false);
+    await expect(service.remove('u1', ID)).rejects.toMatchObject({
+      status: 404,
+      response: { code: 'NOT_FOUND' },
+    });
+  });
+
+  it('répond 404 sans interroger la base quand l’identifiant n’est pas un UUID', async () => {
+    const { store, service } = setup(null);
+    await expect(service.remove('u1', 'zzz')).rejects.toMatchObject({ status: 404 });
+    expect(store.deleteMessage).not.toHaveBeenCalled();
+  });
+
+  it('marque un message supprimé dans l’historique', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.messages).mockResolvedValue([
+      {
+        id: 'm1',
+        author: 'USER',
+        text: '',
+        translationFr: null,
+        createdAt: new Date('2026-11-25T10:00:00Z'),
+        deletedAt: new Date('2026-11-25T11:00:00Z'),
+        correction: null,
+      },
+    ]);
+    const page = await service.messages('u1', ID);
+    expect(page.items[0]).toMatchObject({ deleted: true, text: '' });
   });
 });

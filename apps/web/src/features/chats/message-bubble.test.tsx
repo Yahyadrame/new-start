@@ -13,8 +13,14 @@ const message = (over: Partial<MessageItem>): MessageItem => ({
   translationFr: null,
   createdAt: '2026-11-20T10:00:00.000Z',
   correction: null,
+  deleted: false,
   ...over,
 });
+// Les boutons de la bulle, sans le menu d'actions qui est toujours là.
+const buttons = () =>
+  screen
+    .queryAllByRole('button')
+    .filter((b) => b.getAttribute('aria-label') !== fr.conversation.messageActions);
 const show = (m: MessageItem, onAddToNotebook?: (id: string) => Promise<void>) =>
   render(
     <ol>
@@ -66,10 +72,10 @@ describe('MessageBubble', () => {
 
     it("n'apparaît pas sans action fournie, ni quand rien n'est à corriger", () => {
       show(corrected);
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
       cleanup();
       show(message({ author: 'USER', correction: { better: null, whyFr: null } }), vi.fn());
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
     });
 
     it('garde la correction de ce message puis confirme', async () => {
@@ -78,7 +84,7 @@ describe('MessageBubble', () => {
       fireEvent.click(button());
       expect(add).toHaveBeenCalledWith('m9');
       expect(await screen.findByText(fr.conversation.addedToNotebook)).toBeTruthy();
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
     });
 
     it("se désactive pendant l'ajout", async () => {
@@ -118,7 +124,7 @@ describe('MessageBubble', () => {
       fireEvent.click(button());
       await waitFor(() => expect(screen.getByText('Bonjour')).toBeTruthy());
       expect(translate).toHaveBeenCalledWith('m1');
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
     });
 
     it('montre tout de suite une traduction déjà gardée', () => {
@@ -128,7 +134,7 @@ describe('MessageBubble', () => {
         </ol>,
       );
       expect(screen.getByText('Salut')).toBeTruthy();
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
     });
 
     it('laisse réessayer après un échec', async () => {
@@ -146,14 +152,14 @@ describe('MessageBubble', () => {
 
     it('n’offre pas le bouton sans onTranslate, ni sur un message de la personne', () => {
       show(message({}));
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
       cleanup();
       render(
         <ol>
           <MessageBubble message={message({ author: 'USER' })} onTranslate={vi.fn()} />
         </ol>,
       );
-      expect(screen.queryByRole('button')).toBeNull();
+      expect(buttons()).toHaveLength(0);
     });
   });
 
@@ -185,5 +191,63 @@ describe('MessageBubble', () => {
       </ol>,
     );
     expect(screen.getByText('Hello there').className).toContain('ring-2');
+  });
+
+  const c = fr.conversation;
+  const openMenu = (onDelete?: (id: string) => Promise<void>) => {
+    render(
+      <ol>
+        <MessageBubble message={message({})} {...(onDelete && { onDelete })} />
+      </ol>,
+    );
+    const trigger = screen.getByRole('button', { name: c.messageActions });
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+  };
+
+  it('remplace un message supprimé par « Message supprimé », sans menu ni traduction', () => {
+    show(message({ deleted: true, text: '' }));
+    expect(screen.getByText(c.deleted)).toBeTruthy();
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('copie le texte du message', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+    openMenu();
+    fireEvent.click(await screen.findByRole('button', { name: c.copy }));
+    expect(writeText).toHaveBeenCalledWith('Hello there');
+    expect((await screen.findByRole('status')).textContent).toBe(c.copied);
+    expect(screen.queryByRole('button', { name: c.delete })).toBeNull();
+  });
+
+  it('dit quand la copie échoue', async () => {
+    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockRejectedValue(new Error()) } });
+    openMenu();
+    fireEvent.click(await screen.findByRole('button', { name: c.copy }));
+    expect((await screen.findByRole('status')).textContent).toBe(c.copyFailed);
+  });
+
+  it('demande confirmation avant de supprimer, puis supprime', async () => {
+    const onDelete = vi.fn().mockResolvedValue(undefined);
+    openMenu(onDelete);
+    fireEvent.click(await screen.findByRole('button', { name: c.delete }));
+    expect(onDelete).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: c.deleteCancel }));
+    expect(screen.getByRole('button', { name: c.delete })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: c.delete }));
+    fireEvent.click(screen.getByRole('button', { name: c.deleteConfirm }));
+    await waitFor(() => expect(onDelete).toHaveBeenCalledWith('m1'));
+    await waitFor(() => expect(screen.queryByRole('button', { name: c.deleteConfirm })).toBeNull());
+  });
+
+  it('garde le menu ouvert et le dit quand la suppression échoue', async () => {
+    openMenu(vi.fn().mockRejectedValue(new Error()));
+    fireEvent.click(await screen.findByRole('button', { name: c.delete }));
+    fireEvent.click(screen.getByRole('button', { name: c.deleteConfirm }));
+    expect((await screen.findByRole('status')).textContent).toBe(c.deleteFailed);
+    expect(
+      (screen.getByRole('button', { name: c.deleteConfirm }) as HTMLButtonElement).disabled,
+    ).toBe(false);
   });
 });

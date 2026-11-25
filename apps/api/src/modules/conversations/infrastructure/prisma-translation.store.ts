@@ -8,7 +8,7 @@ export class PrismaTranslationStore implements TranslationStore {
 
   find(userId: string, messageId: string) {
     return this.db.message.findFirst({
-      where: { id: messageId, author: 'AGENT', conversation: { userId } },
+      where: { id: messageId, author: 'AGENT', deletedAt: null, conversation: { userId } },
       select: { text: true, translationFr: true },
     });
   }

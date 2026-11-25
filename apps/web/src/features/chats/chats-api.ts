@@ -83,6 +83,15 @@ export async function translateMessage(token: string, messageId: string): Promis
   return ((await res.json()) as { translationFr: string }).translationFr;
 }
 
+/** Efface le texte d'un message ; la bulle reste, marquée supprimée. */
+export async function deleteMessage(token: string, messageId: string): Promise<void> {
+  const res = await fetch(`/api/messages/${messageId}`, {
+    method: 'DELETE',
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+}
+
 /** Les messages de la personne qui contiennent `q` (2 caractères au moins), du plus récent au plus ancien. */
 export async function searchMessages(token: string, q: string): Promise<SearchHit[]> {
   const res = await fetch(`/api/conversations/search?q=${encodeURIComponent(q)}`, {

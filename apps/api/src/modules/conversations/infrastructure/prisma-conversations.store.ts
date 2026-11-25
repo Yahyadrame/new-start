@@ -13,6 +13,7 @@ const select = {
   unreadCount: true,
   agent: { select: { slug: true, name: true, initials: true, roleFr: true, category: true } },
   messages: {
+    where: { deletedAt: null },
     select: { author: true, text: true },
     orderBy: { createdAt: 'desc' },
     take: 1,
@@ -25,6 +26,7 @@ const messageSelect = {
   text: true,
   translationFr: true,
   createdAt: true,
+  deletedAt: true,
   correction: { select: { better: true, whyFr: true } },
 } as const;
 
@@ -147,6 +149,22 @@ export class PrismaConversationsStore implements ConversationsStore {
       take: limit,
       select: messageSelect,
     });
+  }
+
+  async deleteMessage(userId: string, messageId: string) {
+    const found = await this.db.message.findFirst({
+      where: { id: messageId, deletedAt: null, conversation: { userId } },
+      select: { id: true },
+    });
+    if (!found) return false;
+    await this.db.$transaction([
+      this.db.correction.deleteMany({ where: { messageId } }),
+      this.db.message.update({
+        where: { id: messageId },
+        data: { text: '', translationFr: null, deletedAt: new Date() },
+      }),
+    ]);
+    return true;
   }
 
   async markRead(userId: string, conversationId: string) {

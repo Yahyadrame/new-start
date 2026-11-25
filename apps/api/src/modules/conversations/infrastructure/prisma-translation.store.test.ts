@@ -15,7 +15,7 @@ describe('PrismaTranslationStore', () => {
     const { message, store } = fake();
     expect(await store.find('u1', 'm1')).toEqual({ text: 'Hey!', translationFr: null });
     expect(message.findFirst).toHaveBeenCalledWith({
-      where: { id: 'm1', author: 'AGENT', conversation: { userId: 'u1' } },
+      where: { id: 'm1', author: 'AGENT', deletedAt: null, conversation: { userId: 'u1' } },
       select: { text: true, translationFr: true },
     });
   });

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   addToNotebook,
   translateMessage,
+  deleteMessage,
   ChatsError,
   listConversations,
   listMessages,
@@ -165,5 +166,22 @@ describe('searchMessages', () => {
   it('lève ChatsError quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 400 }));
     await expect(searchMessages('tok', 'x')).rejects.toMatchObject({ status: 400 });
+  });
+
+  describe('deleteMessage', () => {
+    it('envoie un DELETE avec le jeton', async () => {
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+      vi.stubGlobal('fetch', fetchMock);
+      await deleteMessage('tok', 'm1');
+      expect(fetchMock).toHaveBeenCalledWith('/api/messages/m1', {
+        method: 'DELETE',
+        headers: { authorization: 'Bearer tok' },
+      });
+    });
+
+    it('lève une erreur quand l’API refuse', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+      await expect(deleteMessage('tok', 'm1')).rejects.toMatchObject({ status: 404 });
+    });
   });
 });

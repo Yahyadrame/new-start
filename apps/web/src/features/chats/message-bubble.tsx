@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { MessageItem } from '@newstart/shared';
-import { cn } from '@newstart/ui';
+import { cn, Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
-import { CheckCheck } from 'lucide-react';
+import { Ban, CheckCheck, Copy, MoreHorizontal, Trash2 } from 'lucide-react';
 import { formatHour } from './chats-format';
 
 const c = fr.conversation;
@@ -33,6 +33,90 @@ function NotebookButton({ onAdd }: { onAdd: () => Promise<void> }) {
           ? c.addToNotebookFailed
           : c.addToNotebook}
     </button>
+  );
+}
+
+const item =
+  'flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-base hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-accent-text disabled:opacity-60';
+
+/** Menu d'un message : copier, et supprimer après une confirmation. */
+function Actions({
+  text,
+  onDelete,
+}: {
+  text: string;
+  onDelete: (() => Promise<void>) | undefined;
+}) {
+  const [open, setOpen] = useState(false);
+  const [ask, setAsk] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const close = (next: boolean) => {
+    setOpen(next);
+    if (!next) {
+      setAsk(false);
+      setNote(null);
+    }
+  };
+  const copy = () =>
+    navigator.clipboard.writeText(text).then(
+      () => setNote(c.copied),
+      () => setNote(c.copyFailed),
+    );
+  const remove = () => {
+    setBusy(true);
+    onDelete?.().then(
+      () => close(false),
+      () => {
+        setBusy(false);
+        setNote(c.deleteFailed);
+      },
+    );
+  };
+  return (
+    <Popover open={open} onOpenChange={close}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={c.messageActions}
+          className="-my-3 grid size-11 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+        >
+          <MoreHorizontal aria-hidden="true" className="size-4" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-60" side="top">
+        {ask ? (
+          <div className="flex flex-col gap-1">
+            <p className="px-3 py-2 text-base font-semibold">{c.deleteAsk}</p>
+            <button type="button" className={item} disabled={busy} onClick={remove}>
+              <Trash2 aria-hidden="true" className="size-5 text-danger" />
+              {c.deleteConfirm}
+            </button>
+            <button type="button" className={item} disabled={busy} onClick={() => setAsk(false)}>
+              {c.deleteCancel}
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1">
+            <button type="button" className={item} onClick={() => void copy()}>
+              <Copy aria-hidden="true" className="size-5" />
+              {c.copy}
+            </button>
+            {onDelete && (
+              <button type="button" className={item} onClick={() => setAsk(true)}>
+                <Trash2 aria-hidden="true" className="size-5" />
+                {c.delete}
+              </button>
+            )}
+          </div>
+        )}
+        {note && (
+          <p role="status" className="px-3 pt-2 text-sm text-text-muted">
+            {note}
+          </p>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -90,12 +174,15 @@ export function MessageBubble({
   highlighted = false,
   onAddToNotebook,
   onTranslate,
+  onDelete,
 }: {
   message: MessageItem;
   /** Entoure la bulle : le message qu'on vient de retrouver par la recherche. */
   highlighted?: boolean;
   /** Traduit un message du contact ; sans elle, pas de bouton. */
   onTranslate?: (messageId: string) => Promise<string>;
+  /** Efface le message ; sans elle, le menu ne propose que « Copier ». */
+  onDelete?: (messageId: string) => Promise<void>;
   /** Garde la correction de ce message dans le carnet ; sans elle, la carte n'a pas de bouton. */
   onAddToNotebook?: (messageId: string) => Promise<void>;
 }) {
@@ -103,6 +190,19 @@ export function MessageBubble({
     return <li className="self-center text-center text-xs text-text-muted">{message.text}</li>;
   }
   const mine = message.author === 'USER';
+  if (message.deleted) {
+    return (
+      <li
+        id={`message-${message.id}`}
+        className={cn('max-w-[85%] min-w-0 sm:max-w-[75%]', mine ? 'self-end' : 'self-start')}
+      >
+        <p className="flex items-center gap-2 rounded-[18px] border border-line bg-bg px-4 py-2.5 text-[15px] text-text-muted italic">
+          <Ban aria-hidden="true" className="size-4 shrink-0" />
+          {c.deleted}
+        </p>
+      </li>
+    );
+  }
   return (
     <li
       id={`message-${message.id}`}
@@ -123,6 +223,7 @@ export function MessageBubble({
       <span className="flex items-center gap-1 px-1 text-xs text-text-muted">
         <time dateTime={message.createdAt}>{formatHour(message.createdAt)}</time>
         {mine && <CheckCheck aria-hidden="true" className="size-3.5" />}
+        <Actions text={message.text} onDelete={onDelete && (() => onDelete(message.id))} />
       </span>
       {!mine && (
         <Translation

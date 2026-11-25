@@ -16,7 +16,10 @@ import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor
 export const CONVERSATIONS_STORE = Symbol('CONVERSATIONS_STORE');
 
 /** Un message tel que le stockage le rend : la date n'est pas encore mise en texte. */
-export type MessageRow = Omit<MessageItem, 'createdAt'> & { createdAt: Date };
+export type MessageRow = Omit<MessageItem, 'createdAt' | 'deleted'> & {
+  createdAt: Date;
+  deletedAt: Date | null;
+};
 
 /** Un message trouvé tel que le stockage le rend : le texte entier, la date pas encore en texte. */
 export type SearchRow = Omit<SearchHit, 'excerpt' | 'createdAt'> & {
@@ -54,6 +57,8 @@ export interface ConversationsStore {
    * rend le message existant (`created: false`) sans rien ajouter. Null si la conversation n'est pas à elle.
    * Un nouveau message au-delà de `dailyLimit` messages aujourd'hui n'est pas créé : `{ limited: true }`.
    */
+  deleteMessage(userId: string, messageId: string): Promise<boolean>;
+
   send(
     userId: string,
     conversationId: string,
@@ -62,9 +67,10 @@ export interface ConversationsStore {
   ): Promise<{ row: MessageRow; created: boolean } | { limited: true } | null>;
 }
 
-const toItem = (row: MessageRow): MessageItem => ({
+const toItem = ({ deletedAt, ...row }: MessageRow): MessageItem => ({
   ...row,
   createdAt: row.createdAt.toISOString(),
+  deleted: deletedAt !== null,
 });
 
 const notFound = () =>
@@ -116,6 +122,14 @@ export class ConversationsService {
         createdAt: createdAt.toISOString(),
       })),
     };
+  }
+
+  /** Efface le texte d'un message de la personne (le sien ou celui d'un contact) ; la bulle reste, vide. */
+  async remove(userId: string, messageId: string): Promise<void> {
+    const done = UUID.test(messageId) && (await this.store.deleteMessage(userId, messageId));
+    if (!done) {
+      throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
+    }
   }
 
   async messages(userId: string, conversationId: string, cursor?: string): Promise<MessagesPage> {
