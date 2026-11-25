@@ -9,6 +9,7 @@ import { ConversationsController } from './conversations.controller.js';
 const list = vi.fn().mockResolvedValue([{ id: 'c1' }]);
 const start = vi.fn().mockResolvedValue({ id: 'c2' });
 const send = vi.fn();
+const search = vi.fn().mockResolvedValue({ items: [] });
 const markRead = vi.fn();
 const messages = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
@@ -17,7 +18,10 @@ beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [ConversationsController],
     providers: [
-      { provide: ConversationsService, useValue: { list, start, messages, send, markRead } },
+      {
+        provide: ConversationsService,
+        useValue: { list, start, messages, send, markRead, search },
+      },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -150,5 +154,35 @@ describe('POST /conversations/:id/read', () => {
     const res = await post().set({ Authorization: 'Bearer tok-u1' });
     expect(res.status).toBe(204);
     expect(markRead).toHaveBeenCalledWith('u1', 'c1');
+  });
+});
+
+describe('GET /conversations/search', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await request(app.getHttpServer()).get('/conversations/search?q=hello')).status).toBe(
+      401,
+    );
+    expect(search).not.toHaveBeenCalled();
+  });
+
+  it('cherche pour le compte du jeton, texte sans espaces autour', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/conversations/search?q=%20hello%20')
+      .set('Authorization', 'Bearer tok-u1');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ items: [] });
+    expect(search).toHaveBeenCalledWith('u1', 'hello');
+  });
+
+  it('refuse un texte trop court, absent ou trop long (400)', async () => {
+    for (const q of ['?q=a', '', `?q=${'x'.repeat(101)}`]) {
+      const res = await request(app.getHttpServer())
+        .get(`/conversations/search${q}`)
+        .set('Authorization', 'Bearer tok-u1');
+      expect(res.status).toBe(400);
+    }
+    expect(search).not.toHaveBeenCalled();
   });
 });

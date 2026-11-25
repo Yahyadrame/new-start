@@ -4,9 +4,12 @@ import {
   type ConversationItem,
   type MessageItem,
   type MessagesPage,
+  type SearchHit,
   type SendMessage,
+  SEARCH_LIMIT,
 } from '@newstart/shared';
 import { isAdult } from '../../../shared/age.js';
+import { escapeLike, makeExcerpt } from './excerpt.js';
 import type { ReplyScheduler } from './agent-reply.js';
 import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor.js';
 
@@ -15,7 +18,18 @@ export const CONVERSATIONS_STORE = Symbol('CONVERSATIONS_STORE');
 /** Un message tel que le stockage le rend : la date n'est pas encore mise en texte. */
 export type MessageRow = Omit<MessageItem, 'createdAt'> & { createdAt: Date };
 
+/** Un message trouvé tel que le stockage le rend : le texte entier, la date pas encore en texte. */
+export type SearchRow = Omit<SearchHit, 'excerpt' | 'createdAt'> & {
+  text: string;
+  createdAt: Date;
+};
+
 export interface ConversationsStore {
+  /**
+   * Les messages de la personne (jamais ceux du système) dont le texte contient `like` sans tenir
+   * compte de la casse, du plus récent au plus ancien, au plus `limit`. `like` est déjà protégé.
+   */
+  search(userId: string, like: string, limit: number): Promise<SearchRow[]>;
   /** Les conversations du compte, la plus récente d'abord. */
   list(userId: string): Promise<ConversationItem[]>;
   birthYear(userId: string): Promise<number | null | undefined>;
@@ -91,6 +105,17 @@ export class ConversationsService {
       );
     }
     return this.store.open(userId, slug);
+  }
+
+  async search(userId: string, query: string) {
+    const rows = await this.store.search(userId, escapeLike(query), SEARCH_LIMIT);
+    return {
+      items: rows.map(({ text, createdAt, ...row }) => ({
+        ...row,
+        excerpt: makeExcerpt(text, query),
+        createdAt: createdAt.toISOString(),
+      })),
+    };
   }
 
   async messages(userId: string, conversationId: string, cursor?: string): Promise<MessagesPage> {
