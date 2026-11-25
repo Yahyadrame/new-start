@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Input } from '@newstart/ui';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { GoogleButton } from '../../shared/auth/google-button';
@@ -61,6 +62,14 @@ export function LoginForm() {
   const message = error && (
     <p id="login-error" role="alert" className="text-[13px] text-danger">
       {error}
+      {error === fr.google.errors.notFound && (
+        <>
+          {' '}
+          <Link href="/signup" className="font-semibold underline">
+            {t.signupLink}
+          </Link>
+        </>
+      )}
     </p>
   );
 

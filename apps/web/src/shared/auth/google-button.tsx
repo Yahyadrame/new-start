@@ -32,6 +32,13 @@ function loadGis(): Promise<Gis> {
   });
 }
 
+/** Le thème se pose sur <html data-theme> ; sans choix, c'est le réglage du système qui décide. */
+export function isDarkTheme(): boolean {
+  const choice = document.documentElement.getAttribute('data-theme');
+  if (choice) return choice === 'dark';
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+}
+
 export function googleMessage(err: unknown): string {
   if (!(err instanceof GoogleSignInError)) return t.errors.server;
   if (err.status === 404) return t.errors.notFound;
@@ -83,7 +90,7 @@ export function GoogleButton({
             }
           },
         });
-        const dark = document.documentElement.classList.contains('dark');
+        const dark = isDarkTheme();
         gis.accounts.id.renderButton(el, {
           type: 'standard',
           theme: dark ? 'filled_black' : 'outline',

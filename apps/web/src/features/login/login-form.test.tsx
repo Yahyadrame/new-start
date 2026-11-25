@@ -97,3 +97,30 @@ describe('LoginForm, étape du code', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 });
+
+describe('LoginForm, Google', () => {
+  it('propose de créer le compte quand Google ne trouve aucun compte', async () => {
+    vi.stubEnv('NEXT_PUBLIC_GOOGLE_CLIENT_ID', 'cid');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, status: 404, json: async () => ({}) }),
+    );
+    let callback: (r: { credential: string }) => Promise<void> = async () => {};
+    (window as unknown as { google: unknown }).google = {
+      accounts: {
+        id: {
+          initialize: (o: { callback: typeof callback }) => (callback = o.callback),
+          renderButton: vi.fn(),
+        },
+      },
+    };
+    render(<LoginForm />);
+    await waitFor(() => expect(screen.getByTestId('google-button')).toBeTruthy());
+    await callback({ credential: 'tok' });
+    const link = await screen.findByRole('link', { name: t.signupLink });
+    expect(link.getAttribute('href')).toBe('/signup');
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    delete (window as unknown as { google?: unknown }).google;
+  });
+});

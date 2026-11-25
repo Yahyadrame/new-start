@@ -104,6 +104,15 @@ describe('ConversationScreen', () => {
     );
   });
 
+  it('garde l’en-tête fixe : aucun parent ne coupe le défilement avec overflow-x-hidden', async () => {
+    render(<ConversationScreen agentSlug="jade" />);
+    const heading = await screen.findByRole('heading', { level: 1 });
+    const header = heading.closest('header');
+    expect(header?.className).toContain('sticky top-0');
+    expect(header?.parentElement?.className).not.toContain('overflow-x-hidden');
+    expect(header?.parentElement?.className).toContain('overflow-x-clip');
+  });
+
   it('place un séparateur de jour avant chaque nouvelle journée', async () => {
     listMessages.mockResolvedValue({
       items: [
