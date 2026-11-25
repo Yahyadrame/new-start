@@ -10,6 +10,9 @@ const agent = {
   roleFr: 'Coloc · familier',
   category: 'Quotidien',
   accent: 'en-US',
+  bioFr: 'Ta colocataire.',
+  interests: ['Séries'],
+  level: 'B1',
 };
 
 function fake(rows: unknown[]) {

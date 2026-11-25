@@ -11,6 +11,12 @@ export const ConversationItem = z.object({
     category: z.string(),
     /** Accent de la voix du contact (`en-US`, `en-GB`, `en-NG`). */
     accent: z.string(),
+    /** Présentation du contact, en français. */
+    bioFr: z.string(),
+    /** Centres d'intérêt affichés sur la fiche. */
+    interests: z.array(z.string()),
+    /** Niveau de langue du contact (`A2`, `B1`, `B2` ou `C1`). */
+    level: z.string(),
   }),
   /** Le dernier message, ou null si la conversation est encore vide. */
   lastMessage: z

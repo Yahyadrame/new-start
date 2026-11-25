@@ -737,6 +737,9 @@
     "accent": "Accent",
     "topic": "Thème",
     "aiNote": "{name} est une IA. Ce n'est pas une personne.",
-    "error": "Impossible de charger la fiche. Réessaie dans un instant."
+    "error": "Impossible de charger la fiche. Réessaie dans un instant.",
+    "about": "Présentation",
+    "interests": "Centres d'intérêt",
+    "level": "Niveau"
   }
 }

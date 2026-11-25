@@ -23,6 +23,9 @@ const jade = {
     roleFr: 'Coloc · familier',
     category: 'Quotidien',
     accent: 'en-US',
+    bioFr: 'Ta colocataire.',
+    interests: ['Séries', 'Vie en coloc'],
+    level: 'B1',
   },
 };
 
@@ -55,6 +58,16 @@ describe('ContactProfileScreen', () => {
     expect(screen.getByText('Américain')).toBeTruthy();
     expect(screen.getByText('Quotidien')).toBeTruthy();
     expect(screen.getByText(fr.contact.aiNote.replace('{name}', 'Jade'))).toBeTruthy();
+  });
+
+  it('montre la présentation, les centres d’intérêt et le niveau', async () => {
+    render(<ContactProfileScreen agentSlug="jade" />);
+    expect(await screen.findByText('Ta colocataire.')).toBeTruthy();
+    expect(screen.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Séries',
+      'Vie en coloc',
+    ]);
+    expect(screen.getByText('B1')).toBeTruthy();
   });
 
   it('garde le code d’un accent sans libellé', async () => {
