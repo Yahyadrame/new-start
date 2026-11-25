@@ -176,7 +176,7 @@ export function Composer({
         </p>
       )}
       <div className="flex items-end gap-2">
-        <div className="flex min-w-0 flex-1 items-end rounded-3xl border border-line bg-bg">
+        <div className="flex min-w-0 flex-1 items-end rounded-3xl border border-line bg-bg focus-within:border-text-muted focus-within:ring-1 focus-within:ring-text-muted">
           {draft ? (
             <DraftPreview
               draft={draft}

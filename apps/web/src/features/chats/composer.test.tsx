@@ -183,6 +183,8 @@ describe('Composer, champ de saisie', () => {
     render(<Composer onSend={vi.fn()} />);
     const field = screen.getByLabelText(c.composerLabel);
     expect(field.className).toContain('outline-none');
+    // L'indicateur de focus clavier passe par le conteneur, en gris neutre.
+    expect(field.parentElement?.className).toContain('focus-within:ring-text-muted');
     expect(field.className).not.toContain('focus-visible:outline-2');
   });
 });

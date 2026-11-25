@@ -8,7 +8,12 @@ async function focused(page: Page) {
     if (!el || el === document.body) return null;
     const s = getComputedStyle(el);
     const outline = s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0;
-    const ring = s.boxShadow !== 'none';
+    // Le champ de message n'a pas de cadre propre : c'est son conteneur qui s'entoure au focus.
+    const ring =
+      s.boxShadow !== 'none' ||
+      (el.tagName === 'TEXTAREA' &&
+        !!el.parentElement &&
+        getComputedStyle(el.parentElement).boxShadow !== 'none');
     const name = (el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 40);
     return { tag: el.tagName.toLowerCase(), name, visible: outline || ring };
   });
