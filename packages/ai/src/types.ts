@@ -16,6 +16,8 @@ export interface LlmRequest {
 export interface LlmResponse {
   text: string;
   usage?: { inputTokens: number; outputTokens: number };
+  /** Vrai pour une réponse de l'adaptateur factice : à ne jamais montrer comme un vrai résultat. */
+  fake?: true;
 }
 
 export interface LlmProvider {

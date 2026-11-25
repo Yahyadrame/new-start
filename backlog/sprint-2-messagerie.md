@@ -206,3 +206,28 @@ _Ajouté le 2026-11-25._
 - [ ] Fiche d'un contact (depuis l'en-tête de la conversation) : photo ou avatar, présentation, centres d'intérêt, niveau de langue.
 - [ ] Plusieurs variantes d'un même contact (ton, accent, niveau de difficulté, avatar) choisies et modifiables par la personne. Cadre dans `docs/09-ia-agents.md` : un agent ne se présente jamais comme un humain.
 - [ ] À découper en deux ou trois PR après maquette.
+
+## NS-052 — La traduction ne doit jamais montrer une réponse factice · S
+
+_Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
+
+- [x] Cause : quand le fournisseur d'IA est absent, hors quota ou en panne, l'adaptateur factice répond « Got it: … ». Il passait pour une traduction.
+- [x] Les réponses factices sont marquées ; la traduction les refuse (503 `AI_UNAVAILABLE`, rien n'est gardé) et le bouton propose de réessayer.
+- [x] Tests unitaires (adaptateur factice, service de traduction).
+- [ ] Vérifier sur staging que `LLM_PROVIDER` et la clé correspondent (à faire avec le porteur : valeurs secrètes).
+
+## NS-053 — Mobile : garder des messages visibles quand le clavier s'ouvre · M
+
+- [ ] À l'ouverture du clavier, la liste reste défilée en bas : les derniers messages restent visibles au-dessus de la barre d'écriture.
+- [ ] Tests unitaires et e2e mobile.
+
+## NS-054 — Actions sur un message : supprimer, modifier, transférer, copier, répondre · L
+
+- [ ] Menu au toucher long (mobile) ou au survol (bureau) sur chaque bulle.
+- [ ] API : suppression et modification de ses propres messages, transfert vers une autre conversation (`docs/08-api.md`, codes d'erreur).
+- [ ] À découper en deux ou trois PR.
+
+## NS-055 — Émojis et stickers · M
+
+- [ ] Sélecteur d'émojis dans la barre d'écriture, réactions rapides sur un message.
+- [ ] Stickers : source à décider (pack libre de droits, sans dépense), puis demander.

@@ -59,4 +59,14 @@ describe('TranslationService', () => {
     const { service } = setup({ text: 'Hey!', translationFr: null }, complete);
     await expect(service.translate('u1', ID)).rejects.toMatchObject({ status: 503 });
   });
+
+  it('refuse la réponse factice de l’IA et ne la garde pas', async () => {
+    const complete = vi.fn().mockResolvedValue({ text: 'Got it: Hey!', fake: true });
+    const { service, store } = setup({ text: 'Hey!', translationFr: null }, complete);
+    await expect(service.translate('u1', ID)).rejects.toMatchObject({
+      status: 503,
+      response: { code: 'AI_UNAVAILABLE' },
+    });
+    expect(store.save).not.toHaveBeenCalled();
+  });
 });

@@ -48,7 +48,8 @@ export class TranslationService {
           ...(this.sleep && { sleep: this.sleep }),
         },
       );
-      translationFr = answer.text.trim();
+      // Une réponse factice (quota ou clé absente) n'est pas une traduction.
+      translationFr = answer.fake ? '' : answer.text.trim();
     } catch {
       translationFr = '';
     }
