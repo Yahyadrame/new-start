@@ -732,7 +732,6 @@
   "contact": {
     "title": "Fiche du contact",
     "write": "Écrire",
-    "changeAvatar": "Changer l'avatar",
     "speech": "Façon de parler",
     "accent": "Accent",
     "topic": "Thème",
@@ -740,6 +739,34 @@
     "error": "Impossible de charger la fiche. Réessaie dans un instant.",
     "about": "Présentation",
     "interests": "Centres d'intérêt",
-    "level": "Niveau"
+    "level": "Niveau",
+    "settings": {
+      "title": "Réglages pour toi",
+      "tone": "Ton",
+      "toneOptions": {
+        "familier": "Familier",
+        "neutre": "Neutre",
+        "soigne": "Soigné"
+      },
+      "toneHints": {
+        "familier": "{name} parle comme à un ami, avec un peu d'argot.",
+        "neutre": "{name} reste clair et simple, sans argot.",
+        "soigne": "{name} parle poliment, en phrases complètes."
+      },
+      "toneDefault": "Le ton d'origine de {name}.",
+      "difficulty": "Difficulté",
+      "difficultyHints": {
+        "A2": "Phrases très courtes, mots du quotidien.",
+        "B1": "Phrases courtes, mots courants.",
+        "B2": "Phrases plus longues, expressions courantes.",
+        "C1": "Anglais naturel, sans simplification."
+      },
+      "difficultyDefault": "{name} suit ton niveau.",
+      "avatar": "Avatar",
+      "changeAvatar": "Changer",
+      "reset": "Revenir aux réglages d'origine",
+      "saved": "Enregistré. {name} s'en sert dès ton prochain message.",
+      "error": "Le réglage n'a pas été enregistré. Réessaie dans un instant."
+    }
   }
 }

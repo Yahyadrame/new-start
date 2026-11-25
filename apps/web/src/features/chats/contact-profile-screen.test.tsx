@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
@@ -8,6 +8,9 @@ const listConversations = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ replace }) }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 vi.mock('./chats-api', () => ({ listConversations }));
+const getContactVariants = vi.fn();
+const saveContactVariant = vi.fn();
+vi.mock('./contact-variants-api', () => ({ getContactVariants, saveContactVariant }));
 vi.mock('../../shared/avatar/contact-avatars', () => ({
   loadContactAvatars: vi.fn().mockResolvedValue(undefined),
   useContactChoice: () => null,
@@ -41,6 +44,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   ensureSession.mockResolvedValue({ accessToken: 'tok' });
   listConversations.mockResolvedValue([jade]);
+  getContactVariants.mockResolvedValue({});
+  saveContactVariant.mockResolvedValue(undefined);
 });
 afterEach(cleanup);
 
@@ -67,7 +72,7 @@ describe('ContactProfileScreen', () => {
       'Séries',
       'Vie en coloc',
     ]);
-    expect(screen.getByText('B1')).toBeTruthy();
+    expect(screen.getByText('B1', { selector: 'dd' })).toBeTruthy();
   });
 
   it('garde le code d’un accent sans libellé', async () => {
@@ -81,12 +86,48 @@ describe('ContactProfileScreen', () => {
     expect((await screen.findByRole('link', { name: fr.contact.write })).getAttribute('href')).toBe(
       '/chats/jade',
     );
-    expect(screen.getByRole('link', { name: fr.contact.changeAvatar }).getAttribute('href')).toBe(
-      '/chats/jade/avatar',
-    );
+    expect(
+      screen
+        .getByRole('link', { name: new RegExp(fr.contact.settings.avatar) })
+        .getAttribute('href'),
+    ).toBe('/chats/jade/avatar');
     expect(screen.getByRole('link', { name: fr.conversation.back }).getAttribute('href')).toBe(
       '/chats/jade',
     );
+  });
+
+  it('montre les réglages déjà choisis', async () => {
+    getContactVariants.mockResolvedValue({ jade: { tone: 'soigne', difficulty: 'B2' } });
+    render(<ContactProfileScreen agentSlug="jade" />);
+    await waitFor(() =>
+      expect((screen.getByRole('radio', { name: 'Soigné' }) as HTMLInputElement).checked).toBe(
+        true,
+      ),
+    );
+    expect((screen.getByRole('radio', { name: 'B2' }) as HTMLInputElement).checked).toBe(true);
+  });
+
+  it('enregistre un ton choisi puis confirme', async () => {
+    render(<ContactProfileScreen agentSlug="jade" />);
+    fireEvent.click(await screen.findByRole('radio', { name: 'Neutre' }));
+    expect(saveContactVariant).toHaveBeenCalledWith('tok', 'jade', { tone: 'neutre' });
+    expect(await screen.findByText(/Enregistré\. Jade/)).toBeTruthy();
+  });
+
+  it('revient aux réglages d’origine', async () => {
+    getContactVariants.mockResolvedValue({ jade: { difficulty: 'C1' } });
+    render(<ContactProfileScreen agentSlug="jade" />);
+    fireEvent.click(await screen.findByRole('button', { name: fr.contact.settings.reset }));
+    expect(saveContactVariant).toHaveBeenCalledWith('tok', 'jade', null);
+  });
+
+  it('annule le choix quand l’enregistrement échoue', async () => {
+    saveContactVariant.mockRejectedValue(new Error('réseau'));
+    render(<ContactProfileScreen agentSlug="jade" />);
+    const radio = await screen.findByRole('radio', { name: 'B1' });
+    fireEvent.click(radio);
+    expect(await screen.findByText(fr.contact.settings.error)).toBeTruthy();
+    expect((radio as HTMLInputElement).checked).toBe(false);
   });
 
   it('signale un contact inconnu', async () => {
