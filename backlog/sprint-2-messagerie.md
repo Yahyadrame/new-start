@@ -87,3 +87,8 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 - [ ] Plus aucun débordement horizontal dans la conversation (mots longs, clavier ouvert, petits écrans 320 px, tablette, ordinateur).
 - [ ] Barre d'écriture plus douce, style WhatsApp : champ arrondi qui grandit avec le texte, Entrée envoie, Maj+Entrée passe à la ligne, bouton d'envoi rond.
 - [ ] Tests unitaires, thèmes clair et sombre, cibles ≥ 44 px.
+
+## NS-040 — Responsive des autres écrans · M
+*Ajouté le 2026-11-25 : le porteur du projet constate que l'application n'est pas 100 % responsive.*
+- [ ] Passer en revue Discussions, Profil, Notifications, connexion et inscription à 320, 375, 768 et 1280 px, sans débordement horizontal.
+- [ ] Tests unitaires pour chaque correction, thèmes clair et sombre.
