@@ -104,3 +104,9 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - Modifier : seulement ses propres messages, mention « modifié », la réponse du contact ne change pas, la correction est refaite sur le nouveau texte.
 - Transférer : vers une autre conversation, avec la mention « transféré ».
 - Copier : ajouté à la demande du porteur, avec la suppression.
+
+## 2026-11-25 — Inscription en plusieurs étapes, choix multiples (NS-056)
+
+- Objectifs : jusqu'à 4 à cocher, parmi 8 (bourse, travail, voyage, amis, études, examens, affaires, culture). `goal` reste l'objectif principal (le premier choisi) pour ne rien casser ; `goals` garde la liste.
+- Centres d'intérêt : jusqu'à 8 parmi 16, dans `interests`. Ils serviront à proposer des contacts et des sujets (catalogue de domaines, ticket suivant).
+- Contrat de l'API : `goals` et `interests` sont facultatifs dans `POST /auth/otp/request` (listes vides par défaut), donc les anciens clients continuent de marcher. Migration additive ; les comptes existants reprennent leur objectif unique dans `goals`.

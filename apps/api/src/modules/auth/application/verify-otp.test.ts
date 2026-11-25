@@ -11,6 +11,8 @@ const profile: SignupProfile = {
   firstName: 'Awa',
   phone: '+221771234567',
   goal: 'WORK',
+  goals: ['WORK', 'TRAVEL'],
+  interests: ['MUSIC'],
   birthYear: 2000,
   acceptTerms: true,
   smsOptIn: false,

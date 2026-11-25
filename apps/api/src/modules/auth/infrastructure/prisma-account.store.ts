@@ -51,6 +51,8 @@ export class PrismaAccountStore implements AccountStore {
         data: {
           firstName: profile.firstName,
           goal: profile.goal,
+          goals: profile.goals,
+          interests: profile.interests,
           birthYear: profile.birthYear,
           phoneE164: profile.phone,
           phoneVerifiedAt: channel === 'sms' ? now : null,
