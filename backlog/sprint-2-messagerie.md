@@ -188,9 +188,11 @@ _Ajouté le 2026-11-25 : aucun bouton de déconnexion dans le Profil._
 
 _Ajouté le 2026-11-25 à la demande du porteur du projet (« comme Synapse »)._
 
-- [ ] Bibliothèque d'avatars illustrés (visages, animaux, personnages) au choix, en plus de l'initiale, pour la personne et pour les contacts IA.
-- [ ] Source des images à décider (création maison, pack libre de droits, générateur type DiceBear) : proposer 2 à 4 options avec licence et coût, puis demander.
-- [ ] Le choix se fait dans Profil et à l'inscription ; l'avatar s'affiche partout (liste, conversation, profil).
+- [x] Source décidée (2026-11-25) : DiceBear, styles CC0 uniquement (Open Peeps, Notionists, Lorelei, Thumbs). Voir `docs/decisions.md`.
+- [ ] Partie 1, maquette : sélecteur d'avatar (styles, variantes, initiale en repli), clair et sombre, validée par le porteur avant le code.
+- [ ] Partie 2, données : `avatarStyle` et `avatarSeed` sur `User` (migration « étendre »), `Me` et `MePatch`, schémas Zod partagés, tests.
+- [ ] Partie 3, interface : composant `UserAvatar` (SVG généré, initiale en repli), sélecteur dans Profil > Mon compte et à l'inscription, affichage partout (liste, conversation, profil).
+- [ ] Contacts IA : leurs portraits restent ceux de `docs/04-design-system.md` ; les variantes d'avatar d'un contact relèvent de NS-051.
 
 ## NS-050 — Modifier son profil · M
 
