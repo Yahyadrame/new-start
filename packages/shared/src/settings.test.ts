@@ -49,4 +49,21 @@ describe('MePatch', () => {
   ])('refuse %j', (patch) => {
     expect(MePatch.safeParse(patch).success).toBe(false);
   });
+
+  it('accepte l’année de naissance et les centres d’intérêt, sans vider la liste quand on ne la touche pas', () => {
+    const year = new Date().getFullYear();
+    expect(MePatch.parse({ birthYear: year - 20, interests: ['MUSIC'] })).toEqual({
+      birthYear: year - 20,
+      interests: ['MUSIC'],
+    });
+    expect(MePatch.parse({ firstName: 'Awa' })).toEqual({ firstName: 'Awa' });
+  });
+  it('refuse moins de 13 ans, une année absurde, trop de centres d’intérêt ou un inconnu', () => {
+    const year = new Date().getFullYear();
+    expect(MePatch.safeParse({ birthYear: year - 12 }).success).toBe(false);
+    expect(MePatch.safeParse({ birthYear: 1800 }).success).toBe(false);
+    expect(MePatch.safeParse({ interests: ['MAGIC'] }).success).toBe(false);
+    const nine = ['MUSIC', 'SPORT', 'ART', 'TECH', 'BOOKS', 'FAITH', 'NATURE', 'FASHION', 'GAMING'];
+    expect(MePatch.safeParse({ interests: nine }).success).toBe(false);
+  });
 });

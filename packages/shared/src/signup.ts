@@ -1,6 +1,9 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js/max';
 import { z } from 'zod';
 
+/** Âge minimum pour avoir un compte (conditions d'utilisation). */
+export const MIN_AGE = 13;
+
 /** Objectifs proposés à l'inscription, dans l'ordre d'affichage (écran 11). */
 export const SIGNUP_GOALS = [
   'SCHOLARSHIP',

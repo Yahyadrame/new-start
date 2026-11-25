@@ -39,6 +39,8 @@ const me = {
   id: 'u',
   firstName: 'Awa',
   goal: 'WORK',
+  interests: ['MUSIC'],
+  birthYear: 2000,
   level: 'B1',
   theme: 'SYSTEM',
   reminderTime: null,
@@ -96,14 +98,15 @@ describe('ProfileScreen', () => {
     expect(screen.getByText('Niveau B1')).toBeTruthy();
     const rows = within(screen.getByRole('navigation', { name: t.title })).getAllByRole('link');
     expect(rows.map((a) => a.getAttribute('href'))).toEqual([
+      '/profile/account',
       '/profile/learning',
       '/profile/notifications',
       '/profile/appearance',
       '/profile/notebook',
       '/profile/data',
     ]);
-    expect(rows[0]?.textContent).toContain(t.sections.learning.title);
-    expect(rows[0]?.textContent).toContain(t.sections.learning.hint);
+    expect(rows[1]?.textContent).toContain(t.sections.learning.title);
+    expect(rows[1]?.textContent).toContain(t.sections.learning.hint);
     // Les réglages ne sont plus sur l'accueil.
     expect(screen.queryByLabelText(t.learning.dailyGoal)).toBeNull();
   });
@@ -347,5 +350,14 @@ describe('ProfileScreen', () => {
       expect(setSession).not.toHaveBeenCalled();
       expect(replace).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('ProfileScreen : Mon compte', () => {
+  it('enregistre le prénom modifié et l’affiche', async () => {
+    await open('account');
+    fireEvent.change(screen.getByLabelText(t.account.firstName), { target: { value: 'Fatou' } });
+    fireEvent.click(screen.getByRole('button', { name: t.account.save }));
+    await waitFor(() => expect(patchMe).toHaveBeenCalledWith('tok', { firstName: 'Fatou' }));
   });
 });

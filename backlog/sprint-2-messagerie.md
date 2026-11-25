@@ -196,8 +196,10 @@ _Ajouté le 2026-11-25 à la demande du porteur du projet (« comme Synapse »).
 
 _Ajouté le 2026-11-25._
 
-- [ ] Page « Mon compte » (Profil) : modifier prénom, photo ou avatar, année de naissance, numéro, e-mail (avec nouveau code de confirmation).
-- [ ] Schémas Zod partagés, tests unitaires, deux thèmes.
+- [x] Partie 1 : rubrique « Mon compte » (Profil) : prénom, année de naissance (13 ans minimum), centres d'intérêt. `GET /me` renvoie `birthYear` et `interests`, `PATCH /me` les accepte.
+- [ ] Partie 2 : numéro et e-mail, avec un nouveau code de confirmation (le numéro passe par un SMS : coût du fournisseur à confirmer avec le porteur).
+- [ ] Partie 3 : photo ou avatar, avec NS-049.
+- [x] Schémas Zod partagés, tests unitaires, deux thèmes.
 
 ## NS-051 — Profil d'un contact et variantes · L
 

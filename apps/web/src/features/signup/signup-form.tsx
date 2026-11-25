@@ -9,7 +9,7 @@ import { useState, type ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { GoogleButton } from '../../shared/auth/google-button';
 import fr from '../../shared/i18n/fr.json';
-import { ChoiceChips } from './choice-chips';
+import { ChoiceChips } from '../../shared/choice-chips';
 import { PhoneField } from './phone-field';
 import { savePendingSignup } from './pending-signup';
 import { requestCode } from './request-code';

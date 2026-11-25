@@ -225,6 +225,16 @@
       "export": "L'export n'a pas marché. Réessaie dans un instant.",
       "delete": "Le compte n'a pas été supprimé. Réessaie dans un instant."
     },
+    "account": {
+      "firstName": "Prénom",
+      "firstNameError": "Ton prénom fait entre 2 et 30 caractères.",
+      "save": "Enregistrer",
+      "birthYear": "Année de naissance",
+      "birthYearPlaceholder": "Choisis une année",
+      "birthYearHint": "Elle sert à ouvrir ou fermer les thèmes réservés aux adultes.",
+      "interests": "Centres d'intérêt",
+      "interestsHint": "Jusqu'à 8. Tes contacts en parlent avec toi et Explorer te propose des thèmes."
+    },
     "appearance": {
       "title": "Apparence"
     },
@@ -276,6 +286,10 @@
     "signOut": "Se déconnecter",
     "back": "Retour au profil",
     "sections": {
+      "account": {
+        "title": "Mon compte",
+        "hint": "Prénom, année de naissance, centres d'intérêt"
+      },
       "learning": {
         "title": "Apprentissage",
         "hint": "Objectif quotidien, accent"

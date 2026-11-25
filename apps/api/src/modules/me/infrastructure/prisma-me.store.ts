@@ -9,6 +9,7 @@ const select = {
   firstName: true,
   goal: true,
   interests: true,
+  birthYear: true,
   level: true,
   theme: true,
   reminderTime: true,
