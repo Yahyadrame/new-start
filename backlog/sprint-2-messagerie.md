@@ -84,9 +84,9 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 
 ## NS-039 — Messagerie responsive et barre d'écriture façon WhatsApp · M
 *Ajouté le 2026-11-25 par le porteur du projet, en testant l'application : elle n'est pas 100 % responsive et l'écran de conversation déborde quand on écrit.*
-- [ ] Plus aucun débordement horizontal dans la conversation (mots longs, clavier ouvert, petits écrans 320 px, tablette, ordinateur).
-- [ ] Barre d'écriture plus douce, style WhatsApp : champ arrondi qui grandit avec le texte, Entrée envoie, Maj+Entrée passe à la ligne, bouton d'envoi rond.
-- [ ] Tests unitaires, thèmes clair et sombre, cibles ≥ 44 px.
+- [x] Plus aucun débordement horizontal dans la conversation (mots longs, clavier ouvert, petits écrans 320 px, tablette, ordinateur).
+- [x] Barre d'écriture plus douce, style WhatsApp : champ arrondi qui grandit avec le texte, Entrée envoie, Maj+Entrée passe à la ligne, bouton d'envoi rond.
+- [x] Tests unitaires, thèmes clair et sombre, cibles ≥ 44 px.
 
 ## NS-040 — Responsive des autres écrans · M
 *Ajouté le 2026-11-25 : le porteur du projet constate que l'application n'est pas 100 % responsive.*
