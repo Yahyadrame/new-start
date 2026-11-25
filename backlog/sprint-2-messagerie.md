@@ -224,7 +224,8 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 ## NS-054 — Actions sur un message : supprimer, modifier, transférer, copier, répondre · L
 
 - [x] Menu « … » sur chaque bulle : copier, supprimer (avec confirmation). Décision du 2026-11-25 : la suppression efface le texte et la bulle devient « Message supprimé ».
-- [ ] Modifier (ses messages, mention « modifié », correction refaite), transférer (mention « transféré »), répondre en citant, réactions.
+- [x] Répondre en citant (#344 API, web) : « Répondre » dans le menu, bande au-dessus du champ, citation dans la bulle.
+- [ ] Modifier (ses messages, mention « modifié », correction refaite), transférer (mention « transféré »), réactions.
 - [x] API de suppression (`DELETE /messages/:id`, colonne `deletedAt`). Reste : modification et transfert.
 - [ ] À découper en deux ou trois PR.
 

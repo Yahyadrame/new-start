@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { MessageItem } from '@newstart/shared';
 import { cn, Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
-import { Ban, CheckCheck, Copy, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Ban, CheckCheck, Copy, MoreHorizontal, Reply, Trash2 } from 'lucide-react';
+import { QuotedMessage } from './quoted-message';
 import { formatHour } from './chats-format';
 
 const c = fr.conversation;
@@ -42,9 +43,11 @@ const item =
 /** Menu d'un message : copier, et supprimer après une confirmation. */
 function Actions({
   text,
+  onReply,
   onDelete,
 }: {
   text: string;
+  onReply: (() => void) | undefined;
   onDelete: (() => Promise<void>) | undefined;
 }) {
   const [open, setOpen] = useState(false);
@@ -98,6 +101,19 @@ function Actions({
           </div>
         ) : (
           <div className="flex flex-col gap-1">
+            {onReply && (
+              <button
+                type="button"
+                className={item}
+                onClick={() => {
+                  close(false);
+                  onReply();
+                }}
+              >
+                <Reply aria-hidden="true" className="size-5" />
+                {c.reply}
+              </button>
+            )}
             <button type="button" className={item} onClick={() => void copy()}>
               <Copy aria-hidden="true" className="size-5" />
               {c.copy}
@@ -175,8 +191,14 @@ export function MessageBubble({
   onAddToNotebook,
   onTranslate,
   onDelete,
+  onReply,
+  agentName = '',
 }: {
   message: MessageItem;
+  /** Le nom du contact, pour citer ses messages. */
+  agentName?: string;
+  /** Répond en citant ce message ; sans elle, le menu n'a pas « Répondre ». */
+  onReply?: (message: MessageItem) => void;
   /** Entoure la bulle : le message qu'on vient de retrouver par la recherche. */
   highlighted?: boolean;
   /** Traduit un message du contact ; sans elle, pas de bouton. */
@@ -211,19 +233,26 @@ export function MessageBubble({
         mine ? 'items-end self-end' : 'self-start',
       )}
     >
-      <p
+      <div
         className={cn(
           'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug break-words whitespace-pre-wrap [overflow-wrap:anywhere]',
           mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
           highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
         )}
       >
-        {message.text}
-      </p>
+        {message.replyTo && (
+          <QuotedMessage quote={message.replyTo} agentName={agentName} onDark={mine} />
+        )}
+        <p>{message.text}</p>
+      </div>
       <span className="flex items-center gap-1 px-1 text-xs text-text-muted">
         <time dateTime={message.createdAt}>{formatHour(message.createdAt)}</time>
         {mine && <CheckCheck aria-hidden="true" className="size-3.5" />}
-        <Actions text={message.text} onDelete={onDelete && (() => onDelete(message.id))} />
+        <Actions
+          text={message.text}
+          onReply={onReply && (() => onReply(message))}
+          onDelete={onDelete && (() => onDelete(message.id))}
+        />
       </span>
       {!mine && (
         <Translation

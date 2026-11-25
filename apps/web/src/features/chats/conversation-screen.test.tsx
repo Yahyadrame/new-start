@@ -256,6 +256,31 @@ describe('ConversationScreen', () => {
       expect(texts()).toEqual(['First', 'Second', 'Hello']);
     });
 
+    it('répond en citant : la bande au-dessus du champ, puis replyToId à l’envoi', async () => {
+      sendMessage.mockResolvedValue(msg('m3', 'USER', 'Yes'));
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+      fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger as HTMLElement);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.reply }));
+      expect(screen.getByText(/Réponse à/)).toBeTruthy();
+      await write('Yes');
+      expect(sendMessage.mock.calls[0]?.[2]).toMatchObject({ text: 'Yes', replyToId: 'm1' });
+      expect(screen.queryByText(/Réponse à/)).toBeNull();
+    });
+
+    it('abandonne la réponse avec le bouton d’annulation', async () => {
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+      fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger as HTMLElement);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.reply }));
+      fireEvent.click(screen.getByRole('button', { name: fr.conversation.replyCancel }));
+      expect(screen.queryByText(/Réponse à/)).toBeNull();
+    });
+
     it('affiche un message doux à la limite du jour, sans proposer de réessayer', async () => {
       sendMessage.mockRejectedValue(
         Object.assign(new Error('limite'), { status: 429, code: 'USAGE_LIMIT' }),
@@ -438,7 +463,9 @@ describe('ConversationScreen depuis la recherche', () => {
     await screen.findByText('Old 1');
     expect(listMessages).toHaveBeenCalledTimes(3);
     const target = document.getElementById('message-o1');
-    await waitFor(() => expect(target?.querySelector('p')?.className).toContain('ring-2'));
+    await waitFor(() =>
+      expect(target?.querySelector('p')?.parentElement?.className).toContain('ring-2'),
+    );
     expect(scrollIntoView).toHaveBeenCalledWith({ block: 'center' });
     expect(scrollIntoView).not.toHaveBeenCalledWith({ block: 'end' });
     expect(screen.queryByText(fr.conversation.messageNotFound)).toBeNull();
@@ -449,7 +476,7 @@ describe('ConversationScreen depuis la recherche', () => {
     try {
       render(<ConversationScreen agentSlug="jade" focusMessageId="m1" />);
       await screen.findByText('First');
-      const bubble = document.getElementById('message-m1')?.querySelector('p');
+      const bubble = document.getElementById('message-m1')?.querySelector('p')?.parentElement;
       await waitFor(() => expect(bubble?.className).toContain('ring-2'));
       await act(() => vi.advanceTimersByTimeAsync(3100));
       expect(bubble?.className).not.toContain('ring-2');

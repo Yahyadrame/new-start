@@ -411,7 +411,11 @@
     "draftVoice": "Message vocal, {duration}",
     "draftRemove": "Retirer la pièce jointe",
     "fileTooBig": "Ce fichier dépasse 10 Mo.",
-    "mediaSoon": "L'envoi des vocaux et des fichiers arrive bientôt. Pour l'instant, écris ton message."
+    "mediaSoon": "L'envoi des vocaux et des fichiers arrive bientôt. Pour l'instant, écris ton message.",
+    "reply": "Répondre",
+    "replyingTo": "Réponse à {name}",
+    "replyCancel": "Annuler la réponse",
+    "quoteYou": "Toi"
   },
   "comingSoon": {
     "badge": "Bientôt",

@@ -77,8 +77,13 @@ const round =
 export function Composer({
   onSend,
   onSendMedia,
+  reply = null,
+  onCancelReply,
 }: {
   onSend: (text: string) => void;
+  /** Le message cité : une bande au-dessus du champ, avec un bouton pour l'abandonner. */
+  reply?: { name: string; text: string } | null;
+  onCancelReply?: () => void;
   onSendMedia?: (draft: Draft) => void;
 }) {
   const [text, setText] = useState('');
@@ -174,6 +179,22 @@ export function Composer({
         <p role="status" className="px-3 pb-2 text-sm text-text-muted">
           {note}
         </p>
+      )}
+      {reply && (
+        <div className="mb-2 flex items-center gap-2 rounded-2xl border-l-4 border-accent-text bg-bg py-1 pr-1 pl-3">
+          <div className="min-w-0 flex-1 text-[13px]">
+            <p className="font-semibold">{c.replyingTo.replace('{name}', reply.name)}</p>
+            <p className="truncate text-text-muted">{reply.text}</p>
+          </div>
+          <button
+            type="button"
+            aria-label={c.replyCancel}
+            onClick={onCancelReply}
+            className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+          >
+            <X aria-hidden="true" className="size-5" />
+          </button>
+        </div>
       )}
       <div className="flex items-end gap-2">
         <div className="flex min-w-0 flex-1 items-end rounded-3xl border border-line bg-bg focus-within:border-text-muted focus-within:ring-1 focus-within:ring-text-muted">
