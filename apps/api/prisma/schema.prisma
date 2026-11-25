@@ -53,7 +53,7 @@ model User {
   interests         String[]           @default([])
   level             Cefr               @default(A1)
   birthYear         Int? // pour restreindre les thèmes réservés aux majeurs
-  avatar            Json? // silhouette choisie : { id, palette?, variant? } ; null = silhouette grise par défaut
+  avatar            Json? // silhouette choisie (id, palette, variante) ; null = silhouette grise par défaut
   phoneE164         String?            @unique // format international (+221…), demandé à l'inscription
   phoneVerifiedAt   DateTime? // rempli quand la vérification par SMS sera activée
   smsOptIn          Boolean            @default(false) // consentement séparé aux SMS
