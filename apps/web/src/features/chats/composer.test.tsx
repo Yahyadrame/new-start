@@ -177,3 +177,12 @@ describe('Composer, clavier mobile', () => {
     expect((container.firstChild as HTMLElement).className).toContain('bottom-[var(--kb,0px)]');
   });
 });
+
+describe('Composer, champ de saisie', () => {
+  it('n’affiche aucun cadre de focus autour du champ : le curseur suffit', () => {
+    render(<Composer onSend={vi.fn()} />);
+    const field = screen.getByLabelText(c.composerLabel);
+    expect(field.className).toContain('outline-none');
+    expect(field.className).not.toContain('focus-visible:outline-2');
+  });
+});
