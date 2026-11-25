@@ -69,9 +69,9 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 ## NS-037 — Rechercher dans les messages · M
 *Ajouté le 2026-11-24 : les appels ne sont pas encore là, mais la recherche de messages doit l'être (maquette : loupe dans l'en-tête de la conversation).*
 *Décidé le 2026-11-24 : la recherche porte sur toutes les discussions (option B).*
-- [ ] Route API de recherche, limitée aux messages de la personne connectée, documentée dans `docs/08-api.md`, avec un index adapté. Aucun contenu de message dans les logs.
-- [ ] Un champ de recherche depuis la liste des discussions ; chaque résultat montre le contact, l'extrait avec le mot surligné et la date. Un toucher ouvre la conversation au bon message.
-- [ ] Tests unitaires (service, route, écran), thèmes clair et sombre.
+- [x] Route API de recherche, limitée aux messages de la personne connectée, documentée dans `docs/08-api.md`, avec un index adapté. Aucun contenu de message dans les logs.
+- [x] Un champ de recherche depuis la liste des discussions ; chaque résultat montre le contact, l'extrait avec le mot surligné et la date. Un toucher ouvre la conversation au bon message (l'écran remonte l'historique page par page, 20 pages au plus ; pas de paramètre `around` côté API).
+- [x] Tests unitaires (service, route, écran), thèmes clair et sombre.
 
 ## NS-038 — Fonds de conversation au choix · M
 *Ajouté le 2026-11-24 : plusieurs motifs de fond, comme WhatsApp, pour rendre la conversation plus attirante.*

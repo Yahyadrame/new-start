@@ -87,10 +87,13 @@ function Correction({
 
 export function MessageBubble({
   message,
+  highlighted = false,
   onAddToNotebook,
   onTranslate,
 }: {
   message: MessageItem;
+  /** Entoure la bulle : le message qu'on vient de retrouver par la recherche. */
+  highlighted?: boolean;
   /** Traduit un message du contact ; sans elle, pas de bouton. */
   onTranslate?: (messageId: string) => Promise<string>;
   /** Garde la correction de ce message dans le carnet ; sans elle, la carte n'a pas de bouton. */
@@ -102,6 +105,7 @@ export function MessageBubble({
   const mine = message.author === 'USER';
   return (
     <li
+      id={`message-${message.id}`}
       className={cn(
         'flex max-w-[85%] min-w-0 flex-col gap-1 sm:max-w-[75%]',
         mine ? 'items-end self-end' : 'self-start',
@@ -111,6 +115,7 @@ export function MessageBubble({
         className={cn(
           'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug break-words whitespace-pre-wrap [overflow-wrap:anywhere]',
           mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
+          highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
         )}
       >
         {message.text}

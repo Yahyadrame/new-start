@@ -170,4 +170,20 @@ describe('MessageBubble', () => {
     expect(screen.getByText('Nouvelle conversation').className).toContain('self-center');
     expect(document.querySelector('time')).toBeNull();
   });
+
+  it('porte un identifiant pour qu’on puisse s’y placer, et entoure la bulle quand on la retrouve', () => {
+    const { rerender } = render(
+      <ol>
+        <MessageBubble message={message({ id: 'm7' })} />
+      </ol>,
+    );
+    expect(screen.getByRole('listitem').id).toBe('message-m7');
+    expect(screen.getByText('Hello there').className).not.toContain('ring-2');
+    rerender(
+      <ol>
+        <MessageBubble message={message({ id: 'm7' })} highlighted />
+      </ol>,
+    );
+    expect(screen.getByText('Hello there').className).toContain('ring-2');
+  });
 });

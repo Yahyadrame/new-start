@@ -55,3 +55,13 @@ export function dayLabel(iso: string, now = new Date()): string {
     ...(date.getFullYear() === now.getFullYear() ? {} : { year: 'numeric' }),
   });
 }
+
+/** Coupe `text` en morceaux, ceux qui contiennent `query` (sans tenir compte de la casse) marqués `match`. */
+export function splitMatch(text: string, query: string): { text: string; match: boolean }[] {
+  const q = query.trim();
+  if (!q) return [{ text, match: false }];
+  const parts = text.split(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'i'));
+  return parts
+    .filter(Boolean)
+    .map((part) => ({ text: part, match: part.toLowerCase() === q.toLowerCase() }));
+}

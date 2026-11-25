@@ -27,8 +27,22 @@ import { TypingBubble } from './typing-bubble';
 const t = fr.chats;
 const c = fr.conversation;
 
-/** Écran 4 : l'en-tête du contact, l'historique du plus ancien au plus récent, et le champ d'écriture. */
-export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
+/** Pages plus anciennes qu'on charge au plus pour retrouver un message de la recherche (30 messages chacune). */
+const MAX_SEEK_PAGES = 20;
+/** Durée pendant laquelle le message retrouvé reste entouré. */
+const FLASH_MS = 3000;
+
+/**
+ * Écran 4 : l'en-tête du contact, l'historique du plus ancien au plus récent, et le champ d'écriture.
+ * `focusMessageId` (venu de la recherche) ouvre la conversation sur ce message au lieu du plus récent.
+ */
+export function ConversationScreen({
+  agentSlug,
+  focusMessageId,
+}: {
+  agentSlug: string;
+  focusMessageId?: string | undefined;
+}) {
   const router = useRouter();
   const [item, setItem] = useState<ConversationItem | null | undefined>(undefined);
   const [error, setError] = useState(false);
@@ -42,6 +56,13 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
   // La limite du jour est atteinte : le message n'est pas parti et réessayer ne sert à rien avant demain.
   const [limited, setLimited] = useState(false);
   const [background, setBackground] = useState<ChatBackground>('NONE');
+  // `seeking` : on charge des pages plus anciennes jusqu'à trouver le message.
+  const [focus, setFocus] = useState<'seeking' | 'found' | 'missing' | null>(
+    focusMessageId ? 'seeking' : null,
+  );
+  const [flash, setFlash] = useState<string | null>(null);
+  const seekedPages = useRef(0);
+  const skipBottom = useRef(false);
   const token = useRef('');
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
@@ -140,11 +161,38 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
     return () => clearInterval(timer);
   }, [awaiting, item, markRead]);
 
+  // Venu de la recherche : on remonte page par page jusqu'au message, sans dépasser MAX_SEEK_PAGES.
+  useEffect(() => {
+    if (!messages || focus !== 'seeking' || older === 'loading') return;
+    if (messages.some((m) => m.id === focusMessageId)) {
+      skipBottom.current = true;
+      setFocus('found');
+      setFlash(focusMessageId ?? null);
+    } else if (!nextCursor || older === 'error' || seekedPages.current >= MAX_SEEK_PAGES) {
+      setFocus('missing');
+    } else {
+      seekedPages.current += 1;
+      void loadOlder();
+    }
+  }, [messages, focus, focusMessageId, nextCursor, older, loadOlder]);
+
+  useEffect(() => {
+    if (focus !== 'found' || !focusMessageId) return;
+    document.getElementById(`message-${focusMessageId}`)?.scrollIntoView({ block: 'center' });
+    const timer = setTimeout(() => setFlash(null), FLASH_MS);
+    return () => clearTimeout(timer);
+  }, [focus, focusMessageId]);
+
   // On arrive sur le plus récent, et un nouveau message ramène en bas. Charger des messages plus anciens ne bouge rien.
   const newest = messages?.at(-1)?.id;
   useEffect(() => {
-    if (loaded) end.current?.scrollIntoView({ block: 'end' });
-  }, [loaded, newest, pending.length, awaiting !== null]);
+    if (!loaded || focus === 'seeking') return;
+    if (skipBottom.current) {
+      skipBottom.current = false;
+      return;
+    }
+    end.current?.scrollIntoView({ block: 'end' });
+  }, [loaded, focus, newest, pending.length, awaiting !== null]);
 
   const retry = () => {
     setError(false);
@@ -219,6 +267,7 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
                     )}
                     <MessageBubble
                       message={m}
+                      highlighted={m.id === flash}
                       onAddToNotebook={(id) => addToNotebook(token.current, id)}
                       onTranslate={(id) => translateMessage(token.current, id)}
                     />
@@ -236,6 +285,11 @@ export function ConversationScreen({ agentSlug }: { agentSlug: string }) {
             )}
             <div ref={end} />
           </>
+        )}
+        {focus === 'missing' && (
+          <p role="status" className="rounded-2xl bg-bg px-4 py-3 text-[15px]">
+            {c.messageNotFound}
+          </p>
         )}
         {limited && item && (
           <p role="status" className="rounded-2xl bg-bg px-4 py-3 text-[15px]">

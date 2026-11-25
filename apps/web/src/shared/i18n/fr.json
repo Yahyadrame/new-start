@@ -230,8 +230,8 @@
     "title": "Discussions",
     "pick": "Choisis une discussion pour commencer.",
     "explore": "Explorer les thèmes",
-    "searchLabel": "Chercher dans tes discussions",
-    "searchPlaceholder": "Rechercher un contact",
+    "searchLabel": "Chercher dans tes discussions et tes messages",
+    "searchPlaceholder": "Rechercher un contact ou un message",
     "filtersLabel": "Filtrer les discussions",
     "filters": {
       "all": "Toutes",
@@ -246,7 +246,11 @@
     "empty": "Aucune discussion pour l'instant. Choisis un contact avec le bouton « + ».",
     "emptyFilter": "Rien dans ce filtre pour l'instant.",
     "noMatch": "Aucune discussion ne correspond à ta recherche.",
-    "error": "Impossible de charger tes discussions. Réessaie dans un instant."
+    "error": "Impossible de charger tes discussions. Réessaie dans un instant.",
+    "searchMessages": "Dans les messages",
+    "searchLoading": "Recherche dans tes messages…",
+    "searchNone": "Aucun message ne contient « {q} ».",
+    "searchError": "La recherche dans les messages a échoué. Réessaie dans un instant."
   },
   "explore": {
     "title": "Explorer",
@@ -293,7 +297,8 @@
     "sending": "Envoi en cours…",
     "sendFailed": "Le message n'est pas parti. Touche pour réessayer.",
     "limitReached": "Tu as bien pratiqué aujourd'hui. Reviens demain, {name} t'attend.",
-    "typing": "{name} est en train d'écrire…"
+    "typing": "{name} est en train d'écrire…",
+    "messageNotFound": "Ce message est trop ancien pour être retrouvé ici."
   },
   "comingSoon": {
     "badge": "Bientôt",

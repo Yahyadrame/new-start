@@ -1,4 +1,10 @@
-import type { ConversationItem, MessageItem, MessagesPage, SendMessage } from '@newstart/shared';
+import type {
+  ConversationItem,
+  MessageItem,
+  MessagesPage,
+  SearchHit,
+  SendMessage,
+} from '@newstart/shared';
 
 export class ChatsError extends Error {
   constructor(
@@ -75,4 +81,13 @@ export async function translateMessage(token: string, messageId: string): Promis
   });
   if (!res.ok) throw new ChatsError(res.status);
   return ((await res.json()) as { translationFr: string }).translationFr;
+}
+
+/** Les messages de la personne qui contiennent `q` (2 caractères au moins), du plus récent au plus ancien. */
+export async function searchMessages(token: string, q: string): Promise<SearchHit[]> {
+  const res = await fetch(`/api/conversations/search?q=${encodeURIComponent(q)}`, {
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+  return ((await res.json()) as { items: SearchHit[] }).items;
 }

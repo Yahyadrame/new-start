@@ -6,6 +6,7 @@ import {
   listConversations,
   listMessages,
   markConversationRead,
+  searchMessages,
   sendMessage,
 } from './chats-api';
 
@@ -146,5 +147,23 @@ describe('translateMessage', () => {
   it('lève ChatsError avec le statut quand l’API refuse', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
     await expect(translateMessage('tok', 'm1')).rejects.toMatchObject({ status: 503 });
+  });
+});
+
+describe('searchMessages', () => {
+  it('appelle /api/conversations/search avec le texte encodé et rend les résultats', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({ items: [{ messageId: 'm1' }] }) });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await searchMessages('tok', 'a&b é')).toEqual([{ messageId: 'm1' }]);
+    expect(fetchMock).toHaveBeenCalledWith('/api/conversations/search?q=a%26b%20%C3%A9', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève ChatsError quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 400 }));
+    await expect(searchMessages('tok', 'x')).rejects.toMatchObject({ status: 400 });
   });
 });
