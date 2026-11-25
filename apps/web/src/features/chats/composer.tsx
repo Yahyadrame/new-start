@@ -256,7 +256,7 @@ export function Composer({
                 placeholder={c.composerPlaceholder}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={onKeyDown}
-                className="max-h-32 min-h-11 min-w-0 flex-1 resize-none bg-transparent py-2.5 pr-4 text-base leading-snug [field-sizing:content] placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+                className="max-h-32 min-h-11 min-w-0 flex-1 resize-none bg-transparent py-2.5 pr-4 text-base leading-snug [field-sizing:content] placeholder:text-text-muted outline-none"
               />
             </>
           )}
