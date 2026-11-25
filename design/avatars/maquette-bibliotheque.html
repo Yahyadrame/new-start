@@ -30,6 +30,10 @@
 <main id="grid"></main>
 <script>
   const L = NSLibrary, N = NSNeutral;
+  /* les choix viennent des listes ci-dessous, par indice : jamais le texte d'un champ dans le SVG */
+  const SHAPES = ['carre', 'rond'];
+  const VARIANTS = N.VARIANTS.map((v) => v.id).filter((id) => id !== 'initiales');
+  const PALETTES = [undefined, ...L.PALETTES];
   const $ = (id) => document.getElementById(id);
   N.VARIANTS.filter((v) => v.id !== 'initiales').forEach((v) => $('variant').add(new Option(v.label, v.id, v.id === 'duo', v.id === 'duo')));
   $('palette').add(new Option('Une par silhouette', ''));
@@ -38,7 +42,7 @@
     const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
     const parser = new DOMParser();
     const figures = L.LIBRARY.map((a) => {
-      const svg = parser.parseFromString(L.lib(a.slug, $('variant').value, theme, $('shape').value, $('palette').value || undefined), 'image/svg+xml').documentElement;
+      const svg = parser.parseFromString(L.lib(a.slug, VARIANTS[$('variant').selectedIndex], theme, SHAPES[$('shape').selectedIndex], PALETTES[$('palette').selectedIndex]), 'image/svg+xml').documentElement;
       const figure = document.createElement('figure');
       figure.append(svg, a.slug);
       return figure;
