@@ -165,9 +165,9 @@ _Ajouté le 2026-11-25 : la page Profil est « brute », tout y est regroupé. R
 
 _Ajouté le 2026-11-25 : tout dans un seul endroit, comme WhatsApp. Suite de NS-039._
 
-- [ ] Champ arrondi, bouton + (photo, fichier), micro quand le champ est vide, envoi quand il y a du texte.
-- [ ] Enregistrement vocal avec durée affichée, annulation et aperçu avant envoi ; choix de fichier avec aperçu.
-- [ ] Tests unitaires, deux thèmes, accessibilité (libellés, cibles ≥ 44 px).
+- [x] Champ arrondi, bouton + (photo, fichier), micro quand le champ est vide, envoi quand il y a du texte.
+- [x] Enregistrement vocal avec durée affichée, annulation et aperçu avant envoi ; choix de fichier avec aperçu. L'envoi réel reste à faire (NS-047) : en attendant, la barre le dit.
+- [x] Tests unitaires, deux thèmes, accessibilité (libellés, cibles ≥ 44 px).
 
 ## NS-047 — Envoi réel des vocaux et des pièces jointes · L
 
