@@ -9,6 +9,7 @@ function fake() {
     message: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn((a: unknown) => a) },
     correction: { create: vi.fn((a: unknown) => a) },
     conversation: { update: vi.fn((a: unknown) => a) },
+    contactVariant: { findUnique: vi.fn().mockResolvedValue(null) },
     $transaction: vi.fn().mockResolvedValue([]),
   };
   return { db, store: new PrismaAgentReplyStore(db as unknown as PrismaService) };
@@ -18,6 +19,8 @@ const createdAt = new Date('2026-11-21T10:00:00.000Z');
 const found = {
   createdAt,
   conversation: {
+    userId: 'u1',
+    agentId: 'ag1',
     agent: { name: 'Jade', persona: 'p', style: 's', accent: 'en-US' },
     user: { firstName: 'Awa', level: 'B1', goal: 'TRAVEL' },
   },
@@ -35,6 +38,29 @@ describe('PrismaAgentReplyStore.context', () => {
       correction: null,
     });
     expect(db.message.findMany).not.toHaveBeenCalled();
+  });
+
+  it('applique le ton et la difficulté choisis pour ce contact', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue([]);
+    db.contactVariant.findUnique.mockResolvedValue({ tone: 'neutre', difficulty: 'B2' });
+    const context = await store.context('c1', 'm1');
+    expect(db.contactVariant.findUnique.mock.calls[0]?.[0].where).toEqual({
+      userId_agentId: { userId: 'u1', agentId: 'ag1' },
+    });
+    expect(context?.learner.level).toBe('B2');
+    expect(context?.agent.style).toMatch(/no slang/);
+  });
+
+  it('ignore un réglage inconnu en base', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue([]);
+    db.contactVariant.findUnique.mockResolvedValue({ tone: 'grossier', difficulty: null });
+    const context = await store.context('c1', 'm1');
+    expect(context?.agent.style).toBe('s');
+    expect(context?.learner.level).toBe('B1');
   });
 
   it('relit les 16 derniers messages jusqu’au message et les rend du plus ancien au plus récent', async () => {

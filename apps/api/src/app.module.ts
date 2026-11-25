@@ -15,6 +15,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ConversationsModule } from './modules/conversations/conversations.module.js';
 import { ContactAvatarsModule } from './modules/contact-avatars/contact-avatars.module.js';
+import { ContactVariantsModule } from './modules/contact-variants/contact-variants.module.js';
 import { MeModule } from './modules/me/me.module.js';
 import { OnboardingModule } from './modules/onboarding/onboarding.module.js';
 import { AiModule } from './shared/ai/ai.module.js';
@@ -41,6 +42,7 @@ import { PrismaModule } from './shared/prisma/prisma.module.js';
     AuthModule,
     OnboardingModule,
     ContactAvatarsModule,
+    ContactVariantsModule,
     MeModule,
     ConversationsModule,
     CatalogModule,
