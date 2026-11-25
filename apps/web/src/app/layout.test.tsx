@@ -21,6 +21,10 @@ describe('RootLayout', () => {
     expect(metadata.title).toBe('new start');
   });
 
+  it('laisse la page se redimensionner avec le clavier au lieu de passer dessous', () => {
+    expect(viewport.interactiveWidget).toBe('resizes-content');
+  });
+
   it('donne la couleur de la barre du navigateur pour chaque thème', () => {
     expect(viewport.themeColor).toEqual([
       { media: '(prefers-color-scheme: light)', color: '#F2F2F2' },

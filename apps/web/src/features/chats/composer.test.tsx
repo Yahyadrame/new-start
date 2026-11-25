@@ -45,4 +45,10 @@ describe('Composer', () => {
     expect(onSend).toHaveBeenCalledWith('Hello');
     expect(field().value).toBe('');
   });
+
+  // Sous 16 px, Safari sur iPhone zoome la page au toucher du champ : bulles et bouton coupés.
+  it('écrit en 16 px pour que le téléphone ne zoome pas au toucher', () => {
+    render(<Composer onSend={vi.fn()} />);
+    expect(field().className).toContain('text-base');
+  });
 });

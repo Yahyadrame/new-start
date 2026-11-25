@@ -47,7 +47,7 @@ export function Composer({ onSend }: { onSend: (text: string) => void }) {
         placeholder={c.composerPlaceholder}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={onKeyDown}
-        className="max-h-32 min-h-11 min-w-0 flex-1 resize-none rounded-3xl border border-line bg-bg px-4 py-2.5 text-[15px] leading-snug [field-sizing:content] placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+        className="max-h-32 min-h-11 min-w-0 flex-1 resize-none rounded-3xl border border-line bg-bg px-4 py-2.5 text-base leading-snug [field-sizing:content] placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
       />
       <button
         type="submit"

@@ -25,6 +25,11 @@ describe('Input', () => {
     expect(input.getAttribute('aria-invalid')).toBe('true');
     await expectNoA11yViolations(container);
   });
+
+  it('écrit en 16 px pour que le téléphone ne zoome pas au toucher', () => {
+    render(<Input aria-label="Nom" />);
+    expect(screen.getByLabelText('Nom').className).toContain('text-base');
+  });
 });
 
 describe('Switch', () => {
