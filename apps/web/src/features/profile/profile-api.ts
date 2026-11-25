@@ -38,6 +38,11 @@ export async function exportMe(token: string): Promise<Blob> {
 export async function deleteMe(token: string): Promise<void> {
   const res = await fetch('/api/me', { method: 'DELETE', headers: headers(token) });
   if (!res.ok) throw new ProfileError(res.status);
+  await logout();
+}
+
+/** Ferme la session : l'API efface le cookie de rafraîchissement (best effort, la session locale part de toute façon). */
+export async function logout(): Promise<void> {
   await fetch('/api/auth/logout', { method: 'POST' }).catch(() => undefined);
 }
 

@@ -1,5 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ProfileError, deleteMe, exportMe, getMe, listNotebook, patchMe } from './profile-api';
+import {
+  ProfileError,
+  deleteMe,
+  logout,
+  exportMe,
+  getMe,
+  listNotebook,
+  patchMe,
+} from './profile-api';
 
 afterEach(() => vi.unstubAllGlobals());
 const stub = (res: Partial<Response>) => {
@@ -72,5 +80,12 @@ describe('listNotebook', () => {
     stub({ ok: false, status: 401 });
     await expect(listNotebook('tok')).rejects.toMatchObject({ status: 401 });
     await expect(listNotebook('tok')).rejects.toBeInstanceOf(ProfileError);
+  });
+
+  it('logout appelle la route de déconnexion et ignore un échec réseau', async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new Error('réseau'));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(logout()).resolves.toBeUndefined();
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/logout', { method: 'POST' });
   });
 });

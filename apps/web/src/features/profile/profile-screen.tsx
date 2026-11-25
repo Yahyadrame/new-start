@@ -7,6 +7,7 @@ import {
   BellRing,
   BookOpen,
   ChevronRight,
+  LogOut,
   GraduationCap,
   Palette,
   ShieldCheck,
@@ -24,7 +25,7 @@ import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../.
 import { DeleteAccountDialog } from './delete-account-dialog';
 import { SECTIONS, type Section } from './sections';
 import { NotebookSection } from './notebook-section';
-import { deleteMe, exportMe, getMe, patchMe } from './profile-api';
+import { deleteMe, exportMe, getMe, logout, patchMe } from './profile-api';
 
 const t = fr.profile;
 
@@ -111,6 +112,13 @@ export function ProfileScreen({ section }: { section?: Section }) {
     } catch {
       setError(t.errors.export);
     }
+  }
+
+  /** Se déconnecter : on ferme la session, puis retour à l'accueil. Pas de confirmation, on se reconnecte avec un code. */
+  async function signOut() {
+    await logout();
+    setSession(null);
+    router.replace('/');
   }
 
   /** Après la suppression, la session locale n'a plus de compte derrière elle : retour à l'accueil. */
@@ -360,6 +368,10 @@ export function ProfileScreen({ section }: { section?: Section }) {
                   ))}
                 </ul>
               </nav>
+              <Button variant="outline" className="w-full" onClick={signOut}>
+                <LogOut aria-hidden="true" className="size-5" />
+                {t.signOut}
+              </Button>
             </>
           )}
         </>

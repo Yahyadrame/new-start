@@ -225,6 +225,7 @@
       "confirm": "Oui, supprimer mon compte",
       "cancel": "Garder mon compte"
     },
+    "signOut": "Se déconnecter",
     "back": "Retour au profil",
     "sections": {
       "learning": {
