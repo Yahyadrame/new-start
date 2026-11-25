@@ -91,6 +91,18 @@ Le style doit rester **réglable sans redéploiement** (configuration `avatars.c
 - Consigne commune pour les 8 autres : « Stylized 3D cartoon avatar portrait for a messaging app, head and shoulders, centered, facing the viewer, smooth matte clay-like shading, soft studio lighting, clean rounded shapes, expressive eyes, plain solid light grey background, no text, no logo. Character: … » (descriptions des personnages dans la maquette utilisateur).
 - Générer ces images coûte des crédits : à faire seulement avec l'accord du porteur du projet. En attendant, les silhouettes à détail servent de portraits.
 
+## 4. Bibliothèque multipliée (NS-065)
+
+Les silhouettes du zip sont des exemples. `design/avatars/bibliotheque.js` les multiplie dans le même trait :
+
+- **360 silhouettes** (`a001` à `a360`), toutes différentes : 26 coiffures et couvre-chefs (afro, tresses, locks, foulard, turban, casquette, bonnet…), 6 choix de barbe, 4 de lunettes, 12 de tenues (cravate, nœud papillon, écharpe, blouse de chef, stéthoscope…).
+- **16 palettes** : les 8 d'origine et 8 nouvelles (Corail, Indigo, Menthe, Ardoise, Prune, Ocre, Ciel, Lilas).
+- **7 variantes, 2 formes, 2 thèmes** : 40 320 combinaisons.
+- Un identifiant suffit à retrouver une silhouette : le tirage est déterministe, rien n'est stocké. L'appli enregistrera seulement `{ id, palette, variante }`.
+- Les tracés des 12 contacts d'origine sont inchangés (vérifié : 336 SVG identiques avant et après).
+- Planche à ouvrir dans le navigateur : `design/avatars/maquette-bibliotheque.html`.
+- Chaque contact garde sa silhouette d'origine ; la personne peut en choisir une autre dans la bibliothèque pour ce contact ou pour elle-même (NS-062, NS-051).
+
 ## Tickets
 
 - **NS-062 — Silhouettes neutres** (sprint 2) : composant `NeutralAvatar`, 7 variantes, 2 formes, 2 thèmes ; repli du composant Avatar ; avatar par défaut à l'inscription ; écran profil avec bouton photo. Tests visuels Storybook (clair et sombre) et test d'accessibilité.
