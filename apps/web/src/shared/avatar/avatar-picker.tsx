@@ -4,6 +4,7 @@ import type { AvatarChoice } from '@newstart/shared';
 import { AVATAR_VARIANTS, LIBRARY_IDS, NeutralAvatar, PALETTE_NAMES } from '@newstart/ui';
 import { useState } from 'react';
 import fr from '../i18n/fr.json';
+import { AVATAR_SHAPE } from './config';
 import { useColorScheme } from './use-color-scheme';
 
 const t = fr.avatar;
@@ -34,7 +35,7 @@ export function AvatarPicker({
   const [palette, setPalette] = useState<string | undefined>(value?.palette);
   const [style, setStyle] = useState<Style>((value?.variant as Style | undefined) ?? 'duo');
   const [shown, setShown] = useState(FIRST_PAGE);
-  const preview = { palette, variant: style, theme } as const;
+  const preview = { palette, variant: style, theme, shape: AVATAR_SHAPE } as const;
 
   return (
     <div className="flex flex-col gap-5">
