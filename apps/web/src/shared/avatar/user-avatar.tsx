@@ -2,6 +2,7 @@
 
 import type { AvatarChoice } from '@newstart/shared';
 import { NeutralAvatar } from '@newstart/ui';
+import { AVATAR_SHAPE } from './config';
 import { useColorScheme } from './use-color-scheme';
 
 /** L'avatar d'une personne : sa silhouette choisie, ou la silhouette grise tant qu'elle n'en a pas. */
@@ -19,6 +20,7 @@ export function UserAvatar({
       avatarId={avatar?.id ?? ''}
       name={name}
       variant={avatar?.variant ?? 'gris'}
+      shape={AVATAR_SHAPE}
       palette={avatar?.palette}
       theme={useColorScheme()}
       className={className}

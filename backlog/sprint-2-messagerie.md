@@ -283,7 +283,7 @@ _Ajouté le 2026-11-25. Source : `docs/18-avatars.md`, maquettes dans `design/av
 - [ ] Repli du composant Avatar de shadcn/ui (plus utilisé dans l’appli, à retirer ou garder pour les photos).
 - [ ] Partie 4 : choix par contact (table dédiée) et silhouettes des 11 contacts NS-058.
 - [x] Avatar par défaut à l’inscription : aucun choix enregistré = silhouette grise (rien à ajouter).
-- [ ] Style par défaut réglable sans redéploiement (`avatars.contactStyle`, `avatars.shape`).
+- [x] Style et forme réglables par variables d’environnement (`NEXT_PUBLIC_AVATAR_CONTACT_STYLE`, `NEXT_PUBLIC_AVATAR_SHAPE`), option A.
 - [ ] Les 11 contacts ajoutés par NS-058 n'ont pas de silhouette dans le jeu fourni : le porteur les fournit. En attendant, on code les 12 contacts existants et les autres gardent leurs initiales.
 - [ ] Tests unitaires, tests visuels clair et sombre, accessibilité.
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { CONTACT_AVATARS, LIBRARY_IDS, NeutralAvatar } from '@newstart/ui';
+import { AVATAR_SHAPE, CONTACT_STYLE } from './config';
 import { useColorScheme } from './use-color-scheme';
 
 /**
@@ -14,7 +15,7 @@ export function contactAvatarId(slug: string): string {
   return LIBRARY_IDS[hash % LIBRARY_IDS.length] ?? 'a001';
 }
 
-/** L'avatar d'un contact dans les listes et les conversations : style « duo », forme carrée. */
+/** L'avatar d'un contact dans les listes et les conversations : style et forme réglés par variables d'environnement. */
 export function ContactAvatar({
   slug,
   name,
@@ -28,7 +29,8 @@ export function ContactAvatar({
     <NeutralAvatar
       avatarId={contactAvatarId(slug)}
       name={name}
-      variant="duo"
+      variant={CONTACT_STYLE}
+      shape={AVATAR_SHAPE}
       theme={useColorScheme()}
       className={className}
     />
