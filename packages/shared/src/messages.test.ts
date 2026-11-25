@@ -15,6 +15,13 @@ describe('MessagesQuery', () => {
 });
 
 describe('SendMessage', () => {
+  it('accepte un message cité, qui doit être un identifiant', () => {
+    expect(SendMessage.parse({ clientId, text: 'Hi', replyToId: clientId }).replyToId).toBe(
+      clientId,
+    );
+    expect(SendMessage.safeParse({ clientId, text: 'Hi', replyToId: 'x' }).success).toBe(false);
+  });
+
   const clientId = '0198f0a0-0000-4000-8000-000000000001';
 
   it('retire les espaces autour du texte', () => {

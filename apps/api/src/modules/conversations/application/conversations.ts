@@ -16,9 +16,11 @@ import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor
 export const CONVERSATIONS_STORE = Symbol('CONVERSATIONS_STORE');
 
 /** Un message tel que le stockage le rend : la date n'est pas encore mise en texte. */
-export type MessageRow = Omit<MessageItem, 'createdAt' | 'deleted'> & {
+export type MessageRow = Omit<MessageItem, 'createdAt' | 'deleted' | 'replyTo'> & {
   createdAt: Date;
   deletedAt: Date | null;
+  replyTo:
+    (Omit<NonNullable<MessageItem['replyTo']>, 'deleted'> & { deletedAt: Date | null }) | null;
 };
 
 /** Un message trouvé tel que le stockage le rend : le texte entier, la date pas encore en texte. */
@@ -67,8 +69,14 @@ export interface ConversationsStore {
   ): Promise<{ row: MessageRow; created: boolean } | { limited: true } | null>;
 }
 
-const toItem = ({ deletedAt, ...row }: MessageRow): MessageItem => ({
+const toItem = ({ deletedAt, replyTo, ...row }: MessageRow): MessageItem => ({
   ...row,
+  replyTo: replyTo && {
+    id: replyTo.id,
+    author: replyTo.author,
+    text: replyTo.text,
+    deleted: replyTo.deletedAt !== null,
+  },
   createdAt: row.createdAt.toISOString(),
   deleted: deletedAt !== null,
 });

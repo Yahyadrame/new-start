@@ -9,6 +9,15 @@ export const MessageItem = z.object({
   createdAt: z.string(),
   /** Message supprimé par la personne : `text` est vide, la bulle devient « Message supprimé ». */
   deleted: z.boolean(),
+  /** Le message cité quand celui-ci répond en citant ; `text` est vide si le message cité a été supprimé. */
+  replyTo: z
+    .object({
+      id: z.string(),
+      author: z.enum(['USER', 'AGENT', 'SYSTEM']),
+      text: z.string(),
+      deleted: z.boolean(),
+    })
+    .nullable(),
   /** La correction « Plus naturel » d'un message de la personne, ou null. */
   correction: z.object({ better: z.string().nullable(), whyFr: z.string().nullable() }).nullable(),
 });
@@ -31,6 +40,8 @@ export type MessagesQuery = z.infer<typeof MessagesQuery>;
 export const SendMessage = z.object({
   clientId: z.uuid(),
   text: z.string().trim().min(1).max(2000),
+  /** Le message auquel on répond, dans la même conversation. */
+  replyToId: z.uuid().optional(),
 });
 export type SendMessage = z.infer<typeof SendMessage>;
 

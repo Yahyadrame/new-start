@@ -246,8 +246,33 @@ describe('PrismaConversationsStore', () => {
         clientId: message.clientId,
         author: 'USER',
         text: 'Hello',
+        replyToId: null,
       });
       expect(db.conversation.update.mock.calls[0]?.[0].where).toEqual({ id: 'c1' });
+    });
+
+    it('garde la citation quand le message cité est dans la conversation', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.message.findFirst.mockResolvedValue({ id: 'm0' });
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}]);
+      await store.send('u1', 'c1', { ...message, replyToId: 'm0' });
+      expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
+        id: 'm0',
+        conversationId: 'c1',
+      });
+      expect(db.message.create.mock.calls[0]?.[0].data.replyToId).toBe('m0');
+    });
+
+    it('ignore la citation d’un message qui n’est pas dans la conversation', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.message.findFirst.mockResolvedValue(null);
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}]);
+      await store.send('u1', 'c1', { ...message, replyToId: 'm9' });
+      expect(db.message.create.mock.calls[0]?.[0].data.replyToId).toBeNull();
     });
 
     it('ajoute 10 XP à la personne dans la même transaction', async () => {

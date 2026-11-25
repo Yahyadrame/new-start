@@ -225,10 +225,13 @@ model Message {
   translationFr  String?
   readAt         DateTime?
   deletedAt      DateTime? // message supprimé : le texte est effacé, la bulle reste
+  replyToId      String?      @db.Uuid // message cité quand la personne répond en citant
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   correction     Correction?
+  replyTo        Message?     @relation("Reply", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies        Message[]    @relation("Reply")
 
   @@unique([conversationId, clientId])
   @@index([conversationId, createdAt])

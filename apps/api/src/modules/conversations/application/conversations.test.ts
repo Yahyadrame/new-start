@@ -68,6 +68,7 @@ describe('ConversationsService.messages', () => {
     translationFr: null,
     createdAt: new Date(Date.UTC(2026, 10, 20, 10, 60 - n)),
     correction: null,
+    replyTo: null,
     deletedAt: null,
   });
   const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
@@ -134,8 +135,24 @@ describe('ConversationsService.send', () => {
     translationFr: null,
     createdAt: new Date('2026-11-20T10:00:00.000Z'),
     correction: null,
+    replyTo: null,
     deletedAt: null,
   };
+
+  it('rend le message cité, vide quand il a été supprimé', async () => {
+    const { store, service } = setup(null);
+    const quoted = { id: 'm0', author: 'AGENT' as const, text: 'Hi', deletedAt: null };
+    vi.mocked(store.send).mockResolvedValue({ row: { ...row, replyTo: quoted }, created: true });
+    expect((await service.send('u1', ID, body)).message.replyTo).toEqual({
+      id: 'm0',
+      author: 'AGENT',
+      text: 'Hi',
+      deleted: false,
+    });
+    const gone = { ...quoted, text: '', deletedAt: new Date() };
+    vi.mocked(store.send).mockResolvedValue({ row: { ...row, replyTo: gone }, created: true });
+    expect((await service.send('u1', ID, body)).message.replyTo).toMatchObject({ deleted: true });
+  });
 
   it('rend le message avec sa date en texte et signale la création', async () => {
     const { store, service } = setup(null);
@@ -147,6 +164,7 @@ describe('ConversationsService.send', () => {
         text: 'Hello',
         translationFr: null,
         correction: null,
+        replyTo: null,
         deleted: false,
         createdAt: '2026-11-20T10:00:00.000Z',
       },
@@ -291,6 +309,7 @@ describe('ConversationsService.search', () => {
         createdAt: new Date('2026-11-25T10:00:00Z'),
         deletedAt: new Date('2026-11-25T11:00:00Z'),
         correction: null,
+        replyTo: null,
       },
     ]);
     const page = await service.messages('u1', ID);

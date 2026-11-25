@@ -40,6 +40,7 @@ const messageSelect = {
   createdAt: true,
   deletedAt: true,
   correction: { select: { better: true, whyFr: true } },
+  replyTo: { select: { id: true, author: true, text: true, deletedAt: true } },
 } as const;
 
 type Row = Omit<ConversationItem, 'lastMessage' | 'lastMessageAt'> & {
@@ -198,7 +199,7 @@ export class PrismaConversationsStore implements ConversationsStore {
   async send(
     userId: string,
     conversationId: string,
-    { clientId, text }: SendMessage,
+    { clientId, text, replyToId }: SendMessage,
     dailyLimit = Number.POSITIVE_INFINITY,
   ) {
     const owned = await this.db.conversation.findFirst({
@@ -213,6 +214,13 @@ export class PrismaConversationsStore implements ConversationsStore {
       });
     const known = await find();
     if (known) return { row: known, created: false };
+    // Un message cité d'une autre conversation (ou inconnu) est ignoré : la réponse part sans citation.
+    const quoted = replyToId
+      ? await this.db.message.findFirst({
+          where: { id: replyToId, conversationId },
+          select: { id: true },
+        })
+      : null;
     const streak = await streakUpdate(this.db, userId);
     if (streak.lastActiveDay) {
       const today = await this.db.dailyActivity.findUnique({
@@ -225,7 +233,7 @@ export class PrismaConversationsStore implements ConversationsStore {
     try {
       const [row] = await this.db.$transaction([
         this.db.message.create({
-          data: { conversationId, clientId, author: 'USER', text },
+          data: { conversationId, clientId, author: 'USER', text, replyToId: quoted?.id ?? null },
           select: messageSelect,
         }),
         this.db.conversation.update({
