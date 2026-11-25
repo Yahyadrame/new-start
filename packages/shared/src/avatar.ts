@@ -36,3 +36,7 @@ export const AvatarChoice = z.strictObject({
   variant: z.enum(AVATAR_VARIANTS).optional(),
 });
 export type AvatarChoice = z.infer<typeof AvatarChoice>;
+
+/** Les avatars choisis par la personne pour ses contacts, par identifiant de contact (`jade`). */
+export const ContactAvatars = z.record(z.string(), AvatarChoice);
+export type ContactAvatars = z.infer<typeof ContactAvatars>;

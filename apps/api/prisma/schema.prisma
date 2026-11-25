@@ -76,6 +76,7 @@ model User {
   identities        AuthIdentity[]
   refreshTokens     RefreshToken[]
   conversations     Conversation[]
+  contactAvatars    ContactAvatar[]
   levelAnswers      LevelTestAnswer[]
   notebook          NotebookEntry[]
   reviewCards       ReviewCard[]
@@ -140,27 +141,41 @@ model Topic {
 }
 
 model Agent {
-  id            String         @id @default(uuid(7)) @db.Uuid
-  slug          String         @unique
-  name          String
-  initials      String
-  category      String // "Quotidien" | "Pro" | "Business" | "Voyage" | thème
-  topicId       String?        @db.Uuid
-  roleFr        String // "Coloc · familier"
-  persona       String // description utilisée dans le prompt
-  style         String
-  voiceId       String // voix TTS fixe
-  accent        String // "en-US", "en-GB", "en-NG"…
-  firstMessage  String
-  suggestions   String[]
-  isPremium     Boolean        @default(false)
-  isActive      Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  topic         Topic?         @relation(fields: [topicId], references: [id])
-  conversations Conversation[]
+  id             String          @id @default(uuid(7)) @db.Uuid
+  slug           String          @unique
+  name           String
+  initials       String
+  category       String // "Quotidien" | "Pro" | "Business" | "Voyage" | thème
+  topicId        String?         @db.Uuid
+  roleFr         String // "Coloc · familier"
+  persona        String // description utilisée dans le prompt
+  style          String
+  voiceId        String // voix TTS fixe
+  accent         String // "en-US", "en-GB", "en-NG"…
+  firstMessage   String
+  suggestions    String[]
+  isPremium      Boolean         @default(false)
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  topic          Topic?          @relation(fields: [topicId], references: [id])
+  conversations  Conversation[]
+  contactAvatars ContactAvatar[]
 
   @@index([topicId])
+}
+
+model ContactAvatar {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  userId    String   @db.Uuid
+  agentId   String   @db.Uuid
+  avatar    Json // silhouette choisie pour ce contact (id, palette, variante)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, agentId])
 }
 
 model Conversation {
