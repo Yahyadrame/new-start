@@ -8,7 +8,7 @@ const fetchUnreadCount = vi.fn();
 vi.mock('next/navigation', () => ({ usePathname }));
 vi.mock('../auth/session', () => ({ ensureSession }));
 vi.mock('./unread-count', () => ({ fetchUnreadCount }));
-const { NotificationsBell } = await import('./notifications-bell');
+const { NotificationsBell, NotificationsRailItem } = await import('./notifications-bell');
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -60,5 +60,46 @@ describe('NotificationsBell', () => {
     render(<NotificationsBell />);
     await waitFor(() => expect(fetchUnreadCount).toHaveBeenCalled());
     expect(screen.queryByRole('link')).toBeNull();
+  });
+});
+
+describe('NotificationsBell dans l’en-tête', () => {
+  it('se cache dès 1024 px, où la cloche est dans le rail', async () => {
+    render(<NotificationsBell />);
+    const link = await screen.findByRole('link', { name: fr.nav.bell });
+    expect(link.className).toContain('lg:hidden');
+  });
+});
+
+describe('NotificationsRailItem', () => {
+  const renderRail = () =>
+    render(
+      <ul>
+        <NotificationsRailItem />
+      </ul>,
+    );
+
+  it('est une entrée du rail, cachée sur mobile, qui prend l’espace libre', async () => {
+    renderRail();
+    const link = await screen.findByRole('link', { name: fr.nav.bell });
+    expect(link.getAttribute('href')).toBe('/notifications');
+    expect(link.textContent).toBe(fr.nav.bellShort);
+    expect(screen.getByRole('listitem').className).toContain('hidden');
+    expect(screen.getByRole('listitem').className).toContain('lg:mt-auto');
+    expect(link.hasAttribute('aria-current')).toBe(false);
+  });
+
+  it('annonce les non-lus avec un point', async () => {
+    fetchUnreadCount.mockResolvedValue(2);
+    renderRail();
+    expect(await screen.findByRole('link', { name: 'Notifications, 2 non lues' })).toBeTruthy();
+    expect(screen.getByTestId('unread-dot')).toBeTruthy();
+  });
+
+  it('marque l’entrée active sur l’écran Notifications', async () => {
+    usePathname.mockReturnValue('/notifications');
+    renderRail();
+    const link = await screen.findByRole('link');
+    expect(link.getAttribute('aria-current')).toBe('page');
   });
 });

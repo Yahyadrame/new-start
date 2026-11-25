@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
-import { BottomNav } from '../../shared/navigation';
+import { BottomNav, NotificationsBell } from '../../shared/navigation';
 import { listConversations } from './chats-api';
 import { SearchResults } from './search-results';
 import {
@@ -66,13 +66,16 @@ export function ChatsScreen() {
         <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
           {t.title}
         </h1>
-        <Link
-          href="/explore"
-          aria-label={t.explore}
-          className="fixed right-5 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-10 flex size-14 items-center justify-center rounded-full border border-line bg-surface-1 text-text shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text lg:static lg:size-11 lg:border-0 lg:bg-accent lg:text-on-accent lg:shadow-none"
-        >
-          <Plus aria-hidden="true" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <NotificationsBell />
+          <Link
+            href="/explore"
+            aria-label={t.explore}
+            className="fixed right-5 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-10 flex size-14 items-center justify-center rounded-full border border-line bg-surface-1 text-text shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text lg:static lg:size-11 lg:border-0 lg:bg-accent lg:text-on-accent lg:shadow-none"
+          >
+            <Plus aria-hidden="true" />
+          </Link>
+        </div>
       </header>
 
       {error && (

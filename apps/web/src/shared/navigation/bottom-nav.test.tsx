@@ -5,7 +5,11 @@ import fr from '../i18n/fr.json';
 const usePathname = vi.fn();
 vi.mock('next/navigation', () => ({ usePathname }));
 vi.mock('./notifications-bell', () => ({
-  NotificationsBell: () => <a href="/notifications">cloche</a>,
+  NotificationsRailItem: () => (
+    <li className="hidden lg:mt-auto lg:flex">
+      <a href="/notifications">cloche</a>
+    </li>
+  ),
 }));
 const { BottomNav } = await import('./bottom-nav');
 
@@ -17,7 +21,15 @@ describe('BottomNav', () => {
     render(<BottomNav />);
     const nav = screen.getByRole('navigation', { name: fr.nav.label });
     const hrefs = [...nav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/chats', '/series', '/games', '/progress', '/profile']);
+    // La cloche n'apparaît que dans le rail (dès 1024 px), juste avant Profil.
+    expect(hrefs).toEqual([
+      '/chats',
+      '/series',
+      '/games',
+      '/progress',
+      '/notifications',
+      '/profile',
+    ]);
   });
 
   it("marque l'onglet de la page courante", () => {
@@ -53,9 +65,11 @@ describe('BottomNav', () => {
     const nav = screen.getByRole('navigation', { name: fr.nav.label });
     expect(nav.className).toContain('lg:w-[72px]');
     expect(nav.hasAttribute('data-shell-nav')).toBe(true);
-    const items = nav.querySelectorAll('li');
-    expect(items[items.length - 1]?.className).toContain('lg:mt-auto');
+    const items = [...nav.querySelectorAll('li')];
+    // Le logo reste en haut ; la cloche prend l'espace libre, Profil la suit en bas.
     expect(items[0]?.className).not.toContain('lg:mt-auto');
+    expect(items[items.length - 2]?.className).toContain('lg:mt-auto');
+    expect(items[items.length - 1]?.textContent).toBe(fr.nav.profile);
   });
 
   it('met le logo en haut du rail, caché sur mobile et des lecteurs d’écran', () => {

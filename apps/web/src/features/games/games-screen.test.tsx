@@ -27,7 +27,10 @@ vi.mock('./games-api', () => ({
   fetchDueReviews,
   gradeReview,
 }));
-vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
+vi.mock('../../shared/navigation', () => ({
+  BottomNav: () => <nav>barre du bas</nav>,
+  NotificationsBell: () => <span>cloche</span>,
+}));
 const { GamesScreen } = await import('./games-screen');
 
 const t = fr.games;
@@ -52,6 +55,14 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('GamesScreen', () => {
+  it('met la cloche des notifications dans l’en-tête, à côté du titre', async () => {
+    render(<GamesScreen />);
+    await screen.findByText('You know');
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.parentElement?.tagName).toBe('HEADER');
+    expect(heading.parentElement?.textContent).toContain('cloche');
+  });
+
   it('liste les jeux à venir avec leur badge « Bientôt »', async () => {
     render(<GamesScreen />);
     await screen.findByText('You know');

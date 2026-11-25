@@ -9,7 +9,10 @@ const fetchProgress = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ replace }) }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 vi.mock('./progress-api', () => ({ fetchProgress }));
-vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
+vi.mock('../../shared/navigation', () => ({
+  BottomNav: () => <nav>barre du bas</nav>,
+  NotificationsBell: () => <span>cloche</span>,
+}));
 const { ProgressScreen } = await import('./progress-screen');
 
 const t = fr.progress;
@@ -22,6 +25,14 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('ProgressScreen', () => {
+  it('met la cloche des notifications dans l’en-tête, à côté du titre', async () => {
+    render(<ProgressScreen />);
+    await screen.findByText('3');
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.parentElement?.tagName).toBe('HEADER');
+    expect(heading.parentElement?.textContent).toContain('cloche');
+  });
+
   it('affiche le niveau, la barre et l’XP restant', async () => {
     render(<ProgressScreen />);
     expect(await screen.findByText('3')).toBeTruthy();
