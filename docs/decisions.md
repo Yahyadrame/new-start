@@ -110,3 +110,9 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - Objectifs : jusqu'à 4 à cocher, parmi 8 (bourse, travail, voyage, amis, études, examens, affaires, culture). `goal` reste l'objectif principal (le premier choisi) pour ne rien casser ; `goals` garde la liste.
 - Centres d'intérêt : jusqu'à 8 parmi 16, dans `interests`. Ils serviront à proposer des contacts et des sujets (catalogue de domaines, ticket suivant).
 - Contrat de l'API : `goals` et `interests` sont facultatifs dans `POST /auth/otp/request` (listes vides par défaut), donc les anciens clients continuent de marcher. Migration additive ; les comptes existants reprennent leur objectif unique dans `goals`.
+
+## Connexion Google (NS-103), 2026-11-26
+
+- Le jeton Google est vérifié côté API avec `jose` et les clés publiques de Google : aucune nouvelle dépendance.
+- Un compte Google se rattache au compte qui a le même e-mail, à condition que Google l'ait vérifié. Sans compte, la création demande le profil d'inscription (le numéro reste obligatoire).
+- Sans `GOOGLE_CLIENT_ID`, la route répond 503 et le bouton reste masqué. Le client OAuth est créé par le porteur du projet.

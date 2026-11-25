@@ -31,6 +31,8 @@ const schema = z.object({
   ),
   // Facultatif : sans jeton, /health/sentry-test répond 404. Sert à vérifier que Sentry reçoit bien les erreurs.
   SENTRY_TEST_TOKEN: z.preprocess(emptyToUndefined, z.string().min(16).optional()),
+  // Connexion Google : sans identifiant client, POST /auth/google répond 503.
+  GOOGLE_CLIENT_ID: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
   // Brevo : sans clé ou sans MAIL_FROM, les e-mails restent en mémoire (adaptateur factice).
   BREVO_API_KEY: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
   MAIL_FROM: z.preprocess(emptyToUndefined, z.string().email().optional()),

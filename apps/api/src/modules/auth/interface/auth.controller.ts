@@ -5,6 +5,7 @@ import { ENV, type Env } from '../../../config/env.js';
 import { REFRESH_TTL_MS } from '../domain/tokens.js';
 import { SessionService } from '../application/session.js';
 import { VerifyOtp } from '../application/verify-otp.js';
+import { GoogleSignIn } from '../application/google-sign-in.js';
 import { RequestOtp } from '../application/request-otp.js';
 import { PhoneE164, SignupProfile } from '@newstart/shared';
 
@@ -18,6 +19,11 @@ const Destination = z.discriminatedUnion('channel', [
 const RequestBody = z.intersection(Destination, z.object({ signup: SignupProfile.optional() }));
 
 const VerifyBody = z.intersection(Destination, z.object({ code: z.string().regex(/^\d{6}$/) }));
+
+const GoogleBody = z.object({
+  idToken: z.string().min(20).max(4096),
+  signup: SignupProfile.optional(),
+});
 
 // Réponse Express réduite à ce qu'on utilise (le paquet de types n'est pas installé).
 type CookieResponse = {
@@ -33,6 +39,7 @@ export class AuthController {
   constructor(
     @Inject(RequestOtp) private readonly requestOtp: RequestOtp,
     @Inject(VerifyOtp) private readonly verifyOtp: VerifyOtp,
+    @Inject(GoogleSignIn) private readonly google: GoogleSignIn,
     @Inject(SessionService) private readonly sessions: SessionService,
     @Inject(ENV) private readonly env: Env,
   ) {}
@@ -47,6 +54,14 @@ export class AuthController {
   @HttpCode(200)
   async verify(@Body() body: unknown, @Res({ passthrough: true }) res: CookieResponse) {
     const { refreshToken, ...session } = await this.verifyOtp.execute(parseBody(VerifyBody, body));
+    this.setRefreshCookie(res, refreshToken);
+    return session;
+  }
+
+  @Post('google')
+  @HttpCode(200)
+  async signInWithGoogle(@Body() body: unknown, @Res({ passthrough: true }) res: CookieResponse) {
+    const { refreshToken, ...session } = await this.google.execute(parseBody(GoogleBody, body));
     this.setRefreshCookie(res, refreshToken);
     return session;
   }

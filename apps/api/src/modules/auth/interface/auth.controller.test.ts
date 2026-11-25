@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ENV } from '../../../config/env.js';
 import { RequestOtp } from '../application/request-otp.js';
 import { SessionService } from '../application/session.js';
+import { GoogleSignIn } from '../application/google-sign-in.js';
 import { VerifyOtp } from '../application/verify-otp.js';
 import { AuthController, readCookie } from './auth.controller.js';
 
@@ -14,6 +15,12 @@ const verify = vi.fn().mockResolvedValue({
   expiresInSeconds: 900,
   refreshToken: 'opaque',
   user: { id: 'u1', firstName: 'Awa', goal: 'WORK', level: 'A1' },
+});
+const google = vi.fn().mockResolvedValue({
+  accessToken: 'jwt-g',
+  expiresInSeconds: 900,
+  refreshToken: 'opaque-g',
+  user: { id: 'u1' },
 });
 const sessions = {
   refresh: vi.fn().mockResolvedValue({
@@ -32,6 +39,7 @@ beforeAll(async () => {
     providers: [
       { provide: RequestOtp, useValue: { execute } },
       { provide: VerifyOtp, useValue: { execute: verify } },
+      { provide: GoogleSignIn, useValue: { execute: google } },
       { provide: SessionService, useValue: sessions },
       { provide: ENV, useValue: env },
     ],
@@ -119,6 +127,29 @@ describe('POST /auth/otp/verify', () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(verify).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /auth/google', () => {
+  const send = (body: unknown) =>
+    request(app.getHttpServer())
+      .post('/auth/google')
+      .send(body as object);
+  const idToken = 'x'.repeat(40);
+
+  it('renvoie la session et pose le cookie de rafraîchissement', async () => {
+    const res = await send({ idToken });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ accessToken: 'jwt-g', expiresInSeconds: 900, user: { id: 'u1' } });
+    expect(String(res.headers['set-cookie'])).toContain('ns_refresh=opaque-g');
+    expect(google).toHaveBeenLastCalledWith({ idToken });
+  });
+
+  it('refuse un jeton absent ou trop court', async () => {
+    google.mockClear();
+    expect((await send({ idToken: 'court' })).status).toBe(400);
+    expect((await send({})).status).toBe(400);
+    expect(google).not.toHaveBeenCalled();
   });
 });
 

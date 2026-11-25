@@ -20,6 +20,7 @@ import {
   VerifyOtp,
   type AccountStore,
 } from './application/verify-otp.js';
+import { createGoogleVerifier, GoogleSignIn } from './application/google-sign-in.js';
 import { PrismaSessionStore } from './infrastructure/prisma-session.store.js';
 import { SESSION_STORE, SessionService, type SessionStore } from './application/session.js';
 import { PrismaOtpStore } from './infrastructure/prisma-otp.store.js';
@@ -50,6 +51,16 @@ import { AuthController } from './interface/auth.controller.js';
       inject: [ACCOUNT_STORE, ACCESS_SIGNER, OTP_KEY],
       useFactory: (store: AccountStore, signer: AccessSigner, key: string) =>
         new VerifyOtp(store, signer, key),
+    },
+    {
+      provide: GoogleSignIn,
+      inject: [ACCOUNT_STORE, ACCESS_SIGNER, ENV],
+      useFactory: (store: AccountStore, signer: AccessSigner, e: Env) =>
+        new GoogleSignIn(
+          store,
+          signer,
+          e.GOOGLE_CLIENT_ID ? createGoogleVerifier(e.GOOGLE_CLIENT_ID) : null,
+        ),
     },
     { provide: ACCESS_VERIFIER, useExisting: ACCESS_SIGNER },
     AccessGuard,
