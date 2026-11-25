@@ -32,6 +32,7 @@ describe('/profile/[section]', () => {
 
   it('prépare une page par rubrique', () => {
     expect(generateStaticParams().map((p) => p.section)).toEqual([
+      'account',
       'learning',
       'notifications',
       'appearance',
