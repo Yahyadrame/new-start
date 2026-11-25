@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Écran de démarrage retenu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* VOICE: atelier produit, net, sans fioritures
+   IDEA: une planche de maquettes comme celles qu'on passe en revue avant de coder
+   PICTURE: quatre téléphones qui jouent chacun leur animation, rejouables
+   COLOUR and TYPE: palette New Start (#CCFF00, noir, #999, #F2F2F2) ; Space Grotesk + Inter
+   LAYOUT: titre, rangée de téléphones (4 > 2 > 1), puis recommandation */
+:root{color-scheme:light dark;--bg:light-dark(#F2F2F2,#000);--card:light-dark(#fff,#121212);--ink:light-dark(#000,#F2F2F2);--mu:light-dark(#555,#999);--line:light-dark(#E2E2E2,#2A2A2A);--lime:#CCFF00}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px);max-width:1320px;margin:0 auto}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:clamp(32px,4.6vw,48px);letter-spacing:-.02em}
+h2{font-size:26px;letter-spacing:-.01em}
+h3{font-size:19px}
+.lead{max-width:66ch;color:var(--mu);margin:14px 0 0}
+.top{display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between}
+.btn{height:44px;padding:0 20px;border-radius:999px;border:0;background:var(--lime);color:#000;font:600 15px Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:640px;gap:20px;margin-top:28px}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.meta{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.dur{font-size:13px;color:var(--mu);white-space:nowrap}
+.card p{margin:0;font-size:15px;color:var(--mu)}
+.fit{font-size:14px;color:var(--ink)!important}
+.card .btn{align-self:flex-start;height:44px}
+/* téléphone */
+.phone{position:relative;width:100%;max-width:250px;aspect-ratio:9/18.5;margin:0 auto;border-radius:34px;border:6px solid #1F1F1F;overflow:hidden;box-shadow:0 18px 40px -20px rgba(0,0,0,.5)}
+.screen{position:absolute;inset:0;display:grid;place-items:center}
+.stack{display:flex;flex-direction:column;align-items:center;gap:14px}
+.word{font:700 24px 'Space Grotesk',sans-serif;letter-spacing:-.02em;opacity:0}
+.icon{width:96px;height:96px}
+.n{stroke-dasharray:100;stroke-dashoffset:100}
+/* 1 — la bulle s'ouvre */
+.c1{background:#000}.c1 .word{color:#F2F2F2}
+.play .c1 .icon{animation:pop .7s cubic-bezier(.2,1.4,.4,1) both}
+.play .c1 .n{animation:draw .55s .45s ease-out forwards}
+.play .c1 .word{animation:rise .4s .9s ease-out forwards}
+/* 2 — message qui arrive */
+.c2{background:#000}
+.c2 .typing{position:absolute;display:flex;gap:7px;padding:16px 20px;border-radius:22px 22px 22px 6px;background:#1F1F1F;opacity:0}
+.c2 .typing i{width:10px;height:10px;border-radius:50%;background:#999}
+.c2 .icon,.c2 .word{opacity:0}.c2 .word{color:#F2F2F2}
+.play .c2 .typing{animation:typing 1.1s ease-out forwards}
+.play .c2 .typing i{animation:dot .6s ease-in-out 2}
+.play .c2 .typing i:nth-child(2){animation-delay:.15s}.play .c2 .typing i:nth-child(3){animation-delay:.3s}
+.play .c2 .icon{animation:pop .6s 1s cubic-bezier(.2,1.4,.4,1) both}
+.play .c2 .n{animation:draw .5s 1.3s ease-out forwards}
+.play .c2 .word{animation:rise .4s 1.5s ease-out forwards}
+/* 3 — la correction */
+.c3{background:#000;color:#F2F2F2}
+.c3 .lines{position:absolute;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0}
+.c3 .wrong{font:600 22px Inter,sans-serif;position:relative}
+.c3 .wrong s{text-decoration:none;position:relative}
+.c3 .wrong s::after{content:"";position:absolute;left:-2px;right:-2px;top:52%;height:3px;background:#999;transform:scaleX(0);transform-origin:left}
+.c3 .right{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--lime);color:#000;font:700 18px Inter,sans-serif;opacity:0}
+.c3 .stack{opacity:0}
+.c3 .word{color:#F2F2F2}
+.play .c3 .lines{animation:lines 1.8s ease forwards}
+.play .c3 .wrong s::after{animation:strike .3s .5s ease-out forwards}
+.play .c3 .right{animation:rise .35s .8s ease-out forwards}
+.play .c3 .stack{animation:fadein .3s 1.8s forwards}
+.play .c3 .icon{animation:pop .6s 1.8s cubic-bezier(.2,1.4,.4,1) both}
+.play .c3 .n{animation:draw .5s 2.1s ease-out forwards}
+.play .c3 .word{animation:rise .4s 2.3s ease-out forwards}
+/* 4 — fond vert */
+.c4{background:var(--lime)}.c4 .word{color:#000}
+.c4 .bub{transform:translateY(-140%);opacity:0}
+.play .c4 .bub{animation:drop .75s cubic-bezier(.3,1.5,.5,1) forwards}
+.play .c4 .n{animation:draw .5s .55s ease-out forwards}
+.play .c4 .word{animation:rise .4s .95s ease-out forwards}
+/* écran fixe du système */
+.sys{background:#000}
+.sys .icon{width:84px;height:84px}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadein{to{opacity:1}}
+@keyframes typing{0%{opacity:0;transform:translateY(12px)}15%,80%{opacity:1;transform:none}100%{opacity:0;transform:scale(.6)}}
+@keyframes dot{0%,100%{transform:none;opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+@keyframes lines{0%{opacity:0;transform:translateY(10px)}12%,80%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-12px)}}
+@keyframes strike{to{transform:scaleX(1)}}
+@keyframes drop{from{transform:translateY(-140%);opacity:1}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.play *,.play *::after{animation-duration:.01s!important;animation-delay:0s!important}}
+/* bas de page */
+.split{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
+.rules{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:12px}
+.rules li{padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.rules b{display:block;margin-bottom:2px}
+.sysrow{display:flex;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px}
+.sysrow .phone{max-width:120px;border-width:4px;border-radius:22px;flex:none}
+.sysrow p{margin:6px 0 0;color:var(--mu);font-size:15px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bubble" viewBox="0 0 120 120"><path d="M24 22h72a12 12 0 0112 12v42a12 12 0 01-12 12H52l-20 16V88h-8a12 12 0 01-12-12V34a12 12 0 0112-12z"/></symbol>
+  </defs>
+</svg>
+
+<header class="band">
+  <div class="top">
+    <div>
+      <h1>Écrans de démarrage pour New Start</h1>
+      <p class="lead">Les deux animations retenues : la piste 1 à chaque ouverture, la piste 3 à la toute première ouverture. Appuie sur « Rejouer » pour revoir une animation.</p>
+    </div>
+    <button class="btn" id="all">Tout rejouer</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</header>
+
+<section class="band">
+  <div class="split">
+    <div>
+      <h2>Comment ça s'enchaîne dans l'appli</h2>
+      <ul class="rules">
+        <li><b>1. L'écran fixe du système</b>Le téléphone affiche d'abord une image fixe (icône sur fond noir) pendant que l'appli se charge. On ne peut pas l'animer : c'est le système qui le dessine.</li>
+        <li><b>2. L'animation, une seule fois par ouverture</b>Elle prend le relais du même fond et de la même icône, pour que le passage soit invisible. Elle ne revient pas quand on change d'écran.</li>
+        <li><b>3. Jamais plus de 2 secondes à chaque ouverture</b>Les pistes 1 et 4 durent moins d’1,5 seconde. La piste 3, plus longue, est à réserver à la toute première ouverture, avant l'inscription.</li>
+        <li><b>4. On peut la passer</b>Un toucher sur l'écran la saute. Si l'appareil demande de réduire les animations, le logo apparaît directement.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>L'écran fixe, avant l'animation</h2>
+      <div class="sysrow" style="margin-top:16px">
+        <div class="phone"><div class="screen sys"><svg class="icon" viewBox="0 0 120 120" aria-label="Logo New Start"><rect width="120" height="120" rx="29" fill="#CCFF00"/><use href="#bubble" fill="#000"/><path d="M44 72V38l32 34V38" fill="none" stroke="#CCFF00" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div><h3>Fond noir, icône au centre</h3><p>Même image pour les deux pistes. Dans la PWA, elle vient du manifeste (couleur de fond et icône) ; dans l'appli mobile (V2), d'Expo.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+{
+  const icon = (bg, bubble, n, cls='') => `<svg class="icon ${cls}" viewBox="0 0 120 120" aria-hidden="true">${bg?`<rect width="120" height="120" rx="29" fill="${bg}"/>`:''}<use href="#bubble" fill="${bubble}"/><path class="n" pathLength="100" d="M44 72V38l32 34V38" fill="none" stroke="${n}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const word = '<div class="word">New Start</div>';
+  const check = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+  const items = [
+    {n:1,name:'La bulle s’ouvre', dur:'1,3 s', ms:1300, cls:'c1',
+     html:`<div class="stack">${icon('#CCFF00','#000','#CCFF00')}${word}</div>`,
+     what:'L’icône apparaît avec un léger rebond, puis le N se trace à l’intérieur de la bulle.',
+     fit:'La plus simple et la plus rapide. Bon choix pour chaque ouverture.'},
+    {n:3,name:'La correction', dur:'2,7 s', ms:2700, cls:'c3',
+     html:`<div class="lines" aria-hidden="true"><div class="wrong">I <s>am</s> agree</div><div class="right">${check}I agree</div></div><div class="stack">${icon('#CCFF00','#000','#CCFF00')}${word}</div>`,
+     what:'Une faute fréquente est barrée, la version correcte s’affiche en vert, puis le logo arrive.',
+     fit:'Montre la promesse de l’appli. Trop longue pour chaque ouverture : à garder pour la première.'}
+  ];
+  const grid = document.getElementById('grid');
+  grid.innerHTML = items.map((it,i)=>`
+    <article class="card">
+      <div class="phone" id="p${i}"><div class="screen ${it.cls}">${it.html}</div></div>
+      <div class="meta"><h3>Piste ${it.n} — ${it.name}</h3><span class="dur">${it.dur}</span></div>
+      <p>${it.what}</p>
+      <p class="fit">${it.fit}</p>
+      <button class="btn ghost" data-i="${i}" aria-label="Rejouer la piste ${it.n}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Rejouer
+      </button>
+    </article>`).join('');
+  const play = i => { const p = document.getElementById('p'+i); p.classList.remove('play'); void p.offsetWidth; p.classList.add('play'); };
+  grid.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) play(+b.dataset.i); });
+  document.getElementById('all').addEventListener('click', () => items.forEach((_,i)=>play(i)));
+  const seen = new IntersectionObserver(entries => {
+    for (const en of entries) if (en.isIntersecting) { play(+en.target.id.slice(1)); seen.unobserve(en.target); }
+  }, {threshold:.5});
+  items.forEach((_,i)=>seen.observe(document.getElementById('p'+i)));
+}
+</script>
+</body>
+</html>
