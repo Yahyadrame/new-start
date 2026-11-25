@@ -14,6 +14,7 @@ import { NotebookModule } from './modules/notebook/notebook.module.js';
 import { ReviewsModule } from './modules/reviews/reviews.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { ConversationsModule } from './modules/conversations/conversations.module.js';
+import { ContactAvatarsModule } from './modules/contact-avatars/contact-avatars.module.js';
 import { MeModule } from './modules/me/me.module.js';
 import { OnboardingModule } from './modules/onboarding/onboarding.module.js';
 import { AiModule } from './shared/ai/ai.module.js';
@@ -39,6 +40,7 @@ import { PrismaModule } from './shared/prisma/prisma.module.js';
     HealthModule,
     AuthModule,
     OnboardingModule,
+    ContactAvatarsModule,
     MeModule,
     ConversationsModule,
     CatalogModule,
