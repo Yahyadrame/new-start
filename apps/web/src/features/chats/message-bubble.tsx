@@ -102,11 +102,14 @@ export function MessageBubble({
   const mine = message.author === 'USER';
   return (
     <li
-      className={cn('flex max-w-[80%] flex-col gap-1', mine ? 'items-end self-end' : 'self-start')}
+      className={cn(
+        'flex max-w-[85%] min-w-0 flex-col gap-1 sm:max-w-[75%]',
+        mine ? 'items-end self-end' : 'self-start',
+      )}
     >
       <p
         className={cn(
-          'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap',
+          'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug break-words whitespace-pre-wrap [overflow-wrap:anywhere]',
           mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
         )}
       >
