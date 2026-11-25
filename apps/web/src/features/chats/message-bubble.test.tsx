@@ -14,6 +14,7 @@ const message = (over: Partial<MessageItem>): MessageItem => ({
   createdAt: '2026-11-20T10:00:00.000Z',
   correction: null,
   replyTo: null,
+  edited: false,
   deleted: false,
   ...over,
 });

@@ -40,6 +40,37 @@ describe('AgentReplyService.reply, détresse', () => {
   });
 });
 
+describe('AgentReplyService.reply, message modifié', () => {
+  it('transmet correctionOnly à l’enregistrement', async () => {
+    const { store, service } = setup(async () => json('Same here!'));
+    await service.reply('c1', 'm1', { correctionOnly: true });
+    expect(store.saveReply).toHaveBeenCalledWith(
+      'c1',
+      'm1',
+      { reply: 'Same here!', fix: null },
+      { correctionOnly: true },
+    );
+  });
+
+  it('n’enregistre rien en cas de détresse', async () => {
+    const distress: ReplyContext = {
+      ...context,
+      history: [{ author: 'USER', text: 'Je veux mourir' }],
+    };
+    const { store, service } = setup(async () => json('x'), distress);
+    await service.reply('c1', 'm1', { correctionOnly: true });
+    expect(store.saveReply).not.toHaveBeenCalled();
+  });
+
+  it('n’ajoute pas de message d’échec quand l’IA ne répond pas', async () => {
+    const { store, service } = setup(async () => {
+      throw new ProviderError('gemini', 503, 'indisponible');
+    });
+    await service.reply('c1', 'm1', { correctionOnly: true });
+    expect(store.saveFailure).not.toHaveBeenCalled();
+  });
+});
+
 describe('AgentReplyService.reply', () => {
   it('répond avec le gabarit agent.v1 et l’historique, puis enregistre la réponse et la correction', async () => {
     const fix = { better: 'I agree', why: 'On ne dit pas « am agree »' };
@@ -51,14 +82,14 @@ describe('AgentReplyService.reply', () => {
       { role: 'assistant', content: 'Heyyy!' },
       { role: 'user', content: 'I am agree' },
     ]);
-    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', { reply: 'Same here!', fix });
+    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', { reply: 'Same here!', fix }, {});
     expect(store.saveFailure).not.toHaveBeenCalled();
   });
 
   it('enregistre une correction vide quand le message est déjà correct', async () => {
     const { store, service } = setup(async () => json('Nice!'));
     await service.reply('c1', 'm1');
-    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', { reply: 'Nice!', fix: null });
+    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', { reply: 'Nice!', fix: null }, {});
   });
 
   it('ne fait rien quand le message a déjà reçu sa réponse', async () => {
@@ -109,7 +140,12 @@ describe('AgentReplyService.reply, garde de sortie', () => {
     const { store, llm, service } = setup(async () => answers.shift() ?? json('x'));
     await service.reply('c1', 'm1');
     expect(llm.complete).toHaveBeenCalledTimes(2);
-    expect(store.saveReply).toHaveBeenCalledWith('c1', 'm1', { reply: 'Same here!', fix: null });
+    expect(store.saveReply).toHaveBeenCalledWith(
+      'c1',
+      'm1',
+      { reply: 'Same here!', fix: null },
+      {},
+    );
     expect(store.saveFailure).not.toHaveBeenCalled();
   });
 

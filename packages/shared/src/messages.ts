@@ -9,6 +9,8 @@ export const MessageItem = z.object({
   createdAt: z.string(),
   /** Message supprimé par la personne : `text` est vide, la bulle devient « Message supprimé ». */
   deleted: z.boolean(),
+  /** La personne a modifié son message : la bulle porte la mention « modifié ». */
+  edited: z.boolean(),
   /** Le message cité quand celui-ci répond en citant ; `text` est vide si le message cité a été supprimé. */
   replyTo: z
     .object({
@@ -44,6 +46,10 @@ export const SendMessage = z.object({
   replyToId: z.uuid().optional(),
 });
 export type SendMessage = z.infer<typeof SendMessage>;
+
+/** Corps de `PATCH /messages/:id` : le nouveau texte d'un message de la personne. */
+export const EditMessage = z.object({ text: z.string().trim().min(1).max(2000) });
+export type EditMessage = z.infer<typeof EditMessage>;
 
 /** Paramètres de `GET /conversations/search` : le texte cherché, sans espaces autour. */
 export const SearchQuery = z.object({ q: z.string().trim().min(2).max(100) });

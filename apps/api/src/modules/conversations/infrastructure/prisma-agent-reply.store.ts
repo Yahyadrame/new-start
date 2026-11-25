@@ -7,6 +7,7 @@ import {
   FAILURE_TEXT,
   HISTORY_SIZE,
   type AgentReplyStore,
+  type ReplyOptions,
   type ReplyContext,
 } from '../application/agent-reply.js';
 import { applyVariant } from '../application/agent-variant.js';
@@ -61,18 +62,27 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
     return applyVariant({ agent, learner: user, history }, parseVariant(variant));
   }
 
-  async saveReply(conversationId: string, messageId: string, { reply, fix }: AgentReply) {
+  async saveReply(
+    conversationId: string,
+    messageId: string,
+    { reply, fix }: AgentReply,
+    { correctionOnly = false }: ReplyOptions = {},
+  ) {
     try {
       await this.db.$transaction([
         // `messageId` est unique : une seconde réponse au même message annule toute la transaction.
         this.db.correction.create({
           data: { messageId, better: fix?.better ?? null, whyFr: fix?.why ?? null },
         }),
-        this.db.message.create({ data: { conversationId, author: 'AGENT', text: reply } }),
-        this.db.conversation.update({
-          where: { id: conversationId },
-          data: { lastMessageAt: new Date(), unreadCount: { increment: 1 } },
-        }),
+        ...(correctionOnly
+          ? []
+          : [
+              this.db.message.create({ data: { conversationId, author: 'AGENT', text: reply } }),
+              this.db.conversation.update({
+                where: { id: conversationId },
+                data: { lastMessageAt: new Date(), unreadCount: { increment: 1 } },
+              }),
+            ]),
       ]);
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') return;

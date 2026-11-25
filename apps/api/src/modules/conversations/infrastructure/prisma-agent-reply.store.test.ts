@@ -107,6 +107,15 @@ describe('PrismaAgentReplyStore.saveReply', () => {
     expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(3);
   });
 
+  it('refait seulement la correction d’un message modifié', async () => {
+    const { db, store } = fake();
+    await store.saveReply('c1', 'm1', { reply: 'Hi', fix: null }, { correctionOnly: true });
+    expect(db.correction.create).toHaveBeenCalledTimes(1);
+    expect(db.message.create).not.toHaveBeenCalled();
+    expect(db.conversation.update).not.toHaveBeenCalled();
+    expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(1);
+  });
+
   it('écrit une correction vide quand le message est parfait', async () => {
     const { db, store } = fake();
     await store.saveReply('c1', 'm1', { reply: 'Hi', fix: null });

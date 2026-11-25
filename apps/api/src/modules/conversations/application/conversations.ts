@@ -16,9 +16,10 @@ import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor
 export const CONVERSATIONS_STORE = Symbol('CONVERSATIONS_STORE');
 
 /** Un message tel que le stockage le rend : la date n'est pas encore mise en texte. */
-export type MessageRow = Omit<MessageItem, 'createdAt' | 'deleted' | 'replyTo'> & {
+export type MessageRow = Omit<MessageItem, 'createdAt' | 'deleted' | 'edited' | 'replyTo'> & {
   createdAt: Date;
   deletedAt: Date | null;
+  editedAt: Date | null;
   replyTo:
     (Omit<NonNullable<MessageItem['replyTo']>, 'deleted'> & { deletedAt: Date | null }) | null;
 };
@@ -60,6 +61,15 @@ export interface ConversationsStore {
    * Un nouveau message au-delà de `dailyLimit` messages aujourd'hui n'est pas créé : `{ limited: true }`.
    */
   deleteMessage(userId: string, messageId: string): Promise<boolean>;
+  /**
+   * Remplace le texte d'un message de la personne (pas supprimé), date la modification et efface sa
+   * correction pour qu'elle soit refaite. Null s'il n'existe pas ou n'est pas à elle ; `changed: false` si le texte est le même.
+   */
+  editMessage(
+    userId: string,
+    messageId: string,
+    text: string,
+  ): Promise<{ row: MessageRow; conversationId: string; changed: boolean } | null>;
 
   send(
     userId: string,
@@ -69,8 +79,9 @@ export interface ConversationsStore {
   ): Promise<{ row: MessageRow; created: boolean } | { limited: true } | null>;
 }
 
-const toItem = ({ deletedAt, replyTo, ...row }: MessageRow): MessageItem => ({
+const toItem = ({ deletedAt, editedAt, replyTo, ...row }: MessageRow): MessageItem => ({
   ...row,
+  edited: editedAt !== null,
   replyTo: replyTo && {
     id: replyTo.id,
     author: replyTo.author,
@@ -138,6 +149,19 @@ export class ConversationsService {
     if (!done) {
       throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
     }
+  }
+
+  /** Modifie le texte d'un message de la personne ; sa correction est refaite, sans nouvelle réponse du contact. */
+  async edit(userId: string, messageId: string, text: string) {
+    const done = UUID.test(messageId)
+      ? await this.store.editMessage(userId, messageId, text)
+      : null;
+    if (!done) {
+      throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
+    }
+    if (done.changed)
+      this.replies?.schedule(done.conversationId, done.row.id, { correctionOnly: true });
+    return toItem(done.row);
   }
 
   async messages(userId: string, conversationId: string, cursor?: string): Promise<MessagesPage> {
