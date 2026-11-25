@@ -20,6 +20,7 @@ vi.mock('../../shared/auth/session', () => ({ ensureSession, setSession }));
 vi.mock('../../shared/push/use-push', () => ({ usePush: () => ({ ...push, enable, disable }) }));
 vi.mock('../../shared/navigation', () => ({
   BottomNav: () => <nav aria-label="Navigation principale" />,
+  NotificationsBell: () => <span>cloche</span>,
 }));
 vi.mock('./profile-api', () => ({ getMe, patchMe, exportMe, deleteMe, listNotebook }));
 const { ProfileScreen } = await import('./profile-screen');
@@ -63,6 +64,14 @@ describe('ProfileScreen', () => {
     render(<ProfileScreen />);
     await waitFor(() => expect(replace).toHaveBeenCalledWith('/'));
     expect(getMe).not.toHaveBeenCalled();
+  });
+
+  it('met la cloche des notifications dans l’en-tête, à côté du titre', async () => {
+    render(<ProfileScreen />);
+    await screen.findByText('Awa');
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.parentElement?.tagName).toBe('HEADER');
+    expect(heading.parentElement?.textContent).toContain('cloche');
   });
 
   it('affiche la navigation du bas, pour pouvoir quitter le profil', async () => {

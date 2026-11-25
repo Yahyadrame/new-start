@@ -111,8 +111,8 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 
 ## NS-044 — Cloche des notifications dans l'en-tête · S
 *Ajouté le 2026-11-25 : l'icône flotte en haut à droite, sur le web comme sur mobile.*
-- [ ] Mobile : cloche dans l'en-tête de chaque écran, alignée avec le titre. Ordinateur : entrée de la barre latérale. Point de non-lu conservé.
-- [ ] Plus de cloche flottante ; tests unitaires, thèmes clair et sombre, cible ≥ 44 px.
+- [x] Mobile : cloche dans l'en-tête de chaque écran, alignée avec le titre. Ordinateur : entrée de la barre latérale. Point de non-lu conservé.
+- [x] Plus de cloche flottante ; tests unitaires, thèmes clair et sombre, cible ≥ 44 px.
 
 ## NS-045 — Profil organisé en sous-pages · L
 *Ajouté le 2026-11-25 : la page Profil est « brute », tout y est regroupé. Référence : WhatsApp.*

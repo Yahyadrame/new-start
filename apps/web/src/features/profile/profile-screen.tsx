@@ -7,7 +7,7 @@ import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ensureSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { ChatBackgroundPicker } from '../../shared/chat-background';
-import { BottomNav } from '../../shared/navigation';
+import { BottomNav, NotificationsBell } from '../../shared/navigation';
 import type { PushStatus } from '../../shared/push/subscription';
 import { usePush } from '../../shared/push/use-push';
 import { ThemeSwitcher, applyTheme, isTheme, storeTheme, type Theme } from '../../shared/theme';
@@ -113,9 +113,12 @@ export function ProfileScreen() {
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-4 pt-12 pb-28 lg:max-w-2xl lg:pb-10">
-      <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
-        {t.title}
-      </h1>
+      <header className="flex items-center justify-between">
+        <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
+          {t.title}
+        </h1>
+        <NotificationsBell />
+      </header>
 
       {error && (
         <p

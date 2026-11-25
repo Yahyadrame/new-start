@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import fr from '../../shared/i18n/fr.json';
-import { BottomNav } from '../../shared/navigation';
+import { BottomNav, NotificationsBell } from '../../shared/navigation';
 
 const t = fr.comingSoon;
 
@@ -8,12 +8,15 @@ const t = fr.comingSoon;
 export function ComingSoonScreen({ title }: Readonly<{ title: string }>) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-6 pt-14 pb-28">
-      <header className="flex items-center justify-between">
+      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <h1 className="font-display text-[32px] leading-tight font-bold tracking-[-0.02em]">
           {title}
         </h1>
-        <span className="rounded-full border border-line px-3 py-1 text-xs font-semibold text-text-muted">
-          {t.badge}
+        <span className="flex items-center gap-2">
+          <span className="rounded-full border border-line px-3 py-1 text-xs font-semibold text-text-muted">
+            {t.badge}
+          </span>
+          <NotificationsBell />
         </span>
       </header>
       <p className="text-text-muted">{t.body}</p>

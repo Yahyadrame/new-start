@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
-import { BottomNav } from '../../shared/navigation';
+import { BottomNav, NotificationsBell } from '../../shared/navigation';
 import {
   type GameOutcome,
   fetchStreak,
@@ -73,9 +73,12 @@ export function GamesScreen() {
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 pt-12 pb-28 lg:max-w-2xl lg:pb-10">
-      <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
-        {t.title}
-      </h1>
+      <header className="flex items-center justify-between">
+        <h1 className="font-display text-[28px] leading-tight font-bold tracking-[-0.02em]">
+          {t.title}
+        </h1>
+        <NotificationsBell />
+      </header>
       {streak !== null && (
         <p className="-mt-3 text-[15px] text-text-muted">
           {streak > 0 ? t.streak.replace('{n}', String(streak)) : t.noStreak}

@@ -11,7 +11,10 @@ const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 vi.mock('./chats-api', () => ({ listConversations, searchMessages }));
-vi.mock('../../shared/navigation', () => ({ BottomNav: () => <nav>barre du bas</nav> }));
+vi.mock('../../shared/navigation', () => ({
+  BottomNav: () => <nav>barre du bas</nav>,
+  NotificationsBell: () => <span>cloche</span>,
+}));
 const { ChatsScreen } = await import('./chats-screen');
 
 const t = fr.chats;
@@ -55,6 +58,14 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe('ChatsScreen', () => {
+  it('met la cloche des notifications dans l’en-tête, à côté du titre', async () => {
+    render(<ChatsScreen />);
+    await screen.findByText('barre du bas');
+    const heading = screen.getByRole('heading', { level: 1 });
+    expect(heading.parentElement?.tagName).toBe('HEADER');
+    expect(heading.parentElement?.textContent).toContain('cloche');
+  });
+
   it('affiche la barre d’onglets du bas', async () => {
     render(<ChatsScreen />);
     expect(await screen.findByText('barre du bas')).toBeTruthy();
