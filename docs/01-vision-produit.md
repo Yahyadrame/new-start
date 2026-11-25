@@ -13,11 +13,11 @@ New Start permet à un francophone de **tenir une conversation simple en anglais
 
 ## La cible
 
-| Priorité | Profil | Besoin principal |
-| --- | --- | --- |
-| 1 | Étudiants francophones (Sénégal, Afrique de l'Ouest et centrale) qui visent une bourse ou des études à l'étranger | Réussir un entretien, un examen (IELTS, TOEFL), vivre à l'étranger |
-| 2 | Jeunes actifs francophones | Entretiens d'embauche, réunions, clients |
-| 3 | Francophones du monde entier (Maghreb, France, Canada, Belgique) | Voyager, se faire des amis, suivre séries et actualité |
+| Priorité | Profil                                                                                                            | Besoin principal                                                   |
+| -------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 1        | Étudiants francophones (Sénégal, Afrique de l'Ouest et centrale) qui visent une bourse ou des études à l'étranger | Réussir un entretien, un examen (IELTS, TOEFL), vivre à l'étranger |
+| 2        | Jeunes actifs francophones                                                                                        | Entretiens d'embauche, réunions, clients                           |
+| 3        | Francophones du monde entier (Maghreb, France, Canada, Belgique)                                                  | Voyager, se faire des amis, suivre séries et actualité             |
 
 Expansion prévue : Sénégal → Afrique de l'Ouest et centrale → toute l'Afrique francophone → Europe et Asie (puis d'autres langues d'interface).
 
@@ -42,11 +42,11 @@ Expansion prévue : Sénégal → Afrique de l'Ouest et centrale → toute l'Afr
 
 ## Indicateurs de succès
 
-| Indicateur | Objectif bêta | Objectif 6 mois |
-| --- | --- | --- |
-| Rétention J1 (revient le lendemain) | ≥ 40 % | ≥ 50 % |
-| Rétention J7 | ≥ 20 % | ≥ 30 % |
-| Minutes parlées par utilisateur actif et par semaine | ≥ 20 | ≥ 45 |
-| Conversion gratuit → payant | — | ≥ 4 % |
-| Coût IA par utilisateur actif et par mois | à mesurer | < 30 % du prix de l'abonnement |
-| Disponibilité du service | ≥ 99,5 % | ≥ 99,9 % |
+| Indicateur                                           | Objectif bêta | Objectif 6 mois                |
+| ---------------------------------------------------- | ------------- | ------------------------------ |
+| Rétention J1 (revient le lendemain)                  | ≥ 40 %        | ≥ 50 %                         |
+| Rétention J7                                         | ≥ 20 %        | ≥ 30 %                         |
+| Minutes parlées par utilisateur actif et par semaine | ≥ 20          | ≥ 45                           |
+| Conversion gratuit → payant                          | —             | ≥ 4 %                          |
+| Coût IA par utilisateur actif et par mois            | à mesurer     | < 30 % du prix de l'abonnement |
+| Disponibilité du service                             | ≥ 99,5 %      | ≥ 99,9 %                       |

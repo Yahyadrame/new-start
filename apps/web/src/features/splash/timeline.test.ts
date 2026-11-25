@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { durationFor, pickTrack, TIMELINE } from './timeline';
+import { AWAY_MS, durationFor, pickTrack, shouldReplay, TIMELINE } from './timeline';
 
 describe('pickTrack', () => {
   it('joue « La correction » à la toute première ouverture', () => {
@@ -24,5 +24,16 @@ describe('durationFor', () => {
     expect(durationFor('first', false)).toBe(2700);
     expect(durationFor('regular', false)).toBe(1300);
     expect(durationFor('first', true)).toBe(TIMELINE.reduced);
+  });
+});
+
+describe('shouldReplay', () => {
+  it('rejoue après 5 minutes ou plus loin de l’appli', () => {
+    expect(shouldReplay(1000, 1000 + AWAY_MS)).toBe(true);
+    expect(shouldReplay(1000, 1000 + AWAY_MS + 1)).toBe(true);
+  });
+  it('ne rejoue pas pour une absence courte ou sans départ noté', () => {
+    expect(shouldReplay(1000, 1000 + AWAY_MS - 1)).toBe(false);
+    expect(shouldReplay(null, 99_999_999)).toBe(false);
   });
 });

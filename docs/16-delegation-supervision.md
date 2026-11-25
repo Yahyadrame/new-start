@@ -4,14 +4,14 @@ Claude Code réalise **tout** le travail : code, tests, infrastructure, déploie
 
 ## Qui fait quoi
 
-| Sujet | Claude Code | Porteur du projet |
-| --- | --- | --- |
-| Code, tests, revue | Fait tout, de bout en bout | Regarde le résultat sur staging |
-| Git et GitHub | Travaille en local (branches, commits), prépare les PR et les relit ; **demande l'accord** avant toute action sur GitHub | **Donne son accord** : pousser, ouvrir une PR, fusionner, configurer le dépôt |
-| Déploiement | Met en place staging dès le sprint 0, puis un aperçu par PR ; déploie la production sur accord | Teste les liens d'aperçu et de staging |
-| Choix (fournisseur, librairie, design, prix, contenu) | Propose 2 à 4 options avec une recommandation | **Choisit** |
-| Dépenses | Annonce le coût avant toute création payante | **Valide** |
-| Mise en production | Prépare, déroule la procédure | **Valide** chaque mise en production |
+| Sujet                                                 | Claude Code                                                                                                              | Porteur du projet                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Code, tests, revue                                    | Fait tout, de bout en bout                                                                                               | Regarde le résultat sur staging                                               |
+| Git et GitHub                                         | Travaille en local (branches, commits), prépare les PR et les relit ; **demande l'accord** avant toute action sur GitHub | **Donne son accord** : pousser, ouvrir une PR, fusionner, configurer le dépôt |
+| Déploiement                                           | Met en place staging dès le sprint 0, puis un aperçu par PR ; déploie la production sur accord                           | Teste les liens d'aperçu et de staging                                        |
+| Choix (fournisseur, librairie, design, prix, contenu) | Propose 2 à 4 options avec une recommandation                                                                            | **Choisit**                                                                   |
+| Dépenses                                              | Annonce le coût avant toute création payante                                                                             | **Valide**                                                                    |
+| Mise en production                                    | Prépare, déroule la procédure                                                                                            | **Valide** chaque mise en production                                          |
 
 ## Quand Claude Code doit s'arrêter et demander
 
@@ -34,11 +34,11 @@ Dans Claude Code, utiliser l'outil de questions à choix (AskUserQuestion) quand
 
 **Contexte** : <pourquoi on doit choisir maintenant, en 2 phrases>
 
-| Option | Avantages | Inconvénients | Coût | Effort |
-| --- | --- | --- | --- | --- |
-| A. … (recommandée) | … | … | … €/mois | S/M/L |
-| B. … | … | … | … | … |
-| C. … | … | … | … | … |
+| Option             | Avantages | Inconvénients | Coût     | Effort |
+| ------------------ | --------- | ------------- | -------- | ------ |
+| A. … (recommandée) | …         | …             | … €/mois | S/M/L  |
+| B. …               | …         | …             | …        | …      |
+| C. …               | …         | …             | …        | …      |
 
 **Ma recommandation** : A, parce que …
 **Si tu ne réponds pas** : je continue sur les autres tickets ; ce ticket reste en attente.
@@ -51,34 +51,34 @@ Règles : options réellement différentes, coûts chiffrés quand ils existent 
 Chaque réponse du porteur du projet est consignée dans `docs/decisions.md` (date, question, option choisie, raison). Claude Code relit ce journal avant chaque ticket et ne repose jamais une question déjà tranchée.
 
 ```markdown
-| Date | Sujet | Décision | Raison |
-| --- | --- | --- | --- |
+| Date       | Sujet                | Décision | Raison                        |
+| ---------- | -------------------- | -------- | ----------------------------- |
 | 2026-11-14 | Hébergeur Kubernetes | Option B | Moins cher, datacenter proche |
 ```
 
 ## Validation des livraisons
 
-| Moment | Ce que Claude Code fournit | Ce que le porteur du projet fait |
-| --- | --- | --- |
-| Fin de chaque ticket | Message court : lien de la PR, lien d'aperçu ou de staging, capture clair et sombre, ce qui a changé | Teste s'il le souhaite ; signale un problème en une phrase |
-| Fin de sprint (démo) | Liste des tickets livrés, liens à tester, chiffres (tests, couverture, quality gate), points ouverts, plan du sprint suivant | **Valide** le sprint ou demande des ajustements |
-| Avant la production | Notes de version, résultat des tests de fumée sur staging, plan de retour arrière | **Valide** la mise en production |
+| Moment               | Ce que Claude Code fournit                                                                                                   | Ce que le porteur du projet fait                           |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Fin de chaque ticket | Message court : lien de la PR, lien d'aperçu ou de staging, capture clair et sombre, ce qui a changé                         | Teste s'il le souhaite ; signale un problème en une phrase |
+| Fin de sprint (démo) | Liste des tickets livrés, liens à tester, chiffres (tests, couverture, quality gate), points ouverts, plan du sprint suivant | **Valide** le sprint ou demande des ajustements            |
+| Avant la production  | Notes de version, résultat des tests de fumée sur staging, plan de retour arrière                                            | **Valide** la mise en production                           |
 
 Une remarque du porteur du projet devient un ticket `fix/` ou `feat/` prioritaire.
 
 ## Git et GitHub : rien sans l'accord du porteur du projet
 
-| Action | Règle |
-| --- | --- |
-| Créer une branche locale, faire des commits locaux | Libre |
-| Pousser une branche sur GitHub | **Accord demandé** |
-| Ouvrir, modifier ou fermer une pull request | **Accord demandé** |
-| Fusionner une PR dans `main` | **Accord demandé, à chaque fois**, après CI verte et quality gate vert |
-| Créer le dépôt, changer ses réglages, la protection de `main`, les droits | **Accord demandé** |
-| Créer ou modifier des issues, étiquettes, tableau Projects | **Accord demandé** (une fois pour un lot, par exemple « créer les 50 issues du backlog ») |
-| Ajouter ou changer un secret GitHub | **Accord demandé** ; la valeur est saisie par le porteur du projet lui-même |
-| Créer un tag ou une release | **Accord demandé** |
-| Supprimer une branche distante, réécrire l'historique (`push --force`, `rebase` d'une branche partagée) | Interdit sans accord explicite et motivé |
+| Action                                                                                                  | Règle                                                                                     |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Créer une branche locale, faire des commits locaux                                                      | Libre                                                                                     |
+| Pousser une branche sur GitHub                                                                          | **Accord demandé**                                                                        |
+| Ouvrir, modifier ou fermer une pull request                                                             | **Accord demandé**                                                                        |
+| Fusionner une PR dans `main`                                                                            | **Accord demandé, à chaque fois**, après CI verte et quality gate vert                    |
+| Créer le dépôt, changer ses réglages, la protection de `main`, les droits                               | **Accord demandé**                                                                        |
+| Créer ou modifier des issues, étiquettes, tableau Projects                                              | **Accord demandé** (une fois pour un lot, par exemple « créer les 50 issues du backlog ») |
+| Ajouter ou changer un secret GitHub                                                                     | **Accord demandé** ; la valeur est saisie par le porteur du projet lui-même               |
+| Créer un tag ou une release                                                                             | **Accord demandé**                                                                        |
+| Supprimer une branche distante, réécrire l'historique (`push --force`, `rebase` d'une branche partagée) | Interdit sans accord explicite et motivé                                                  |
 
 Comment demander, pour ne pas multiplier les messages :
 

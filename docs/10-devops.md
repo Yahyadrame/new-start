@@ -6,12 +6,12 @@ Objectif : l'application tourne **en continu**, y compris pendant les mises à j
 
 Le porteur du projet **développe et teste en local**, comme d'habitude, **dans Docker**, mais sa machine n'est pas très puissante. Donc : en local, des conteneurs légers (applis, PostgreSQL, faux serveur d'e-mails) ; **tout ce qui est lourd ou lié au déploiement tourne en ligne** (build des images Docker, SonarQube, tests e2e complets, hébergement, aperçus par PR).
 
-| Environnement | Rôle | Déploiement | Données |
-| --- | --- | --- | --- |
-| `preview` | Un aperçu par pull request, pour tester avant fusion | Automatique à l'ouverture de la PR, supprimé à la fermeture | Données de démonstration (branche Neon de la PR) |
-| `staging` | Préproduction en ligne dès le sprint 0 | Automatique à chaque fusion sur `main` | Données de test réalistes |
-| `production` | Utilisateurs réels (phase 2) | Manuel, après approbation, depuis un tag `vX.Y.Z` | Réelles, sauvegardées |
-| `local` | Développement et tests du porteur du projet et de Claude Code | `docker compose --profile dev up` (tout conteneurisé, version légère) | Seed |
+| Environnement | Rôle                                                          | Déploiement                                                           | Données                                          |
+| ------------- | ------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------ |
+| `preview`     | Un aperçu par pull request, pour tester avant fusion          | Automatique à l'ouverture de la PR, supprimé à la fermeture           | Données de démonstration (branche Neon de la PR) |
+| `staging`     | Préproduction en ligne dès le sprint 0                        | Automatique à chaque fusion sur `main`                                | Données de test réalistes                        |
+| `production`  | Utilisateurs réels (phase 2)                                  | Manuel, après approbation, depuis un tag `vX.Y.Z`                     | Réelles, sauvegardées                            |
+| `local`       | Développement et tests du porteur du projet et de Claude Code | `docker compose --profile dev up` (tout conteneurisé, version légère) | Seed                                             |
 
 Le projet avance en **deux phases**.
 
@@ -19,23 +19,23 @@ Le projet avance en **deux phases**.
 
 Objectif : **voir l'application marcher en ligne**, le plus vite possible, sans serveur à administrer et sans dépenser. Décision du porteur du projet : services en ligne gratuits, les plus généreux. Les chiffres ont été relevés en novembre 2026 ; les offres gratuites changent souvent, donc Claude Code revérifie chaque limite au ticket NS-000 et signale tout changement.
 
-| Besoin | Outil retenu | Ce que donne l'offre gratuite | Points d'attention |
-| --- | --- | --- | --- |
-| Front Next.js | **Vercel** (offre Hobby) | Un aperçu automatique par PR, 100 Go de transfert, 1 million d'invocations de fonctions, 4 heures de CPU actif, 100 déploiements par jour | Réservée à l'usage **personnel et non commercial** : parfait pour l'aperçu, à revoir avant d'activer le paiement (Vercel Pro ou phase 2) |
-| API NestJS + jobs | **Render** (web service Free), image Docker construite par la CI | 750 heures d'instance par mois, WebSocket acceptés, aperçu par PR pour un service, pas de carte bancaire | **Se met en veille après 15 minutes sans trafic**, environ une minute pour se réveiller ; une seule instance ; pas de « background worker » gratuit, donc les jobs tournent **dans le même processus que l'API** ; disque effacé à chaque redéploiement (les fichiers vont sur Cloudinary) |
-| PostgreSQL | **Neon** (offre Free) | 1 Go par projet, 100 CU-heures de calcul par projet et par mois, veille après 5 min, 10 branches maximum par projet, **branches** | Une branche par PR pour les aperçus (supprimer à la fermeture pour rester sous 10). Une API éveillée qui interroge la base la garde allumée : voir « Risques ouverts » dans `docs/decisions.md`. Ne pas utiliser la base gratuite de Render : elle est supprimée après 30 jours |
-| Files de jobs | **pg-boss sur Neon**, derrière l'interface `Queue` | Pas de service en plus | BullMQ interroge Redis en continu et épuiserait vite un quota gratuit ; il reviendra en phase 2 sans changer le code métier |
-| Cache et limites de débit | **Upstash Redis** (offre Free), facultatif | 500 000 commandes par mois | Seulement pour les quotas et le cache ; si le quota approche, repli sur Postgres. Avec une seule instance d'API, Socket.IO n'a pas besoin de l'adaptateur Redis |
-| Qualité du code | **SonarQube Cloud** (offre Free) | Projets privés jusqu'à 50 000 lignes, publics illimités, analyse de chaque PR, quality gate | — |
-| CI/CD, registre d'images | **GitHub Actions** + **GitHub Container Registry** | Illimité pour un dépôt public, quota mensuel pour un dépôt privé | Choix public ou privé en NS-000 |
-| Médias | **Cloudinary** (offre Free) | Crédits mensuels partagés (montant à vérifier) | Choix du porteur du projet |
-| E-mails | **Brevo** (offre Free) | 300 e-mails par jour | Render bloque les ports SMTP sortants (25, 465, 587) : passer par l'**API HTTP** de Brevo, pas par SMTP |
-| SMS (plus tard) | **Brevo** | Crédits prépayés | Sur accord budgétaire |
-| Erreurs | **Sentry** (offre Developer) | Quota mensuel d'erreurs (à vérifier) | — |
-| Métriques et journaux | **Grafana Cloud** (offre Free) | 10 000 séries, 50 Go de journaux par mois | Facultatif en phase 1 : les journaux de Render et Vercel suffisent au début |
-| Disponibilité | **UptimeRobot** ou **Better Stack** (offre Free) | Sondes toutes les 5 minutes environ (à vérifier) | Remplace Uptime Kuma, qui demanderait un serveur |
-| DNS, HTTPS | Sous-domaines gratuits `*.vercel.app` et `*.onrender.com` ; **Cloudflare** si un domaine est acheté | — | Achat d'un domaine sur accord |
-| Atelier de code en ligne (en secours) | **GitHub Codespaces** | Quota mensuel gratuit pour les comptes personnels (à vérifier) | Si une tâche est trop lourde pour la machine locale |
+| Besoin                                | Outil retenu                                                                                        | Ce que donne l'offre gratuite                                                                                                             | Points d'attention                                                                                                                                                                                                                                                                         |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Front Next.js                         | **Vercel** (offre Hobby)                                                                            | Un aperçu automatique par PR, 100 Go de transfert, 1 million d'invocations de fonctions, 4 heures de CPU actif, 100 déploiements par jour | Réservée à l'usage **personnel et non commercial** : parfait pour l'aperçu, à revoir avant d'activer le paiement (Vercel Pro ou phase 2)                                                                                                                                                   |
+| API NestJS + jobs                     | **Render** (web service Free), image Docker construite par la CI                                    | 750 heures d'instance par mois, WebSocket acceptés, aperçu par PR pour un service, pas de carte bancaire                                  | **Se met en veille après 15 minutes sans trafic**, environ une minute pour se réveiller ; une seule instance ; pas de « background worker » gratuit, donc les jobs tournent **dans le même processus que l'API** ; disque effacé à chaque redéploiement (les fichiers vont sur Cloudinary) |
+| PostgreSQL                            | **Neon** (offre Free)                                                                               | 1 Go par projet, 100 CU-heures de calcul par projet et par mois, veille après 5 min, 10 branches maximum par projet, **branches**         | Une branche par PR pour les aperçus (supprimer à la fermeture pour rester sous 10). Une API éveillée qui interroge la base la garde allumée : voir « Risques ouverts » dans `docs/decisions.md`. Ne pas utiliser la base gratuite de Render : elle est supprimée après 30 jours            |
+| Files de jobs                         | **pg-boss sur Neon**, derrière l'interface `Queue`                                                  | Pas de service en plus                                                                                                                    | BullMQ interroge Redis en continu et épuiserait vite un quota gratuit ; il reviendra en phase 2 sans changer le code métier                                                                                                                                                                |
+| Cache et limites de débit             | **Upstash Redis** (offre Free), facultatif                                                          | 500 000 commandes par mois                                                                                                                | Seulement pour les quotas et le cache ; si le quota approche, repli sur Postgres. Avec une seule instance d'API, Socket.IO n'a pas besoin de l'adaptateur Redis                                                                                                                            |
+| Qualité du code                       | **SonarQube Cloud** (offre Free)                                                                    | Projets privés jusqu'à 50 000 lignes, publics illimités, analyse de chaque PR, quality gate                                               | —                                                                                                                                                                                                                                                                                          |
+| CI/CD, registre d'images              | **GitHub Actions** + **GitHub Container Registry**                                                  | Illimité pour un dépôt public, quota mensuel pour un dépôt privé                                                                          | Choix public ou privé en NS-000                                                                                                                                                                                                                                                            |
+| Médias                                | **Cloudinary** (offre Free)                                                                         | Crédits mensuels partagés (montant à vérifier)                                                                                            | Choix du porteur du projet                                                                                                                                                                                                                                                                 |
+| E-mails                               | **Brevo** (offre Free)                                                                              | 300 e-mails par jour                                                                                                                      | Render bloque les ports SMTP sortants (25, 465, 587) : passer par l'**API HTTP** de Brevo, pas par SMTP                                                                                                                                                                                    |
+| SMS (plus tard)                       | **Brevo**                                                                                           | Crédits prépayés                                                                                                                          | Sur accord budgétaire                                                                                                                                                                                                                                                                      |
+| Erreurs                               | **Sentry** (offre Developer)                                                                        | Quota mensuel d'erreurs (à vérifier)                                                                                                      | —                                                                                                                                                                                                                                                                                          |
+| Métriques et journaux                 | **Grafana Cloud** (offre Free)                                                                      | 10 000 séries, 50 Go de journaux par mois                                                                                                 | Facultatif en phase 1 : les journaux de Render et Vercel suffisent au début                                                                                                                                                                                                                |
+| Disponibilité                         | **UptimeRobot** ou **Better Stack** (offre Free)                                                    | Sondes toutes les 5 minutes environ (à vérifier)                                                                                          | Remplace Uptime Kuma, qui demanderait un serveur                                                                                                                                                                                                                                           |
+| DNS, HTTPS                            | Sous-domaines gratuits `*.vercel.app` et `*.onrender.com` ; **Cloudflare** si un domaine est acheté | —                                                                                                                                         | Achat d'un domaine sur accord                                                                                                                                                                                                                                                              |
+| Atelier de code en ligne (en secours) | **GitHub Codespaces**                                                                               | Quota mensuel gratuit pour les comptes personnels (à vérifier)                                                                            | Si une tâche est trop lourde pour la machine locale                                                                                                                                                                                                                                        |
 
 Ce que le porteur du projet doit savoir en testant :
 
@@ -51,17 +51,17 @@ Sources des limites (novembre 2026) : [Render, offre gratuite](https://render.co
 
 Secrets et variables du dépôt pour le déploiement staging (saisis par le porteur du projet, jamais dans le code). Chaque étape de `cd-staging.yml` est sautée tant que sa valeur manque.
 
-| Nom | Type | Rôle |
-| --- | --- | --- |
-| `STAGING_DATABASE_URL` | secret | URL de connexion à la base Neon `newstart-staging` (Francfort) pour `prisma migrate deploy`. Utiliser l'URL directe, sans pooler, pour les migrations. |
-| `RENDER_DEPLOY_HOOK_URL` | secret | Hook de déploiement du service Render de l'API. |
-| `STAGING_API_URL` | variable | Adresse publique de l'API, sans barre finale, pour le test de fumée sur `/health/ready`. |
+| Nom                      | Type     | Rôle                                                                                                                                                   |
+| ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `STAGING_DATABASE_URL`   | secret   | URL de connexion à la base Neon `newstart-staging` (Francfort) pour `prisma migrate deploy`. Utiliser l'URL directe, sans pooler, pour les migrations. |
+| `RENDER_DEPLOY_HOOK_URL` | secret   | Hook de déploiement du service Render de l'API.                                                                                                        |
+| `STAGING_API_URL`        | variable | Adresse publique de l'API, sans barre finale, pour le test de fumée sur `/health/ready`.                                                               |
 
 Réglages côté Vercel (intégration Git, sans secret dans GitHub) :
 
-| Réglage | Valeur |
-| --- | --- |
-| Dossier racine | `apps/web` (laisser « Include source files outside of the Root Directory » activé) |
+| Réglage               | Valeur                                                                                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dossier racine        | `apps/web` (laisser « Include source files outside of the Root Directory » activé)                                                                                        |
 | `NEXT_PUBLIC_API_URL` | `https://newstart-api-staging.onrender.com`, pour **Production et Preview** : les aperçus de PR appellent l'API de staging (pas d'API d'aperçu, voir `docs/decisions.md`) |
 
 Côté Render, la variable `CORS_ORIGINS` de l'API liste les adresses du site autorisées, séparées par des virgules, sans barre finale (l'adresse de production). Un `*` remplace un seul morceau d'adresse, sans point : `https://new-start-*-yhd.vercel.app` couvre les aperçus de PR. L'API n'utilise pas de cookies, donc ce motif ne donne accès à aucune session.
@@ -76,10 +76,10 @@ Côté Render, la variable `CORS_ORIGINS` de l'API liste les adresses du site au
 
 Quand l'aperçu est validé, Claude Code prépare un **comparatif de coûts** et le porteur du projet choisit. Rien n'est créé sur AWS ni chez un hébergeur sans son accord.
 
-| Option | Ce qu'on déploie | Ce qu'il faut vérifier |
-| --- | --- | --- |
-| **VPS** (un ou deux serveurs, prix fixe mensuel) | k3s, chart Helm, Argo CD, Redis et BullMQ, Postgres managé (Neon) ou sur le serveur | Prix mensuel réel, localisation (latence depuis Dakar), sauvegardes |
-| **AWS avec les crédits du porteur du projet** | Option économique : une instance EC2 avec k3s + Neon. Option complète : EKS + RDS + ElastiCache | Montant et date d'expiration des crédits, services couverts. EKS facture le plan de contrôle à l'heure (environ 73 $ par mois) en plus des machines : à éviter tant que les crédits sont petits |
+| Option                                           | Ce qu'on déploie                                                                                | Ce qu'il faut vérifier                                                                                                                                                                          |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **VPS** (un ou deux serveurs, prix fixe mensuel) | k3s, chart Helm, Argo CD, Redis et BullMQ, Postgres managé (Neon) ou sur le serveur             | Prix mensuel réel, localisation (latence depuis Dakar), sauvegardes                                                                                                                             |
+| **AWS avec les crédits du porteur du projet**    | Option économique : une instance EC2 avec k3s + Neon. Option complète : EKS + RDS + ElastiCache | Montant et date d'expiration des crédits, services couverts. EKS facture le plan de contrôle à l'heure (environ 73 $ par mois) en plus des machines : à éviter tant que les crédits sont petits |
 
 Avant tout usage d'AWS : **alerte de budget AWS Budgets** à un montant fixé par le porteur du projet, région choisie avec lui, et estimation faite avec l'AWS Pricing Calculator jointe au comparatif. Le comparatif indique le coût mensuel une fois les crédits épuisés.
 
@@ -123,11 +123,11 @@ Le porteur du projet a **Docker sur sa machine** : tout ce qui tourne en local e
 
 Trois façons de lancer, du plus léger au plus complet :
 
-| Commande | Ce qui démarre | Usage |
-| --- | --- | --- |
-| `docker compose up -d` | PostgreSQL + Mailpit | Dépendances seules, applis lancées avec `pnpm dev` si Node est installé |
-| `docker compose --profile dev up` | + `web` et `api` en conteneurs de développement, code monté en volume, **rechargement automatique** | Travail quotidien, sans Node sur la machine |
-| `docker compose --profile prod up --build` | `web` et `api` construits avec les Dockerfiles de production | Vérifier avant une PR que l'image finale marche, comme en ligne |
+| Commande                                   | Ce qui démarre                                                                                      | Usage                                                                   |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `docker compose up -d`                     | PostgreSQL + Mailpit                                                                                | Dépendances seules, applis lancées avec `pnpm dev` si Node est installé |
+| `docker compose --profile dev up`          | + `web` et `api` en conteneurs de développement, code monté en volume, **rechargement automatique** | Travail quotidien, sans Node sur la machine                             |
+| `docker compose --profile prod up --build` | `web` et `api` construits avec les Dockerfiles de production                                        | Vérifier avant une PR que l'image finale marche, comme en ligne         |
 
 Options : `--profile redis` ajoute Redis, `--profile quality` ajoute SonarQube (lourd : environ 2 Go de RAM, à lancer rarement ; l'analyse en ligne sur chaque PR suffit en général).
 
@@ -153,47 +153,47 @@ x-dev-app: &dev-app
     - pnpm_store:/root/.local/share/pnpm/store
   env_file: ../../.env.local
   depends_on: [postgres, mailpit]
-  profiles: ["dev"]
+  profiles: ['dev']
   mem_limit: 768m
 
 services:
   postgres:
     image: postgres:16-alpine
     environment: { POSTGRES_USER: ns, POSTGRES_PASSWORD: ns, POSTGRES_DB: newstart }
-    ports: ["5432:5432"]
+    ports: ['5432:5432']
     volumes: [pg:/var/lib/postgresql/data]
     mem_limit: 256m
   mailpit:
     image: axllent/mailpit:latest
-    ports: ["8025:8025"]
+    ports: ['8025:8025']
     mem_limit: 64m
   web:
     <<: *dev-app
-    environment: { APP: "@newstart/web" }
-    ports: ["3000:3000"]
+    environment: { APP: '@newstart/web' }
+    ports: ['3000:3000']
   api:
     <<: *dev-app
-    environment: { APP: "@newstart/api", RUN_JOBS: inline }
-    ports: ["4000:4000"]
+    environment: { APP: '@newstart/api', RUN_JOBS: inline }
+    ports: ['4000:4000']
   web-prod:
     build: { context: ../.., dockerfile: infra/docker/web.Dockerfile }
-    ports: ["3000:3000"]
-    profiles: ["prod"]
+    ports: ['3000:3000']
+    profiles: ['prod']
   api-prod:
     build: { context: ../.., dockerfile: infra/docker/api.Dockerfile }
     environment: { RUN_JOBS: inline }
-    ports: ["4000:3000"]
+    ports: ['4000:3000']
     depends_on: [postgres]
-    profiles: ["prod"]
+    profiles: ['prod']
   redis:
     image: redis:7-alpine
-    ports: ["6379:6379"]
-    profiles: ["redis"]
+    ports: ['6379:6379']
+    profiles: ['redis']
     mem_limit: 128m
   sonarqube:
     image: sonarqube:lts-community
-    ports: ["9002:9000"]
-    profiles: ["quality"]
+    ports: ['9002:9000']
+    profiles: ['quality']
 
 volumes: { pg: {}, node_modules: {}, pnpm_store: {} }
 ```
@@ -220,7 +220,7 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0   # aucun pod retiré avant que le nouveau soit prêt
+      maxUnavailable: 0 # aucun pod retiré avant que le nouveau soit prêt
       maxSurge: 1
   selector:
     matchLabels: { app: api }
@@ -247,7 +247,7 @@ spec:
             initialDelaySeconds: 20
             periodSeconds: 10
           lifecycle:
-            preStop: { exec: { command: ["sh", "-c", "sleep 10"] } }  # laisse l'Ingress retirer le pod
+            preStop: { exec: { command: ['sh', '-c', 'sleep 10'] } } # laisse l'Ingress retirer le pod
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -305,17 +305,15 @@ Argo Rollouts en mode **canary** : 10 % du trafic pendant 10 minutes, analyse au
 
 Les pipelines sont livrés au **sprint 0, avant toute ligne de code métier** : aucun ticket de fonctionnalité ne démarre tant que la CI, le quality gate et le déploiement automatique sur staging ne fonctionnent pas.
 
-| Workflow | Déclencheur | Ce qu'il fait |
-| --- | --- | --- |
-| `ci.yml` | Chaque PR et chaque push | Lint, typecheck, contrôle des imports entre couches, tests unitaires et d'intégration, couverture, SonarQube + quality gate, build des images, scan Trivy |
-| `e2e.yml` | Chaque PR touchant l'interface | Tests Playwright (mobile et ordinateur, clair et sombre) contre un build lancé sur le runner, accessibilité axe ; captures comparées à venir |
-| `preview.yml` | Ouverture et mise à jour d'une PR | Phase 1 : crée la branche Neon de la PR, migre et charge la démo ; Vercel déploie le front de la PR, Render l'aperçu de l'API si la PR la touche ; commente les liens dans la PR ; supprime la branche Neon à la fermeture. Phase 2 : aperçu `pr-<n>` dans le cluster |
-| `cd-staging.yml` | Fusion sur `main` | Publie les images ; phase 1 : migration Prisma sur Neon, appel du « deploy hook » Render avec la nouvelle image, déploiement Vercel ; phase 2 : Argo CD. Puis tests de fumée |
-| `release.yml` | Tag `vX.Y.Z` | Notes de version, puis production après approbation du porteur du projet (phase 2) |
-| `nightly.yml` | Chaque nuit | Tests e2e complets sur staging avec les vrais fournisseurs en mode test, évaluations IA, audit des dépendances, scan OWASP ZAP |
-| `codeql.yml` | Chaque PR et chaque semaine | Analyse de sécurité du code |
-
-
+| Workflow         | Déclencheur                       | Ce qu'il fait                                                                                                                                                                                                                                                         |
+| ---------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`         | Chaque PR et chaque push          | Lint, typecheck, contrôle des imports entre couches, tests unitaires et d'intégration, couverture, SonarQube + quality gate, build des images, scan Trivy                                                                                                             |
+| `e2e.yml`        | Chaque PR touchant l'interface    | Tests Playwright (mobile et ordinateur, clair et sombre) contre un build lancé sur le runner, accessibilité axe ; captures comparées à venir                                                                                                                          |
+| `preview.yml`    | Ouverture et mise à jour d'une PR | Phase 1 : crée la branche Neon de la PR, migre et charge la démo ; Vercel déploie le front de la PR, Render l'aperçu de l'API si la PR la touche ; commente les liens dans la PR ; supprime la branche Neon à la fermeture. Phase 2 : aperçu `pr-<n>` dans le cluster |
+| `cd-staging.yml` | Fusion sur `main`                 | Publie les images ; phase 1 : migration Prisma sur Neon, appel du « deploy hook » Render avec la nouvelle image, déploiement Vercel ; phase 2 : Argo CD. Puis tests de fumée                                                                                          |
+| `release.yml`    | Tag `vX.Y.Z`                      | Notes de version, puis production après approbation du porteur du projet (phase 2)                                                                                                                                                                                    |
+| `nightly.yml`    | Chaque nuit                       | Tests e2e complets sur staging avec les vrais fournisseurs en mode test, évaluations IA, audit des dépendances, scan OWASP ZAP                                                                                                                                        |
+| `codeql.yml`     | Chaque PR et chaque semaine       | Analyse de sécurité du code                                                                                                                                                                                                                                           |
 
 ```mermaid
 flowchart LR
@@ -338,30 +336,31 @@ name: ci
 on:
   pull_request:
   push: { branches: [main] }
-concurrency: { group: "ci-${{ github.ref }}", cancel-in-progress: true }
+concurrency: { group: 'ci-${{ github.ref }}', cancel-in-progress: true }
 jobs:
   quality:
     runs-on: ubuntu-latest
     services:
-      postgres: { image: "postgres:16-alpine", env: { POSTGRES_PASSWORD: ns }, ports: ["5432:5432"] }
-      redis: { image: "redis:7-alpine", ports: ["6379:6379"] }
+      postgres:
+        { image: 'postgres:16-alpine', env: { POSTGRES_PASSWORD: ns }, ports: ['5432:5432'] }
+      redis: { image: 'redis:7-alpine', ports: ['6379:6379'] }
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }          # historique complet pour SonarQube
+        with: { fetch-depth: 0 } # historique complet pour SonarQube
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint && pnpm typecheck
       - run: pnpm test -- --coverage
-        env: { DATABASE_URL: "postgresql://postgres:ns@localhost:5432/postgres" }
+        env: { DATABASE_URL: 'postgresql://postgres:ns@localhost:5432/postgres' }
       - uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - uses: SonarSource/sonarqube-quality-gate-action@v1
         timeout-minutes: 5
-        env: { SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}" }
+        env: { SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}' }
   images:
     needs: quality
     runs-on: ubuntu-latest
@@ -370,7 +369,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
-        with: { registry: ghcr.io, username: "${{ github.actor }}", password: "${{ secrets.GITHUB_TOKEN }}" }
+        with:
+          {
+            registry: ghcr.io,
+            username: '${{ github.actor }}',
+            password: '${{ secrets.GITHUB_TOKEN }}',
+          }
       - uses: docker/build-push-action@v6
         with:
           file: infra/docker/${{ matrix.app }}.Dockerfile
@@ -382,7 +386,7 @@ jobs:
         with:
           image-ref: ghcr.io/${{ github.repository_owner }}/newstart-${{ matrix.app }}:${{ github.sha }}
           severity: CRITICAL
-          exit-code: "1"
+          exit-code: '1'
 ```
 
 Vérifier les versions des actions au moment de créer le fichier et les épingler par SHA de commit (sécurité de la chaîne d'approvisionnement). Les mises à jour de dépendances passent par **Renovate**.
@@ -410,13 +414,13 @@ sonar.qualitygate.wait=true
 
 En phase 1, Sentry et les journaux de Render et Vercel suffisent ; OpenTelemetry vers Grafana Cloud s'ajoute dès que le volume le justifie. Les SLO ci-dessous s'appliquent à la production (phase 2).
 
-| Outil | Rôle |
-| --- | --- |
-| OpenTelemetry | Traces et métriques depuis web, api, worker |
-| Grafana Cloud (phase 1), Prometheus + Grafana (phase 2) | Métriques, tableaux de bord (trafic, erreurs, latence, files, coût IA) |
-| Loki | Journaux centralisés (JSON, sans données personnelles) |
-| Sentry | Erreurs front et back, avec version de release |
-| UptimeRobot ou Better Stack (phase 1), Uptime Kuma (phase 2) | Sondes externes depuis l'Afrique de l'Ouest et l'Europe |
+| Outil                                                        | Rôle                                                                   |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| OpenTelemetry                                                | Traces et métriques depuis web, api, worker                            |
+| Grafana Cloud (phase 1), Prometheus + Grafana (phase 2)      | Métriques, tableaux de bord (trafic, erreurs, latence, files, coût IA) |
+| Loki                                                         | Journaux centralisés (JSON, sans données personnelles)                 |
+| Sentry                                                       | Erreurs front et back, avec version de release                         |
+| UptimeRobot ou Better Stack (phase 1), Uptime Kuma (phase 2) | Sondes externes depuis l'Afrique de l'Ouest et l'Europe                |
 
 Objectifs de service (SLO) : disponibilité 99,5 % au MVP (99,9 % ensuite), p95 API < 300 ms hors IA, réponse d'agent p95 < 6 s. Alertes vers un canal d'astreinte quand le budget d'erreur se consomme trop vite.
 

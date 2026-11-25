@@ -4,27 +4,27 @@ Base : PostgreSQL 16. ORM : Prisma. Identifiants : UUID v7 (triables dans le tem
 
 ## Entités
 
-| Entité | Rôle | Relations principales |
-| --- | --- | --- |
-| `User` | Compte, prénom, objectif, niveau, réglages | 1–n Conversation, Subscription, ReviewCard |
-| `AuthIdentity` | Téléphone ou Google rattaché à un compte | n–1 User |
-| `RefreshToken` | Jetons de rafraîchissement (hachés) | n–1 User |
-| `Agent` | Contact IA : nom, thème, persona, voix, premier message, suggestions | 1–n Conversation |
-| `Topic` | Thème (Amour, Études, Sport…) | 1–n Agent |
-| `Conversation` | Fil entre un utilisateur et un agent (ou un groupe en V2) | 1–n Message |
-| `Message` | Texte ou audio, auteur (user, agent, system) | 0–1 Correction |
-| `Correction` | Version « Plus naturel » + explication | 1–1 Message |
-| `Expression`, `Word` | Le noyau (depuis `data/*.csv`) | — |
-| `NotebookEntry` | Carnet personnel | n–1 User |
-| `ReviewCard` | Carte de révision FSRS par utilisateur et expression | n–1 User, Expression |
-| `Episode`, `EpisodeProgress` | Série et avancement | — |
-| `GameSession`, `GameAnswer` | Parties et réponses | n–1 User |
-| `DailyActivity` | Agrégat par jour : minutes parlées, messages, XP | n–1 User |
-| `Plan`, `Subscription`, `Payment` | Offres, abonnements, paiements | n–1 User |
-| `UsageCounter` | Compteurs de quota par jour | n–1 User |
-| `NotificationLog` | Notifications envoyées (pour limiter à 1/jour) | n–1 User |
-| `PushSubscription` | Appareils abonnés aux notifications push (`endpoint` unique, clés `p256dh` et `auth`) | n–1 User |
-| `AuditLog` | Actions sensibles (admin, paiement, suppression) | — |
+| Entité                            | Rôle                                                                                  | Relations principales                      |
+| --------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `User`                            | Compte, prénom, objectif, niveau, réglages                                            | 1–n Conversation, Subscription, ReviewCard |
+| `AuthIdentity`                    | Téléphone ou Google rattaché à un compte                                              | n–1 User                                   |
+| `RefreshToken`                    | Jetons de rafraîchissement (hachés)                                                   | n–1 User                                   |
+| `Agent`                           | Contact IA : nom, thème, persona, voix, premier message, suggestions                  | 1–n Conversation                           |
+| `Topic`                           | Thème (Amour, Études, Sport…)                                                         | 1–n Agent                                  |
+| `Conversation`                    | Fil entre un utilisateur et un agent (ou un groupe en V2)                             | 1–n Message                                |
+| `Message`                         | Texte ou audio, auteur (user, agent, system)                                          | 0–1 Correction                             |
+| `Correction`                      | Version « Plus naturel » + explication                                                | 1–1 Message                                |
+| `Expression`, `Word`              | Le noyau (depuis `data/*.csv`)                                                        | —                                          |
+| `NotebookEntry`                   | Carnet personnel                                                                      | n–1 User                                   |
+| `ReviewCard`                      | Carte de révision FSRS par utilisateur et expression                                  | n–1 User, Expression                       |
+| `Episode`, `EpisodeProgress`      | Série et avancement                                                                   | —                                          |
+| `GameSession`, `GameAnswer`       | Parties et réponses                                                                   | n–1 User                                   |
+| `DailyActivity`                   | Agrégat par jour : minutes parlées, messages, XP                                      | n–1 User                                   |
+| `Plan`, `Subscription`, `Payment` | Offres, abonnements, paiements                                                        | n–1 User                                   |
+| `UsageCounter`                    | Compteurs de quota par jour                                                           | n–1 User                                   |
+| `NotificationLog`                 | Notifications envoyées (pour limiter à 1/jour)                                        | n–1 User                                   |
+| `PushSubscription`                | Appareils abonnés aux notifications push (`endpoint` unique, clés `p256dh` et `auth`) | n–1 User                                   |
+| `AuditLog`                        | Actions sensibles (admin, paiement, suppression)                                      | —                                          |
 
 ## Schéma Prisma (extrait de référence)
 

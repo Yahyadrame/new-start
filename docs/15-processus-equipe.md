@@ -2,20 +2,20 @@
 
 ## Rôles
 
-| Rôle | Qui | Responsabilité |
-| --- | --- | --- |
-| Product Owner (superviseur) | Porteur du projet | Choisit entre les options proposées, valide chaque sprint et chaque mise en production, teste en ligne |
-| Équipe de développement | Claude Code, en rôles successifs (tech lead, dev back, dev front, DevOps, QA, relecteur) | Réalise tout le travail selon `CLAUDE.md` et `16-delegation-supervision.md` ; demande l'accord avant chaque action GitHub |
-| Testeurs bêta | 20 à 50 utilisateurs | Retours sur l'usage réel |
+| Rôle                        | Qui                                                                                      | Responsabilité                                                                                                            |
+| --------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Product Owner (superviseur) | Porteur du projet                                                                        | Choisit entre les options proposées, valide chaque sprint et chaque mise en production, teste en ligne                    |
+| Équipe de développement     | Claude Code, en rôles successifs (tech lead, dev back, dev front, DevOps, QA, relecteur) | Réalise tout le travail selon `CLAUDE.md` et `16-delegation-supervision.md` ; demande l'accord avant chaque action GitHub |
+| Testeurs bêta               | 20 à 50 utilisateurs                                                                     | Retours sur l'usage réel                                                                                                  |
 
 ## Cadence : sprints d'une semaine
 
-| Moment | Durée | Contenu |
-| --- | --- | --- |
-| Planification (lundi) | 30 min | Choisir les tickets du sprint dans `backlog/`, vérifier la définition de « prêt » |
-| Point quotidien | 5 min | Fait hier, prévu aujourd'hui, blocages (écrit dans `docs/journal/AAAA-MM-JJ.md`) |
-| Démo (vendredi) | 30 min | Montrer ce qui tourne sur staging, valider ou demander des ajustements |
-| Rétrospective (vendredi) | 15 min | Ce qui a marché, ce qu'on change, une action |
+| Moment                   | Durée  | Contenu                                                                           |
+| ------------------------ | ------ | --------------------------------------------------------------------------------- |
+| Planification (lundi)    | 30 min | Choisir les tickets du sprint dans `backlog/`, vérifier la définition de « prêt » |
+| Point quotidien          | 5 min  | Fait hier, prévu aujourd'hui, blocages (écrit dans `docs/journal/AAAA-MM-JJ.md`)  |
+| Démo (vendredi)          | 30 min | Montrer ce qui tourne sur staging, valider ou demander des ajustements            |
+| Rétrospective (vendredi) | 15 min | Ce qui a marché, ce qu'on change, une action                                      |
 
 ## Git
 
@@ -35,9 +35,11 @@ Format d'un ticket (`backlog/NS-123.md` ou outil de gestion choisi) :
 **Épopée** : E2 Messagerie · **Estimation** : S / M / L · **Écran** : 4 Conversation
 
 ## Besoin
+
 En tant que <utilisateur>, je veux <action> afin de <bénéfice>.
 
 ## Critères d'acceptation
+
 - [ ] Étant donné …, quand …, alors …
 
 ## Notes techniques

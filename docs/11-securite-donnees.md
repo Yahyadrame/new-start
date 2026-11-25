@@ -22,14 +22,14 @@ Je ne suis pas juriste : les points de conformité ci-dessous sont à faire vali
 
 ## Données personnelles
 
-| Donnée | Usage | Conservation |
-| --- | --- | --- |
-| Numéro de téléphone | Demandé à l'inscription ; servira aux SMS (code de connexion, rappels) une fois activés, seulement avec le consentement SMS | Durée du compte |
-| Adresse e-mail (Google ou saisie) | Connexion, e-mails transactionnels | Durée du compte |
-| Prénom, objectif, niveau, année de naissance | Personnalisation, restriction des thèmes adultes | Durée du compte |
-| Messages et corrections | Conversation, progrès | Durée du compte (supprimables) |
-| Enregistrements vocaux | Transcription, prononciation | 30 jours, puis seule la transcription reste |
-| Paiements | Facturation | Durée légale de conservation comptable, sans numéro de carte (géré par le prestataire) |
+| Donnée                                       | Usage                                                                                                                       | Conservation                                                                           |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Numéro de téléphone                          | Demandé à l'inscription ; servira aux SMS (code de connexion, rappels) une fois activés, seulement avec le consentement SMS | Durée du compte                                                                        |
+| Adresse e-mail (Google ou saisie)            | Connexion, e-mails transactionnels                                                                                          | Durée du compte                                                                        |
+| Prénom, objectif, niveau, année de naissance | Personnalisation, restriction des thèmes adultes                                                                            | Durée du compte                                                                        |
+| Messages et corrections                      | Conversation, progrès                                                                                                       | Durée du compte (supprimables)                                                         |
+| Enregistrements vocaux                       | Transcription, prononciation                                                                                                | 30 jours, puis seule la transcription reste                                            |
+| Paiements                                    | Facturation                                                                                                                 | Durée légale de conservation comptable, sans numéro de carte (géré par le prestataire) |
 
 Principes :
 

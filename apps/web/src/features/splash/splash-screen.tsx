@@ -9,7 +9,7 @@ import {
   FIRST_LAUNCH_KEY,
   OFF_KEY,
   pickTrack,
-  SHOWN_KEY,
+  shouldReplay,
   TIMELINE,
   type Track,
 } from './timeline';
@@ -20,14 +20,15 @@ type Phase = { name: 'pending' } | { name: 'play' | 'leaving'; track: Track } | 
 
 function alreadyShown(): boolean {
   try {
-    return sessionStorage.getItem(SHOWN_KEY) !== null || localStorage.getItem(OFF_KEY) === 'off';
+    return localStorage.getItem(OFF_KEY) === 'off';
   } catch {
     return false;
   }
 }
 
 /**
- * Écran de démarrage : une fois par ouverture de l'appli, au-dessus de tout, puis retiré du DOM.
+ * Écran de démarrage : à chaque chargement de la page et au retour dans l'appli après 5 minutes ou plus
+ * en arrière-plan (NS-043), au-dessus de tout, puis retiré du DOM. Changer d'écran ne le rejoue pas.
  * Un toucher, Entrée ou Échap le saute. Le rendu serveur est un simple fond noir, comme l'écran du système.
  */
 export function SplashScreen() {
@@ -37,12 +38,36 @@ export function SplashScreen() {
     if (alreadyShown()) return setPhase({ name: 'done' });
     const track = pickTrack(localStorage);
     try {
-      sessionStorage.setItem(SHOWN_KEY, '1');
       localStorage.setItem(FIRST_LAUNCH_KEY, '1');
     } catch {
       // Stockage indisponible : l'animation se joue, sans mémoire.
     }
     setPhase({ name: 'play', track });
+  }, []);
+
+  // Retour dans l'appli : on note le départ, puis on rejoue la piste courte si l'absence a duré.
+  useEffect(() => {
+    let hiddenAt: number | null = null;
+    const leave = () => {
+      hiddenAt = Date.now();
+    };
+    const back = () => {
+      const replay = shouldReplay(hiddenAt, Date.now());
+      hiddenAt = null;
+      if (replay && !alreadyShown()) {
+        setPhase((p) => (p.name === 'done' ? { name: 'play', track: 'regular' } : p));
+      }
+    };
+    const onVisibility = () => (document.visibilityState === 'hidden' ? leave() : back());
+    const onPageShow = (e: PageTransitionEvent) => e.persisted && back();
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', leave);
+    window.addEventListener('pageshow', onPageShow);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', leave);
+      window.removeEventListener('pageshow', onPageShow);
+    };
   }, []);
 
   const track = phase.name === 'play' || phase.name === 'leaving' ? phase.track : null;

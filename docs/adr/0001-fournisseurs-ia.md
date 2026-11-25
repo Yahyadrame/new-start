@@ -18,14 +18,14 @@ Le LLM doit répondre en JSON `{ reply, fix }`. Une correction compte comme exac
 
 ### LLM (50 appels chacun)
 
-| | Gemini `gemini-3.5-flash-lite` | Groq `openai/gpt-oss-20b` |
-| --- | --- | --- |
-| Appels en erreur | 13 (HTTP 429, quota gratuit) | 0 |
-| JSON valide | 37 sur 37 réponses reçues | 47 sur 50 |
-| Corrections exactes | 34 | 45 |
-| Fausses alertes | 0 | 0 |
-| Erreurs non repérées | 0 | 3 |
-| Latence p50 / p95 | 739 / 1 858 ms | 460 / 663 ms |
+|                      | Gemini `gemini-3.5-flash-lite` | Groq `openai/gpt-oss-20b` |
+| -------------------- | ------------------------------ | ------------------------- |
+| Appels en erreur     | 13 (HTTP 429, quota gratuit)   | 0                         |
+| JSON valide          | 37 sur 37 réponses reçues      | 47 sur 50                 |
+| Corrections exactes  | 34                             | 45                        |
+| Fausses alertes      | 0                              | 0                         |
+| Erreurs non repérées | 0                              | 3                         |
+| Latence p50 / p95    | 739 / 1 858 ms                 | 460 / 663 ms              |
 
 Gemini a repéré toutes les erreurs sur les 37 appels réussis, mais 13 appels sur 50 ont dépassé le quota gratuit. Les appels partaient à 1,5 s d'écart, un rythme que le chat réel atteindra facilement. Groq n'a eu aucune erreur d'appel. Il a laissé passer trois fautes (`We went at the beach`, `asked me to not be late`, `give me an advice`) en renvoyant `fix: null`, ce qui laisse croire à l'apprenant que sa phrase est juste.
 
@@ -33,20 +33,20 @@ Une partie des écarts restants sont des variantes acceptables (`suggest that yo
 
 ### STT (11 audios chacun)
 
-| | Taux d'erreur de mots moyen | Latence p50 / p95 |
-| --- | --- | --- |
-| Groq `whisper-large-v3` | 0 % | 522 / 637 ms |
-| Groq `whisper-large-v3-turbo` | 1 % | 590 / 682 ms |
-| Gemini `gemini-3.5-flash-lite` (audio) | 1 % | 1 542 / 2 177 ms |
+|                                        | Taux d'erreur de mots moyen | Latence p50 / p95 |
+| -------------------------------------- | --------------------------- | ----------------- |
+| Groq `whisper-large-v3`                | 0 %                         | 522 / 637 ms      |
+| Groq `whisper-large-v3-turbo`          | 1 %                         | 590 / 682 ms      |
+| Gemini `gemini-3.5-flash-lite` (audio) | 1 %                         | 1 542 / 2 177 ms  |
 
 Les audios viennent de la voix de synthèse Gemini : sans accent, sans bruit, sans hésitation. Les trois fournisseurs approchent donc 0 %, et seule la latence les départage. Cette mesure ne dit rien de la tenue face à un accent français ou africain. Il faut des enregistrements humains pour conclure sur la précision.
 
 ### TTS (15 phrases chacun)
 
-| | Résultat |
-| --- | --- |
+|                                                  | Résultat                                                                                                                                   |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | Gemini `gemini-2.5-flash-preview-tts`, voix Kore | 11 audios sur 15, p50 2 632 ms, p95 3 341 ms. Les 4 échecs sont des HTTP 400 : le modèle a répondu en texte au lieu de produire de l'audio |
-| Groq `canopylabs/orpheus-v1-english` | 15 échecs sur 15 : HTTP 400, conditions d'utilisation non acceptées par l'administrateur de l'organisation |
+| Groq `canopylabs/orpheus-v1-english`             | 15 échecs sur 15 : HTTP 400, conditions d'utilisation non acceptées par l'administrateur de l'organisation                                 |
 
 Orpheus n'a donc pas été écouté ni comparé. Seule Gemini a produit des voix.
 
@@ -63,7 +63,7 @@ Ces tarifs servent à estimer le coût si le projet quitte le palier gratuit. Il
 
 ## Décision
 
-1. **LLM principal : Groq `openai/gpt-oss-20b`.** Il est le plus rapide, n'a pas atteint de plafond pendant la mesure et corrige le mieux. Le code valide le JSON et relance une fois en cas de réponse invalide, comme le prévoit `docs/09-ia-agents.md` (une nouvelle tentative, puis `reply` brut et `fix = null`).  Sur 50 phrases, 45 corrections exactes font 90 %, pile le seuil de `docs/09-ia-agents.md` (≥ 90 %, mesuré là sur 200 phrases avec relecture humaine). La marge est nulle, donc le jeu de 200 phrases reste à faire.
+1. **LLM principal : Groq `openai/gpt-oss-20b`.** Il est le plus rapide, n'a pas atteint de plafond pendant la mesure et corrige le mieux. Le code valide le JSON et relance une fois en cas de réponse invalide, comme le prévoit `docs/09-ia-agents.md` (une nouvelle tentative, puis `reply` brut et `fix = null`). Sur 50 phrases, 45 corrections exactes font 90 %, pile le seuil de `docs/09-ia-agents.md` (≥ 90 %, mesuré là sur 200 phrases avec relecture humaine). La marge est nulle, donc le jeu de 200 phrases reste à faire.
 2. **LLM de secours : Gemini `gemini-3.5-flash-lite`.** Il repère bien les erreurs, mais son quota gratuit est trop juste pour être le choix par défaut.
 3. **STT : Groq `whisper-large-v3-turbo`.** L'écart de précision avec `large-v3` ne se voit pas dans nos mesures, et le tarif horaire relevé est celui de ce modèle.
 4. **TTS : Gemini, à titre provisoire.** Il est le seul à avoir produit de l'audio. Le code réessaie une fois sur l'erreur 400, puis retombe sur l'adaptateur factice.
