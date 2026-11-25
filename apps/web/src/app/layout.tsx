@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
 import { ServerGate } from '../features/server-status';
+import { SplashScreen } from '../features/splash';
 import { OfflineBanner } from '../shared/network';
 import { themeInitScript } from '../shared/theme';
 import './globals.css';
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
+        <SplashScreen />
         <OfflineBanner />
         <ServerGate apiUrl={process.env['NEXT_PUBLIC_API_URL']}>{children}</ServerGate>
       </body>

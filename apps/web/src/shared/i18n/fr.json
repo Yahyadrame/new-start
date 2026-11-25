@@ -566,5 +566,12 @@
       "DIAMONDS": "Losanges",
       "CIRCLES": "Cercles"
     }
+  },
+  "splash": {
+    "label": "New Start",
+    "wrongBefore": "I ",
+    "wrongWord": "am",
+    "wrongAfter": " agree",
+    "right": "I agree"
   }
 }

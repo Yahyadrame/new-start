@@ -92,3 +92,10 @@ Les réponses d'agent, la voix et les e-mails passent par la file (NS-203, NS-20
 *Ajouté le 2026-11-25 : le porteur du projet constate que l'application n'est pas 100 % responsive.*
 - [ ] Passer en revue Discussions, Profil, Notifications, connexion et inscription à 320, 375, 768 et 1280 px, sans débordement horizontal.
 - [ ] Tests unitaires pour chaque correction, thèmes clair et sombre.
+
+## NS-041 — Écran de démarrage animé · S
+*Ajouté le 2026-11-25 par le porteur du projet, avec la maquette `ecran-demarrage` (numérotée NS-015 dans son fichier, numéro déjà pris par les générateurs).*
+- [ ] Première ouverture : « La correction » (2,7 s) ; ouvertures suivantes : « La bulle s'ouvre » (1,3 s). Une fois par ouverture de l'appli.
+- [ ] Un toucher, Entrée ou Échap saute l'animation ; `prefers-reduced-motion` : icône et mot pendant 0,4 s.
+- [ ] Durées dans `features/splash/timeline.ts` ; tests unitaires et test e2e (durée maximale, enchaînement).
+- [ ] Réduction à 0,8 s « si les données sont prêtes » : non faite, aucun signal de chargement n'existe encore.
