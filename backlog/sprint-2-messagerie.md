@@ -233,3 +233,10 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Sélecteur d'émojis dans la barre d'écriture (une quarantaine, sans bibliothèque).
 - [ ] Réactions rapides sur un message.
 - [ ] Stickers : source à décider (pack libre de droits, sans dépense), puis demander.
+
+## NS-057 — Responsivité tablette (768 et 1024 px) · M
+**Besoin** : de 640 à 1023 px, l'appli affiche la version mobile étirée ; aucun seuil `md` n'existe.
+**Critères d'acceptation**
+- [x] Chaque écran est contrôlé à 768 et 1024 px, en clair et en sombre.
+- [x] Aucun débordement horizontal, cibles tactiles ≥ 44 px, lignes de texte lisibles (largeur bornée).
+- [x] Aucun écart bloquant : colonne de contenu bornée à ~400 px dès 768 px, rail latéral et deux colonnes dès 1024 px. Contrôle de débordement à 768 px déjà couvert par `e2e/responsive.spec.ts`.
