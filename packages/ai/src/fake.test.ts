@@ -13,6 +13,7 @@ describe('FakeLlm', () => {
       ],
     });
     expect(res.text).toBe('Got it: how are you?');
+    expect(res.fake).toBe(true);
   });
 
   it('renvoie le JSON du contrat d’agent quand json est demandé', async () => {

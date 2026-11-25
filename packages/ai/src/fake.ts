@@ -17,7 +17,7 @@ export class FakeLlm implements LlmProvider {
   async complete(request: LlmRequest): Promise<LlmResponse> {
     const last = request.messages.at(-1)?.content ?? '';
     const reply = `Got it: ${last}`;
-    return { text: request.json ? JSON.stringify({ reply, fix: null }) : reply };
+    return { text: request.json ? JSON.stringify({ reply, fix: null }) : reply, fake: true };
   }
 }
 
