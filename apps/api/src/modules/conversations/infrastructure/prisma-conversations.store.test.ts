@@ -291,6 +291,7 @@ describe('PrismaConversationsStore', () => {
         author: 'USER',
         text: 'Hello',
         replyToId: null,
+        forwarded: false,
       });
       expect(db.conversation.update.mock.calls[0]?.[0].where).toEqual({ id: 'c1' });
     });
@@ -307,6 +308,15 @@ describe('PrismaConversationsStore', () => {
         conversationId: 'c1',
       });
       expect(db.message.create.mock.calls[0]?.[0].data.replyToId).toBe('m0');
+    });
+
+    it('marque le message transféré', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}]);
+      await store.send('u1', 'c1', { ...message, forwarded: true });
+      expect(db.message.create.mock.calls[0]?.[0].data.forwarded).toBe(true);
     });
 
     it('ignore la citation d’un message qui n’est pas dans la conversation', async () => {

@@ -71,6 +71,7 @@ describe('ConversationsService.messages', () => {
     correction: null,
     replyTo: null,
     editedAt: null,
+    forwarded: false,
     deletedAt: null,
   });
   const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
@@ -139,6 +140,7 @@ describe('ConversationsService.send', () => {
     correction: null,
     replyTo: null,
     editedAt: null,
+    forwarded: false,
     deletedAt: null,
   };
 
@@ -170,6 +172,7 @@ describe('ConversationsService.send', () => {
         replyTo: null,
         deleted: false,
         edited: false,
+        forwarded: false,
         createdAt: '2026-11-20T10:00:00.000Z',
       },
       created: true,
@@ -301,6 +304,7 @@ describe('ConversationsService.search', () => {
       replyTo: null,
       deletedAt: null,
       editedAt: new Date('2026-11-25T10:05:00Z'),
+      forwarded: false,
     };
     vi.mocked(store.editMessage).mockResolvedValue({
       row: row as never,
@@ -317,7 +321,14 @@ describe('ConversationsService.search', () => {
     const schedule = vi.fn();
     const service = new ConversationsService(store, () => 2026, { schedule });
     vi.mocked(store.editMessage).mockResolvedValue({
-      row: { id: ID, author: 'USER', text: 'Hi', createdAt: new Date(), editedAt: null } as never,
+      row: {
+        id: ID,
+        author: 'USER',
+        text: 'Hi',
+        createdAt: new Date(),
+        editedAt: null,
+        forwarded: false,
+      } as never,
       conversationId: 'c1',
       changed: false,
     });
@@ -361,6 +372,7 @@ describe('ConversationsService.search', () => {
         correction: null,
         replyTo: null,
         editedAt: null,
+        forwarded: false,
       },
     ]);
     const page = await service.messages('u1', ID);

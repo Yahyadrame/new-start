@@ -11,6 +11,7 @@ const m = (id: string, author: MessageItem['author'], createdAt: string): Messag
   correction: null,
   replyTo: null,
   edited: false,
+  forwarded: false,
   deleted: false,
 });
 

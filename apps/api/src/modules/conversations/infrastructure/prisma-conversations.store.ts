@@ -40,6 +40,7 @@ const messageSelect = {
   createdAt: true,
   deletedAt: true,
   editedAt: true,
+  forwarded: true,
   correction: { select: { better: true, whyFr: true } },
   replyTo: { select: { id: true, author: true, text: true, deletedAt: true } },
 } as const;
@@ -224,7 +225,7 @@ export class PrismaConversationsStore implements ConversationsStore {
   async send(
     userId: string,
     conversationId: string,
-    { clientId, text, replyToId }: SendMessage,
+    { clientId, text, replyToId, forwarded }: SendMessage,
     dailyLimit = Number.POSITIVE_INFINITY,
   ) {
     const owned = await this.db.conversation.findFirst({
@@ -258,7 +259,14 @@ export class PrismaConversationsStore implements ConversationsStore {
     try {
       const [row] = await this.db.$transaction([
         this.db.message.create({
-          data: { conversationId, clientId, author: 'USER', text, replyToId: quoted?.id ?? null },
+          data: {
+            conversationId,
+            clientId,
+            author: 'USER',
+            text,
+            replyToId: quoted?.id ?? null,
+            forwarded: forwarded === true,
+          },
           select: messageSelect,
         }),
         this.db.conversation.update({
