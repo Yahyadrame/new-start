@@ -326,3 +326,13 @@ _Ajouté le 2026-11-25 à la demande du porteur du projet : les zip sont des exe
 - [ ] Planche de contact en HTML (`design/avatars/maquette-bibliotheque.html`), clair et sombre, validée par le porteur avant tout code dans l'appli.
 - [ ] Ensuite (NS-062) : chaque contact garde sa silhouette d'origine et la personne peut en choisir une autre dans la bibliothèque pour ce contact, et pour elle-même.
 
+## NS-066 — Transférer un message à plusieurs contacts · S
+
+_Ajouté le 2026-11-26 à la demande du porteur du projet. Complète NS-054._
+
+- [x] La fenêtre « Transférer à… » montre une case à cocher par conversation, puis un bouton « Transférer (n) ».
+- [x] Chaque conversation cochée reçoit le message avec la mention « transféré » ; un sticker reste un sticker.
+- [x] Si un envoi échoue, la fenêtre dit à qui il manque ; seuls ceux-là repartent, sans doublon.
+- [x] À la limite de messages du jour, les envois s'arrêtent et la fenêtre le dit.
+- [x] Tests unitaires et e2e, deux thèmes.
+

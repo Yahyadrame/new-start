@@ -140,3 +140,10 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - La recherche marche en français et en anglais (demande du porteur du projet), avec ou sans accents. Les mots français viennent d’`emojibase-data` (MIT, 0 €, environ 89 Ko compressés) et sont ajoutés aux mots-clés de la bibliothèque à l’ouverture du panneau.
 - Les GIF restent en attente (choix du porteur du projet) : rien à développer pour l’instant.
 
+## 2026-11-26 — Transfert à plusieurs contacts (NS-066)
+
+- On coche les conversations, puis on envoie le même message à toutes (demande du porteur du projet).
+- La liste reprend les conversations déjà ouvertes, comme avant.
+- Chaque envoi compte dans la limite de messages du jour et déclenche une réponse du contact. Pas d'autre plafond sur le nombre de cases : la limite du jour suffit pour l'instant.
+- Aucun changement d'API : le web envoie les messages un par un.
+

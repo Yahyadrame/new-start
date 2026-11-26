@@ -426,7 +426,12 @@
     "forward": {
       "title": "Transférer à…",
       "empty": "Tu n'as pas d'autre conversation pour l'instant.",
-      "failed": "Le message n'est pas parti. Réessaie."
+      "send": "Transférer",
+      "sendCount": "Transférer ({count})",
+      "sending": "Envoi…",
+      "sent": "Envoyé",
+      "failed": "Pas envoyé à {names}. Réessaie.",
+      "limit": "Limite de messages du jour atteinte. Pas envoyé à {names}."
     },
     "forwardAction": "Transférer",
     "forwarded": "transféré",

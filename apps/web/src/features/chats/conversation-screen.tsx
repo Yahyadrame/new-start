@@ -438,11 +438,12 @@ export function ConversationScreen({
           text={forwarding.text}
           targets={targets}
           onClose={() => setForwarding(null)}
-          onPick={async (target) => {
+          onPick={async (target, clientId) => {
             await sendMessage(token.current, target.id, {
-              clientId: crypto.randomUUID(),
+              clientId,
               text: forwarding.text,
               forwarded: true,
+              ...(forwarding.sticker ? { sticker: forwarding.sticker } : {}),
             });
           }}
         />
