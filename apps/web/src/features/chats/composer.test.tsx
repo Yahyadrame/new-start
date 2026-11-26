@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
-import { Composer, EMOJIS, MAX_FILE_BYTES } from './composer';
+import { Composer, MAX_FILE_BYTES } from './composer';
 
 const recorder = vi.hoisted(() => ({
   recording: false,
@@ -166,18 +166,9 @@ describe('Composer', () => {
     expect(screen.getByRole('button', { name: c.attachFile })).toBeTruthy();
   });
 
-  it('insère un émoji choisi dans le message', async () => {
-    render(<Composer onSend={vi.fn()} />);
-    fireEvent.change(field(), { target: { value: 'Hi ' } });
-    fireEvent.pointerDown(screen.getByRole('button', { name: c.emoji }), {
-      button: 0,
-      ctrlKey: false,
-    });
-    fireEvent.click(screen.getByRole('button', { name: c.emoji }));
-    fireEvent.click(
-      await screen.findByRole('button', { name: c.emojiInsert.replace('{emoji}', '👍') }),
-    );
-    expect(field().value).toBe('Hi 👍');
+  it('n’a plus de bouton émojis : le clavier du téléphone les propose', () => {
+    render(<Composer onSend={vi.fn()} onSendSticker={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: 'Émojis' })).toBeNull();
   });
 
   it('n’a pas de bouton stickers sans onSendSticker', () => {
@@ -185,22 +176,26 @@ describe('Composer', () => {
     expect(screen.queryByRole('button', { name: c.stickers })).toBeNull();
   });
 
-  it('envoie le sticker choisi et ferme le panneau', async () => {
+  it('ouvre le panneau sous la barre à la place du clavier, et le garde ouvert après un envoi', () => {
     const onSendSticker = vi.fn();
     render(<Composer onSend={vi.fn()} onSendSticker={onSendSticker} />);
-    const open = screen.getByRole('button', { name: c.stickers });
-    fireEvent.pointerDown(open, { button: 0, ctrlKey: false });
-    fireEvent.click(open);
+    field().focus();
+    fireEvent.click(screen.getByRole('button', { name: c.stickers }));
+    expect(document.activeElement).not.toBe(field());
     fireEvent.click(
-      await screen.findByRole('button', { name: c.stickerSend.replace('{text}', 'Hello!') }),
+      screen.getByRole('button', { name: c.stickerSend.replace('{text}', 'Hello!') }),
     );
     expect(onSendSticker).toHaveBeenCalledWith('hello');
-    expect(screen.queryByLabelText(c.stickerSearch)).toBeNull();
+    expect(screen.getByLabelText(c.stickerSearch)).toBeTruthy();
   });
 
-  it('propose une quarantaine d’émojis, tous entiers', () => {
-    expect(EMOJIS.length).toBeGreaterThan(35);
-    expect(new Set(EMOJIS).size).toBe(EMOJIS.length);
+  it('rend le clavier avec la touche clavier et ferme le panneau', () => {
+    render(<Composer onSend={vi.fn()} onSendSticker={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: c.stickers }));
+    fireEvent.click(screen.getByRole('button', { name: c.keyboard }));
+    expect(screen.queryByLabelText(c.stickerSearch)).toBeNull();
+    expect(document.activeElement).toBe(field());
+    expect(screen.getByRole('button', { name: c.stickers })).toBeTruthy();
   });
 });
 

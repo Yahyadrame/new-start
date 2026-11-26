@@ -61,6 +61,18 @@ describe('MessageBubble', () => {
     expect(screen.getByText('Le passé de go est went.')).toBeTruthy();
   });
 
+  it('ne montre aucune correction sous un sticker', () => {
+    show(
+      message({
+        author: 'USER',
+        sticker: 'thanks',
+        text: 'Thanks!',
+        correction: { better: null, whyFr: null },
+      }),
+    );
+    expect(screen.queryByText(c.perfect)).toBeNull();
+  });
+
   it('ne montre que le mot « Rien à corriger » quand le message est déjà naturel', () => {
     show(message({ author: 'USER', correction: { better: null, whyFr: null } }));
     expect(screen.getByText(fr.conversation.perfect)).toBeTruthy();
