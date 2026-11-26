@@ -398,7 +398,6 @@
     "typing": "{name} est en train d'écrire…",
     "messageNotFound": "Ce message est trop ancien pour être retrouvé ici.",
     "emojis": "Émojis",
-    "emojiInsert": "Insérer {emoji}",
     "emojiStickers": "Émojis et stickers",
     "stickers": "Stickers",
     "keyboard": "Clavier",

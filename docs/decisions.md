@@ -133,3 +133,9 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - Source : stickers maison, dessinés en SVG dans le style des silhouettes (0 €, aucune licence). Les 8 de départ (Thanks!, Got it!, Well done!, Hmm…, Oops!, Sorry!, No way!, See you!) passent à **63**, en 5 groupes (Politesse, Accord, Joie, Émotions, Quotidien), composés de pièces (yeux, sourcils, bouche, accessoire) : `design/stickers/stickers.js`. Le porteur veut « beaucoup » : on pourra en ajouter en combinant les pièces. Choix du porteur parmi 4 options, style validé le 2026-11-26.
 - GIF (GIPHY, Tenor) : repoussés à NS-059, avec la question du contenu et du coût.
 - Planche à valider avant le code : `design/stickers/maquette-stickers.html`.
+
+## 2026-11-26 — Liste complète d’émojis (NS-059)
+
+- Ordinateur : la liste maison de 40 émojis est remplacée par `emoji-mart` et ses données (licence MIT, 0 €), chargés à l’ouverture du panneau et servis par notre site, sans CDN. Le composant web est utilisé directement, car `@emoji-mart/react` n’accepte pas React 19.
+- L’interface est en français, la recherche se fait avec des mots anglais (`giraffe`) : la bibliothèque ne fournit pas de mots-clés français.
+

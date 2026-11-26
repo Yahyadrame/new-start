@@ -259,7 +259,8 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Ordinateur : même panneau, onglets émojis et stickers (GIF à venir).
 - [ ] Le panneau garde les récents et un champ de recherche ; fermeture au toucher en dehors ou avec Échap ; focus géré au clavier.
 - [ ] Source des stickers et des GIF à choisir avec le porteur (options, licence, coût) avant de coder. Aucune dépense sans accord.
-- [ ] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+- [x] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+- [x] Ordinateur : liste complète d’émojis avec catégories, recherche (mots-clés en anglais), récents et teintes de peau.
 
 ## NS-060 — Masquer la barre de suggestions au-dessus du clavier iPhone · S
 **Besoin** : au-dessus du champ de saisie, iOS affiche sa barre (flèches haut/bas, validation, mots proposés) qui gêne.

@@ -19,6 +19,14 @@ vi.mock('./use-voice-recorder', () => ({
     return recorder;
   },
 }));
+// La liste d'émojis a ses propres tests ; ici un seul bouton suffit.
+vi.mock('./emoji-panel', () => ({
+  EmojiPanel: ({ onPick }: { onPick: (emoji: string) => void }) => (
+    <button type="button" onClick={() => onPick('👍')}>
+      émoji de test
+    </button>
+  ),
+}));
 
 beforeEach(() => {
   Object.assign(recorder, { recording: false, seconds: 0, error: null });
@@ -181,7 +189,7 @@ describe('Composer', () => {
     render(<Composer onSend={vi.fn()} onSendSticker={vi.fn()} />);
     fireEvent.change(field(), { target: { value: 'Hi ' } });
     fireEvent.click(screen.getByRole('button', { name: c.emojiStickers }));
-    fireEvent.click(screen.getByRole('button', { name: c.emojiInsert.replace('{emoji}', '👍') }));
+    fireEvent.click(screen.getByRole('button', { name: 'émoji de test' }));
     expect(field().value).toBe('Hi 👍');
     fireEvent.mouseDown(screen.getByRole('tab', { name: c.stickers }));
     expect(await screen.findByLabelText(c.stickerSearch)).toBeTruthy();
