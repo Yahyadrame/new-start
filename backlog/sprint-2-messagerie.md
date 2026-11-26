@@ -265,7 +265,7 @@ _Ajouté le 2026-11-26, défaut vu en travaillant sur NS-066._
 - [x] Mobile : panneau à la place du clavier, stickers seulement (GIF à venir) ; les émojis viennent du clavier. (#354, #355)
 - [x] Ordinateur : même panneau, onglets émojis et stickers (GIF à venir).
 - [x] Fermeture au toucher en dehors ou avec Échap ; focus géré au clavier (Échap le rend au bouton, sur ordinateur il entre dans le panneau à l’ouverture). Sur téléphone, toucher le champ rend la place au clavier.
-- [ ] Le panneau garde les récents et un champ de recherche (émojis : #356 ; reste les stickers récents).
+- [x] Le panneau garde les récents et un champ de recherche (émojis : #356 ; stickers récents, huit au plus, gardés sur l’appareil).
 - [ ] Source des stickers et des GIF à choisir avec le porteur (options, licence, coût) avant de coder. Aucune dépense sans accord.
 - [x] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
 - [x] Ordinateur : liste complète d’émojis avec catégories, recherche en français et en anglais, récents et teintes de peau.
