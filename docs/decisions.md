@@ -153,3 +153,8 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - Un contact n'envoie un sticker qu'en retour, quand la personne vient d'en envoyer un (choix du porteur du projet parmi 3 options). Il répond toujours par du texte, le sticker suit et reste facultatif.
 - Les contacts n'envoient ni « Kiss! » ni « Miss you » : `docs/09-ia-agents.md` exclut le jeu romantique et la pression affective.
 - Un émoji au plus par réponse. Aucun nouveau service, aucune migration : la colonne `sticker` existe déjà.
+
+## 2026-11-26 — Stickers récents (NS-059)
+
+- Les huit derniers stickers envoyés s'affichent en haut du panneau, gardés sur l'appareil comme les émojis récents. Pas de synchronisation entre appareils : elle demanderait une table et une route, à faire si le besoin apparaît.
+- L'ordre ne change qu'à la réouverture du panneau, pour que les boutons ne bougent pas sous le doigt.
