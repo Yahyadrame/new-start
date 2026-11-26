@@ -24,6 +24,7 @@ import {
 import { dayLabel } from './chats-format';
 import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
 import { Composer } from './composer';
+import { ForwardDialog } from './forward-dialog';
 import { useKeyboardInset } from './use-keyboard-inset';
 import { MessageBubble } from './message-bubble';
 import { PendingBubble, type PendingMessage } from './pending-bubble';
@@ -58,6 +59,8 @@ export function ConversationScreen({
   const [replyTo, setReplyTo] = useState<MessageItem | null>(null);
   const [editing, setEditing] = useState<MessageItem | null>(null);
   const [editFailed, setEditFailed] = useState(false);
+  const [forwarding, setForwarding] = useState<MessageItem | null>(null);
+  const [targets, setTargets] = useState<ConversationItem[] | undefined>(undefined);
   // Compte les modifications : chacune relance la relecture qui ramène la nouvelle correction.
   const [edits, setEdits] = useState(0);
   // Date du dernier message envoyé tant que le contact n'a pas répondu ; null sinon.
@@ -340,6 +343,14 @@ export function ConversationScreen({
                         setEditFailed(false);
                         setEditing(m);
                       }}
+                      onForward={(m) => {
+                        setTargets(undefined);
+                        setForwarding(m);
+                        listConversations(token.current).then(
+                          (all) => setTargets(all.filter((x) => x.id !== item?.id)),
+                          () => setTargets([]),
+                        );
+                      }}
                       onAddToNotebook={(id) => addToNotebook(token.current, id)}
                       onTranslate={(id) => translateMessage(token.current, id)}
                       onDelete={async (id) => {
@@ -390,6 +401,20 @@ export function ConversationScreen({
           </p>
         )}
       </div>
+      {forwarding && (
+        <ForwardDialog
+          text={forwarding.text}
+          targets={targets}
+          onClose={() => setForwarding(null)}
+          onPick={async (target) => {
+            await sendMessage(token.current, target.id, {
+              clientId: crypto.randomUUID(),
+              text: forwarding.text,
+              forwarded: true,
+            });
+          }}
+        />
+      )}
       {loaded && (
         <Composer
           onSend={send}

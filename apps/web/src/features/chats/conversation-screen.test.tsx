@@ -272,6 +272,27 @@ describe('ConversationScreen', () => {
       expect(screen.queryByText(/Réponse à/)).toBeNull();
     });
 
+    it('transfère un message vers une autre conversation, marqué « transféré »', async () => {
+      const lea = { ...jade, id: 'c2', agent: { ...jade.agent, slug: 'lea', name: 'Léa' } };
+      listConversations.mockResolvedValue([jade, lea]);
+      sendMessage.mockResolvedValue(msg('x', 'USER', 'First'));
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+      fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger as HTMLElement);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.forwardAction }));
+      expect(await screen.findByText(fr.conversation.forward.title)).toBeTruthy();
+      expect(screen.queryByRole('button', { name: /Jade/ })).toBeNull();
+      fireEvent.click(await screen.findByRole('button', { name: /Léa/ }));
+      await waitFor(() => expect(screen.queryByText(fr.conversation.forward.title)).toBeNull());
+      expect(sendMessage).toHaveBeenCalledWith(
+        'tok',
+        'c2',
+        expect.objectContaining({ text: 'First', forwarded: true }),
+      );
+    });
+
     const startEdit = async () => {
       const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
       fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
