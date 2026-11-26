@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { MESSAGES_PAGE_SIZE, MessagesQuery, SendMessage } from './messages.js';
+import {
+  MESSAGES_PAGE_SIZE,
+  MessagesQuery,
+  REACTIONS,
+  SendMessage,
+  SetReaction,
+} from './messages.js';
 
 describe('MessagesQuery', () => {
   it('accepte l’absence de curseur, refuse un curseur vide ou trop long', () => {
@@ -39,5 +45,15 @@ describe('SendMessage', () => {
     expect(SendMessage.safeParse({ clientId, text: 'x'.repeat(2001) }).success).toBe(false);
     expect(SendMessage.safeParse({ clientId: 'abc', text: 'Hi' }).success).toBe(false);
     expect(SendMessage.safeParse({ text: 'Hi' }).success).toBe(false);
+  });
+});
+
+describe('SetReaction', () => {
+  it('accepte un des six émojis ou null, rien d’autre', () => {
+    expect(REACTIONS).toHaveLength(6);
+    expect(SetReaction.parse({ emoji: '❤️' }).emoji).toBe('❤️');
+    expect(SetReaction.parse({ emoji: null }).emoji).toBeNull();
+    expect(SetReaction.safeParse({ emoji: '🦄' }).success).toBe(false);
+    expect(SetReaction.safeParse({}).success).toBe(false);
   });
 });

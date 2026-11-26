@@ -7,9 +7,10 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
-import { EditMessage } from '@newstart/shared';
+import { EditMessage, SetReaction } from '@newstart/shared';
 import { AccessGuard, CurrentUserId } from '../../../shared/auth/access.guard.js';
 import { parseBody } from '../../../shared/http/validate.js';
 import { ConversationsService } from '../application/conversations.js';
@@ -34,6 +35,12 @@ export class MessagesController {
   @Patch(':id')
   edit(@CurrentUserId() userId: string, @Param('id') id: string, @Body() body: unknown) {
     return this.conversations.edit(userId, id, parseBody(EditMessage, body).text);
+  }
+
+  /** Pose la réaction de la personne sur un message (`emoji: null` la retire). 404 s'il n'existe pas ou n'est pas dans ses conversations. */
+  @Put(':id/reaction')
+  react(@CurrentUserId() userId: string, @Param('id') id: string, @Body() body: unknown) {
+    return this.conversations.react(userId, id, parseBody(SetReaction, body).emoji);
   }
 
   /** Traduction française d'un message d'agent ; 200 aussi pour une traduction déjà gardée. */

@@ -122,3 +122,8 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 | 2026-11-25 | Avatars : bibliothèque et stockage | Les silhouettes du zip sont des exemples, multipliés en 360 silhouettes (`a001` à `a360`) et 16 palettes dans le même trait (planche validée). Le choix est enregistré sous forme d'un petit champ `avatar` `{ id, palette?, variante? }` sur le profil (colonne JSON facultative `User.avatar`) et, plus tard, sur chaque contact personnalisé : la personne choisit la silhouette, la palette et la variante (option A). Chaque contact IA garde sa silhouette d'origine tant que la personne n'en choisit pas une autre. | Choix du porteur du projet | — |
 | 2026-11-25 | Avatars : réglages sans redéploiement | Option A : le style des contacts et la forme viennent des variables `NEXT_PUBLIC_AVATAR_CONTACT_STYLE` (défaut `duo`) et `NEXT_PUBLIC_AVATAR_SHAPE` (défaut `carre`). Un changement demande un redéploiement du web, pas de code. Pas de table de réglages en base. | Choix du porteur du projet | — |
 | 2026-11-26 | Fiche contact (NS-051, parties 2 et 3) | Partie 2 : présentation, centres d'intérêt et niveau écrits à la main dans le catalogue. Partie 3 : les quatre variantes (ton, accent, difficulté, avatar) d'un coup ; l'accent demande des voix en plus, donc coût fournisseur à confirmer avant de coder | Choix du porteur du projet |
+
+## 2026-11-26 — Réactions sur un message (NS-054, NS-055)
+
+- Une seule réaction par message et par personne, six émojis fixes (👍 ❤️ 😂 😮 😢 🙏), retirable. Les contacts IA ne réagissent pas.
+- Stockage : colonne `reaction` sur `Message` (pas de table), `PUT /messages/:id/reaction`. Une table se justifiera le jour où plusieurs personnes partagent une conversation.

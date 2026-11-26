@@ -41,6 +41,7 @@ const messageSelect = {
   deletedAt: true,
   editedAt: true,
   forwarded: true,
+  reaction: true,
   correction: { select: { better: true, whyFr: true } },
   replyTo: { select: { id: true, author: true, text: true, deletedAt: true } },
 } as const;
@@ -188,6 +189,19 @@ export class PrismaConversationsStore implements ConversationsStore {
       }),
     ]);
     return { row, conversationId: found.conversationId, changed: true };
+  }
+
+  async setReaction(userId: string, messageId: string, emoji: string | null) {
+    const found = await this.db.message.findFirst({
+      where: { id: messageId, deletedAt: null, conversation: { userId } },
+      select: { id: true },
+    });
+    if (!found) return null;
+    return this.db.message.update({
+      where: { id: messageId },
+      data: { reaction: emoji },
+      select: messageSelect,
+    });
   }
 
   async deleteMessage(userId: string, messageId: string) {

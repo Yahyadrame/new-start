@@ -14,6 +14,7 @@ function setup(rule: { adultOnly: boolean } | null, birthYear: number | null = 1
     markRead: vi.fn(),
     deleteMessage: vi.fn(),
     editMessage: vi.fn(),
+    setReaction: vi.fn(),
     search: vi.fn().mockResolvedValue([]),
   };
   return { item, store, service: new ConversationsService(store, () => 2026) };
@@ -72,6 +73,7 @@ describe('ConversationsService.messages', () => {
     replyTo: null,
     editedAt: null,
     forwarded: false,
+    reaction: null,
     deletedAt: null,
   });
   const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
@@ -141,6 +143,7 @@ describe('ConversationsService.send', () => {
     replyTo: null,
     editedAt: null,
     forwarded: false,
+    reaction: null,
     deletedAt: null,
   };
 
@@ -173,6 +176,7 @@ describe('ConversationsService.send', () => {
         deleted: false,
         edited: false,
         forwarded: false,
+        reaction: null,
         createdAt: '2026-11-20T10:00:00.000Z',
       },
       created: true,
@@ -305,6 +309,7 @@ describe('ConversationsService.search', () => {
       deletedAt: null,
       editedAt: new Date('2026-11-25T10:05:00Z'),
       forwarded: false,
+      reaction: null,
     };
     vi.mocked(store.editMessage).mockResolvedValue({
       row: row as never,
@@ -328,12 +333,35 @@ describe('ConversationsService.search', () => {
         createdAt: new Date(),
         editedAt: null,
         forwarded: false,
+        reaction: null,
       } as never,
       conversationId: 'c1',
       changed: false,
     });
     expect((await service.edit('u1', ID, 'Hi')).edited).toBe(false);
     expect(schedule).not.toHaveBeenCalled();
+  });
+
+  it('pose la réaction et rend le message', async () => {
+    const { store, service } = setup(null);
+    const row = { id: ID, author: 'AGENT', text: 'Hi', createdAt: new Date(), reaction: '👍' };
+    vi.mocked(store.setReaction).mockResolvedValue({
+      ...row,
+      deletedAt: null,
+      editedAt: null,
+      forwarded: false,
+      replyTo: null,
+    } as never);
+    expect((await service.react('u1', ID, '👍')).reaction).toBe('👍');
+    expect(store.setReaction).toHaveBeenCalledWith('u1', ID, '👍');
+  });
+
+  it('répond 404 pour une réaction sur un message inconnu ou un faux identifiant', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.setReaction).mockResolvedValue(null);
+    await expect(service.react('u1', ID, '👍')).rejects.toMatchObject({ status: 404 });
+    await expect(service.react('u1', 'nope', null)).rejects.toMatchObject({ status: 404 });
+    expect(store.setReaction).toHaveBeenCalledTimes(1);
   });
 
   it('répond 404 pour une modification sur un message inconnu ou un faux identifiant', async () => {
@@ -373,6 +401,7 @@ describe('ConversationsService.search', () => {
         replyTo: null,
         editedAt: null,
         forwarded: false,
+        reaction: null,
       },
     ]);
     const page = await service.messages('u1', ID);

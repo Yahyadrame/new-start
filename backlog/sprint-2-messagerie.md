@@ -227,7 +227,7 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Répondre en citant (#344 API, web) : « Répondre » dans le menu, bande au-dessus du champ, citation dans la bulle.
 - [x] Modifier (#346 API, web) : « Modifier » dans le menu de ses messages, le champ reprend le texte, mention « modifié », correction relue.
 - [x] Transférer (mention « transféré ») : API (#348) et web.
-- [ ] Réactions.
+- [ ] Réactions : API (`PUT /messages/:id/reaction`) faite, reste le web.
 - [x] API de suppression (`DELETE /messages/:id`, colonne `deletedAt`). Reste : modification et transfert.
 - [ ] À découper en deux ou trois PR.
 
