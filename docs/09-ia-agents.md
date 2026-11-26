@@ -37,6 +37,8 @@ ou
 }
 ```
 
+Quand la personne envoie un sticker, le message système ajoute la liste des identifiants permis et le LLM peut renvoyer `"sticker": "<id>"`. L'API ne garde que les identifiants de cette liste et enregistre le sticker en second message, juste après le texte. « Kiss! » et « Miss you » n'y figurent pas.
+
 Si le JSON est invalide : une nouvelle tentative avec un rappel du format ; sinon, on garde `reply` brut et `fix = null`.
 
 ## Gabarit de prompt d'un agent
@@ -51,6 +53,7 @@ Rules for "reply":
 - Stay fully in character. If asked, say honestly that you are an AI character in the New Start app.
 - Keep the conversation going (often end with a question). Use 1 or 2 of today's target
   expressions when natural: {targetExpressions}.
+- You may use at most one emoji when it fits your style.
 - If the learner writes in French, answer in simple English as if you understood.
 - Never give medical, legal or financial advice beyond everyday small talk; suggest a professional.
 - Never produce sexual content, hate, harassment, or content that encourages self-harm.
@@ -61,6 +64,10 @@ French, give a natural English version and a short explanation in French (max 15
 If it is already correct and natural, use null.
 
 Answer with only this JSON: {"reply": "...", "fix": null | {"better": "...", "why": "..."}}
+
+[Seulement si la personne vient d'envoyer un sticker]
+The learner just sent a sticker. You may send one back: add "sticker": "<id>" to the JSON,
+using exactly one of these ids, or leave it out: {stickers}. Never write "[sticker]" in "reply".
 ```
 
 Le gabarit est versionné (`packages/ai/prompts/agent.v1.txt`) ; chaque réponse enregistre la version utilisée pour comparer la qualité.

@@ -279,11 +279,19 @@ _Ajouté le 2026-11-26, défaut vu en travaillant sur NS-066._
 
 ## NS-061 — Les contacts envoient stickers, GIF et vrais médias · L
 **Besoin** : les contacts IA peuvent répondre avec un sticker, un émoji ou un GIF, et aussi donner de vrais contenus : images, liens, documents, médias.
-- [ ] Dépend de NS-047 (stockage des pièces jointes, choix et coût à décider) et de NS-059 (source des stickers et GIF).
-- [ ] Les contacts piochent dans la bibliothèque de stickers et de GIF : le prompt ne propose que des identifiants existants, jamais une URL inventée.
+
+Partie 1, stickers et émojis (2026-11-26) :
+- [x] Un contact peut renvoyer un sticker, seulement quand la personne vient d'en envoyer un, juste après son texte.
+- [x] Le prompt ne propose que des identifiants existants (sans « Kiss! » ni « Miss you ») ; un identifiant inconnu est ignoré.
+- [x] Le prompt autorise un émoji au plus par réponse.
+- [x] Tests unitaires (choix d'un sticker valide, rejet d'un identifiant inconnu, enregistrement).
+
+Suite (GIF en attente, médias après NS-047) :
+- [ ] Dépend de NS-047 (stockage des pièces jointes, choix et coût à décider) et de NS-059 (source des GIF).
+- [ ] Les contacts piochent dans la bibliothèque de GIF : le prompt ne propose que des identifiants existants, jamais une URL inventée.
 - [ ] Liens : seulement des sources fiables ; images et documents vérifiés, jamais générés au hasard. Pas de contenu sexuel ni violent (règle de `docs/09-ia-agents.md`).
 - [ ] Affichage dans la conversation : aperçu de lien, image ouvrable, document téléchargeable.
-- [ ] Tests unitaires (choix d'un sticker valide, rejet d'un identifiant inconnu, rendu des types de message).
+- [ ] Tests unitaires du rendu des nouveaux types de message.
 
 ## NS-062 — Silhouettes neutres · M
 

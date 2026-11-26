@@ -94,6 +94,19 @@ describe('PrismaAgentReplyStore.context, stickers', () => {
     db.message.findMany.mockResolvedValue([{ author: 'USER', text: 'Thanks!', sticker: 'thanks' }]);
     const context = await store.context('c1', 'm1');
     expect(context?.history).toEqual([{ author: 'USER', text: '[sticker] Thanks!' }]);
+    expect(context?.stickerReceived).toBe(true);
+  });
+
+  it('ne rejoue pas au modèle les stickers que le contact a envoyés', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue([
+      { author: 'USER', text: 'Hi', sticker: null },
+      { author: 'AGENT', text: 'Cool!', sticker: 'cool' },
+    ]);
+    const context = await store.context('c1', 'm1');
+    expect(context?.history).toEqual([{ author: 'USER', text: 'Hi' }]);
+    expect(context?.stickerReceived).toBeUndefined();
   });
 });
 
@@ -115,6 +128,21 @@ describe('PrismaAgentReplyStore.saveReply', () => {
         .unreadCount,
     ).toEqual({ increment: 1 });
     expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(3);
+  });
+
+  it('ajoute le sticker du contact juste après son texte, avec deux non lus', async () => {
+    const { db, store } = fake();
+    await store.saveReply('c1', 'm1', { reply: 'Anytime!', fix: null, sticker: 'welcome' });
+    const [text, sticker] = db.message.create.mock.calls.map(
+      (call) => (call[0] as { data: { createdAt: Date; text: string; sticker?: string } }).data,
+    );
+    expect(text?.text).toBe('Anytime!');
+    expect(sticker).toMatchObject({ author: 'AGENT', sticker: 'welcome', text: "You're welcome" });
+    expect(Number(sticker?.createdAt)).toBeGreaterThan(Number(text?.createdAt));
+    expect(
+      (db.conversation.update.mock.calls[0]?.[0] as { data: { unreadCount: unknown } }).data
+        .unreadCount,
+    ).toEqual({ increment: 2 });
   });
 
   it('refait seulement la correction d’un message modifié', async () => {

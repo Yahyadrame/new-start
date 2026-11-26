@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { AgentReply } from '@newstart/ai';
-import { ContactVariant } from '@newstart/shared';
+import { ContactVariant, stickerText } from '@newstart/shared';
 import { Prisma } from '../../../generated/prisma/client.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import {
@@ -51,25 +51,36 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
       take: HISTORY_SIZE,
       select: { author: true, text: true, sticker: true },
     });
+    // Les stickers du contact ne sont pas rejoués : le modèle imiterait la marque « [sticker] ».
     const history = rows
       .reverse()
       .flatMap(({ author, text, sticker }) =>
-        author === 'SYSTEM' ? [] : [{ author, text: sticker ? `[sticker] ${text}` : text }],
+        author === 'SYSTEM' || (author === 'AGENT' && sticker)
+          ? []
+          : [{ author, text: sticker ? `[sticker] ${text}` : text }],
       );
+    const stickerReceived = Boolean(rows.at(-1)?.sticker);
     const { agent, user, userId, agentId } = message.conversation;
     const variant = await this.db.contactVariant.findUnique({
       where: { userId_agentId: { userId, agentId } },
       select: { tone: true, difficulty: true },
     });
-    return applyVariant({ agent, learner: user, history }, parseVariant(variant));
+    return applyVariant(
+      { agent, learner: user, history, ...(stickerReceived && { stickerReceived }) },
+      parseVariant(variant),
+    );
   }
 
   async saveReply(
     conversationId: string,
     messageId: string,
-    { reply, fix }: AgentReply,
+    { reply, fix, sticker }: AgentReply,
     { correctionOnly = false }: ReplyOptions = {},
   ) {
+    const caption = sticker ? stickerText(sticker) : undefined;
+    const extra = sticker && caption ? { sticker, text: caption } : undefined;
+    // Deux dates explicites : le sticker doit s'afficher après le texte.
+    const at = new Date();
     try {
       await this.db.$transaction([
         // `messageId` est unique : une seconde réponse au même message annule toute la transaction.
@@ -79,10 +90,29 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
         ...(correctionOnly
           ? []
           : [
-              this.db.message.create({ data: { conversationId, author: 'AGENT', text: reply } }),
+              this.db.message.create({
+                data: {
+                  conversationId,
+                  author: 'AGENT',
+                  text: reply,
+                  ...(extra && { createdAt: at }),
+                },
+              }),
+              ...(extra
+                ? [
+                    this.db.message.create({
+                      data: {
+                        conversationId,
+                        author: 'AGENT',
+                        ...extra,
+                        createdAt: new Date(at.getTime() + 1),
+                      },
+                    }),
+                  ]
+                : []),
               this.db.conversation.update({
                 where: { id: conversationId },
-                data: { lastMessageAt: new Date(), unreadCount: { increment: 1 } },
+                data: { lastMessageAt: new Date(), unreadCount: { increment: extra ? 2 : 1 } },
               }),
             ]),
       ]);

@@ -147,3 +147,9 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - Chaque envoi compte dans la limite de messages du jour et déclenche une réponse du contact. Pas d'autre plafond sur le nombre de cases : la limite du jour suffit pour l'instant.
 - Aucun changement d'API : le web envoie les messages un par un.
 
+
+## 2026-11-26 — Stickers des contacts (NS-061, partie 1)
+
+- Un contact n'envoie un sticker qu'en retour, quand la personne vient d'en envoyer un (choix du porteur du projet parmi 3 options). Il répond toujours par du texte, le sticker suit et reste facultatif.
+- Les contacts n'envoient ni « Kiss! » ni « Miss you » : `docs/09-ia-agents.md` exclut le jeu romantique et la pression affective.
+- Un émoji au plus par réponse. Aucun nouveau service, aucune migration : la colonne `sticker` existe déjà.

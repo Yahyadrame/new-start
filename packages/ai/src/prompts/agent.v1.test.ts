@@ -68,3 +68,18 @@ describe('buildAgentSystem', () => {
     expect(AGENT_PROMPT_VERSION).toBe('agent.v1');
   });
 });
+
+describe('buildAgentSystem, stickers et émojis', () => {
+  it('autorise un émoji au plus', () => {
+    expect(buildAgentSystem({ agent, learner })).toContain('at most one emoji');
+  });
+
+  it('ne propose un sticker que si des identifiants sont donnés', () => {
+    expect(buildAgentSystem({ agent, learner })).not.toContain('"sticker"');
+    expect(buildAgentSystem({ agent, learner, stickers: [] })).not.toContain('"sticker"');
+    const system = buildAgentSystem({ agent, learner, stickers: ['thanks', 'cool'] });
+    expect(system).toContain('"sticker"');
+    expect(system).toContain('thanks, cool');
+    expect(system).not.toMatch(/\{\w+\}/);
+  });
+});
