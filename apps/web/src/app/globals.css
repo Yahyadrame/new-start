@@ -38,6 +38,7 @@ body {
 /* Dès 1024 px, la navigation devient un rail fixe de 72 px à gauche : le contenu lui laisse la place (NS-034). */
 @media (min-width: 1024px) {
   body:has([data-shell-nav]) {
-    padding-left: 72px;
+    /* !important : à l'ouverture d'une fenêtre, Radix bloque le défilement et remettait la marge à 0. */
+    padding-left: 72px !important;
   }
 }

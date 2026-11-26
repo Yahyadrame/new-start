@@ -19,6 +19,14 @@ vi.mock('./use-voice-recorder', () => ({
     return recorder;
   },
 }));
+// La liste d'émojis a ses propres tests ; ici un seul bouton suffit.
+vi.mock('./emoji-panel', () => ({
+  EmojiPanel: ({ onPick }: { onPick: (emoji: string) => void }) => (
+    <button type="button" onClick={() => onPick('👍')}>
+      émoji de test
+    </button>
+  ),
+}));
 
 beforeEach(() => {
   Object.assign(recorder, { recording: false, seconds: 0, error: null });
@@ -181,7 +189,7 @@ describe('Composer', () => {
     render(<Composer onSend={vi.fn()} onSendSticker={vi.fn()} />);
     fireEvent.change(field(), { target: { value: 'Hi ' } });
     fireEvent.click(screen.getByRole('button', { name: c.emojiStickers }));
-    fireEvent.click(screen.getByRole('button', { name: c.emojiInsert.replace('{emoji}', '👍') }));
+    fireEvent.click(screen.getByRole('button', { name: 'émoji de test' }));
     expect(field().value).toBe('Hi 👍');
     fireEvent.mouseDown(screen.getByRole('tab', { name: c.stickers }));
     expect(await screen.findByLabelText(c.stickerSearch)).toBeTruthy();
@@ -213,6 +221,76 @@ describe('Composer', () => {
     expect(screen.queryByLabelText(c.stickerSearch)).toBeNull();
     expect(document.activeElement).toBe(field());
     expect(screen.getByRole('button', { name: c.stickers })).toBeTruthy();
+  });
+});
+
+describe('Composer, fermeture du panneau', () => {
+  const desktop = () =>
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+  const open = (name: string = c.stickers) => {
+    render(
+      <>
+        <p>Dehors</p>
+        <Composer onSend={vi.fn()} onSendSticker={vi.fn()} />
+      </>,
+    );
+    fireEvent.click(screen.getByRole('button', { name }));
+  };
+  const search = () => screen.queryByLabelText(c.stickerSearch);
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('se ferme avec Échap et rend le focus au bouton', () => {
+    open();
+    fireEvent.keyDown(search() as HTMLElement, { key: 'Escape' });
+    expect(search()).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: c.stickers }));
+  });
+
+  it('laisse d’abord Échap vider la recherche', () => {
+    open();
+    fireEvent.change(search() as HTMLElement, { target: { value: 'hel' } });
+    fireEvent.keyDown(search() as HTMLElement, { key: 'Escape' });
+    expect(search()).toBeTruthy();
+  });
+
+  it('ignore un Échap déjà traité (liste d’émojis, fenêtre ouverte)', () => {
+    open();
+    const handled = (e: Event) => e.preventDefault();
+    search()?.addEventListener('keydown', handled);
+    fireEvent.keyDown(search() as HTMLElement, { key: 'Escape' });
+    expect(search()).toBeTruthy();
+  });
+
+  it('se ferme au toucher en dehors, pas au toucher dedans', () => {
+    open();
+    fireEvent.click(search() as HTMLElement);
+    expect(search()).toBeTruthy();
+    fireEvent.click(screen.getByText('Dehors'));
+    expect(search()).toBeNull();
+  });
+
+  it('sur téléphone, toucher le champ rend la place au clavier', () => {
+    open();
+    fireEvent.focus(field());
+    expect(search()).toBeNull();
+  });
+
+  it('sur ordinateur, on écrit sans fermer le panneau', () => {
+    desktop();
+    open(c.emojiStickers);
+    fireEvent.focus(field());
+    expect(screen.getByRole('tab', { name: c.emojis })).toBeTruthy();
+  });
+
+  it('sur ordinateur, le focus entre dans le panneau à l’ouverture', () => {
+    desktop();
+    open(c.emojiStickers);
+    expect(document.activeElement).toBe(screen.getByRole('tab', { name: c.emojis }));
   });
 });
 

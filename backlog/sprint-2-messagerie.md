@@ -245,6 +245,13 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Aucun débordement horizontal, cibles tactiles ≥ 44 px, lignes de texte lisibles (largeur bornée).
 - [x] Aucun écart bloquant : colonne de contenu bornée à ~400 px dès 768 px, rail latéral et deux colonnes dès 1024 px. Contrôle de débordement à 768 px déjà couvert par `e2e/responsive.spec.ts`.
 
+## NS-067 — Ordinateur : ouvrir une fenêtre ne décale plus la page · S
+
+_Ajouté le 2026-11-26, défaut vu en travaillant sur NS-066._
+
+- [x] Dès 1024 px, ouvrir une fenêtre ou un menu garde la page à droite du rail (72 px). Cause : le blocage du défilement de Radix remettait la marge à 0.
+- [x] Test e2e, deux thèmes. Pas de test unitaire : une seule règle CSS, vérifiable dans un navigateur.
+
 ## NS-058 — Domaines élargis et contacts IA selon les centres d'intérêt · L
 **Besoin** : le catalogue ne couvre pas les 16 centres d'intérêt de l'inscription.
 - [x] Partie 1 : 8 thèmes et 11 contacts ajoutés (17 thèmes, 23 contacts), statuts et tests à jour.
@@ -257,9 +264,11 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Un seul bouton « émojis et stickers » (GIF plus tard) ; sur téléphone il ne montre que les stickers.
 - [x] Mobile : panneau à la place du clavier, stickers seulement (GIF à venir) ; les émojis viennent du clavier. (#354, #355)
 - [x] Ordinateur : même panneau, onglets émojis et stickers (GIF à venir).
-- [ ] Le panneau garde les récents et un champ de recherche ; fermeture au toucher en dehors ou avec Échap ; focus géré au clavier.
+- [x] Fermeture au toucher en dehors ou avec Échap ; focus géré au clavier (Échap le rend au bouton, sur ordinateur il entre dans le panneau à l’ouverture). Sur téléphone, toucher le champ rend la place au clavier.
+- [ ] Le panneau garde les récents et un champ de recherche (émojis : #356 ; reste les stickers récents).
 - [ ] Source des stickers et des GIF à choisir avec le porteur (options, licence, coût) avant de coder. Aucune dépense sans accord.
-- [ ] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+- [x] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+- [x] Ordinateur : liste complète d’émojis avec catégories, recherche en français et en anglais, récents et teintes de peau.
 
 ## NS-060 — Masquer la barre de suggestions au-dessus du clavier iPhone · S
 **Besoin** : au-dessus du champ de saisie, iOS affiche sa barre (flèches haut/bas, validation, mots proposés) qui gêne.

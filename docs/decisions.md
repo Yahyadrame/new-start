@@ -134,6 +134,12 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - GIF (GIPHY, Tenor) : repoussés à NS-059, avec la question du contenu et du coût.
 - Planche à valider avant le code : `design/stickers/maquette-stickers.html`.
 
+## 2026-11-26 — Liste complète d’émojis (NS-059)
+
+- Ordinateur : la liste maison de 40 émojis est remplacée par `emoji-mart` et ses données (licence MIT, 0 €), chargés à l’ouverture du panneau et servis par notre site, sans CDN. Le composant web est utilisé directement, car `@emoji-mart/react` n’accepte pas React 19.
+- La recherche marche en français et en anglais (demande du porteur du projet), avec ou sans accents. Les mots français viennent d’`emojibase-data` (MIT, 0 €, environ 89 Ko compressés) et sont ajoutés aux mots-clés de la bibliothèque à l’ouverture du panneau.
+- Les GIF restent en attente (choix du porteur du projet) : rien à développer pour l’instant.
+
 ## 2026-11-26 — Transfert à plusieurs contacts (NS-066)
 
 - On coche les conversations, puis on envoie le même message à toutes (demande du porteur du projet).
