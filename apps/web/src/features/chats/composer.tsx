@@ -69,6 +69,8 @@ export function Composer({
   const desktop = useFinePointer();
   const [notice, setNotice] = useState<string | null>(null);
   const field = useRef<HTMLTextAreaElement>(null);
+  const bar = useRef<HTMLFormElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
   const photoInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const recorder = useVoiceRecorder((clip) => setDraft({ kind: 'voice', ...clip }));
@@ -99,6 +101,30 @@ export function Composer({
       setStickers(true);
     }
   };
+
+  // Le panneau se ferme avec Échap (le focus revient au bouton) ou au toucher en dehors de la barre.
+  // Un clic, pas un appui : faire défiler les messages le laisse ouvert.
+  useEffect(() => {
+    if (!stickers) return;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      // Déjà traité par la liste d'émojis ou une fenêtre ; une recherche remplie se vide d'abord.
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      if (e.target instanceof HTMLInputElement && e.target.type === 'search' && e.target.value)
+        return;
+      setStickers(false);
+      toggle.current?.focus();
+    };
+    const onClick = (e: MouseEvent) => {
+      if (!bar.current?.contains(e.target as Node)) setStickers(false);
+    };
+    document.addEventListener('keydown', onKey);
+    // En capture : la cible est encore dans la page, même si le clic la fait disparaître.
+    document.addEventListener('click', onClick, true);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, [stickers]);
 
   const send = () => {
     if (empty) return;
@@ -171,7 +197,7 @@ export function Composer({
   }
 
   return (
-    <form onSubmit={submit} className={shell}>
+    <form ref={bar} onSubmit={submit} className={shell}>
       {note && (
         <p role="status" className="px-3 pb-2 text-sm text-text-muted">
           {note}
@@ -252,6 +278,7 @@ export function Composer({
               </Popover>
               {onSendSticker && (
                 <button
+                  ref={toggle}
                   type="button"
                   aria-label={stickers ? c.keyboard : desktop ? c.emojiStickers : c.stickers}
                   aria-pressed={stickers}
@@ -279,6 +306,8 @@ export function Composer({
                 placeholder={c.composerPlaceholder}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={onKeyDown}
+                // Sur téléphone, le clavier qui s'ouvre prend la place du panneau.
+                onFocus={() => !desktop && setStickers(false)}
                 className="max-h-32 min-h-11 min-w-0 flex-1 resize-none bg-transparent py-2.5 pr-4 text-base leading-snug [field-sizing:content] placeholder:text-text-muted outline-none"
               />
             </>
@@ -304,7 +333,10 @@ export function Composer({
           {desktop ? (
             <Tabs defaultValue="emojis" className="flex h-full flex-col gap-2">
               <TabsList className="self-start">
-                <TabsTrigger value="emojis">{c.emojis}</TabsTrigger>
+                {/* Le panneau vient après le bouton d'envoi : on y amène le focus à l'ouverture. */}
+                <TabsTrigger value="emojis" autoFocus>
+                  {c.emojis}
+                </TabsTrigger>
                 <TabsTrigger value="stickers">{c.stickers}</TabsTrigger>
               </TabsList>
               <TabsContent value="emojis" className="mt-0 min-h-0 flex-1">
