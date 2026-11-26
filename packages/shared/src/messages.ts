@@ -13,6 +13,8 @@ export const MessageItem = z.object({
   edited: z.boolean(),
   /** Le message a été transféré depuis une autre conversation : la bulle porte la mention « transféré ». */
   forwarded: z.boolean(),
+  /** La réaction de la personne à ce message (un des émojis de `REACTIONS`), ou null. */
+  reaction: z.string().nullable(),
   /** Le message cité quand celui-ci répond en citant ; `text` est vide si le message cité a été supprimé. */
   replyTo: z
     .object({
@@ -54,6 +56,13 @@ export type SendMessage = z.infer<typeof SendMessage>;
 /** Corps de `PATCH /messages/:id` : le nouveau texte d'un message de la personne. */
 export const EditMessage = z.object({ text: z.string().trim().min(1).max(2000) });
 export type EditMessage = z.infer<typeof EditMessage>;
+
+/** Les réactions rapides proposées sur un message. */
+export const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'] as const;
+
+/** Corps de `PUT /messages/:id/reaction` : l'émoji choisi, ou null pour retirer la réaction. */
+export const SetReaction = z.object({ emoji: z.enum(REACTIONS).nullable() });
+export type SetReaction = z.infer<typeof SetReaction>;
 
 /** Paramètres de `GET /conversations/search` : le texte cherché, sans espaces autour. */
 export const SearchQuery = z.object({ q: z.string().trim().min(2).max(100) });

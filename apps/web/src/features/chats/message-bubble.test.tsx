@@ -16,6 +16,7 @@ const message = (over: Partial<MessageItem>): MessageItem => ({
   replyTo: null,
   edited: false,
   forwarded: false,
+  reaction: null,
   deleted: false,
   ...over,
 });

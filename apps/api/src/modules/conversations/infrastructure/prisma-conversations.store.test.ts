@@ -252,6 +252,33 @@ describe('PrismaConversationsStore', () => {
     });
   });
 
+  describe('setReaction', () => {
+    it('ne touche à rien quand le message n’est pas un message vivant de cette personne', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue(null);
+      expect(await store.setReaction('u1', 'm9', '👍')).toBeNull();
+      expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
+        id: 'm9',
+        deletedAt: null,
+        conversation: { userId: 'u1' },
+      });
+      expect(db.message.update).not.toHaveBeenCalled();
+    });
+
+    it('pose puis retire la réaction', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue({ id: 'm1' });
+      db.message.update.mockResolvedValue({ id: 'm1', reaction: '👍' });
+      expect(await store.setReaction('u1', 'm1', '👍')).toEqual({ id: 'm1', reaction: '👍' });
+      expect(db.message.update.mock.calls[0]?.[0]).toMatchObject({
+        where: { id: 'm1' },
+        data: { reaction: '👍' },
+      });
+      await store.setReaction('u1', 'm1', null);
+      expect(db.message.update.mock.calls[1]?.[0].data).toEqual({ reaction: null });
+    });
+  });
+
   describe('send', () => {
     const message = { clientId: '0198f0a0-0000-4000-8000-000000000002', text: 'Hello' };
     const owned = (db: ReturnType<typeof fake>['db']) =>

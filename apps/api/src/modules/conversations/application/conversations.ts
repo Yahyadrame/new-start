@@ -65,6 +65,8 @@ export interface ConversationsStore {
    * Remplace le texte d'un message de la personne (pas supprimé), date la modification et efface sa
    * correction pour qu'elle soit refaite. Null s'il n'existe pas ou n'est pas à elle ; `changed: false` si le texte est le même.
    */
+  /** Pose (ou retire, avec null) la réaction de la personne sur un message vivant de ses conversations. Null s'il n'existe pas. */
+  setReaction(userId: string, messageId: string, emoji: string | null): Promise<MessageRow | null>;
   editMessage(
     userId: string,
     messageId: string,
@@ -149,6 +151,17 @@ export class ConversationsService {
     if (!done) {
       throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
     }
+  }
+
+  /** Pose ou retire la réaction de la personne sur un message. */
+  async react(userId: string, messageId: string, emoji: string | null) {
+    const row = UUID.test(messageId)
+      ? await this.store.setReaction(userId, messageId, emoji)
+      : null;
+    if (!row) {
+      throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
+    }
+    return toItem(row);
   }
 
   /** Modifie le texte d'un message de la personne ; sa correction est refaite, sans nouvelle réponse du contact. */

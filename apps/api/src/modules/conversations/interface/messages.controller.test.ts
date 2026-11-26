@@ -8,6 +8,7 @@ import { TranslationService } from '../application/translation.js';
 import { MessagesController } from './messages.controller.js';
 
 const remove = vi.fn().mockResolvedValue(undefined);
+const react = vi.fn().mockResolvedValue({ id: 'm1', reaction: '👍' });
 const translate = vi.fn().mockResolvedValue({ translationFr: 'Salut !' });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
 let app: INestApplication;
@@ -16,7 +17,7 @@ beforeAll(async () => {
     controllers: [MessagesController],
     providers: [
       { provide: TranslationService, useValue: { translate } },
-      { provide: ConversationsService, useValue: { remove } },
+      { provide: ConversationsService, useValue: { remove, react } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -54,5 +55,33 @@ describe('DELETE /messages/:id', () => {
       .set('authorization', 'Bearer tok-u1');
     expect(res.status).toBe(204);
     expect(remove).toHaveBeenCalledWith('u1', 'm1');
+  });
+});
+
+describe('PUT /messages/:id/reaction', () => {
+  it('refuse sans jeton (401)', async () => {
+    const res = await request(app.getHttpServer())
+      .put('/messages/m1/reaction')
+      .send({ emoji: null });
+    expect(res.status).toBe(401);
+    expect(react).not.toHaveBeenCalled();
+  });
+
+  it('pose la réaction de la personne connectée (200)', async () => {
+    const res = await request(app.getHttpServer())
+      .put('/messages/m1/reaction')
+      .set('authorization', 'Bearer tok-u1')
+      .send({ emoji: '👍' });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ id: 'm1', reaction: '👍' });
+    expect(react).toHaveBeenCalledWith('u1', 'm1', '👍');
+  });
+
+  it('refuse un émoji hors de la liste (400)', async () => {
+    const res = await request(app.getHttpServer())
+      .put('/messages/m1/reaction')
+      .set('authorization', 'Bearer tok-u1')
+      .send({ emoji: '🦄' });
+    expect(res.status).toBe(400);
   });
 });
