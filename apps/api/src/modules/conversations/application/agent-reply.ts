@@ -12,11 +12,17 @@ import {
   type AgentReply,
   type LlmProvider,
 } from '@newstart/ai';
+import { STICKER_IDS } from '@newstart/shared';
 
 export const AGENT_REPLY_STORE = Symbol('AGENT_REPLY_STORE');
 
 /** Nombre de messages relus pour répondre (docs/09-ia-agents.md). */
 export const HISTORY_SIZE = 16;
+
+/** Les contacts ne jouent ni le partenaire ni le manque (docs/09-ia-agents.md). */
+const AGENT_STICKERS: readonly string[] = STICKER_IDS.filter(
+  (id) => id !== 'kiss' && id !== 'miss-you',
+);
 
 export const FAILURE_TEXT = "Le message n'est pas passé. Renvoie-le.";
 
@@ -25,6 +31,8 @@ export interface ReplyContext {
   learner: { firstName: string; level: string; goal: string; interests?: string[] };
   /** Du plus ancien au plus récent, le message de la personne en dernier. */
   history: { author: 'USER' | 'AGENT'; text: string }[];
+  /** La personne vient d'envoyer un sticker : le contact peut en renvoyer un. */
+  stickerReceived?: boolean;
 }
 
 export interface AgentReplyStore {
@@ -80,7 +88,8 @@ export class AgentReplyService implements ReplyScheduler {
       log.log('Message de détresse : réponse de soutien enregistrée');
       return;
     }
-    const system = buildAgentSystem(context);
+    const stickers = context.stickerReceived && !options.correctionOnly ? AGENT_STICKERS : [];
+    const system = buildAgentSystem({ ...context, stickers: [...stickers] });
     const messages = context.history.map(({ author, text }) => ({
       role: author === 'USER' ? ('user' as const) : ('assistant' as const),
       content: text,
@@ -89,11 +98,12 @@ export class AgentReplyService implements ReplyScheduler {
     try {
       answer = await withRetry(
         async () => {
-          const { reply, fix } = await askAgent(this.llm, { system, messages });
+          const { reply, fix, sticker } = await askAgent(this.llm, { system, messages });
           // Garde de sortie : une réponse refusée est redemandée, sans jamais être enregistrée.
           const blocked = checkAgentReply(reply);
           if (blocked) throw new BlockedReplyError(blocked);
-          return { reply, fix };
+          // Seul un identifiant proposé est gardé : jamais une invention du modèle.
+          return { reply, fix, ...(sticker && stickers.includes(sticker) && { sticker }) };
         },
         {
           retries: 2,

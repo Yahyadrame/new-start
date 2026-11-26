@@ -7,6 +7,8 @@ export const agentReplySchema = z.object({
     .object({ better: z.string().min(1), why: z.string().min(1) })
     .nullish()
     .transform((v) => v ?? null),
+  // Un sticker mal formé est ignoré, la réponse reste bonne ; l'identifiant est vérifié par l'appelant.
+  sticker: z.string().nullish().catch(undefined),
 });
 
 export type AgentReply = z.infer<typeof agentReplySchema>;

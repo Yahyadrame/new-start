@@ -166,3 +166,48 @@ describe('AgentReplyService.schedule', () => {
     await vi.waitFor(() => expect(store.context).toHaveBeenCalled());
   });
 });
+
+describe('AgentReplyService.reply, stickers', () => {
+  const received: ReplyContext = {
+    ...context,
+    history: [{ author: 'USER', text: '[sticker] Thanks!' }],
+    stickerReceived: true,
+  };
+  const withSticker = (sticker: string) => async () => ({
+    text: JSON.stringify({ reply: 'Anytime!', fix: null, sticker }),
+  });
+
+  it('propose la bibliothèque, sans les stickers affectifs, et enregistre le sticker choisi', async () => {
+    const { store, llm, service } = setup(withSticker('welcome'), received);
+    await service.reply('c1', 'm1');
+    const system = vi.mocked(llm.complete).mock.calls[0]?.[0].system ?? '';
+    expect(system).toContain('welcome');
+    expect(system).not.toMatch(/\bkiss\b|miss-you/);
+    expect(vi.mocked(store.saveReply).mock.calls[0]?.[2]).toEqual({
+      reply: 'Anytime!',
+      fix: null,
+      sticker: 'welcome',
+    });
+  });
+
+  it('écarte un identifiant inconnu ou interdit', async () => {
+    for (const sticker of ['https://example.com/a.png', 'kiss']) {
+      const { store, service } = setup(withSticker(sticker), received);
+      await service.reply('c1', 'm1');
+      expect(vi.mocked(store.saveReply).mock.calls[0]?.[2]).toEqual({
+        reply: 'Anytime!',
+        fix: null,
+      });
+    }
+  });
+
+  it('n’envoie aucun sticker à qui n’en a pas envoyé', async () => {
+    const { store, llm, service } = setup(withSticker('welcome'));
+    await service.reply('c1', 'm1');
+    expect(vi.mocked(llm.complete).mock.calls[0]?.[0].system).not.toContain('"sticker"');
+    expect(vi.mocked(store.saveReply).mock.calls[0]?.[2]).toEqual({
+      reply: 'Anytime!',
+      fix: null,
+    });
+  });
+});

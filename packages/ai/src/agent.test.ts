@@ -79,3 +79,17 @@ describe('askAgent', () => {
     expect((await askAgent(llm, request)).reply).toBe('premier');
   });
 });
+
+describe('parseAgentReply, sticker', () => {
+  it('lit le sticker choisi', () => {
+    expect(parseAgentReply('{"reply":"Hi","fix":null,"sticker":"cool"}')?.sticker).toBe('cool');
+  });
+
+  it('ignore un sticker absent, nul ou mal formé sans rejeter la réponse', () => {
+    for (const extra of ['', ',"sticker":null', ',"sticker":12', ',"sticker":{"id":"cool"}']) {
+      const parsed = parseAgentReply(`{"reply":"Hi","fix":null${extra}}`);
+      expect(parsed?.reply).toBe('Hi');
+      expect(parsed?.sticker ?? null).toBeNull();
+    }
+  });
+});
