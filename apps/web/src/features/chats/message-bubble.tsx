@@ -362,7 +362,7 @@ export function MessageBubble({
           onTranslate={onTranslate && (() => onTranslate(message.id))}
         />
       )}
-      {mine && message.correction && (
+      {mine && message.correction && !message.sticker && (
         <Correction
           correction={message.correction}
           onAdd={onAddToNotebook && (() => onAddToNotebook(message.id))}
