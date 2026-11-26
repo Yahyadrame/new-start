@@ -7,7 +7,7 @@ import { PrismaAgentReplyStore } from './prisma-agent-reply.store.js';
 function fake() {
   const db = {
     message: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn((a: unknown) => a) },
-    correction: { create: vi.fn((a: unknown) => a) },
+    correction: { create: vi.fn((a: unknown) => a), deleteMany: vi.fn() },
     conversation: { update: vi.fn((a: unknown) => a) },
     contactVariant: { findUnique: vi.fn().mockResolvedValue(null) },
     $transaction: vi.fn().mockResolvedValue([]),
@@ -36,6 +36,7 @@ describe('PrismaAgentReplyStore.context', () => {
       conversationId: 'c1',
       author: 'USER',
       correction: null,
+      deletedAt: null,
     });
     expect(db.message.findMany).not.toHaveBeenCalled();
   });
@@ -75,8 +76,8 @@ describe('PrismaAgentReplyStore.context', () => {
     expect(args.take).toBe(HISTORY_SIZE);
     expect(args.where).toEqual({
       conversationId: 'c1',
-      author: { in: ['USER', 'AGENT'] },
-      createdAt: { lte: createdAt },
+      deletedAt: null,
+      OR: [{ author: { in: ['USER', 'AGENT'] }, createdAt: { lte: createdAt } }],
     });
     expect(context?.history).toEqual([
       { author: 'AGENT', text: 'first' },
@@ -84,6 +85,37 @@ describe('PrismaAgentReplyStore.context', () => {
     ]);
     expect(context?.learner).toEqual({ firstName: 'Awa', level: 'B1', goal: 'TRAVEL' });
     expect(context?.agent.name).toBe('Jade');
+  });
+});
+
+describe('PrismaAgentReplyStore.context, réponse en file', () => {
+  it('ajoute les réponses arrivées depuis et laisse le message visé en dernier', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue([
+      { id: 'r1', author: 'AGENT', text: 'reply one' },
+      { id: 'm2', author: 'USER', text: 'two', sticker: 'thanks' },
+      { id: 'm1', author: 'USER', text: 'one' },
+    ]);
+    const context = await store.context('c1', 'm2', { withLaterReplies: true });
+    expect(db.message.findMany.mock.calls[0]?.[0].where.OR[1]).toEqual({
+      author: 'AGENT',
+      createdAt: { gt: createdAt },
+    });
+    expect(context?.history).toEqual([
+      { author: 'USER', text: 'one' },
+      { author: 'AGENT', text: 'reply one' },
+      { author: 'USER', text: '[sticker] two' },
+    ]);
+    expect(context?.stickerReceived).toBe(true);
+  });
+});
+
+describe('PrismaAgentReplyStore.clearCorrection', () => {
+  it('efface la correction du message', async () => {
+    const { db, store } = fake();
+    await store.clearCorrection('m1');
+    expect(db.correction.deleteMany).toHaveBeenCalledWith({ where: { messageId: 'm1' } });
   });
 });
 

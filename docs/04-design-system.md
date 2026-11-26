@@ -138,7 +138,7 @@ Détails qui font « vraie appli » :
 
 - Retour haptique léger sur mobile à l'envoi d'un message et à une bonne réponse (V2).
 - Heure des messages au format local (« 08:42 », « Hier », « Lun. »).
-- Coches de lecture, indicateur « en train d'écrire… » qui dure le temps réel de génération, sans délai artificiel exagéré.
+- Coches de lecture, indicateur « en train d'écrire… » le temps qu'une personne mettrait à répondre : 4 à 15 s selon la longueur, génération comprise (NS-069).
 - Clavier qui ne masque jamais le champ de saisie ; défilement qui reste en bas quand un message arrive.
 - Sons discrets et désactivables.
 

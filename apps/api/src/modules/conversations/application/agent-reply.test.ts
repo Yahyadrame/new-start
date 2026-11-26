@@ -1,5 +1,5 @@
 import { DISTRESS_REPLY_FR, ProviderError, type LlmProvider } from '@newstart/ai';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AgentReplyService, type AgentReplyStore, type ReplyContext } from './agent-reply.js';
 
 const context: ReplyContext = {
@@ -18,6 +18,7 @@ function setup(complete: LlmProvider['complete'], ctx: ReplyContext | null = con
     context: vi.fn().mockResolvedValue(ctx),
     saveReply: vi.fn().mockResolvedValue(undefined),
     saveFailure: vi.fn().mockResolvedValue(undefined),
+    clearCorrection: vi.fn().mockResolvedValue(undefined),
   };
   const llm: LlmProvider = { name: 'test', complete: vi.fn(complete) };
   const sleep = vi.fn().mockResolvedValue(undefined);
@@ -108,7 +109,7 @@ describe('AgentReplyService.reply', () => {
       .mockResolvedValue(json('Hi!'));
     const { store, sleep, service } = setup(complete);
     await service.reply('c1', 'm1');
-    expect(sleep.mock.calls).toEqual([[1000], [2000]]);
+    expect(sleep.mock.calls.slice(0, 2)).toEqual([[1000], [2000]]);
     expect(store.saveReply).toHaveBeenCalledTimes(1);
   });
 
@@ -209,5 +210,124 @@ describe('AgentReplyService.reply, stickers', () => {
       reply: 'Anytime!',
       fix: null,
     });
+  });
+});
+
+describe('AgentReplyService.reply, rythme humain', () => {
+  afterEach(() => vi.useRealTimers());
+  const waited = async (reply: string, aiTime = 0, options = {}) => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    const { sleep, service } = setup(async () => {
+      vi.setSystemTime(Date.now() + aiTime);
+      return json(reply);
+    });
+    await service.reply('c1', 'm1', options);
+    return sleep.mock.calls.map(([ms]) => ms);
+  };
+
+  it('attend selon la longueur de la réponse, entre 4 s et 15 s', async () => {
+    expect(await waited('Hey!')).toEqual([4000]);
+    expect(await waited('a'.repeat(100))).toEqual([8000]);
+    expect(await waited('a'.repeat(500))).toEqual([15000]);
+  });
+
+  it('compte le temps de l’IA dans l’attente', async () => {
+    expect(await waited('Hey!', 3000)).toEqual([1000]);
+    expect(await waited('Hey!', 9000)).toEqual([]);
+  });
+
+  it('n’attend ni pour une modification, ni pour la détresse, ni pour un échec', async () => {
+    expect(await waited('Hey!', 0, { correctionOnly: true })).toEqual([]);
+    const distress = setup(async () => json('x'), {
+      ...context,
+      history: [{ author: 'USER', text: 'Je veux mourir' }],
+    });
+    await distress.service.reply('c1', 'm1');
+    expect(distress.sleep).not.toHaveBeenCalled();
+    const failing = setup(async () => {
+      throw new ProviderError('gemini', 401, 'clé refusée');
+    });
+    await failing.service.reply('c1', 'm1');
+    expect(failing.sleep).not.toHaveBeenCalled();
+  });
+});
+
+describe('AgentReplyService.schedule, messages envoyés coup sur coup', () => {
+  /** Un service dont la première attente reste ouverte tant que le test ne la libère pas. */
+  function held(distressed?: string) {
+    const events: string[] = [];
+    const store: AgentReplyStore = {
+      context: vi.fn(async (_c: string, id: string) => ({
+        ...context,
+        history: [{ author: 'USER' as const, text: id === distressed ? 'Je veux mourir' : id }],
+      })),
+      saveReply: vi.fn(async (_c, id, _r, options) => {
+        events.push(`${id}${options?.correctionOnly ? ' correction' : ''}`);
+      }),
+      saveFailure: vi.fn(),
+      clearCorrection: vi.fn(async (id) => {
+        events.push(`${id} effacée`);
+      }),
+    };
+    const llm: LlmProvider = { name: 'test', complete: vi.fn(async () => json('Hey!')) };
+    let release = () => {};
+    const sleep = vi
+      .fn<(ms: number) => Promise<void>>()
+      .mockImplementationOnce(() => new Promise((resolve) => (release = resolve)))
+      .mockResolvedValue(undefined);
+    const service = new AgentReplyService(store, llm, sleep);
+    const paused = () => vi.waitFor(() => expect(sleep).toHaveBeenCalled());
+    return { events, store, llm, service, paused, release: () => release() };
+  }
+
+  it('répond à chacun, dans l’ordre, le suivant relisant la réponse précédente', async () => {
+    const { events, store, llm, service, paused, release } = held();
+    service.schedule('c1', 'm1');
+    await paused();
+    service.schedule('c1', 'm2');
+    await new Promise((r) => setImmediate(r));
+    expect(llm.complete).toHaveBeenCalledTimes(1);
+    release();
+    await vi.waitFor(() => expect(events).toEqual(['m1', 'm2']));
+    expect(vi.mocked(store.context).mock.calls.at(-1)).toEqual([
+      'c1',
+      'm2',
+      { withLaterReplies: true },
+    ]);
+  });
+
+  it('ne fait pas attendre une autre conversation', async () => {
+    const { events, service, paused } = held();
+    service.schedule('c1', 'm1');
+    await paused();
+    service.schedule('c2', 'm9');
+    await vi.waitFor(() => expect(events).toEqual(['m9']));
+  });
+
+  it('répond tout de suite à la détresse et ne garde que la correction des réponses en attente', async () => {
+    const { events, service, paused, release } = held('m2');
+    service.schedule('c1', 'm1');
+    await paused();
+    service.schedule('c1', 'm2');
+    await vi.waitFor(() => expect(events).toEqual(['m2']));
+    release();
+    await vi.waitFor(() => expect(events).toEqual(['m2', 'm1 correction']));
+  });
+
+  it('garde la réponse d’un message modifié pendant l’attente, puis refait sa correction', async () => {
+    const { events, service, paused, release } = held();
+    service.schedule('c1', 'm1');
+    await paused();
+    service.schedule('c1', 'm1', { correctionOnly: true });
+    release();
+    await vi.waitFor(() => expect(events).toEqual(['m1', 'm1 effacée', 'm1 correction']));
+  });
+
+  it('continue la file après une erreur', async () => {
+    const { events, store, service } = held();
+    vi.mocked(store.context).mockRejectedValueOnce(new Error('base coupée'));
+    service.schedule('c1', 'm1', { correctionOnly: true });
+    service.schedule('c1', 'm2', { correctionOnly: true });
+    await vi.waitFor(() => expect(events).toContain('m2 correction'));
   });
 });

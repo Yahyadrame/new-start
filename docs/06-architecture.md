@@ -219,4 +219,5 @@ sequenceDiagram
 | LCP sur mobile 3G rapide               | < 2,5 s                |
 | Poids JS initial                       | < 180 Ko compressés    |
 | p95 des routes REST                    | < 300 ms (hors IA)     |
-| Délai de la réponse d'un agent (texte) | p50 < 2,5 s, p95 < 6 s |
+| Génération d'une réponse d'agent (texte) | p50 < 2,5 s, p95 < 6 s |
+| Affichage de cette réponse | 4 à 15 s selon sa longueur, voulu (NS-069) |
