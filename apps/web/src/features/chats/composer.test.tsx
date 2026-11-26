@@ -166,9 +166,26 @@ describe('Composer', () => {
     expect(screen.getByRole('button', { name: c.attachFile })).toBeTruthy();
   });
 
-  it('n’a plus de bouton émojis : le clavier du téléphone les propose', () => {
+  it('sur téléphone, pas d’onglet émojis : le clavier les propose', () => {
     render(<Composer onSend={vi.fn()} onSendSticker={vi.fn()} />);
-    expect(screen.queryByRole('button', { name: 'Émojis' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: c.stickers }));
+    expect(screen.queryByRole('tab', { name: c.emojis })).toBeNull();
+  });
+
+  it('sur ordinateur, le panneau a un onglet émojis qui complète le message', async () => {
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    render(<Composer onSend={vi.fn()} onSendSticker={vi.fn()} />);
+    fireEvent.change(field(), { target: { value: 'Hi ' } });
+    fireEvent.click(screen.getByRole('button', { name: c.emojiStickers }));
+    fireEvent.click(screen.getByRole('button', { name: c.emojiInsert.replace('{emoji}', '👍') }));
+    expect(field().value).toBe('Hi 👍');
+    fireEvent.mouseDown(screen.getByRole('tab', { name: c.stickers }));
+    expect(await screen.findByLabelText(c.stickerSearch)).toBeTruthy();
+    vi.unstubAllGlobals();
   });
 
   it('n’a pas de bouton stickers sans onSendSticker', () => {

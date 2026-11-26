@@ -1,6 +1,14 @@
 'use client';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@newstart/ui';
 import {
   FileText,
   Image as ImageIcon,
@@ -14,6 +22,8 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useFinePointer } from '../../shared/use-fine-pointer';
+import { EmojiPanel } from './emoji-panel';
 import { StickerPanel } from './sticker-panel';
 import fr from '../../shared/i18n/fr.json';
 import { formatDuration, useVoiceRecorder, type VoiceClip } from './use-voice-recorder';
@@ -56,6 +66,7 @@ export function Composer({
   const [draft, setDraft] = useState<Draft | null>(null);
   const [menu, setMenu] = useState(false);
   const [stickers, setStickers] = useState(false);
+  const desktop = useFinePointer();
   const [notice, setNotice] = useState<string | null>(null);
   const field = useRef<HTMLTextAreaElement>(null);
   const photoInput = useRef<HTMLInputElement>(null);
@@ -242,7 +253,7 @@ export function Composer({
               {onSendSticker && (
                 <button
                   type="button"
-                  aria-label={stickers ? c.keyboard : c.stickers}
+                  aria-label={stickers ? c.keyboard : desktop ? c.emojiStickers : c.stickers}
                   aria-pressed={stickers}
                   onClick={toggleStickers}
                   className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
@@ -290,7 +301,22 @@ export function Composer({
       </div>
       {stickers && onSendSticker && (
         <div className="mt-2 h-[min(40dvh,320px)]">
-          <StickerPanel onPick={onSendSticker} />
+          {desktop ? (
+            <Tabs defaultValue="emojis" className="flex h-full flex-col gap-2">
+              <TabsList className="self-start">
+                <TabsTrigger value="emojis">{c.emojis}</TabsTrigger>
+                <TabsTrigger value="stickers">{c.stickers}</TabsTrigger>
+              </TabsList>
+              <TabsContent value="emojis" className="mt-0 min-h-0 flex-1">
+                <EmojiPanel onPick={(emoji) => setText((t) => t + emoji)} />
+              </TabsContent>
+              <TabsContent value="stickers" className="mt-0 min-h-0 flex-1">
+                <StickerPanel onPick={onSendSticker} />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <StickerPanel onPick={onSendSticker} />
+          )}
         </div>
       )}
       <input

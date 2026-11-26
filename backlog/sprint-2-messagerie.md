@@ -254,9 +254,9 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 ## NS-059 — Barre d'écriture façon WhatsApp, avec stickers et GIF · L
 **Besoin** (porteur, 2026-11-25, captures WhatsApp et New Start sur iPhone) : adapter la barre d'écriture à celle de WhatsApp, sur mobile et sur ordinateur.
 - [ ] Maquette d'abord (clair et sombre) : champ en pilule, bouton « + » à gauche, micro à droite qui devient « envoyer » quand il y a du texte. À valider avant le code.
-- [ ] On retire le bouton émoji de la barre. À la place, un bouton « stickers et GIF ».
-- [ ] Mobile : le bouton ouvre un panneau en bas, à la place du clavier, avec deux onglets : stickers et GIF. Les émojis viennent du clavier du téléphone.
-- [ ] Ordinateur : le même panneau avec trois onglets : émojis, stickers et GIF.
+- [x] Un seul bouton « émojis et stickers » (GIF plus tard) ; sur téléphone il ne montre que les stickers.
+- [x] Mobile : panneau à la place du clavier, stickers seulement (GIF à venir) ; les émojis viennent du clavier. (#354, #355)
+- [x] Ordinateur : même panneau, onglets émojis et stickers (GIF à venir).
 - [ ] Le panneau garde les récents et un champ de recherche ; fermeture au toucher en dehors ou avec Échap ; focus géré au clavier.
 - [ ] Source des stickers et des GIF à choisir avec le porteur (options, licence, coût) avant de coder. Aucune dépense sans accord.
 - [ ] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
