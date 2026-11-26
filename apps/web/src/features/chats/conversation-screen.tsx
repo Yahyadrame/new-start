@@ -1,6 +1,11 @@
 'use client';
 
-import type { ChatBackground, ConversationItem, MessageItem } from '@newstart/shared';
+import {
+  STICKERS,
+  type ChatBackground,
+  type ConversationItem,
+  type MessageItem,
+} from '@newstart/shared';
 import { Badge, Button, Skeleton } from '@newstart/ui';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -128,7 +133,7 @@ export function ConversationScreen({
 
   // Le clientId reste le même à chaque nouvel essai : l'API ne crée jamais deux fois le message.
   const deliver = useCallback(
-    async (conversationId: string, { clientId, text, replyToId }: PendingMessage) => {
+    async (conversationId: string, { clientId, text, replyToId, sticker }: PendingMessage) => {
       const mark = (status: PendingMessage['status']) =>
         setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
       mark('sending');
@@ -137,6 +142,7 @@ export function ConversationScreen({
           clientId,
           text,
           ...(replyToId && { replyToId }),
+          ...(sticker && { sticker }),
         });
         setMessages((prev) => [...(prev ?? []), sent]);
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
@@ -163,6 +169,19 @@ export function ConversationScreen({
       ...(replyTo && { replyToId: replyTo.id }),
     };
     setReplyTo(null);
+    setPending((prev) => [...prev, message]);
+    void deliver(item.id, message);
+  };
+
+  const sendSticker = (stickerId: string) => {
+    const known = STICKERS.find((x) => x.id === stickerId);
+    if (!item || !known) return;
+    const message: PendingMessage = {
+      clientId: crypto.randomUUID(),
+      text: known.text,
+      sticker: known.id,
+      status: 'sending',
+    };
     setPending((prev) => [...prev, message]);
     void deliver(item.id, message);
   };
@@ -431,6 +450,7 @@ export function ConversationScreen({
       {loaded && (
         <Composer
           onSend={send}
+          onSendSticker={sendSticker}
           reply={
             replyTo && {
               name: replyTo.author === 'USER' ? fr.conversation.quoteYou : (item?.agent.name ?? ''),

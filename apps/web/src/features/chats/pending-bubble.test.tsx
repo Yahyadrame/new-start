@@ -21,6 +21,18 @@ describe('PendingBubble', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
 
+  it('montre un sticker en cours d’envoi comme un sticker', () => {
+    render(
+      <ol>
+        <PendingBubble
+          message={{ clientId: 'a', text: 'Hello!', status: 'sending', sticker: 'hello' }}
+          onRetry={vi.fn()}
+        />
+      </ol>,
+    );
+    expect(screen.getByRole('img', { name: 'Hello!' })).toBeTruthy();
+  });
+
   it('propose de réessayer quand le message n’est pas parti', () => {
     const onRetry = vi.fn();
     render(

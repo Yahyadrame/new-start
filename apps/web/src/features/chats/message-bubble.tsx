@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { REACTIONS, type MessageItem } from '@newstart/shared';
-import { cn, Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
+import { REACTIONS, STICKERS, type MessageItem } from '@newstart/shared';
+import { cn, Popover, PopoverContent, PopoverTrigger, Sticker } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
 import {
   Ban,
@@ -286,6 +286,7 @@ export function MessageBubble({
     return <li className="self-center text-center text-xs text-text-muted">{message.text}</li>;
   }
   const mine = message.author === 'USER';
+  const sticker = message.sticker ? STICKERS.find((s) => s.id === message.sticker) : undefined;
   if (message.deleted) {
     return (
       <li
@@ -307,18 +308,30 @@ export function MessageBubble({
         mine ? 'items-end self-end' : 'self-start',
       )}
     >
-      <div
-        className={cn(
-          'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug break-words whitespace-pre-wrap [overflow-wrap:anywhere]',
-          mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
-          highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
-        )}
-      >
-        {message.replyTo && (
-          <QuotedMessage quote={message.replyTo} agentName={agentName} onDark={mine} />
-        )}
-        <p>{message.text}</p>
-      </div>
+      {sticker ? (
+        <div
+          className={cn(
+            'flex flex-col items-center rounded-[18px]',
+            highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
+          )}
+        >
+          <Sticker parts={sticker.parts} alt={sticker.text} className="size-28" />
+          <span className="text-[13px] font-semibold">{sticker.text}</span>
+        </div>
+      ) : (
+        <div
+          className={cn(
+            'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug break-words whitespace-pre-wrap [overflow-wrap:anywhere]',
+            mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
+            highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
+          )}
+        >
+          {message.replyTo && (
+            <QuotedMessage quote={message.replyTo} agentName={agentName} onDark={mine} />
+          )}
+          <p>{message.text}</p>
+        </div>
+      )}
       {message.reaction && (
         <span
           role="img"

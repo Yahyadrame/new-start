@@ -180,6 +180,24 @@ describe('Composer', () => {
     expect(field().value).toBe('Hi 👍');
   });
 
+  it('n’a pas de bouton stickers sans onSendSticker', () => {
+    render(<Composer onSend={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: c.stickers })).toBeNull();
+  });
+
+  it('envoie le sticker choisi et ferme le panneau', async () => {
+    const onSendSticker = vi.fn();
+    render(<Composer onSend={vi.fn()} onSendSticker={onSendSticker} />);
+    const open = screen.getByRole('button', { name: c.stickers });
+    fireEvent.pointerDown(open, { button: 0, ctrlKey: false });
+    fireEvent.click(open);
+    fireEvent.click(
+      await screen.findByRole('button', { name: c.stickerSend.replace('{text}', 'Hello!') }),
+    );
+    expect(onSendSticker).toHaveBeenCalledWith('hello');
+    expect(screen.queryByLabelText(c.stickerSearch)).toBeNull();
+  });
+
   it('propose une quarantaine d’émojis, tous entiers', () => {
     expect(EMOJIS.length).toBeGreaterThan(35);
     expect(new Set(EMOJIS).size).toBe(EMOJIS.length);
