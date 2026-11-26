@@ -267,7 +267,8 @@ _Ajouté le 2026-11-26, défaut vu en travaillant sur NS-066._
 - [x] Fermeture au toucher en dehors ou avec Échap ; focus géré au clavier (Échap le rend au bouton, sur ordinateur il entre dans le panneau à l’ouverture). Sur téléphone, toucher le champ rend la place au clavier.
 - [ ] Le panneau garde les récents et un champ de recherche (émojis : #356 ; reste les stickers récents).
 - [ ] Source des stickers et des GIF à choisir avec le porteur (options, licence, coût) avant de coder. Aucune dépense sans accord.
-- [ ] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+- [x] Tests unitaires du panneau, de la bascule clavier/panneau et des onglets ; e2e sur mobile et sur ordinateur.
+- [x] Ordinateur : liste complète d’émojis avec catégories, recherche en français et en anglais, récents et teintes de peau.
 
 ## NS-060 — Masquer la barre de suggestions au-dessus du clavier iPhone · S
 **Besoin** : au-dessus du champ de saisie, iOS affiche sa barre (flèches haut/bas, validation, mots proposés) qui gêne.

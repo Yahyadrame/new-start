@@ -1,69 +1,52 @@
 'use client';
 
-import fr from '../../shared/i18n/fr.json';
+import { useEffect, useRef } from 'react';
+import { useColorScheme } from '../../shared/avatar/use-color-scheme';
+import { addFrenchKeywords } from './emoji-search-fr';
 
-const c = fr.conversation;
-
-/** Les émojis du quotidien, sans bibliothèque : de quoi réagir et se détendre en anglais comme en français. */
-export const EMOJIS = [
-  '😀',
-  '😂',
-  '🥹',
-  '😊',
-  '😍',
-  '🥰',
-  '😎',
-  '🤔',
-  '😅',
-  '😭',
-  '😮',
-  '😴',
-  '🙄',
-  '😬',
-  '🤝',
-  '🙏',
-  '👍',
-  '👎',
-  '👏',
-  '🙌',
-  '💪',
-  '👋',
-  '✌️',
-  '🤞',
-  '❤️',
-  '🔥',
-  '✨',
-  '🎉',
-  '🎶',
-  '☕',
-  '🍕',
-  '🌍',
-  '✈️',
-  '📚',
-  '💡',
-  '✅',
-  '❌',
-  '❓',
-  '💬',
-  '🎧',
-];
-
-/** Les émojis, pour l'ordinateur : sur téléphone, le clavier les propose déjà. Un toucher en ajoute un au message. */
+/**
+ * La liste complète d'émojis (catégories, recherche, récents, teintes de peau), pour l'ordinateur :
+ * sur téléphone, le clavier les propose déjà. Un toucher en ajoute un au message.
+ * emoji-mart et ses données ne sont chargés qu'à l'ouverture, depuis notre site (pas de CDN).
+ * ponytail: sans @emoji-mart/react, qui n'accepte pas React 19 ; le composant web suffit.
+ */
 export function EmojiPanel({ onPick }: { onPick: (emoji: string) => void }) {
-  return (
-    <ul className="grid h-full grid-cols-8 content-start gap-1 overflow-y-auto overscroll-contain">
-      {EMOJIS.map((emoji) => (
-        <li key={emoji}>
-          <button
-            type="button"
-            aria-label={c.emojiInsert.replace('{emoji}', emoji)}
-            onClick={() => onPick(emoji)}
-            className="grid size-11 w-full place-items-center rounded-xl text-2xl hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-accent-text"
-          >
-            {emoji}
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
+  const host = useRef<HTMLDivElement>(null);
+  const pick = useRef(onPick);
+  pick.current = onPick;
+  const theme = useColorScheme();
+
+  useEffect(() => {
+    let closed = false;
+    const node = host.current;
+    void Promise.all([
+      import('emoji-mart'),
+      import('@emoji-mart/data'),
+      import('@emoji-mart/data/i18n/fr.json'),
+      import('emojibase-data/fr/compact.json'),
+    ]).then(([{ Picker }, { default: data }, i18n, french]) => {
+      if (closed || !node) return;
+      addFrenchKeywords(data as Parameters<typeof addFrenchKeywords>[0], french.default);
+      const picker = new Picker({
+        data,
+        i18n: i18n.default,
+        theme,
+        previewPosition: 'none',
+        skinTonePosition: 'search',
+        dynamicWidth: true,
+        emojiButtonSize: 44,
+        emojiSize: 28,
+        onEmojiSelect: (emoji: { native: string }) => pick.current(emoji.native),
+      }) as unknown as HTMLElement;
+      picker.style.width = '100%';
+      picker.style.height = '100%';
+      node.replaceChildren(picker);
+    });
+    return () => {
+      closed = true;
+      node?.replaceChildren();
+    };
+  }, [theme]);
+
+  return <div ref={host} className="h-full overflow-hidden" />;
 }
