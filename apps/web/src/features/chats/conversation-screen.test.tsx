@@ -10,6 +10,7 @@ const sendMessage = vi.fn();
 const markConversationRead = vi.fn();
 const addToNotebook = vi.fn();
 const translateMessage = vi.fn();
+const reactToMessage = vi.fn();
 const getChatBackground = vi.fn();
 const scrollIntoView = vi.fn();
 const router = { replace };
@@ -26,6 +27,7 @@ vi.mock('./chats-api', () => ({
   markConversationRead,
   addToNotebook,
   translateMessage,
+  reactToMessage,
 }));
 vi.mock('../../shared/chat-background/chat-background-api', () => ({ getChatBackground }));
 const { ConversationScreen } = await import('./conversation-screen');
@@ -291,6 +293,42 @@ describe('ConversationScreen', () => {
         'c2',
         expect.objectContaining({ text: 'First', forwarded: true }),
       );
+    });
+
+    it('pose une réaction : la pastille apparaît sous la bulle', async () => {
+      reactToMessage.mockResolvedValue({ ...msg('m1', 'USER', 'First'), reaction: '🙏' });
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+      fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger as HTMLElement);
+      fireEvent.click(
+        await screen.findByRole('button', {
+          name: fr.conversation.reactWith.replace('{emoji}', '🙏'),
+        }),
+      );
+      expect(reactToMessage).toHaveBeenCalledWith('tok', 'm1', '🙏');
+      expect(
+        await screen.findByRole('img', {
+          name: fr.conversation.yourReaction.replace('{emoji}', '🙏'),
+        }),
+      ).toBeTruthy();
+    });
+
+    it('garde la bulle telle quelle quand la réaction n’est pas enregistrée', async () => {
+      reactToMessage.mockRejectedValue(new Error('réseau'));
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      const trigger = screen.getAllByRole('button', { name: fr.conversation.messageActions })[0];
+      fireEvent.pointerDown(trigger as HTMLElement, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger as HTMLElement);
+      fireEvent.click(
+        await screen.findByRole('button', {
+          name: fr.conversation.reactWith.replace('{emoji}', '😂'),
+        }),
+      );
+      await waitFor(() => expect(reactToMessage).toHaveBeenCalled());
+      expect(screen.queryByRole('img', { name: /Ta réaction/ })).toBeNull();
     });
 
     const startEdit = async () => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { MessageItem } from '@newstart/shared';
+import { REACTIONS, type MessageItem } from '@newstart/shared';
 import { cn, Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
 import {
@@ -55,9 +55,13 @@ function Actions({
   onReply,
   onEdit,
   onForward,
+  onReact,
+  reaction,
   onDelete,
 }: {
   text: string;
+  onReact: ((emoji: string | null) => void) | undefined;
+  reaction: string | null;
   onForward: (() => void) | undefined;
   onReply: (() => void) | undefined;
   onEdit: (() => void) | undefined;
@@ -100,7 +104,7 @@ function Actions({
           <MoreHorizontal aria-hidden="true" className="size-4" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-60" side="top">
+      <PopoverContent className="w-[19rem]" side="top">
         {ask ? (
           <div className="flex flex-col gap-1">
             <p className="px-3 py-2 text-base font-semibold">{c.deleteAsk}</p>
@@ -114,6 +118,28 @@ function Actions({
           </div>
         ) : (
           <div className="flex flex-col gap-1">
+            {onReact && (
+              <div className="flex justify-between pb-1">
+                {REACTIONS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    aria-label={c.reactWith.replace('{emoji}', emoji)}
+                    aria-pressed={reaction === emoji}
+                    className={cn(
+                      'grid size-11 place-items-center rounded-full text-xl hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-accent-text',
+                      reaction === emoji && 'bg-surface-2',
+                    )}
+                    onClick={() => {
+                      close(false);
+                      onReact(reaction === emoji ? null : emoji);
+                    }}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
             {onReply && (
               <button
                 type="button"
@@ -233,6 +259,7 @@ export function MessageBubble({
   onReply,
   onEdit,
   onForward,
+  onReact,
   agentName = '',
 }: {
   message: MessageItem;
@@ -242,6 +269,8 @@ export function MessageBubble({
   onReply?: (message: MessageItem) => void;
   /** Modifie ce message (le sien) ; sans elle, le menu n'a pas « Modifier ». */
   onEdit?: (message: MessageItem) => void;
+  /** Pose ou retire (null) la réaction de la personne ; sans elle, le menu n'a pas les émojis. */
+  onReact?: (message: MessageItem, emoji: string | null) => void;
   /** Transfère ce message vers une autre conversation ; sans elle, le menu n'a pas « Transférer ». */
   onForward?: (message: MessageItem) => void;
   /** Entoure la bulle : le message qu'on vient de retrouver par la recherche. */
@@ -290,6 +319,15 @@ export function MessageBubble({
         )}
         <p>{message.text}</p>
       </div>
+      {message.reaction && (
+        <span
+          role="img"
+          aria-label={c.yourReaction.replace('{emoji}', message.reaction)}
+          className="-mt-3 rounded-full border border-line bg-surface-1 px-1.5 text-sm leading-6"
+        >
+          {message.reaction}
+        </span>
+      )}
       <span className="flex items-center gap-1 px-1 text-xs text-text-muted">
         {message.forwarded && <span>{c.forwarded}</span>}
         {message.edited && <span>{c.edited}</span>}
@@ -298,6 +336,8 @@ export function MessageBubble({
         <Actions
           text={message.text}
           onReply={onReply && (() => onReply(message))}
+          reaction={message.reaction}
+          onReact={onReact && ((emoji) => onReact(message, emoji))}
           onForward={onForward && (() => onForward(message))}
           onEdit={mine && onEdit ? () => onEdit(message) : undefined}
           onDelete={onDelete && (() => onDelete(message.id))}

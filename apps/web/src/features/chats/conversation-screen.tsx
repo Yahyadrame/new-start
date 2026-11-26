@@ -19,6 +19,7 @@ import {
   listConversations,
   listMessages,
   markConversationRead,
+  reactToMessage,
   sendMessage,
 } from './chats-api';
 import { dayLabel } from './chats-format';
@@ -342,6 +343,18 @@ export function ConversationScreen({
                         setReplyTo(null);
                         setEditFailed(false);
                         setEditing(m);
+                      }}
+                      onReact={async (m, emoji) => {
+                        try {
+                          const saved = await reactToMessage(token.current, m.id, emoji);
+                          setMessages((prev) =>
+                            prev?.map((x) =>
+                              x.id === m.id ? { ...x, reaction: saved.reaction } : x,
+                            ),
+                          );
+                        } catch {
+                          // La pastille ne change pas : la personne peut réessayer.
+                        }
                       }}
                       onForward={(m) => {
                         setTargets(undefined);

@@ -227,14 +227,14 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 - [x] Répondre en citant (#344 API, web) : « Répondre » dans le menu, bande au-dessus du champ, citation dans la bulle.
 - [x] Modifier (#346 API, web) : « Modifier » dans le menu de ses messages, le champ reprend le texte, mention « modifié », correction relue.
 - [x] Transférer (mention « transféré ») : API (#348) et web.
-- [ ] Réactions : API (`PUT /messages/:id/reaction`) faite, reste le web.
+- [x] Réactions : API (#350) et web (`PUT /messages/:id/reaction`).
 - [x] API de suppression (`DELETE /messages/:id`, colonne `deletedAt`). Reste : modification et transfert.
 - [ ] À découper en deux ou trois PR.
 
 ## NS-055 — Émojis et stickers · M
 
 - [x] Sélecteur d'émojis dans la barre d'écriture (une quarantaine, sans bibliothèque).
-- [ ] Réactions rapides sur un message.
+- [x] Réactions rapides sur un message (voir NS-054).
 - [ ] Stickers : source à décider (pack libre de droits, sans dépense), puis demander.
 
 ## NS-057 — Responsivité tablette (768 et 1024 px) · M

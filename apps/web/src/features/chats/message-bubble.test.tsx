@@ -246,6 +246,34 @@ describe('MessageBubble', () => {
     expect(onForward).toHaveBeenCalledWith(m);
   });
 
+  it('montre la réaction posée et laisse en choisir une autre ou la retirer', async () => {
+    const onReact = vi.fn();
+    const m = message({ author: 'AGENT', reaction: '👍' });
+    render(
+      <ol>
+        <MessageBubble message={m} onReact={onReact} />
+      </ol>,
+    );
+    expect(screen.getByRole('img', { name: c.yourReaction.replace('{emoji}', '👍') })).toBeTruthy();
+    const open = async () => {
+      const trigger = screen.getByRole('button', { name: c.messageActions });
+      fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger);
+    };
+    await open();
+    const current = await screen.findByRole('button', {
+      name: c.reactWith.replace('{emoji}', '👍'),
+    });
+    expect(current.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(current);
+    expect(onReact).toHaveBeenLastCalledWith(m, null);
+    await open();
+    fireEvent.click(
+      await screen.findByRole('button', { name: c.reactWith.replace('{emoji}', '❤️') }),
+    );
+    expect(onReact).toHaveBeenLastCalledWith(m, '❤️');
+  });
+
   it('propose « Modifier » sur ses messages seulement, et montre « modifié »', async () => {
     const onEdit = vi.fn();
     const mine = message({ author: 'USER', edited: true });

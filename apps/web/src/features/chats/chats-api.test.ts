@@ -8,6 +8,7 @@ import {
   listConversations,
   listMessages,
   markConversationRead,
+  reactToMessage,
   searchMessages,
   sendMessage,
 } from './chats-api';
@@ -183,6 +184,26 @@ describe('searchMessages', () => {
     it('lève une erreur quand l’API refuse', async () => {
       vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
       await expect(deleteMessage('tok', 'm1')).rejects.toMatchObject({ status: 404 });
+    });
+  });
+
+  describe('reactToMessage', () => {
+    it('envoie un PUT avec l’émoji, ou null, et rend le message', async () => {
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'm1' }) });
+      vi.stubGlobal('fetch', fetchMock);
+      expect(await reactToMessage('tok', 'm1', '👍')).toEqual({ id: 'm1' });
+      expect(fetchMock).toHaveBeenCalledWith('/api/messages/m1/reaction', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer tok', 'content-type': 'application/json' },
+        body: JSON.stringify({ emoji: '👍' }),
+      });
+      await reactToMessage('tok', 'm1', null);
+      expect(fetchMock.mock.calls[1]?.[1].body).toBe(JSON.stringify({ emoji: null }));
+    });
+
+    it('lève une erreur quand l’API refuse', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+      await expect(reactToMessage('tok', 'm1', '👍')).rejects.toMatchObject({ status: 404 });
     });
   });
 

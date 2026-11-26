@@ -425,6 +425,8 @@
     },
     "forwardAction": "Transférer",
     "forwarded": "transféré",
+    "reactWith": "Réagir avec {emoji}",
+    "yourReaction": "Ta réaction : {emoji}",
     "editing": "Modifier le message",
     "editCancel": "Annuler la modification",
     "editFailed": "La modification n'a pas été enregistrée. Réessaie."
