@@ -418,6 +418,13 @@
     "quoteYou": "Toi",
     "edit": "Modifier",
     "edited": "modifié",
+    "forward": {
+      "title": "Transférer à…",
+      "empty": "Tu n'as pas d'autre conversation pour l'instant.",
+      "failed": "Le message n'est pas parti. Réessaie."
+    },
+    "forwardAction": "Transférer",
+    "forwarded": "transféré",
     "editing": "Modifier le message",
     "editCancel": "Annuler la modification",
     "editFailed": "La modification n'a pas été enregistrée. Réessaie."

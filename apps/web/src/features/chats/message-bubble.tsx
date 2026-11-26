@@ -2,7 +2,16 @@ import { useState } from 'react';
 import type { MessageItem } from '@newstart/shared';
 import { cn, Popover, PopoverContent, PopoverTrigger } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
-import { Ban, CheckCheck, Copy, MoreHorizontal, Pencil, Reply, Trash2 } from 'lucide-react';
+import {
+  Ban,
+  CheckCheck,
+  Copy,
+  Forward,
+  MoreHorizontal,
+  Pencil,
+  Reply,
+  Trash2,
+} from 'lucide-react';
 import { QuotedMessage } from './quoted-message';
 import { formatHour } from './chats-format';
 
@@ -45,9 +54,11 @@ function Actions({
   text,
   onReply,
   onEdit,
+  onForward,
   onDelete,
 }: {
   text: string;
+  onForward: (() => void) | undefined;
   onReply: (() => void) | undefined;
   onEdit: (() => void) | undefined;
   onDelete: (() => Promise<void>) | undefined;
@@ -129,6 +140,19 @@ function Actions({
                 {c.edit}
               </button>
             )}
+            {onForward && (
+              <button
+                type="button"
+                className={item}
+                onClick={() => {
+                  close(false);
+                  onForward();
+                }}
+              >
+                <Forward aria-hidden="true" className="size-5" />
+                {c.forwardAction}
+              </button>
+            )}
             <button type="button" className={item} onClick={() => void copy()}>
               <Copy aria-hidden="true" className="size-5" />
               {c.copy}
@@ -208,6 +232,7 @@ export function MessageBubble({
   onDelete,
   onReply,
   onEdit,
+  onForward,
   agentName = '',
 }: {
   message: MessageItem;
@@ -217,6 +242,8 @@ export function MessageBubble({
   onReply?: (message: MessageItem) => void;
   /** Modifie ce message (le sien) ; sans elle, le menu n'a pas « Modifier ». */
   onEdit?: (message: MessageItem) => void;
+  /** Transfère ce message vers une autre conversation ; sans elle, le menu n'a pas « Transférer ». */
+  onForward?: (message: MessageItem) => void;
   /** Entoure la bulle : le message qu'on vient de retrouver par la recherche. */
   highlighted?: boolean;
   /** Traduit un message du contact ; sans elle, pas de bouton. */
@@ -264,12 +291,14 @@ export function MessageBubble({
         <p>{message.text}</p>
       </div>
       <span className="flex items-center gap-1 px-1 text-xs text-text-muted">
+        {message.forwarded && <span>{c.forwarded}</span>}
         {message.edited && <span>{c.edited}</span>}
         <time dateTime={message.createdAt}>{formatHour(message.createdAt)}</time>
         {mine && <CheckCheck aria-hidden="true" className="size-3.5" />}
         <Actions
           text={message.text}
           onReply={onReply && (() => onReply(message))}
+          onForward={onForward && (() => onForward(message))}
           onEdit={mine && onEdit ? () => onEdit(message) : undefined}
           onDelete={onDelete && (() => onDelete(message.id))}
         />

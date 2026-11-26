@@ -229,6 +229,22 @@ describe('MessageBubble', () => {
     expect(onReply).toHaveBeenCalledWith(m);
   });
 
+  it('propose « Transférer » et montre « transféré »', async () => {
+    const onForward = vi.fn();
+    const m = message({ author: 'AGENT', forwarded: true });
+    render(
+      <ol>
+        <MessageBubble message={m} onForward={onForward} />
+      </ol>,
+    );
+    expect(screen.getByText(c.forwarded)).toBeTruthy();
+    const trigger = screen.getByRole('button', { name: c.messageActions });
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+    fireEvent.click(await screen.findByRole('button', { name: c.forwardAction }));
+    expect(onForward).toHaveBeenCalledWith(m);
+  });
+
   it('propose « Modifier » sur ses messages seulement, et montre « modifié »', async () => {
     const onEdit = vi.fn();
     const mine = message({ author: 'USER', edited: true });
