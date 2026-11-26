@@ -13,9 +13,20 @@ export function mergeLatest(shown: MessageItem[], fetched: MessageItem[]): Messa
   );
 }
 
-/** Le contact (ou le système, en cas d'échec) a écrit après ce message de la personne. */
-export const hasReplyAfter = (items: MessageItem[], since: string) =>
-  items.some((m) => m.author !== 'USER' && m.createdAt > since);
+/** Ce que le contact (ou le système, en cas d'échec) a écrit depuis cette date. */
+export const repliesAfter = (items: MessageItem[], since: string) =>
+  items.filter((m) => m.author !== 'USER' && m.createdAt > since).length;
+
+/**
+ * Un message parti depuis `since` attend encore le contact : sa correction arrive avec la réponse,
+ * et un message d'échec tient lieu de réponse pour l'un d'eux.
+ */
+export function isAwaiting(items: MessageItem[], since: string) {
+  const open = items.filter(
+    (m) => m.author === 'USER' && !m.deleted && !m.correction && m.createdAt >= since,
+  );
+  return open.length > items.filter((m) => m.author === 'SYSTEM' && m.createdAt > since).length;
+}
 
 /** Un message de la personne tout récent sans réponse : l'agent est sans doute encore en train d'écrire. */
 export const isFresh = (createdAt: string, now: number = Date.now()) =>

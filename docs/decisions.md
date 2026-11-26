@@ -159,6 +159,15 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 - Les huit derniers stickers envoyés s'affichent en haut du panneau, gardés sur l'appareil comme les émojis récents. Pas de synchronisation entre appareils : elle demanderait une table et une route, à faire si le besoin apparaît.
 - L'ordre ne change qu'à la réouverture du panneau, pour que les boutons ne bougent pas sous le doigt.
 
+## 2026-11-26 — Rythme des réponses (NS-069)
+
+Choix du porteur du projet.
+
+- Attente selon la longueur de la réponse, parmi 3 options : environ 4 s pour « Hey! », 8 s pour deux phrases, 15 s au plus. Le temps de l'IA compte dans l'attente.
+- Plusieurs messages d'affilée : une réponse par message, dans l'ordre, parmi 2 options. Les attentes s'ajoutent.
+- La détresse ne fait pas la queue : réponse immédiate, et les réponses encore en attente ne gardent que leur correction.
+- La file vit en mémoire de l'API : avec plusieurs instances ou un redémarrage fréquent, il faudra une file de jobs.
+
 ## 2026-11-26 — Messages non lus (NS-068)
 
 - Un message est lu quand sa conversation est affichée et l'appli au premier plan (demande du porteur du projet). L'API ne change pas.

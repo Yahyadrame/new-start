@@ -608,6 +608,38 @@ describe('ConversationScreen', () => {
       expect(markConversationRead).toHaveBeenCalledWith('tok', 'c1');
     });
 
+    it('attend la réponse à chaque message envoyé coup sur coup', async () => {
+      await sendHello();
+      const second = { ...msg('m5', 'USER', 'Again'), createdAt: '2026-11-20T10:01:01.000Z' };
+      sendMessage.mockResolvedValue(second);
+      await write('Again');
+      await screen.findByText('Again');
+      listMessages.mockResolvedValue({ items: [reply, second, corrected], nextCursor: null });
+      await tick(2000);
+      await screen.findByText('Hi there');
+      expect(screen.getByText(typing)).toBeTruthy();
+      expect(markConversationRead).toHaveBeenCalledTimes(1);
+      const last = { ...msg('m6', 'AGENT', 'Sure'), createdAt: '2026-11-20T10:01:09.000Z' };
+      const secondDone = { ...second, correction: { better: null, whyFr: null } };
+      listMessages.mockResolvedValue({
+        items: [last, reply, secondDone, corrected],
+        nextCursor: null,
+      });
+      await tick(2000);
+      await waitFor(() => expect(screen.queryByText(typing)).toBeNull());
+      expect(markConversationRead).toHaveBeenCalledTimes(2);
+    });
+
+    it('reprend l’attente à l’ouverture quand une première réponse est déjà là', async () => {
+      const now = (ms: number) => new Date(Date.now() - ms).toISOString();
+      const first = { ...corrected, createdAt: now(9000) };
+      const open = { ...msg('m5', 'USER', 'Again'), createdAt: now(8000) };
+      const early = { ...reply, createdAt: now(1000) };
+      listMessages.mockResolvedValue({ items: [early, open, first], nextCursor: null });
+      render(<ConversationScreen agentSlug="jade" />);
+      expect(await screen.findByText(typing)).toBeTruthy();
+    });
+
     it('laisse la réponse non lue si l’appli est en arrière-plan, jusqu’au retour', async () => {
       await sendHello();
       appVisibility('hidden');

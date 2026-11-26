@@ -30,11 +30,12 @@ import {
 import { dayLabel } from './chats-format';
 import {
   CHATS_CHANGED,
-  hasReplyAfter,
+  isAwaiting,
   isFresh,
   mergeLatest,
   POLL_LIMIT,
   POLL_MS,
+  repliesAfter,
 } from './chats-merge';
 import { Composer } from './composer';
 import { ForwardDialog } from './forward-dialog';
@@ -76,8 +77,9 @@ export function ConversationScreen({
   const [targets, setTargets] = useState<ConversationItem[] | undefined>(undefined);
   // Compte les modifications : chacune relance la relecture qui ramène la nouvelle correction.
   const [edits, setEdits] = useState(0);
-  // Date du dernier message envoyé tant que le contact n'a pas répondu ; null sinon.
-  const [awaiting, setAwaiting] = useState<string | null>(null);
+  // Date du plus ancien message encore sans réponse ; null quand le contact a répondu à tout.
+  // Un nouvel objet à chaque envoi relance les 60 s de relecture.
+  const [awaiting, setAwaiting] = useState<{ since: string } | null>(null);
   const [attempt, setAttempt] = useState(0);
   // La limite du jour est atteinte : le message n'est pas parti et réessayer ne sert à rien avant demain.
   const [limited, setLimited] = useState(false);
@@ -142,8 +144,11 @@ export function ConversationScreen({
         const page = await listMessages(token.current, found.id);
         setMessages([...page.items].reverse());
         setNextCursor(page.nextCursor);
-        const last = page.items[0];
-        if (last?.author === 'USER' && isFresh(last.createdAt)) setAwaiting(last.createdAt);
+        // La page va du plus récent au plus ancien : le dernier trouvé est le plus ancien.
+        const since = page.items
+          .filter((m) => m.author === 'USER' && !m.correction && isFresh(m.createdAt))
+          .at(-1)?.createdAt;
+        if (since && isAwaiting(page.items, since)) setAwaiting({ since });
       } catch {
         setError(true);
       }
@@ -178,7 +183,9 @@ export function ConversationScreen({
         });
         setMessages((prev) => [...(prev ?? []), sent]);
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
-        setAwaiting(sent.createdAt);
+        setAwaiting((prev) => ({
+          since: prev && prev.since < sent.createdAt ? prev.since : sent.createdAt,
+        }));
       } catch (e) {
         if ((e as { code?: string }).code === 'USAGE_LIMIT') {
           setPending((prev) => prev.filter((p) => p.clientId !== clientId));
@@ -234,7 +241,8 @@ export function ConversationScreen({
   // La correction est refaite en arrière-plan : on relit quelques fois pour la montrer quand elle arrive.
   useEffect(() => {
     if (edits === 0 || !item) return;
-    const timers = [3000, 8000, 15000].map((ms) =>
+    // Après une réponse en attente, la nouvelle correction peut prendre plus de temps.
+    const timers = [3000, 8000, 15000, 30000].map((ms) =>
       setTimeout(() => {
         void listMessages(token.current, item.id)
           .then((page) => setMessages((prev) => mergeLatest(prev ?? [], page.items)))
@@ -248,15 +256,22 @@ export function ConversationScreen({
   useEffect(() => {
     if (!awaiting || !item) return;
     let tries = 0;
+    let replies = 0;
     const timer = setInterval(() => {
       tries += 1;
       if (tries >= POLL_LIMIT) setAwaiting(null);
       void listMessages(token.current, item.id)
         .then((page) => {
           setMessages((prev) => mergeLatest(prev ?? [], page.items));
-          if (hasReplyAfter(page.items, awaiting)) {
-            setAwaiting(null);
+          const count = repliesAfter(page.items, awaiting.since);
+          if (count > replies) {
+            replies = count;
+            tries = 0;
             markRead(item.id);
+          }
+          // Une relecture partie avant le dernier envoi ne dit rien de lui.
+          if (!isAwaiting(page.items, awaiting.since)) {
+            setAwaiting((current) => (current === awaiting ? null : current));
           }
         })
         .catch(() => undefined); // le tour suivant réessaie
