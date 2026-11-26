@@ -107,6 +107,21 @@ export async function editMessage(
   return (await res.json()) as MessageItem;
 }
 
+/** Pose la réaction de la personne sur un message ; `null` la retire. Rend le message à jour. */
+export async function reactToMessage(
+  token: string,
+  messageId: string,
+  emoji: string | null,
+): Promise<MessageItem> {
+  const res = await fetch(`/api/messages/${messageId}/reaction`, {
+    method: 'PUT',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ emoji }),
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+  return (await res.json()) as MessageItem;
+}
+
 /** Les messages de la personne qui contiennent `q` (2 caractères au moins), du plus récent au plus ancien. */
 export async function searchMessages(token: string, q: string): Promise<SearchHit[]> {
   const res = await fetch(`/api/conversations/search?q=${encodeURIComponent(q)}`, {
