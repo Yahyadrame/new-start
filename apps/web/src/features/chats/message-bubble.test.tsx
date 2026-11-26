@@ -247,6 +247,17 @@ describe('MessageBubble', () => {
     expect(onForward).toHaveBeenCalledWith(m);
   });
 
+  it('montre un sticker en grand avec sa légende, sans bulle de texte', () => {
+    render(
+      <ol>
+        <MessageBubble message={message({ sticker: 'thanks', text: 'Thanks!' })} />
+      </ol>,
+    );
+    expect(screen.getByRole('img', { name: 'Thanks!' })).toBeTruthy();
+    expect(screen.getByText('Thanks!').tagName).toBe('SPAN');
+    expect(document.querySelector('p.bg-bg, p')?.textContent ?? '').not.toBe('Thanks!');
+  });
+
   it('montre la réaction posée et laisse en choisir une autre ou la retirer', async () => {
     const onReact = vi.fn();
     const m = message({ author: 'AGENT', reaction: '👍' });

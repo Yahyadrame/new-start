@@ -11,6 +11,7 @@ export {
   type AvatarTheme,
   type AvatarVariant,
 } from './avatars';
+export { Sticker, type StickerProps } from './components/sticker';
 export { Badge, badgeVariants } from './components/badge';
 export { Input } from './components/input';
 export { Select } from './components/select';

@@ -295,6 +295,26 @@ describe('ConversationScreen', () => {
       );
     });
 
+    it('envoie un sticker avec son identifiant et l’affiche', async () => {
+      sendMessage.mockResolvedValue({ ...msg('m9', 'USER', 'Thanks!'), sticker: 'thanks' });
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      const open = screen.getByRole('button', { name: fr.conversation.stickers });
+      fireEvent.pointerDown(open, { button: 0, ctrlKey: false });
+      fireEvent.click(open);
+      fireEvent.click(
+        await screen.findByRole('button', {
+          name: fr.conversation.stickerSend.replace('{text}', 'Thanks!'),
+        }),
+      );
+      expect(sendMessage).toHaveBeenCalledWith(
+        'tok',
+        expect.any(String),
+        expect.objectContaining({ text: 'Thanks!', sticker: 'thanks' }),
+      );
+      expect(await screen.findByRole('img', { name: 'Thanks!' })).toBeTruthy();
+    });
+
     it('pose une réaction : la pastille apparaît sous la bulle', async () => {
       reactToMessage.mockResolvedValue({ ...msg('m1', 'USER', 'First'), reaction: '🙏' });
       render(<ConversationScreen agentSlug="jade" />);

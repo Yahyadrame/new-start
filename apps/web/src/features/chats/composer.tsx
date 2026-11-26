@@ -7,12 +7,14 @@ import {
   Mic,
   Plus,
   Smile,
+  Sticker as StickerIcon,
   SendHorizontal,
   Square,
   Trash2,
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { StickerPanel } from './sticker-panel';
 import fr from '../../shared/i18n/fr.json';
 import { formatDuration, useVoiceRecorder, type VoiceClip } from './use-voice-recorder';
 
@@ -77,6 +79,7 @@ const round =
 export function Composer({
   onSend,
   onSendMedia,
+  onSendSticker,
   reply = null,
   onCancelReply,
   edit = null,
@@ -90,10 +93,13 @@ export function Composer({
   edit?: { id: string; text: string } | null;
   onCancelEdit?: () => void;
   onSendMedia?: (draft: Draft) => void;
+  /** Envoie le sticker choisi dans le panneau ; sans lui, la barre n'a pas de bouton stickers. */
+  onSendSticker?: (stickerId: string) => void;
 }) {
   const [text, setText] = useState('');
   const [draft, setDraft] = useState<Draft | null>(null);
   const [menu, setMenu] = useState(false);
+  const [stickers, setStickers] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const photoInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -292,6 +298,27 @@ export function Composer({
                   </ul>
                 </PopoverContent>
               </Popover>
+              {onSendSticker && (
+                <Popover open={stickers} onOpenChange={setStickers}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label={c.stickers}
+                      className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+                    >
+                      <StickerIcon aria-hidden="true" className="size-6" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80" side="top">
+                    <StickerPanel
+                      onPick={(id) => {
+                        setStickers(false);
+                        onSendSticker(id);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
               <label htmlFor="composer" className="sr-only">
                 {c.composerLabel}
               </label>

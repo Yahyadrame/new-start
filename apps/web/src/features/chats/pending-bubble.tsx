@@ -1,3 +1,5 @@
+import { STICKERS } from '@newstart/shared';
+import { Sticker } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
 
 const c = fr.conversation;
@@ -8,6 +10,8 @@ export type PendingMessage = {
   status: 'sending' | 'failed';
   /** Le message cité, gardé pour que le nouvel essai parte avec la même citation. */
   replyToId?: string;
+  /** L'identifiant du sticker quand le message en est un. */
+  sticker?: string;
 };
 
 /** Message de la personne pas encore confirmé par l'API : en cours d'envoi, ou parti en échec. */
@@ -18,11 +22,19 @@ export function PendingBubble({
   message: PendingMessage;
   onRetry: () => void;
 }) {
+  const sticker = STICKERS.find((s) => s.id === message.sticker);
   return (
     <li className="flex max-w-[80%] flex-col items-end gap-1 self-end">
-      <p className="rounded-[18px] rounded-br-[6px] bg-accent px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap text-on-accent opacity-70">
-        {message.text}
-      </p>
+      {sticker ? (
+        <div className="flex flex-col items-center opacity-70">
+          <Sticker parts={sticker.parts} alt={sticker.text} className="size-28" />
+          <span className="text-[13px] font-semibold">{sticker.text}</span>
+        </div>
+      ) : (
+        <p className="rounded-[18px] rounded-br-[6px] bg-accent px-4 py-2.5 text-[15px] leading-snug whitespace-pre-wrap text-on-accent opacity-70">
+          {message.text}
+        </p>
+      )}
       {message.status === 'sending' ? (
         <p role="status" className="px-1 text-xs text-text-muted">
           {c.sending}
