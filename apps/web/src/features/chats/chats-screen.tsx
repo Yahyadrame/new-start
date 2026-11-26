@@ -13,14 +13,15 @@ import {
 } from '@newstart/ui';
 import { ChevronDown, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { ContactAvatar } from '../../shared/avatar/contact-avatar';
 import { loadContactAvatars } from '../../shared/avatar/contact-avatars';
 import { ensureSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
 import { BottomNav, NotificationsBell } from '../../shared/navigation';
 import { listConversations } from './chats-api';
+import { CHATS_CHANGED, LIST_POLL_MS } from './chats-merge';
 import { SearchResults } from './search-results';
 import {
   applyFilter,
@@ -42,20 +43,52 @@ export function ChatsScreen() {
   const [query, setQuery] = useState('');
   const [moreOpen, setMoreOpen] = useState(false);
   const [token, setToken] = useState('');
+  const pathname = usePathname();
+  const signedIn = useRef(false);
 
+  // La liste reste montée d'une conversation à l'autre : on la relit à chaque changement d'écran, puis
+  // régulièrement, pour que les réponses arrivées entre-temps gardent leur badge « non lu ».
   useEffect(() => {
-    void (async () => {
+    let sent = 0;
+    // Dernière réponse affichée : une plus ancienne qui arrive après elle est ignorée. On ne compare pas
+    // à la dernière demande envoyée, sinon un réseau lent ne laisserait jamais rien s'afficher.
+    let shown = 0;
+    let stopped = false;
+    const load = async () => {
+      const turn = ++sent;
       const session = await ensureSession();
-      if (!session) return router.replace('/');
-      setToken(session.accessToken);
-      void loadContactAvatars(session.accessToken);
-      try {
-        setItems(await listConversations(session.accessToken));
-      } catch {
-        setError(true);
+      if (!session) {
+        // Une fois la personne connue, une session muette (réseau coupé) ne renvoie plus à l'accueil.
+        if (!signedIn.current) router.replace('/');
+        return;
       }
-    })();
-  }, [router]);
+      setToken(session.accessToken);
+      if (!signedIn.current) void loadContactAvatars(session.accessToken);
+      signedIn.current = true;
+      try {
+        const next = await listConversations(session.accessToken);
+        if (stopped || turn < shown) return;
+        shown = turn;
+        setItems(next);
+        setError(false);
+      } catch {
+        if (!stopped && turn > shown) setError(true);
+      }
+    };
+    const refresh = () => {
+      if (document.visibilityState !== 'hidden') void load();
+    };
+    void load();
+    const timer = setInterval(refresh, LIST_POLL_MS);
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener(CHATS_CHANGED, refresh);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener(CHATS_CHANGED, refresh);
+    };
+  }, [router, pathname]);
 
   const isMore = (MORE_FILTERS as readonly string[]).includes(filter);
   const filtered = items ? applyFilter(items, filter) : [];
@@ -79,7 +112,7 @@ export function ChatsScreen() {
         </div>
       </header>
 
-      {error && (
+      {error && !items && (
         <p role="alert" className="mx-4 rounded-2xl bg-surface-1 px-4 py-3 text-[15px] text-danger">
           {t.error}
         </p>

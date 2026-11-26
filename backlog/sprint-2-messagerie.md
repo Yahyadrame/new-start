@@ -252,6 +252,16 @@ _Ajouté le 2026-11-26, défaut vu en travaillant sur NS-066._
 - [x] Dès 1024 px, ouvrir une fenêtre ou un menu garde la page à droite du rail (72 px). Cause : le blocage du défilement de Radix remettait la marge à 0.
 - [x] Test e2e, deux thèmes. Pas de test unitaire : une seule règle CSS, vérifiable dans un navigateur.
 
+## NS-068 — Les messages non vus restent non lus · S
+
+_Ajouté le 2026-11-26, défaut signalé par le porteur._
+**Besoin** : une réponse ou un message transféré ne doit pas passer pour lu tant qu'on n'est pas entré dans la conversation.
+
+- [x] La liste des discussions se met à jour sans rechargement (changement d'écran, retour dans l'appli, toutes les 5 s à l'écran) : badge et aperçu des messages arrivés entre-temps.
+- [x] Une conversation n'est marquée lue que si elle est affichée et l'appli au premier plan ; sinon au retour.
+- [x] Une réponse reçue après avoir quitté la conversation reste non lue.
+- [x] Tests unitaires et e2e.
+
 ## NS-058 — Domaines élargis et contacts IA selon les centres d'intérêt · L
 **Besoin** : le catalogue ne couvre pas les 16 centres d'intérêt de l'inscription.
 - [x] Partie 1 : 8 thèmes et 11 contacts ajoutés (17 thèmes, 23 contacts), statuts et tests à jour.

@@ -158,3 +158,8 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 
 - Les huit derniers stickers envoyés s'affichent en haut du panneau, gardés sur l'appareil comme les émojis récents. Pas de synchronisation entre appareils : elle demanderait une table et une route, à faire si le besoin apparaît.
 - L'ordre ne change qu'à la réouverture du panneau, pour que les boutons ne bougent pas sous le doigt.
+
+## 2026-11-26 — Messages non lus (NS-068)
+
+- Un message est lu quand sa conversation est affichée et l'appli au premier plan (demande du porteur du projet). L'API ne change pas.
+- En attendant le temps réel (NS-202), la liste des discussions se relit toutes les 5 secondes tant que l'appli est à l'écran.

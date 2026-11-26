@@ -31,6 +31,7 @@ vi.mock('./chats-api', () => ({
 }));
 vi.mock('../../shared/chat-background/chat-background-api', () => ({ getChatBackground }));
 const { ConversationScreen } = await import('./conversation-screen');
+const { CHATS_CHANGED } = await import('./chats-merge');
 
 const jade = {
   id: 'c1',
@@ -76,7 +77,16 @@ beforeEach(() => {
   Element.prototype.scrollIntoView = scrollIntoView;
 });
 
-afterEach(cleanup);
+/** Simule l'appli mise en arrière-plan (autre onglet, téléphone verrouillé) puis revenue. */
+const appVisibility = (state: 'visible' | 'hidden') => {
+  Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => state });
+  act(() => void document.dispatchEvent(new Event('visibilitychange')));
+};
+
+afterEach(() => {
+  cleanup();
+  Reflect.deleteProperty(document, 'visibilityState');
+});
 
 describe('ConversationScreen', () => {
   it('ouvre la fiche du contact depuis l’en-tête', async () => {
@@ -530,6 +540,27 @@ describe('ConversationScreen', () => {
       expect(markConversationRead).not.toHaveBeenCalled();
     });
 
+    it('prévient la liste des discussions une fois la conversation marquée lue', async () => {
+      const changed = vi.fn();
+      window.addEventListener(CHATS_CHANGED, changed);
+      listConversations.mockResolvedValue([{ ...jade, unreadCount: 2 }]);
+      render(<ConversationScreen agentSlug="jade" />);
+      await waitFor(() => expect(changed).toHaveBeenCalled());
+      window.removeEventListener(CHATS_CHANGED, changed);
+    });
+
+    it('attend que la personne regarde l’écran avant de marquer lue', async () => {
+      appVisibility('hidden');
+      listConversations.mockResolvedValue([{ ...jade, unreadCount: 2 }]);
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('Second');
+      expect(markConversationRead).not.toHaveBeenCalled();
+      appVisibility('visible');
+      expect(markConversationRead).toHaveBeenCalledTimes(1);
+      appVisibility('visible');
+      expect(markConversationRead).toHaveBeenCalledTimes(1);
+    });
+
     it('garde l’écran quand l’appel échoue', async () => {
       listConversations.mockResolvedValue([{ ...jade, unreadCount: 1 }]);
       markConversationRead.mockRejectedValue(new Error('x'));
@@ -575,6 +606,27 @@ describe('ConversationScreen', () => {
       expect(screen.getByText('Hello!')).toBeTruthy();
       expect(screen.getAllByText('Hello')).toHaveLength(1);
       expect(markConversationRead).toHaveBeenCalledWith('tok', 'c1');
+    });
+
+    it('laisse la réponse non lue si l’appli est en arrière-plan, jusqu’au retour', async () => {
+      await sendHello();
+      appVisibility('hidden');
+      listMessages.mockResolvedValue({ items: [reply, corrected], nextCursor: null });
+      await tick(2000);
+      await screen.findByText('Hi there');
+      expect(markConversationRead).not.toHaveBeenCalled();
+      appVisibility('visible');
+      expect(markConversationRead).toHaveBeenCalledWith('tok', 'c1');
+    });
+
+    it('laisse la réponse non lue si on a quitté la conversation avant de la recevoir', async () => {
+      await sendHello();
+      let arrive: (page: unknown) => void = () => undefined;
+      listMessages.mockReturnValue(new Promise((resolve) => (arrive = resolve)));
+      await tick(2000);
+      cleanup();
+      await act(async () => arrive({ items: [reply, corrected], nextCursor: null }));
+      expect(markConversationRead).not.toHaveBeenCalled();
     });
 
     it('continue de relire tant que le contact n’a pas répondu', async () => {
