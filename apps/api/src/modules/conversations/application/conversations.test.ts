@@ -74,6 +74,7 @@ describe('ConversationsService.messages', () => {
     editedAt: null,
     forwarded: false,
     reaction: null,
+    sticker: null,
     deletedAt: null,
   });
   const rows = (count: number) => Array.from({ length: count }, (_, i) => row(i + 1));
@@ -144,6 +145,7 @@ describe('ConversationsService.send', () => {
     editedAt: null,
     forwarded: false,
     reaction: null,
+    sticker: null,
     deletedAt: null,
   };
 
@@ -177,11 +179,24 @@ describe('ConversationsService.send', () => {
         edited: false,
         forwarded: false,
         reaction: null,
+        sticker: null,
         createdAt: '2026-11-20T10:00:00.000Z',
       },
       created: true,
     });
     expect(store.send).toHaveBeenCalledWith('u1', ID, body, 60);
+  });
+
+  it('remplace le texte d’un sticker par sa légende du catalogue', async () => {
+    const { store, service } = setup(null);
+    vi.mocked(store.send).mockResolvedValue({ row, created: true });
+    await service.send('u1', ID, { ...body, text: 'autre chose', sticker: 'thanks' });
+    expect(store.send).toHaveBeenCalledWith(
+      'u1',
+      ID,
+      { ...body, text: 'Thanks!', sticker: 'thanks' },
+      60,
+    );
   });
 
   it('signale un renvoi quand le clientId était déjà enregistré', async () => {
@@ -310,6 +325,7 @@ describe('ConversationsService.search', () => {
       editedAt: new Date('2026-11-25T10:05:00Z'),
       forwarded: false,
       reaction: null,
+      sticker: null,
     };
     vi.mocked(store.editMessage).mockResolvedValue({
       row: row as never,
@@ -334,6 +350,7 @@ describe('ConversationsService.search', () => {
         editedAt: null,
         forwarded: false,
         reaction: null,
+        sticker: null,
       } as never,
       conversationId: 'c1',
       changed: false,
@@ -402,6 +419,7 @@ describe('ConversationsService.search', () => {
         editedAt: null,
         forwarded: false,
         reaction: null,
+        sticker: null,
       },
     ]);
     const page = await service.messages('u1', ID);

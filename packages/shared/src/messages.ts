@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { StickerId } from './stickers.js';
 
 /** Un message de l'historique, tel que `GET /conversations/:id/messages` le renvoie. */
 export const MessageItem = z.object({
@@ -13,6 +14,8 @@ export const MessageItem = z.object({
   edited: z.boolean(),
   /** Le message a été transféré depuis une autre conversation : la bulle porte la mention « transféré ». */
   forwarded: z.boolean(),
+  /** L'identifiant du sticker quand le message en est un ; `text` porte alors sa légende en anglais. */
+  sticker: z.string().nullable(),
   /** La réaction de la personne à ce message (un des émojis de `REACTIONS`), ou null. */
   reaction: z.string().nullable(),
   /** Le message cité quand celui-ci répond en citant ; `text` est vide si le message cité a été supprimé. */
@@ -50,6 +53,8 @@ export const SendMessage = z.object({
   replyToId: z.uuid().optional(),
   /** Le texte vient d'un message transféré depuis une autre conversation. */
   forwarded: z.boolean().optional(),
+  /** Envoie ce sticker : l'API remplace `text` par sa légende. */
+  sticker: StickerId.optional(),
 });
 export type SendMessage = z.infer<typeof SendMessage>;
 

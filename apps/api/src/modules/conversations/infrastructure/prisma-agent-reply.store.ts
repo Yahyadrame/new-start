@@ -49,11 +49,13 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
       },
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       take: HISTORY_SIZE,
-      select: { author: true, text: true },
+      select: { author: true, text: true, sticker: true },
     });
     const history = rows
       .reverse()
-      .flatMap(({ author, text }) => (author === 'SYSTEM' ? [] : [{ author, text }]));
+      .flatMap(({ author, text, sticker }) =>
+        author === 'SYSTEM' ? [] : [{ author, text: sticker ? `[sticker] ${text}` : text }],
+      );
     const { agent, user, userId, agentId } = message.conversation;
     const variant = await this.db.contactVariant.findUnique({
       where: { userId_agentId: { userId, agentId } },

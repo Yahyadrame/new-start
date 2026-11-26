@@ -14,3 +14,4 @@ export * from './progress.js';
 export * from './notifications.js';
 export * from './push.js';
 export * from './plans.js';
+export * from './stickers.js';

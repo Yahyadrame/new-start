@@ -13,6 +13,7 @@ const m = (id: string, author: MessageItem['author'], createdAt: string): Messag
   edited: false,
   forwarded: false,
   reaction: null,
+  sticker: null,
   deleted: false,
 });
 
