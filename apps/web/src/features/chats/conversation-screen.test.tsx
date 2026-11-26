@@ -285,13 +285,38 @@ describe('ConversationScreen', () => {
       fireEvent.click(trigger as HTMLElement);
       fireEvent.click(await screen.findByRole('button', { name: fr.conversation.forwardAction }));
       expect(await screen.findByText(fr.conversation.forward.title)).toBeTruthy();
-      expect(screen.queryByRole('button', { name: /Jade/ })).toBeNull();
-      fireEvent.click(await screen.findByRole('button', { name: /Léa/ }));
+      expect(screen.queryByRole('checkbox', { name: /Jade/ })).toBeNull();
+      fireEvent.click(await screen.findByRole('checkbox', { name: /Léa/ }));
+      fireEvent.click(screen.getByRole('button', { name: /^Transférer/ }));
       await waitFor(() => expect(screen.queryByText(fr.conversation.forward.title)).toBeNull());
       expect(sendMessage).toHaveBeenCalledWith(
         'tok',
         'c2',
         expect.objectContaining({ text: 'First', forwarded: true }),
+      );
+    });
+
+    it('transfère un sticker comme sticker', async () => {
+      const lea = { ...jade, id: 'c2', agent: { ...jade.agent, slug: 'lea', name: 'Léa' } };
+      listConversations.mockResolvedValue([jade, lea]);
+      listMessages.mockResolvedValue({
+        items: [{ ...msg('m1', 'AGENT', 'Thanks!'), sticker: 'thanks' }],
+        nextCursor: null,
+      });
+      sendMessage.mockResolvedValue(msg('x', 'USER', 'Thanks!'));
+      render(<ConversationScreen agentSlug="jade" />);
+      const trigger = await screen.findByRole('button', { name: fr.conversation.messageActions });
+      fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.forwardAction }));
+      fireEvent.click(await screen.findByRole('checkbox', { name: /Léa/ }));
+      fireEvent.click(screen.getByRole('button', { name: /^Transférer/ }));
+      await waitFor(() =>
+        expect(sendMessage).toHaveBeenCalledWith(
+          'tok',
+          'c2',
+          expect.objectContaining({ sticker: 'thanks', forwarded: true }),
+        ),
       );
     });
 
