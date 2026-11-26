@@ -127,3 +127,9 @@ Tenu par Claude Code. Une ligne par décision du porteur du projet. À relire av
 
 - Une seule réaction par message et par personne, six émojis fixes (👍 ❤️ 😂 😮 😢 🙏), retirable. Les contacts IA ne réagissent pas.
 - Stockage : colonne `reaction` sur `Message` (pas de table), `PUT /messages/:id/reaction`. Une table se justifiera le jour où plusieurs personnes partagent une conversation.
+
+## 2026-11-26 — Stickers (NS-055, NS-063)
+
+- Source : 8 stickers maison, dessinés en SVG dans le style des silhouettes (0 €, aucune licence). Thanks!, Got it!, Well done!, Hmm…, Oops!, Sorry!, No way!, See you!. Choix du porteur parmi 4 options.
+- GIF (GIPHY, Tenor) : repoussés à NS-059, avec la question du contenu et du coût.
+- Planche à valider avant le code : `design/stickers/maquette-stickers.html`.
