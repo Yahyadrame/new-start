@@ -20,8 +20,18 @@ test('sur ordinateur, la liste complète d’émojis complète le message', asyn
     return;
   }
 
-  // La recherche porte sur toute la bibliothèque ; ses mots-clés sont en anglais.
-  await page.locator('em-emoji-picker input[type="search"]').fill('giraffe');
+  // La recherche porte sur toute la bibliothèque, en français (avec ou sans accents) et en anglais.
+  const search = page.locator('em-emoji-picker input[type="search"]');
+  for (const [word, emoji] of [
+    ['giraffe', '🦒'],
+    ['éléphant', '🐘'],
+    ['elephant', '🐘'],
+    ['coeur rouge', '❤️'],
+    ['girafe', '🦒'],
+  ] as const) {
+    await search.fill(word);
+    await expect(page.locator(`em-emoji-picker button[aria-label="${emoji}"]`)).toBeVisible();
+  }
   await page.locator('em-emoji-picker button[aria-label="🦒"]').click();
   await expect(page.getByRole('textbox')).toHaveValue('🦒');
   await page.screenshot({ path: test.info().outputPath('emojis.png') });

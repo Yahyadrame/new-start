@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { EmojiPanel } from './emoji-panel';
 
 type Options = {
-  data: { emojis: Record<string, unknown> };
+  data: { emojis: Record<string, { keywords: string[] }> };
   i18n: { search: string };
   theme: string;
   emojiButtonSize: number;
@@ -36,6 +36,12 @@ describe('EmojiPanel', () => {
     expect(Object.keys(last().data.emojis).length).toBeGreaterThan(1800);
     expect(last().i18n.search).toBe('Rechercher');
     expect(last().emojiButtonSize).toBeGreaterThanOrEqual(44);
+  });
+
+  it('cherche aussi en français', async () => {
+    render(<EmojiPanel onPick={vi.fn()} />);
+    await waitFor(() => expect(picker()).toBeTruthy());
+    expect(last().data.emojis.giraffe_face?.keywords).toEqual(expect.arrayContaining(['girafe']));
   });
 
   it('envoie l’émoji touché au dernier onPick reçu, sans reconstruire la liste', async () => {

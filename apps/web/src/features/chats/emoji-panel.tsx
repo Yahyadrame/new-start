@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useColorScheme } from '../../shared/avatar/use-color-scheme';
+import { addFrenchKeywords } from './emoji-search-fr';
 
 /**
  * La liste complète d'émojis (catégories, recherche, récents, teintes de peau), pour l'ordinateur :
@@ -22,10 +23,12 @@ export function EmojiPanel({ onPick }: { onPick: (emoji: string) => void }) {
       import('emoji-mart'),
       import('@emoji-mart/data'),
       import('@emoji-mart/data/i18n/fr.json'),
-    ]).then(([{ Picker }, data, i18n]) => {
+      import('emojibase-data/fr/compact.json'),
+    ]).then(([{ Picker }, { default: data }, i18n, french]) => {
       if (closed || !node) return;
+      addFrenchKeywords(data as Parameters<typeof addFrenchKeywords>[0], french.default);
       const picker = new Picker({
-        data: data.default,
+        data,
         i18n: i18n.default,
         theme,
         previewPosition: 'none',
