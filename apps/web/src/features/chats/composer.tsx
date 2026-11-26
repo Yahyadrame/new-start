@@ -79,11 +79,16 @@ export function Composer({
   onSendMedia,
   reply = null,
   onCancelReply,
+  edit = null,
+  onCancelEdit,
 }: {
   onSend: (text: string) => void;
   /** Le message cité : une bande au-dessus du champ, avec un bouton pour l'abandonner. */
   reply?: { name: string; text: string } | null;
   onCancelReply?: () => void;
+  /** Le message en cours de modification : le champ reprend son texte et « Envoyer » l'enregistre. */
+  edit?: { id: string; text: string } | null;
+  onCancelEdit?: () => void;
   onSendMedia?: (draft: Draft) => void;
 }) {
   const [text, setText] = useState('');
@@ -94,6 +99,13 @@ export function Composer({
   const fileInput = useRef<HTMLInputElement>(null);
   const recorder = useVoiceRecorder((clip) => setDraft({ kind: 'voice', ...clip }));
   const empty = text.trim() === '';
+
+  // Passer en modification reprend le texte du message ; la quitter vide le champ.
+  const editId = edit?.id;
+  const editText = edit?.text;
+  useEffect(() => {
+    setText(editText ?? '');
+  }, [editId]);
 
   // Libère l'aperçu (URL locale) quand la pièce jointe change ou que l'écran se ferme.
   useEffect(() => {
@@ -180,7 +192,23 @@ export function Composer({
           {note}
         </p>
       )}
-      {reply && (
+      {edit && (
+        <div className="mb-2 flex items-center gap-2 rounded-2xl border-l-4 border-accent-text bg-bg py-1 pr-1 pl-3">
+          <div className="min-w-0 flex-1 text-[13px]">
+            <p className="font-semibold">{c.editing}</p>
+            <p className="truncate text-text-muted">{edit.text}</p>
+          </div>
+          <button
+            type="button"
+            aria-label={c.editCancel}
+            onClick={onCancelEdit}
+            className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+          >
+            <X aria-hidden="true" className="size-5" />
+          </button>
+        </div>
+      )}
+      {reply && !edit && (
         <div className="mb-2 flex items-center gap-2 rounded-2xl border-l-4 border-accent-text bg-bg py-1 pr-1 pl-3">
           <div className="min-w-0 flex-1 text-[13px]">
             <p className="font-semibold">{c.replyingTo.replace('{name}', reply.name)}</p>
@@ -282,7 +310,7 @@ export function Composer({
             </>
           )}
         </div>
-        {empty && !draft ? (
+        {empty && !draft && !edit ? (
           <button
             type="button"
             aria-label={c.record}

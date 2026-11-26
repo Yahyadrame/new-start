@@ -225,7 +225,7 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 
 - [x] Menu « … » sur chaque bulle : copier, supprimer (avec confirmation). Décision du 2026-11-25 : la suppression efface le texte et la bulle devient « Message supprimé ».
 - [x] Répondre en citant (#344 API, web) : « Répondre » dans le menu, bande au-dessus du champ, citation dans la bulle.
-- [x] Modifier, côté API (`PATCH /messages/:id`) ; [ ] côté web (mention « modifié », écran d'édition).
+- [x] Modifier (#346 API, web) : « Modifier » dans le menu de ses messages, le champ reprend le texte, mention « modifié », correction relue.
 - [ ] Transférer (mention « transféré »), réactions.
 - [x] API de suppression (`DELETE /messages/:id`, colonne `deletedAt`). Reste : modification et transfert.
 - [ ] À découper en deux ou trois PR.

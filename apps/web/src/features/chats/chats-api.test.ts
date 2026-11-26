@@ -3,6 +3,7 @@ import {
   addToNotebook,
   translateMessage,
   deleteMessage,
+  editMessage,
   ChatsError,
   listConversations,
   listMessages,
@@ -182,6 +183,24 @@ describe('searchMessages', () => {
     it('lève une erreur quand l’API refuse', async () => {
       vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
       await expect(deleteMessage('tok', 'm1')).rejects.toMatchObject({ status: 404 });
+    });
+  });
+
+  describe('editMessage', () => {
+    it('envoie un PATCH avec le texte et rend le message', async () => {
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'm1' }) });
+      vi.stubGlobal('fetch', fetchMock);
+      expect(await editMessage('tok', 'm1', 'Hello')).toEqual({ id: 'm1' });
+      expect(fetchMock).toHaveBeenCalledWith('/api/messages/m1', {
+        method: 'PATCH',
+        headers: { authorization: 'Bearer tok', 'content-type': 'application/json' },
+        body: JSON.stringify({ text: 'Hello' }),
+      });
+    });
+
+    it('lève une erreur quand l’API refuse', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+      await expect(editMessage('tok', 'm1', 'x')).rejects.toMatchObject({ status: 404 });
     });
   });
 });
