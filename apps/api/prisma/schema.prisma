@@ -226,6 +226,7 @@ model Message {
   readAt         DateTime?
   deletedAt      DateTime? // message supprimé : le texte est effacé, la bulle reste
   editedAt       DateTime? // dernière modification du texte par la personne
+  forwarded      Boolean      @default(false) // message transféré depuis une autre conversation
   replyToId      String?      @db.Uuid // message cité quand la personne répond en citant
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt

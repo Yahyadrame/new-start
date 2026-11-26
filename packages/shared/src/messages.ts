@@ -11,6 +11,8 @@ export const MessageItem = z.object({
   deleted: z.boolean(),
   /** La personne a modifié son message : la bulle porte la mention « modifié ». */
   edited: z.boolean(),
+  /** Le message a été transféré depuis une autre conversation : la bulle porte la mention « transféré ». */
+  forwarded: z.boolean(),
   /** Le message cité quand celui-ci répond en citant ; `text` est vide si le message cité a été supprimé. */
   replyTo: z
     .object({
@@ -44,6 +46,8 @@ export const SendMessage = z.object({
   text: z.string().trim().min(1).max(2000),
   /** Le message auquel on répond, dans la même conversation. */
   replyToId: z.uuid().optional(),
+  /** Le texte vient d'un message transféré depuis une autre conversation. */
+  forwarded: z.boolean().optional(),
 });
 export type SendMessage = z.infer<typeof SendMessage>;
 

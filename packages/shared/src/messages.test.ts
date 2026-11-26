@@ -22,6 +22,12 @@ describe('SendMessage', () => {
     expect(SendMessage.safeParse({ clientId, text: 'Hi', replyToId: 'x' }).success).toBe(false);
   });
 
+  it('accepte la marque « transféré », facultative', () => {
+    expect(SendMessage.parse({ clientId, text: 'Hi', forwarded: true }).forwarded).toBe(true);
+    expect(SendMessage.parse({ clientId, text: 'Hi' }).forwarded).toBeUndefined();
+    expect(SendMessage.safeParse({ clientId, text: 'Hi', forwarded: 'oui' }).success).toBe(false);
+  });
+
   const clientId = '0198f0a0-0000-4000-8000-000000000001';
 
   it('retire les espaces autour du texte', () => {
