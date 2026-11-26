@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette : stickers (NS-055)</title>
+<style>
+  :root { --bg:#fff; --s1:#f2f2f2; --s2:#e4e4e4; --ln:#e2e2e2; --tx:#000; --mu:#666; --ac:#ccff00; --onac:#000; --page:#d9d9d6; --mine:#ccff00; --theirs:#f2f2f2; }
+  body.dark { --bg:#000; --s1:#121212; --s2:#1f1f1f; --ln:#2a2a2a; --tx:#f2f2f2; --mu:#999; --page:#1a1a1a; --theirs:#1f1f1f; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--tx); font:16px/1.4 Inter, system-ui, sans-serif; }
+  .bar { position:sticky; top:0; z-index:5; display:flex; gap:12px; align-items:center; padding:12px 16px; background:var(--bg); border-bottom:1px solid var(--ln); }
+  .bar h1 { font-size:17px; margin:0 auto 0 0; }
+  button { font:inherit; color:inherit; cursor:pointer; }
+  .tg { min-height:44px; padding:0 16px; border-radius:22px; border:1px solid var(--ln); background:var(--s1); }
+  .row { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; padding:24px 12px 48px; }
+  .col { display:flex; flex-direction:column; gap:10px; align-items:center; }
+  .col > b { font-size:14px; color:var(--mu); font-weight:500; max-width:390px; text-align:center; }
+  .phone { width:390px; height:760px; background:var(--bg); border:1px solid var(--ln); border-radius:36px; overflow:hidden; display:flex; flex-direction:column; }
+  header.top { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--ln); font:600 17px "Space Grotesk", Inter, sans-serif; }
+  header.top i { width:36px; height:36px; border-radius:10px; background:var(--s2); }
+  .chat { flex:1; padding:16px; display:flex; flex-direction:column; gap:10px; overflow:hidden; }
+  .b { max-width:75%; padding:10px 14px; border-radius:18px; }
+  .b.t { background:var(--theirs); align-self:flex-start; border-bottom-left-radius:6px; }
+  .b.m { background:var(--mine); color:#000; align-self:flex-end; border-bottom-right-radius:6px; }
+  .st { width:132px; align-self:flex-end; }
+  .st.t { align-self:flex-start; }
+  body.dark img { filter:drop-shadow(0 0 1.5px rgba(255,255,255,.95)); }
+  .st .cap { text-align:center; font:600 13px Inter, sans-serif; margin-top:2px; }
+  .st small { display:block; text-align:right; font-size:12px; color:var(--mu); }
+  .bar2 { display:flex; gap:8px; align-items:center; padding:10px 12px; border-top:1px solid var(--ln); }
+  .field { flex:1; min-height:44px; border-radius:22px; background:var(--s1); padding:0 16px; display:flex; align-items:center; color:var(--mu); }
+  .ic { width:44px; height:44px; border-radius:22px; border:0; background:none; display:grid; place-items:center; }
+  .panel { height:300px; border-top:1px solid var(--ln); background:var(--s1); padding:12px; }
+  .tabs { display:flex; gap:8px; margin-bottom:12px; }
+  .tab { min-height:44px; padding:0 18px; border-radius:22px; border:1px solid var(--ln); background:var(--bg); }
+  .tab[aria-selected="true"] { background:var(--tx); color:var(--bg); border-color:var(--tx); }
+  .grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; }
+  .cell { border:0; background:var(--bg); border-radius:16px; padding:6px 4px 8px; min-height:88px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .cell img { width:100%; max-width:72px; }
+  .cell span { font-size:11px; font-weight:600; color:var(--mu); }
+  .sheet { width:min(820px,94vw); background:var(--bg); border:1px solid var(--ln); border-radius:24px; padding:20px; }
+  .sheet .grid { grid-template-columns:repeat(6, 1fr); gap:10px; }
+  .sheet .cell { background:var(--s1); min-height:118px; }
+  .sheet .cell img { max-width:84px; }
+  .sheet h2 { font:600 13px/1 Inter, sans-serif; letter-spacing:.04em; text-transform:uppercase; color:var(--mu); margin:20px 0 10px; }
+  .st img { width:100%; display:block; }
+  .sheet .cell span { font-size:12px; text-align:center; }
+</style>
+<body>
+<div class="bar"><h1>Stickers New Start (NS-055) : maquette à valider</h1><button class="tg" id="th" type="button">Thème sombre</button></div>
+<div class="row">
+  <div class="col"><b>Les 8 stickers, en grand</b><div class="sheet"><div id="all"></div></div></div>
+  <div class="col"><b>Mobile : panneau à la place du clavier</b>
+    <div class="phone">
+      <header class="top"><i></i>Jade</header>
+      <div class="chat">
+        <div class="b t">Did you finish the report?</div>
+        <div class="b m">Yes, just now.</div>
+        <div class="st t" id="s1"></div>
+        <div class="st" id="s2"></div>
+      </div>
+      <div class="bar2"><button class="ic" type="button" aria-label="Fermer le panneau">&#x2715;</button><div class="field">Écris en anglais...</div></div>
+      <div class="panel">
+        <div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" type="button">Stickers</button><button class="tab" role="tab" aria-selected="false" type="button" disabled>GIF (plus tard)</button></div>
+        <div class="grid" id="pick"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="stickers.js"></script>
+<script>
+const S = STICKERS;
+const cell = (s) => `<button class="cell" type="button" aria-label="Envoyer le sticker ${s.text}"><img alt="" src="data:image/svg+xml;utf8,${encodeURIComponent(s.svg())}"><span>${s.text}</span></button>`;
+const groups = [...new Set(S.map((s) => s.group))];
+all.innerHTML = groups.map((g) => `<h2>${g} (${S.filter((s) => s.group === g).length})</h2><div class="grid">${S.filter((s) => s.group === g).map(cell).join('')}</div>`).join('');
+pick.innerHTML = S.slice(0, 12).map(cell).join('');
+const one = (id) => S.find((s) => s.id === id);
+const im = (t) => `<img alt="${t.text}" src="data:image/svg+xml;utf8,${encodeURIComponent(t.svg())}">`;
+s1.innerHTML = im(one('hmm')) + '<div class="cap">Hmm…</div><small>Jade · 14:02</small>';
+s2.innerHTML = im(one('thanks')) + '<div class="cap">Thanks!</div><small>14:03</small>';
+document.querySelector('.sheet').insertAdjacentHTML('afterbegin', `<p style="margin:0 0 12px;color:var(--mu)">${S.length} stickers</p>`);
+th.onclick = () => { document.body.classList.toggle('dark'); th.textContent = document.body.classList.contains('dark') ? 'Thème clair' : 'Thème sombre'; };
+</script>
+</body>
+</html>

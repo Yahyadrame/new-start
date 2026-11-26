@@ -7,6 +7,7 @@ import {
   type SearchHit,
   type SendMessage,
   SEARCH_LIMIT,
+  stickerText,
 } from '@newstart/shared';
 import { isAdult } from '../../../shared/age.js';
 import { escapeLike, makeExcerpt } from './excerpt.js';
@@ -207,7 +208,11 @@ export class ConversationsService {
     if (!done) throw notFound();
   }
 
-  async send(userId: string, conversationId: string, message: SendMessage) {
+  async send(userId: string, conversationId: string, input: SendMessage) {
+    // Un sticker garde la légende du catalogue : le client ne peut pas y glisser un autre texte.
+    const message = input.sticker
+      ? { ...input, text: stickerText(input.sticker) ?? input.text }
+      : input;
     const sent = UUID.test(conversationId)
       ? await this.store.send(userId, conversationId, message, this.messagesPerDay)
       : null;

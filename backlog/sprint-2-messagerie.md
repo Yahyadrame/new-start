@@ -235,7 +235,8 @@ _Ajouté le 2026-11-25 : « Traduire en français » ne marche pas._
 
 - [x] Sélecteur d'émojis dans la barre d'écriture (une quarantaine, sans bibliothèque).
 - [x] Réactions rapides sur un message (voir NS-054).
-- [ ] Stickers : source à décider (pack libre de droits, sans dépense), puis demander.
+- [x] Stickers : source décidée (63 stickers maison, voir `docs/decisions.md`), API faite.
+- [ ] Stickers : panneau et affichage dans la bulle, côté web.
 
 ## NS-057 — Responsivité tablette (768 et 1024 px) · M
 **Besoin** : de 640 à 1023 px, l'appli affiche la version mobile étirée ; aucun seuil `md` n'existe.

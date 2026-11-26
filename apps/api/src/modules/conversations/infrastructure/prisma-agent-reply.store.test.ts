@@ -87,6 +87,16 @@ describe('PrismaAgentReplyStore.context', () => {
   });
 });
 
+describe('PrismaAgentReplyStore.context, stickers', () => {
+  it('signale un sticker au contact avec sa légende', async () => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue([{ author: 'USER', text: 'Thanks!', sticker: 'thanks' }]);
+    const context = await store.context('c1', 'm1');
+    expect(context?.history).toEqual([{ author: 'USER', text: '[sticker] Thanks!' }]);
+  });
+});
+
 describe('PrismaAgentReplyStore.saveReply', () => {
   it('enregistre la correction, la réponse et le compteur de non lus dans une transaction', async () => {
     const { db, store } = fake();

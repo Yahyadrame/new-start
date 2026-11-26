@@ -48,6 +48,16 @@ describe('SendMessage', () => {
   });
 });
 
+describe('SendMessage, sticker', () => {
+  it('accepte un sticker du catalogue, pas un autre identifiant', () => {
+    const clientId = crypto.randomUUID();
+    expect(SendMessage.parse({ clientId, text: 'Thanks!', sticker: 'thanks' }).sticker).toBe(
+      'thanks',
+    );
+    expect(SendMessage.safeParse({ clientId, text: 'x', sticker: 'inconnu' }).success).toBe(false);
+  });
+});
+
 describe('SetReaction', () => {
   it('accepte un des six émojis ou null, rien d’autre', () => {
     expect(REACTIONS).toHaveLength(6);

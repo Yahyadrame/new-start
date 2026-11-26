@@ -319,6 +319,7 @@ describe('PrismaConversationsStore', () => {
         text: 'Hello',
         replyToId: null,
         forwarded: false,
+        sticker: null,
       });
       expect(db.conversation.update.mock.calls[0]?.[0].where).toEqual({ id: 'c1' });
     });
@@ -344,6 +345,17 @@ describe('PrismaConversationsStore', () => {
       db.$transaction.mockResolvedValue([{ id: 'm2' }, {}]);
       await store.send('u1', 'c1', { ...message, forwarded: true });
       expect(db.message.create.mock.calls[0]?.[0].data.forwarded).toBe(true);
+    });
+
+    it('enregistre l’identifiant du sticker', async () => {
+      const { db, store } = fake([]);
+      owned(db);
+      db.message.findUnique.mockResolvedValue(null);
+      db.$transaction.mockResolvedValue([{ id: 'm2' }, {}]);
+      await store.send('u1', 'c1', { ...message, sticker: 'thanks' });
+      expect(db.message.create.mock.calls[0]?.[0].data.sticker).toBe('thanks');
+      await store.send('u1', 'c1', { ...message, clientId: crypto.randomUUID() });
+      expect(db.message.create.mock.calls[1]?.[0].data.sticker).toBeNull();
     });
 
     it('ignore la citation d’un message qui n’est pas dans la conversation', async () => {
