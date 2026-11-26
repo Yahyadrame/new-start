@@ -20,3 +20,8 @@ export const hasReplyAfter = (items: MessageItem[], since: string) =>
 /** Un message de la personne tout récent sans réponse : l'agent est sans doute encore en train d'écrire. */
 export const isFresh = (createdAt: string, now: number = Date.now()) =>
   now - Date.parse(createdAt) < POLL_MS * POLL_LIMIT;
+
+/** La liste des discussions se relit à ce rythme tant que l'appli est à l'écran (avant le temps réel, NS-202). */
+export const LIST_POLL_MS = 5000;
+/** Événement de fenêtre : une conversation vient d'être marquée lue, la liste doit se relire. */
+export const CHATS_CHANGED = 'ns-chats-changed';

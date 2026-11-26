@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
 
@@ -8,7 +8,8 @@ const listConversations = vi.fn();
 const searchMessages = vi.fn();
 // Un objet stable, comme le routeur de Next : sinon l'effet de chargement repart à chaque rendu.
 const router = { replace };
-vi.mock('next/navigation', () => ({ useRouter: () => router }));
+const usePathname = vi.fn(() => '/chats');
+vi.mock('next/navigation', () => ({ useRouter: () => router, usePathname }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
 vi.mock('./chats-api', () => ({ listConversations, searchMessages }));
 vi.mock('../../shared/navigation', () => ({
@@ -16,6 +17,7 @@ vi.mock('../../shared/navigation', () => ({
   NotificationsBell: () => <span>cloche</span>,
 }));
 const { ChatsScreen } = await import('./chats-screen');
+const { CHATS_CHANGED, LIST_POLL_MS } = await import('./chats-merge');
 
 const t = fr.chats;
 const agent = (slug: string, name: string, category: string) => ({
@@ -176,6 +178,116 @@ describe('ChatsScreen', () => {
     listConversations.mockRejectedValue(new Error('x'));
     render(<ChatsScreen />);
     expect((await screen.findByRole('alert')).textContent).toBe(t.error);
+  });
+});
+
+describe('ChatsScreen : mise à jour de la liste', () => {
+  const replied = [
+    { ...items[1], lastMessage: { author: 'AGENT', text: 'Got it!' }, unreadCount: 1 },
+  ];
+  const badge = () => screen.queryByLabelText(t.unread.replace('{n}', '1'));
+  const tick = () => act(() => vi.advanceTimersByTimeAsync(LIST_POLL_MS));
+  const appVisibility = (state: 'visible' | 'hidden') => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => state });
+    return act(async () => void document.dispatchEvent(new Event('visibilitychange')));
+  };
+  const open = async () => {
+    const view = render(<ChatsScreen />);
+    await screen.findByText('Heyyy!');
+    listConversations.mockClear();
+    listConversations.mockResolvedValue(replied);
+    return view;
+  };
+
+  beforeEach(() => vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] }));
+  afterEach(() => {
+    vi.useRealTimers();
+    usePathname.mockReturnValue('/chats');
+    Reflect.deleteProperty(document, 'visibilityState');
+  });
+
+  it('montre le badge d’une réponse arrivée après l’ouverture de la liste', async () => {
+    await open();
+    await tick();
+    expect(screen.getByText('Got it!')).toBeTruthy();
+    expect(badge()).toBeTruthy();
+  });
+
+  it('relit dès qu’on change d’écran', async () => {
+    const view = await open();
+    usePathname.mockReturnValue('/chats/jade');
+    view.rerender(<ChatsScreen />);
+    expect(await screen.findByText('Got it!')).toBeTruthy();
+  });
+
+  it('relit dès qu’une conversation est marquée lue', async () => {
+    await open();
+    await act(async () => void window.dispatchEvent(new Event(CHATS_CHANGED)));
+    expect(screen.getByText('Got it!')).toBeTruthy();
+  });
+
+  it('ne relit pas en arrière-plan, puis relit au retour', async () => {
+    await open();
+    await appVisibility('hidden');
+    await tick();
+    expect(listConversations).not.toHaveBeenCalled();
+    await appVisibility('visible');
+    expect(screen.getByText('Got it!')).toBeTruthy();
+  });
+
+  it('garde la liste quand une relecture échoue ou que la session ne répond pas', async () => {
+    await open();
+    listConversations.mockRejectedValue(new Error('réseau'));
+    await tick();
+    ensureSession.mockResolvedValue(null);
+    await tick();
+    expect(screen.getByText('Heyyy!')).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it('retire l’erreur dès qu’une relecture réussit', async () => {
+    listConversations.mockRejectedValueOnce(new Error('réseau'));
+    render(<ChatsScreen />);
+    await screen.findByRole('alert');
+    await tick();
+    expect(screen.getByText('Heyyy!')).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('ignore une ancienne réponse arrivée après une plus récente', async () => {
+    await open();
+    let late: (list: unknown) => void = () => undefined;
+    listConversations.mockReturnValueOnce(new Promise((resolve) => (late = resolve)));
+    await tick();
+    await tick();
+    await act(async () => late(items));
+    expect(screen.getByText('Got it!')).toBeTruthy();
+  });
+
+  it('affiche quand même la liste quand chaque réponse dépasse le rythme de relecture', async () => {
+    const answers: ((list: unknown) => void)[] = [];
+    listConversations.mockImplementation(() => new Promise((resolve) => answers.push(resolve)));
+    render(<ChatsScreen />);
+    await act(async () => undefined);
+    await tick();
+    await act(async () => answers[0]?.(items));
+    expect(screen.getByText('Heyyy!')).toBeTruthy();
+  });
+
+  it('ne renvoie pas à l’accueil quand la session ne répond pas après un changement d’écran', async () => {
+    const view = await open();
+    ensureSession.mockResolvedValue(null);
+    usePathname.mockReturnValue('/chats/jade');
+    await act(async () => view.rerender(<ChatsScreen />));
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it('s’arrête quand la liste disparaît', async () => {
+    const view = await open();
+    view.unmount();
+    await tick();
+    expect(listConversations).not.toHaveBeenCalled();
   });
 });
 

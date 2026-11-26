@@ -28,7 +28,14 @@ import {
   sendMessage,
 } from './chats-api';
 import { dayLabel } from './chats-format';
-import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
+import {
+  CHATS_CHANGED,
+  hasReplyAfter,
+  isFresh,
+  mergeLatest,
+  POLL_LIMIT,
+  POLL_MS,
+} from './chats-merge';
 import { Composer } from './composer';
 import { ForwardDialog } from './forward-dialog';
 import { useKeyboardInset } from './use-keyboard-inset';
@@ -86,10 +93,35 @@ export function ConversationScreen({
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
 
+  const onScreen = useRef(true);
+  // Conversation reçue pendant que l'appli était en arrière-plan : elle sera marquée lue au retour.
+  const unseen = useRef<string | null>(null);
+
+  // Un message n'est lu que si la conversation est sous les yeux de la personne.
   // Lire n'est pas bloquant : si l'appel échoue, le badge reste, il sera remis à zéro à la prochaine ouverture.
   const markRead = useCallback((conversationId: string) => {
-    void markConversationRead(token.current, conversationId).catch(() => undefined);
+    if (!onScreen.current) return;
+    if (document.visibilityState === 'hidden') {
+      unseen.current = conversationId;
+      return;
+    }
+    unseen.current = null;
+    void markConversationRead(token.current, conversationId)
+      .then(() => window.dispatchEvent(new Event(CHATS_CHANGED)))
+      .catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    onScreen.current = true;
+    const back = () => {
+      if (unseen.current && document.visibilityState !== 'hidden') markRead(unseen.current);
+    };
+    document.addEventListener('visibilitychange', back);
+    return () => {
+      onScreen.current = false;
+      document.removeEventListener('visibilitychange', back);
+    };
+  }, [markRead]);
 
   useEffect(() => {
     void (async () => {
