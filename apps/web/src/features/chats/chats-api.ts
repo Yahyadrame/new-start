@@ -46,6 +46,26 @@ export async function sendMessage(
     headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
     body: JSON.stringify(body),
   });
+  return sentMessage(res);
+}
+
+/** Envoie une photo en octets bruts. Renvoyer le même `clientId` ne crée pas un second message. */
+export async function sendMedia(
+  token: string,
+  conversationId: string,
+  clientId: string,
+  file: Blob,
+): Promise<MessageItem> {
+  const res = await fetch(`/api/conversations/${conversationId}/media?clientId=${clientId}`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': file.type },
+    body: file,
+  });
+  return sentMessage(res);
+}
+
+/** La réponse d'un envoi : le message enregistré, ou l'erreur avec le code de l'API. */
+async function sentMessage(res: Response): Promise<MessageItem> {
   if (!res.ok) {
     // Deux 429 existent : la limite du jour (USAGE_LIMIT) et la limite de débit (RATE_LIMITED).
     const err = (await res.json().catch(() => null)) as { code?: string } | null;

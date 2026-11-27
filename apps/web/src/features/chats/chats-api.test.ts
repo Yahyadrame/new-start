@@ -10,6 +10,7 @@ import {
   markConversationRead,
   reactToMessage,
   searchMessages,
+  sendMedia,
   sendMessage,
 } from './chats-api';
 
@@ -222,6 +223,36 @@ describe('searchMessages', () => {
     it('lève une erreur quand l’API refuse', async () => {
       vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
       await expect(editMessage('tok', 'm1', 'x')).rejects.toMatchObject({ status: 404 });
+    });
+  });
+});
+
+describe('sendMedia', () => {
+  const photo = new Blob(['x'], { type: 'image/jpeg' });
+
+  it('envoie le fichier en octets bruts avec son type et le clientId', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'm1' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await sendMedia('tok', 'c1', 'id-1', photo)).toEqual({ id: 'm1' });
+    expect(fetchMock).toHaveBeenCalledWith('/api/conversations/c1/media?clientId=id-1', {
+      method: 'POST',
+      headers: { authorization: 'Bearer tok', 'content-type': 'image/jpeg' },
+      body: photo,
+    });
+  });
+
+  it('garde le statut et le code d’erreur de l’API', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        json: async () => ({ code: 'MEDIA_UNAVAILABLE' }),
+      }),
+    );
+    await expect(sendMedia('tok', 'c1', 'id-1', photo)).rejects.toMatchObject({
+      status: 503,
+      code: 'MEDIA_UNAVAILABLE',
     });
   });
 });
