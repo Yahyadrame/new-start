@@ -1,19 +1,9 @@
 'use client';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@newstart/ui';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@newstart/ui';
-import {
-  FileText,
   Image as ImageIcon,
   Mic,
-  Plus,
   Keyboard,
   Sticker as StickerIcon,
   SendHorizontal,
@@ -23,28 +13,29 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useFinePointer } from '../../shared/use-fine-pointer';
+import { compressImage } from './compress-image';
 import { EmojiPanel } from './emoji-panel';
+import { LocalPhoto } from './local-photo';
 import { StickerPanel } from './sticker-panel';
 import fr from '../../shared/i18n/fr.json';
 import { formatDuration, useVoiceRecorder, type VoiceClip } from './use-voice-recorder';
 
 const c = fr.conversation;
-export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
-/** Ce qui attend dans la barre avant l'envoi : un vocal enregistré ou un fichier choisi. */
-export type Draft = ({ kind: 'voice' } & VoiceClip) | { kind: 'file'; file: File; url?: undefined };
+/** Ce qui attend dans la barre avant l'envoi : un vocal enregistré ou une photo réduite. */
+type Draft = ({ kind: 'voice' } & VoiceClip) | { kind: 'photo'; blob: Blob; url?: undefined };
 
 const round =
   'grid size-11 shrink-0 place-items-center rounded-full transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text';
 
 /**
- * Barre d'écriture façon WhatsApp : une pilule (+ et champ) et un bouton rond qui est le micro quand le champ
- * est vide, l'envoi quand il y a du texte. Les vocaux et fichiers se préparent ici ; `onSendMedia` les envoie
- * (NS-047). Sans lui, la barre le dit et garde la pièce jointe.
+ * Barre d'écriture façon WhatsApp : une pilule (photo et champ) et un bouton rond qui est le micro quand le
+ * champ est vide, l'envoi quand il y a du texte. Les photos et les vocaux se préparent ici ; l'envoi des
+ * vocaux vient avec la partie suivante de NS-047, et la barre le dit en gardant l'enregistrement.
  */
 export function Composer({
   onSend,
-  onSendMedia,
+  onSendPhoto,
   onSendSticker,
   reply = null,
   onCancelReply,
@@ -58,13 +49,13 @@ export function Composer({
   /** Le message en cours de modification : le champ reprend son texte et « Envoyer » l'enregistre. */
   edit?: { id: string; text: string } | null;
   onCancelEdit?: () => void;
-  onSendMedia?: (draft: Draft) => void;
+  /** Envoie la photo choisie ; sans lui, la barre n'a pas de bouton photo. */
+  onSendPhoto?: (photo: Blob) => void;
   /** Envoie le sticker choisi dans le panneau ; sans lui, la barre n'a pas de bouton stickers. */
   onSendSticker?: (stickerId: string) => void;
 }) {
   const [text, setText] = useState('');
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [menu, setMenu] = useState(false);
   const [stickers, setStickers] = useState(false);
   const desktop = useFinePointer();
   const [notice, setNotice] = useState<string | null>(null);
@@ -72,9 +63,10 @@ export function Composer({
   const bar = useRef<HTMLFormElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const photoInput = useRef<HTMLInputElement>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
   const recorder = useVoiceRecorder((clip) => setDraft({ kind: 'voice', ...clip }));
   const empty = text.trim() === '';
+  // Pendant une modification, la pièce jointe attend : « Envoyer » enregistre le texte.
+  const attachment = edit ? null : draft;
 
   // Passer en modification reprend le texte du message ; la quitter vide le champ.
   const editId = edit?.id;
@@ -134,12 +126,11 @@ export function Composer({
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (draft) {
-      if (onSendMedia) {
-        onSendMedia(draft);
-        setDraft(null);
-        setNotice(null);
-      } else setNotice(c.mediaSoon);
+    if (attachment) {
+      if (attachment.kind === 'voice') return setNotice(c.voiceSoon);
+      onSendPhoto?.(attachment.blob);
+      setDraft(null);
+      setNotice(null);
       return;
     }
     send();
@@ -152,11 +143,12 @@ export function Composer({
     send();
   };
 
-  const pick = (file: File | undefined) => {
+  const pick = async (file: File | undefined) => {
     if (!file) return;
-    if (file.size > MAX_FILE_BYTES) return setNotice(c.fileTooBig);
     setNotice(null);
-    setDraft({ kind: 'file', file });
+    const blob = await compressImage(file);
+    if (!blob) return setNotice(c.photoUnreadable);
+    setDraft({ kind: 'photo', blob });
   };
 
   const shell =
@@ -219,7 +211,8 @@ export function Composer({
           </button>
         </div>
       )}
-      {reply && !edit && (
+      {/* Une pièce jointe part sans citation : la réponse attend le prochain message écrit. */}
+      {reply && !edit && !attachment && (
         <div className="mb-2 flex items-center gap-2 rounded-2xl border-l-4 border-accent-text bg-bg py-1 pr-1 pl-3">
           <div className="min-w-0 flex-1 text-[13px]">
             <p className="font-semibold">{c.replyingTo.replace('{name}', reply.name)}</p>
@@ -237,9 +230,9 @@ export function Composer({
       )}
       <div className="flex items-end gap-2">
         <div className="flex min-w-0 flex-1 items-end rounded-3xl border border-line bg-bg focus-within:border-text-muted focus-within:ring-1 focus-within:ring-text-muted">
-          {draft ? (
+          {attachment ? (
             <DraftPreview
-              draft={draft}
+              draft={attachment}
               onRemove={() => {
                 setDraft(null);
                 setNotice(null);
@@ -247,35 +240,16 @@ export function Composer({
             />
           ) : (
             <>
-              <Popover open={menu} onOpenChange={setMenu}>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    aria-label={c.attach}
-                    className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
-                  >
-                    <Plus aria-hidden="true" className="size-6" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56" side="top">
-                  <MenuItem
-                    icon={<ImageIcon aria-hidden="true" className="size-5" />}
-                    label={c.attachPhoto}
-                    onClick={() => {
-                      setMenu(false);
-                      photoInput.current?.click();
-                    }}
-                  />
-                  <MenuItem
-                    icon={<FileText aria-hidden="true" className="size-5" />}
-                    label={c.attachFile}
-                    onClick={() => {
-                      setMenu(false);
-                      fileInput.current?.click();
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
+              {onSendPhoto && !edit && (
+                <button
+                  type="button"
+                  aria-label={c.attachPhoto}
+                  onClick={() => photoInput.current?.click()}
+                  className="grid size-11 shrink-0 place-items-center rounded-full text-text-muted focus-visible:outline-2 focus-visible:outline-accent-text"
+                >
+                  <ImageIcon aria-hidden="true" className="size-6" />
+                </button>
+              )}
               {onSendSticker && (
                 <button
                   ref={toggle}
@@ -313,7 +287,7 @@ export function Composer({
             </>
           )}
         </div>
-        {empty && !draft && !edit ? (
+        {empty && !attachment && !edit ? (
           <button
             type="button"
             aria-label={c.record}
@@ -358,42 +332,11 @@ export function Composer({
         hidden
         data-testid="photo-input"
         onChange={(e) => {
-          pick(e.target.files?.[0]);
-          e.target.value = '';
-        }}
-      />
-      <input
-        ref={fileInput}
-        type="file"
-        hidden
-        data-testid="file-input"
-        onChange={(e) => {
-          pick(e.target.files?.[0]);
+          void pick(e.target.files?.[0]);
           e.target.value = '';
         }}
       />
     </form>
-  );
-}
-
-function MenuItem({
-  icon,
-  label,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-base hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-accent-text"
-    >
-      {icon}
-      {label}
-    </button>
   );
 }
 
@@ -411,12 +354,8 @@ function DraftPreview({ draft, onRemove }: { draft: Draft; onRemove: () => void 
         </>
       ) : (
         <>
-          {draft.file.type.startsWith('image/') ? (
-            <ImageIcon aria-hidden="true" className="size-6 shrink-0 text-text-muted" />
-          ) : (
-            <FileText aria-hidden="true" className="size-6 shrink-0 text-text-muted" />
-          )}
-          <span className="min-w-0 flex-1 truncate text-base">{draft.file.name}</span>
+          <LocalPhoto blob={draft.blob} alt="" className="size-11 shrink-0 rounded-xl" />
+          <span className="min-w-0 flex-1 truncate text-base">{c.draftPhoto}</span>
         </>
       )}
       <button
