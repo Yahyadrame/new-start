@@ -74,6 +74,23 @@ describe('PrismaConversationsStore', () => {
     ]);
   });
 
+  it.each([
+    ['IMAGE', { mediaKind: 'IMAGE' }],
+    ['AUDIO', { mediaKind: 'AUDIO' }],
+    ['TEXT', {}],
+  ])('dit quel média porte le dernier message (%s)', async (kind, expected) => {
+    const messages = [{ author: 'USER', text: '', kind }];
+    const { db, store } = fake([
+      { id: 'c1', agent, unreadCount: 0, lastMessageAt: new Date(0), messages },
+    ]);
+    expect((await store.list('u1'))[0]?.lastMessage).toStrictEqual({
+      author: 'USER',
+      text: '',
+      ...expected,
+    });
+    expect(db.conversation.findMany.mock.calls[0]?.[0].select.messages.select.kind).toBe(true);
+  });
+
   it('rend lastMessage null pour une conversation vide', async () => {
     const { store } = fake([
       { id: 'c2', agent, unreadCount: 0, lastMessageAt: new Date(0), messages: [] },

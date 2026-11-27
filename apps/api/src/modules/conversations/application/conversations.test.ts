@@ -165,6 +165,21 @@ describe('ConversationsService.send', () => {
     expect((await service.send('u1', ID, body)).message.replyTo).toMatchObject({ deleted: true });
   });
 
+  it('dit quand le message cité est une photo ou un vocal', async () => {
+    const { store, service } = setup(null);
+    const quoted = { id: 'm0', author: 'USER' as const, text: '', deletedAt: null };
+    vi.mocked(store.send).mockResolvedValue({
+      row: { ...row, replyTo: { ...quoted, kind: 'IMAGE' as const } },
+      created: true,
+    });
+    expect((await service.send('u1', ID, body)).message.replyTo?.mediaKind).toBe('IMAGE');
+    vi.mocked(store.send).mockResolvedValue({
+      row: { ...row, replyTo: { ...quoted, kind: 'TEXT' as const } },
+      created: true,
+    });
+    expect((await service.send('u1', ID, body)).message.replyTo).not.toHaveProperty('mediaKind');
+  });
+
   it('rend le message avec sa date en texte et signale la création', async () => {
     const { store, service } = setup(null);
     vi.mocked(store.send).mockResolvedValue({ row, created: true });

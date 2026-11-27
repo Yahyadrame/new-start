@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyFilter,
   dayLabel,
+  previewText,
   FILTERS,
   formatHour,
   formatWhen,
@@ -100,5 +101,18 @@ describe('splitMatch', () => {
   it('rend le texte entier quand la recherche est vide ou absente', () => {
     expect(splitMatch('abc', '  ')).toEqual([{ text: 'abc', match: false }]);
     expect(splitMatch('abc', 'z')).toEqual([{ text: 'abc', match: false }]);
+  });
+});
+
+describe('previewText', () => {
+  it('rend le texte quand il y en a un, même pour un vocal', () => {
+    expect(previewText('Hello')).toBe('Hello');
+    expect(previewText('I am home', 'AUDIO')).toBe('I am home');
+  });
+
+  it('nomme un vocal ou une photo sans texte', () => {
+    expect(previewText('', 'IMAGE')).toBe('Photo');
+    expect(previewText('', 'AUDIO')).toBe('Message vocal');
+    expect(previewText('')).toBe('');
   });
 });

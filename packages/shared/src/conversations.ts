@@ -20,7 +20,12 @@ export const ConversationItem = z.object({
   }),
   /** Le dernier message, ou null si la conversation est encore vide. */
   lastMessage: z
-    .object({ author: z.enum(['USER', 'AGENT', 'SYSTEM']), text: z.string() })
+    .object({
+      author: z.enum(['USER', 'AGENT', 'SYSTEM']),
+      text: z.string(),
+      /** Présent quand c'est un vocal ou une photo : `text` peut alors être vide. */
+      mediaKind: z.enum(['AUDIO', 'IMAGE']).optional(),
+    })
     .nullable(),
   lastMessageAt: z.string(),
   unreadCount: z.number().int().min(0),

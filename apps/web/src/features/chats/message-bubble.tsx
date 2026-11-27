@@ -7,13 +7,14 @@ import {
   CheckCheck,
   Copy,
   Forward,
+  ImageOff,
   MoreHorizontal,
   Pencil,
   Reply,
   Trash2,
 } from 'lucide-react';
 import { QuotedMessage } from './quoted-message';
-import { formatHour } from './chats-format';
+import { formatHour, previewText } from './chats-format';
 
 const c = fr.conversation;
 
@@ -59,7 +60,8 @@ function Actions({
   reaction,
   onDelete,
 }: {
-  text: string;
+  /** Le texte à copier ; absent pour un vocal ou une photo. */
+  text: string | undefined;
   onReact: ((emoji: string | null) => void) | undefined;
   reaction: string | null;
   onForward: (() => void) | undefined;
@@ -78,8 +80,8 @@ function Actions({
       setNote(null);
     }
   };
-  const copy = () =>
-    navigator.clipboard.writeText(text).then(
+  const copy = (value: string) =>
+    navigator.clipboard.writeText(value).then(
       () => setNote(c.copied),
       () => setNote(c.copyFailed),
     );
@@ -179,10 +181,12 @@ function Actions({
                 {c.forwardAction}
               </button>
             )}
-            <button type="button" className={item} onClick={() => void copy()}>
-              <Copy aria-hidden="true" className="size-5" />
-              {c.copy}
-            </button>
+            {text !== undefined && (
+              <button type="button" className={item} onClick={() => void copy(text)}>
+                <Copy aria-hidden="true" className="size-5" />
+                {c.copy}
+              </button>
+            )}
             {onDelete && (
               <button type="button" className={item} onClick={() => setAsk(true)}>
                 <Trash2 aria-hidden="true" className="size-5" />
@@ -198,6 +202,39 @@ function Actions({
         )}
       </PopoverContent>
     </Popover>
+  );
+}
+
+/**
+ * La photo d'un message, ouverte en grand au toucher. Son lien change à chaque relecture et expire au
+ * bout d'une heure : l'image garde le premier, et ne prend le plus récent que s'il ne répond plus.
+ */
+function Photo({ url }: Readonly<{ url: string | null }>) {
+  const [src, setSrc] = useState(url);
+  if (!url) {
+    return (
+      <p className="flex items-center gap-2 px-2.5 py-1 italic">
+        <ImageOff aria-hidden="true" className="size-4 shrink-0" />
+        {c.photoUnavailable}
+      </p>
+    );
+  }
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block rounded-[14px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+    >
+      {/* Lien signé et temporaire du stockage : l'optimiseur de Next ne peut pas le mettre en cache. */}
+      <img
+        src={src ?? url}
+        alt={c.photoSent}
+        onError={() => setSrc(url)}
+        // Taille fixe : la conversation ne saute pas quand l'image arrive.
+        className="aspect-square w-60 max-w-full rounded-[14px] object-cover"
+      />
+    </a>
   );
 }
 
@@ -286,6 +323,10 @@ export function MessageBubble({
     return <li className="self-center text-center text-xs text-text-muted">{message.text}</li>;
   }
   const mine = message.author === 'USER';
+  const { media } = message;
+  const isPhoto = media?.kind === 'IMAGE';
+  // La légende d'une photo, ou les paroles d'un vocal (nommé quand il n'y en a pas).
+  const text = isPhoto ? message.text : previewText(message.text, media?.kind);
   const sticker = message.sticker ? STICKERS.find((s) => s.id === message.sticker) : undefined;
   if (message.deleted) {
     return (
@@ -324,12 +365,14 @@ export function MessageBubble({
             'rounded-[18px] px-4 py-2.5 text-[15px] leading-snug break-words whitespace-pre-wrap [overflow-wrap:anywhere]',
             mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
             highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
+            isPhoto && 'p-1.5',
           )}
         >
           {message.replyTo && (
             <QuotedMessage quote={message.replyTo} agentName={agentName} onDark={mine} />
           )}
-          <p>{message.text}</p>
+          {isPhoto && <Photo url={media.url} />}
+          {text && <p className={cn(isPhoto && 'px-2.5 py-1')}>{text}</p>}
         </div>
       )}
       {message.reaction && (
@@ -347,12 +390,12 @@ export function MessageBubble({
         <time dateTime={message.createdAt}>{formatHour(message.createdAt)}</time>
         {mine && <CheckCheck aria-hidden="true" className="size-3.5" />}
         <Actions
-          text={message.text}
+          text={media ? undefined : message.text}
           onReply={onReply && (() => onReply(message))}
           reaction={message.reaction}
           onReact={onReact && ((emoji) => onReact(message, emoji))}
-          onForward={onForward && (() => onForward(message))}
-          onEdit={mine && onEdit ? () => onEdit(message) : undefined}
+          onForward={onForward && media?.url !== null ? () => onForward(message) : undefined}
+          onEdit={mine && !media && onEdit ? () => onEdit(message) : undefined}
           onDelete={onDelete && (() => onDelete(message.id))}
         />
       </span>
@@ -362,7 +405,7 @@ export function MessageBubble({
           onTranslate={onTranslate && (() => onTranslate(message.id))}
         />
       )}
-      {mine && message.correction && !message.sticker && (
+      {mine && message.correction && !message.sticker && !isPhoto && (
         <Correction
           correction={message.correction}
           onAdd={onAddToNotebook && (() => onAddToNotebook(message.id))}

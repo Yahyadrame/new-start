@@ -422,6 +422,10 @@
     "replyingTo": "Réponse à {name}",
     "replyCancel": "Annuler la réponse",
     "quoteYou": "Toi",
+    "photo": "Photo",
+    "voiceMessage": "Message vocal",
+    "photoSent": "Photo envoyée",
+    "photoUnavailable": "Photo indisponible",
     "edit": "Modifier",
     "edited": "modifié",
     "forward": {
@@ -432,7 +436,9 @@
       "sending": "Envoi…",
       "sent": "Envoyé",
       "failed": "Pas envoyé à {names}. Réessaie.",
-      "limit": "Limite de messages du jour atteinte. Pas envoyé à {names}."
+      "limit": "Limite de messages du jour atteinte. Pas envoyé à {names}.",
+      "limitPhoto": "Limite de photos du jour atteinte. Pas envoyé à {names}.",
+      "limitVoice": "Limite de vocaux du jour atteinte. Pas envoyé à {names}."
     },
     "forwardAction": "Transférer",
     "forwarded": "transféré",

@@ -306,6 +306,39 @@ describe('ConversationScreen', () => {
       );
     });
 
+    it('transfère une photo par son message d’origine, et la nomme', async () => {
+      const lea = { ...jade, id: 'c2', agent: { ...jade.agent, slug: 'lea', name: 'Léa' } };
+      listConversations.mockResolvedValue([jade, lea]);
+      const media = { kind: 'IMAGE', url: 'https://files.test/a.jpg', seconds: null };
+      listMessages.mockResolvedValue({
+        items: [{ ...msg('m1', 'USER', ''), media }],
+        nextCursor: null,
+      });
+      sendMessage.mockResolvedValue(msg('x', 'USER', ''));
+      render(<ConversationScreen agentSlug="jade" />);
+      const open = async (action: string) => {
+        const trigger = await screen.findByRole('button', {
+          name: fr.conversation.messageActions,
+        });
+        fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+        fireEvent.click(trigger);
+        fireEvent.click(await screen.findByRole('button', { name: action }));
+      };
+      await open(fr.conversation.reply);
+      expect(screen.getByText(fr.conversation.photo)).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: fr.conversation.replyCancel }));
+      await open(fr.conversation.forwardAction);
+      expect(await screen.findByText(fr.conversation.photo)).toBeTruthy();
+      fireEvent.click(await screen.findByRole('checkbox', { name: /Léa/ }));
+      fireEvent.click(screen.getByRole('button', { name: /^Transférer/ }));
+      await waitFor(() => expect(sendMessage).toHaveBeenCalled());
+      expect(sendMessage.mock.calls[0]?.[2]).toEqual({
+        clientId: expect.any(String),
+        text: '',
+        mediaFromId: 'm1',
+      });
+    });
+
     it('transfère un sticker comme sticker', async () => {
       const lea = { ...jade, id: 'c2', agent: { ...jade.agent, slug: 'lea', name: 'Léa' } };
       listConversations.mockResolvedValue([jade, lea]);

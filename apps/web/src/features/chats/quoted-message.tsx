@@ -1,6 +1,7 @@
 import type { MessageItem } from '@newstart/shared';
 import { cn } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
+import { previewText } from './chats-format';
 
 const c = fr.conversation;
 
@@ -24,7 +25,7 @@ export function QuotedMessage({
     >
       <p className="font-semibold">{name}</p>
       <p className={cn('line-clamp-2', quote.deleted && 'italic')}>
-        {quote.deleted ? c.deleted : quote.text}
+        {quote.deleted ? c.deleted : previewText(quote.text, quote.mediaKind)}
       </p>
     </div>
   );

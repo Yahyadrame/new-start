@@ -86,4 +86,23 @@ describe('ForwardDialog', () => {
     expect(await screen.findByText(t.limit.replace('{names}', 'Léa, Marc'))).toBeTruthy();
     expect(onPick).toHaveBeenCalledTimes(1);
   });
+
+  it.each([
+    ['IMAGE', t.limitPhoto],
+    ['AUDIO', t.limitVoice],
+  ] as const)('nomme la limite du média transféré (%s)', async (media, message) => {
+    const onPick = vi.fn().mockRejectedValue(new ChatsError(429, 'USAGE_LIMIT'));
+    render(
+      <ForwardDialog
+        text="Photo"
+        media={media}
+        targets={targets}
+        onPick={onPick}
+        onClose={vi.fn()}
+      />,
+    );
+    fireEvent.click(box('Léa'));
+    fireEvent.click(send());
+    expect(await screen.findByText(message.replace('{names}', 'Léa'))).toBeTruthy();
+  });
 });

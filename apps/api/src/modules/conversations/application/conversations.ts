@@ -32,7 +32,11 @@ export type MessageRow = Omit<
     deletedAt: Date | null;
     editedAt: Date | null;
     replyTo:
-      (Omit<NonNullable<MessageItem['replyTo']>, 'deleted'> & { deletedAt: Date | null }) | null;
+      | (Omit<NonNullable<MessageItem['replyTo']>, 'deleted' | 'mediaKind'> & {
+          deletedAt: Date | null;
+          kind?: MediaColumns['kind'];
+        })
+      | null;
   };
 
 /** Un message trouvé tel que le stockage le rend : le texte entier, la date pas encore en texte. */
@@ -101,6 +105,10 @@ export interface ConversationsStore {
   ): Promise<{ row: MessageRow; created: boolean } | { limited: true } | null>;
 }
 
+/** Le champ `mediaKind` d'un vocal ou d'une photo ; rien pour un texte. */
+export const mediaKindOf = (kind?: MediaColumns['kind']) =>
+  kind === 'AUDIO' || kind === 'IMAGE' ? { mediaKind: kind } : {};
+
 const toItem = ({
   deletedAt,
   editedAt,
@@ -114,6 +122,7 @@ const toItem = ({
     author: replyTo.author,
     text: replyTo.text,
     deleted: replyTo.deletedAt !== null,
+    ...mediaKindOf(replyTo.kind),
   },
   createdAt: row.createdAt.toISOString(),
   deleted: deletedAt !== null,

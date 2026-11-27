@@ -25,6 +25,8 @@ export const MessageItem = z.object({
       author: z.enum(['USER', 'AGENT', 'SYSTEM']),
       text: z.string(),
       deleted: z.boolean(),
+      /** Présent quand le message cité est un vocal ou une photo : `text` peut alors être vide. */
+      mediaKind: z.enum(['AUDIO', 'IMAGE']).optional(),
     })
     .nullable(),
   /** La correction « Plus naturel » d'un message de la personne, ou null. */

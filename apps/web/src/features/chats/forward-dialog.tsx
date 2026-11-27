@@ -12,6 +12,7 @@ import { ContactAvatar } from '../../shared/avatar/contact-avatar';
 import fr from '../../shared/i18n/fr.json';
 
 const t = fr.conversation.forward;
+const MEDIA_LIMITS = { IMAGE: t.limitPhoto, AUDIO: t.limitVoice };
 
 /**
  * Choix des conversations où transférer un message ; `targets` vaut undefined tant que la liste charge.
@@ -20,11 +21,14 @@ const t = fr.conversation.forward;
  */
 export function ForwardDialog({
   text,
+  media,
   targets,
   onPick,
   onClose,
 }: {
   text: string;
+  /** Le message transféré est un vocal ou une photo : sa limite du jour est à part. */
+  media?: 'AUDIO' | 'IMAGE' | undefined;
   targets: ConversationItem[] | undefined;
   onPick: (target: ConversationItem, clientId: string) => Promise<void>;
   onClose: () => void;
@@ -63,7 +67,8 @@ export function ForwardDialog({
     const missed = pending.filter((x) => !done.has(x.id));
     if (missed.length === 0) return onClose();
     const names = missed.map((x) => x.agent.name).join(', ');
-    setError((limited ? t.limit : t.failed).replace('{names}', names));
+    const limit = media ? MEDIA_LIMITS[media] : t.limit;
+    setError((limited ? limit : t.failed).replace('{names}', names));
     setSending(false);
   };
 
