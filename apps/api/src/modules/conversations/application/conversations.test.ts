@@ -305,7 +305,7 @@ describe('ConversationsService.search', () => {
 
   it('efface le texte d’un message de la personne', async () => {
     const { store, service } = setup(null);
-    vi.mocked(store.deleteMessage).mockResolvedValue(true);
+    vi.mocked(store.deleteMessage).mockResolvedValue({ unusedFile: null });
     await service.remove('u1', ID);
     expect(store.deleteMessage).toHaveBeenCalledWith('u1', ID);
   });
@@ -392,7 +392,7 @@ describe('ConversationsService.search', () => {
 
   it('répond 404 pour un message absent, déjà supprimé ou qui n’est pas à elle', async () => {
     const { store, service } = setup(null);
-    vi.mocked(store.deleteMessage).mockResolvedValue(false);
+    vi.mocked(store.deleteMessage).mockResolvedValue(null);
     await expect(service.remove('u1', ID)).rejects.toMatchObject({
       status: 404,
       response: { code: 'NOT_FOUND' },
@@ -463,6 +463,31 @@ describe('ConversationsService et les médias', () => {
     for (const key of ['kind', 'mediaKey', 'mediaProvider', 'mediaSeconds']) {
       expect(item).not.toHaveProperty(key);
     }
+  });
+
+  it('efface le fichier d’un message supprimé quand plus rien ne le reprend', async () => {
+    const { store } = setup(null);
+    const r2 = new FakeMediaStore();
+    await r2.put({ key: photo.mediaKey, data: new Uint8Array([1]) });
+    vi.mocked(store.deleteMessage).mockResolvedValue({
+      unusedFile: { key: photo.mediaKey, provider: 'r2' },
+    });
+    const media = { active: null, stores: { r2 } };
+    await new ConversationsService(store, undefined, undefined, 60, media).remove('u1', ID);
+    expect(r2.files.size).toBe(0);
+  });
+
+  it('supprime le message même quand le stockage refuse d’effacer le fichier', async () => {
+    const { store } = setup(null);
+    const r2 = new FakeMediaStore();
+    const removed = vi.spyOn(r2, 'delete').mockRejectedValue(new Error('panne'));
+    vi.mocked(store.deleteMessage).mockResolvedValue({
+      unusedFile: { key: photo.mediaKey, provider: 'r2' },
+    });
+    const media = { active: null, stores: { r2 } };
+    const service = new ConversationsService(store, undefined, undefined, 60, media);
+    await expect(service.remove('u1', ID)).resolves.toBeUndefined();
+    expect(removed).toHaveBeenCalledWith(photo.mediaKey);
   });
 
   it('répond 400 à la modification d’un vocal ou d’une photo, sans relancer de correction', async () => {

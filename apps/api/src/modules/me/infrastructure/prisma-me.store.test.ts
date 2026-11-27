@@ -24,6 +24,7 @@ function fake() {
     authIdentity: { findMany: vi.fn() },
     otpCode: { deleteMany: vi.fn() },
     user: { deleteMany: vi.fn() },
+    message: { findMany: vi.fn().mockResolvedValue([]) },
   };
   const db = {
     user: { findUnique: vi.fn(), updateMany: vi.fn() },
@@ -126,17 +127,39 @@ describe('PrismaMeStore', () => {
       { provider: 'google', subject: 'g-123' },
     ]);
     tx.user.deleteMany.mockResolvedValue({ count: 1 });
-    expect(await store.remove('u')).toBe(true);
+    expect(await store.remove('u')).toEqual([]);
     expect(tx.otpCode.deleteMany).toHaveBeenCalledWith({
       where: { destination: { in: ['awa@example.com', '+221771234567'] } },
     });
     expect(tx.user.deleteMany).toHaveBeenCalledWith({ where: { id: 'u' } });
   });
 
-  it("rend false quand le compte n'existe plus", async () => {
+  it('rend les fichiers du compte, lus avant que les messages partent en cascade', async () => {
+    const { tx, store } = fake();
+    tx.authIdentity.findMany.mockResolvedValue([]);
+    tx.message.findMany.mockResolvedValue([
+      { mediaKey: 'image/u/a.jpg', mediaProvider: 'r2' },
+      { mediaKey: 'audio/u/b.webm', mediaProvider: 'b2' },
+    ]);
+    tx.user.deleteMany.mockResolvedValue({ count: 1 });
+    expect(await store.remove('u')).toEqual([
+      { key: 'image/u/a.jpg', provider: 'r2' },
+      { key: 'audio/u/b.webm', provider: 'b2' },
+    ]);
+    // Les messages déjà supprimés sont lus aussi : un fichier resté chez le stockage repart avec eux.
+    expect(tx.message.findMany).toHaveBeenCalledWith({
+      where: { conversation: { userId: 'u' }, mediaKey: { not: null } },
+      select: { mediaKey: true, mediaProvider: true },
+    });
+    expect(tx.message.findMany.mock.invocationCallOrder[0]).toBeLessThan(
+      tx.user.deleteMany.mock.invocationCallOrder[0] ?? 0,
+    );
+  });
+
+  it("rend null quand le compte n'existe plus", async () => {
     const { tx, store } = fake();
     tx.authIdentity.findMany.mockResolvedValue([]);
     tx.user.deleteMany.mockResolvedValue({ count: 0 });
-    expect(await store.remove('u')).toBe(false);
+    expect(await store.remove('u')).toBeNull();
   });
 });
