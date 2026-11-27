@@ -25,6 +25,7 @@ import {
   listMessages,
   markConversationRead,
   reactToMessage,
+  sendMedia,
   sendMessage,
 } from './chats-api';
 import { dayLabel, previewText } from './chats-format';
@@ -51,6 +52,14 @@ const c = fr.conversation;
 const MAX_SEEK_PAGES = 20;
 /** Durée pendant laquelle le message retrouvé reste entouré. */
 const FLASH_MS = 3000;
+
+/** Un refus que réessayer ne changera pas : le texte à montrer à la place de la bulle. */
+function refusalOf(code: string | undefined, photo: boolean) {
+  const c = fr.conversation;
+  if (code === 'MEDIA_UNAVAILABLE') return c.photoSendUnavailable;
+  if (code !== 'USAGE_LIMIT') return null;
+  return photo ? c.photoLimit : c.limitReached;
+}
 
 /**
  * Écran 4 : l'en-tête du contact, l'historique du plus ancien au plus récent, et le champ d'écriture.
@@ -81,8 +90,8 @@ export function ConversationScreen({
   // Un nouvel objet à chaque envoi relance les 60 s de relecture.
   const [awaiting, setAwaiting] = useState<{ since: string } | null>(null);
   const [attempt, setAttempt] = useState(0);
-  // La limite du jour est atteinte : le message n'est pas parti et réessayer ne sert à rien avant demain.
-  const [limited, setLimited] = useState(false);
+  // L'API a refusé le dernier envoi (limite du jour, photos indisponibles) : on dit pourquoi.
+  const [refusal, setRefusal] = useState<string | null>(null);
   const [background, setBackground] = useState<ChatBackground>('NONE');
   // `seeking` : on charge des pages plus anciennes jusqu'à trouver le message.
   const [focus, setFocus] = useState<'seeking' | 'found' | 'missing' | null>(
@@ -169,60 +178,55 @@ export function ConversationScreen({
   }, [item, nextCursor]);
 
   // Le clientId reste le même à chaque nouvel essai : l'API ne crée jamais deux fois le message.
-  const deliver = useCallback(
-    async (conversationId: string, { clientId, text, replyToId, sticker }: PendingMessage) => {
-      const mark = (status: PendingMessage['status']) =>
-        setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
-      mark('sending');
-      try {
-        const sent = await sendMessage(token.current, conversationId, {
-          clientId,
-          text,
-          ...(replyToId && { replyToId }),
-          ...(sticker && { sticker }),
-        });
-        setMessages((prev) => [...(prev ?? []), sent]);
-        setPending((prev) => prev.filter((p) => p.clientId !== clientId));
-        setAwaiting((prev) => ({
-          since: prev && prev.since < sent.createdAt ? prev.since : sent.createdAt,
-        }));
-      } catch (e) {
-        if ((e as { code?: string }).code === 'USAGE_LIMIT') {
-          setPending((prev) => prev.filter((p) => p.clientId !== clientId));
-          setLimited(true);
-          return;
-        }
-        mark('failed');
-      }
-    },
-    [],
-  );
+  const deliver = useCallback(async (conversationId: string, message: PendingMessage) => {
+    const { clientId, text, replyToId, sticker, photo } = message;
+    const mark = (status: PendingMessage['status']) =>
+      setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
+    mark('sending');
+    try {
+      const sent = photo
+        ? await sendMedia(token.current, conversationId, clientId, photo)
+        : await sendMessage(token.current, conversationId, {
+            clientId,
+            text,
+            ...(replyToId && { replyToId }),
+            ...(sticker && { sticker }),
+          });
+      setRefusal(null);
+      setMessages((prev) => [...(prev ?? []), sent]);
+      setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+      setAwaiting((prev) => ({
+        since: prev && prev.since < sent.createdAt ? prev.since : sent.createdAt,
+      }));
+    } catch (e) {
+      const refused = refusalOf((e as { code?: string }).code, photo !== undefined);
+      if (!refused) return mark('failed');
+      setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+      setRefusal(refused);
+    }
+  }, []);
 
-  const send = (text: string) => {
-    if (editing) return void saveEdit(editing, text);
+  /** Montre le message en cours d'envoi, puis le confie à `deliver`. */
+  const post = (content: Omit<PendingMessage, 'clientId' | 'status'>) => {
     if (!item) return;
     const message: PendingMessage = {
+      ...content,
       clientId: crypto.randomUUID(),
-      text,
       status: 'sending',
-      ...(replyTo && { replyToId: replyTo.id }),
     };
-    setReplyTo(null);
     setPending((prev) => [...prev, message]);
     void deliver(item.id, message);
   };
 
+  const send = (text: string) => {
+    if (editing) return void saveEdit(editing, text);
+    post({ text, ...(replyTo && { replyToId: replyTo.id }) });
+    setReplyTo(null);
+  };
+
   const sendSticker = (stickerId: string) => {
     const known = STICKERS.find((x) => x.id === stickerId);
-    if (!item || !known) return;
-    const message: PendingMessage = {
-      clientId: crypto.randomUUID(),
-      text: known.text,
-      sticker: known.id,
-      status: 'sending',
-    };
-    setPending((prev) => [...prev, message]);
-    void deliver(item.id, message);
+    if (known) post({ text: known.text, sticker: known.id });
   };
 
   const saveEdit = async (message: MessageItem, text: string) => {
@@ -474,9 +478,9 @@ export function ConversationScreen({
             {c.editFailed}
           </p>
         )}
-        {limited && item && (
+        {refusal && item && (
           <p role="status" className="rounded-2xl bg-bg px-4 py-3 text-[15px]">
-            {c.limitReached.replace('{name}', item.agent.name)}
+            {refusal.replace('{name}', item.agent.name)}
           </p>
         )}
       </div>
@@ -503,6 +507,7 @@ export function ConversationScreen({
         <Composer
           onSend={send}
           onSendSticker={sendSticker}
+          onSendPhoto={(photo) => post({ text: '', photo })}
           reply={
             replyTo && {
               name: replyTo.author === 'USER' ? fr.conversation.quoteYou : (item?.agent.name ?? ''),

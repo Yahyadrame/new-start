@@ -416,6 +416,8 @@
     "draftRemove": "Retirer la pièce jointe",
     "draftPhoto": "Photo prête à envoyer",
     "photoUnreadable": "Impossible de lire cette image. Essaie une photo JPEG ou PNG.",
+    "photoLimit": "Tu as envoyé toutes tes photos du jour. Elles reviennent demain.",
+    "photoSendUnavailable": "L'envoi de photos est indisponible pour le moment. Tu peux toujours écrire.",
     "voiceSoon": "L'envoi des vocaux arrive bientôt. Pour l'instant, écris ton message.",
     "reply": "Répondre",
     "replyingTo": "Réponse à {name}",
