@@ -35,6 +35,8 @@ export class PrismaProgressStore implements ProgressStore {
         day: true,
         spokenSeconds: true,
         messagesSent: true,
+        voiceSent: true,
+        photosSent: true,
         gamesPlayed: true,
         xpEarned: true,
       },
