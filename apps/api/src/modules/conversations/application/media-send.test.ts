@@ -48,10 +48,11 @@ function setup(
       ? { active: null, stores: {} }
       : { active: 'b2' as const, stores: { b2: files } };
   const limits = { voiceEnabled: true, voicePerDay: 30, photosPerDay: 10, ...options.limits };
-  const service = new MediaSend(store, stt, media, limits);
+  const replies = { schedule: vi.fn() };
+  const service = new MediaSend(store, stt, media, limits, replies);
   const send = (data: Uint8Array, seconds?: number) =>
     service.send('u1', CONV, { clientId: CLIENT, data, seconds });
-  return { store, stt, files, service, send };
+  return { store, stt, files, service, send, replies };
 }
 
 const refusal = (p: Promise<unknown>) =>
@@ -277,5 +278,26 @@ describe('MediaSend.voiceAvailability', () => {
     const { store, service } = setup();
     vi.mocked(store.sentToday).mockResolvedValue(30);
     expect(await service.voiceAvailability('u1')).toEqual({ available: false, reason: 'quota' });
+  });
+});
+
+describe('MediaSend : réponse du contact', () => {
+  it.each([
+    ['un vocal', voice],
+    ['une photo', photo],
+  ])('demande une réponse après %s', async (_cas, data) => {
+    const { replies, send } = setup();
+    await send(data, 4);
+    expect(replies.schedule).toHaveBeenCalledExactlyOnceWith(CONV, 'm1');
+  });
+
+  it('ne relance pas le contact pour un message déjà enregistré', async () => {
+    const { store, replies, send } = setup();
+    vi.mocked(store.check).mockResolvedValue({ row: rowOf({}), created: false });
+    await send(photo);
+    vi.mocked(store.check).mockResolvedValue({ ready: true });
+    vi.mocked(store.create).mockResolvedValue({ row: rowOf({}), created: false });
+    await send(photo);
+    expect(replies.schedule).not.toHaveBeenCalled();
   });
 });

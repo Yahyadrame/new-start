@@ -83,3 +83,21 @@ describe('buildAgentSystem, stickers et émojis', () => {
     expect(system).not.toMatch(/\{\w+\}/);
   });
 });
+
+describe('buildAgentSystem, vocaux et photos', () => {
+  const system = buildAgentSystem({ agent, learner });
+
+  it('présente un vocal comme écouté, sans corriger la ponctuation de sa transcription', () => {
+    expect(system).toContain('"[voice message]" starts the transcript');
+    expect(system).toContain('ignore spelling, punctuation and capital letters');
+  });
+
+  it('dit au contact qu’il ne voit pas les photos et de la faire décrire en anglais', () => {
+    expect(system).toContain('"[photo]" means the learner sent a photo. You cannot see photos');
+    expect(system).toContain('describe it in English');
+  });
+
+  it('interdit de recopier ces marques', () => {
+    expect(system).toContain('Never write "[voice message]" or "[photo]"');
+  });
+});

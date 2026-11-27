@@ -60,18 +60,25 @@ const MEDIA_STORES = Symbol('MEDIA_STORES');
     PrismaMediaMessagesStore,
     {
       provide: MediaSend,
-      inject: [PrismaMediaMessagesStore, AI, MEDIA_STORES, ENV],
+      inject: [PrismaMediaMessagesStore, AI, MEDIA_STORES, ENV, AgentReplyService],
       useFactory: (
         store: PrismaMediaMessagesStore,
         ai: AiProviders,
         media: MediaStores,
         env: Env,
+        replies: AgentReplyService,
       ) =>
-        new MediaSend(store, ai.stt, media, {
-          voiceEnabled: env.VOICE_MESSAGES_ENABLED,
-          voicePerDay: env.VOICE_MESSAGES_PER_DAY,
-          photosPerDay: env.PHOTOS_PER_DAY,
-        }),
+        new MediaSend(
+          store,
+          ai.stt,
+          media,
+          {
+            voiceEnabled: env.VOICE_MESSAGES_ENABLED,
+            voicePerDay: env.VOICE_MESSAGES_PER_DAY,
+            photosPerDay: env.PHOTOS_PER_DAY,
+          },
+          replies,
+        ),
     },
   ],
 })

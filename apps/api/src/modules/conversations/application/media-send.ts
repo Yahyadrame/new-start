@@ -4,6 +4,7 @@ import type { SttProvider } from '@newstart/ai';
 import { VOICE_MAX_SECONDS, type VoiceAvailability } from '@newstart/shared';
 import type { MediaStores } from '../../../shared/media/media-store.js';
 import { sniffMedia } from '../../../shared/media/sniff.js';
+import type { ReplyScheduler } from './agent-reply.js';
 import { notFound, presentMessage, UUID } from './conversations.js';
 import type { MediaMessagesStore, SentMessage } from './media-messages-store.js';
 
@@ -51,6 +52,7 @@ export class MediaSend {
     private readonly stt: SttProvider,
     private readonly media: MediaStores,
     private readonly limits: MediaLimits,
+    private readonly replies?: ReplyScheduler,
   ) {}
 
   async send(userId: string, conversationId: string, { clientId, data, seconds }: MediaUpload) {
@@ -139,7 +141,8 @@ export class MediaSend {
       await target.delete(key).catch(() => undefined);
       throw error;
     }
-    if (!sent.created) await target.delete(key).catch(() => undefined);
+    if (sent.created) this.replies?.schedule(conversationId, sent.row.id);
+    else await target.delete(key).catch(() => undefined);
     return this.result(sent);
   }
 
