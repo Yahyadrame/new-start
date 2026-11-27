@@ -187,3 +187,5 @@ Choix du porteur du projet.
 - Messages éphémères façon WhatsApp, gratuits pour tous, après NS-047 (NS-070).
 - Les vocaux et les photos ne comptent pas dans les 60 messages écrits du jour : chacun a sa limite.
 - Transférer un vocal ou une photo compte dans la limite du jour de son type (suite de cette ligne et de NS-066) et le contact répond. Le fichier n'est ni rangé ni transcrit à nouveau, et un vocal expire toujours 30 jours après son premier envoi.
+- Lecteur vocal (option B) : l'onde est calculée à l'enregistrement et gardée avec le message, puis dessinée par wavesurfer.js. Rien n'est téléchargé avant la lecture et le bucket ne demande aucun réglage CORS.
+- L'API ajoute `media.expired` : « Vocal expiré » ne s'affiche que dans ce cas, « Vocal indisponible » pour un fichier dont le stockage n'est plus configuré.

@@ -51,8 +51,8 @@ function setup(
   const limits = { voiceEnabled: true, voicePerDay: 30, photosPerDay: 10, ...options.limits };
   const replies = { schedule: vi.fn() };
   const service = new MediaSend(store, stt, media, limits, replies);
-  const send = (data: Uint8Array, seconds?: number) =>
-    service.send('u1', CONV, { clientId: CLIENT, data, seconds });
+  const send = (data: Uint8Array, seconds?: number, peaks?: number[]) =>
+    service.send('u1', CONV, { clientId: CLIENT, data, seconds, peaks });
   return { store, stt, files, service, send, replies };
 }
 
@@ -79,12 +79,14 @@ describe('MediaSend : photo', () => {
       mediaKey: key,
       mediaProvider: 'b2',
       mediaSeconds: null,
+      mediaPeaks: [],
     });
     expect(created).toBe(true);
     expect(message.media).toEqual({
       kind: 'IMAGE',
       url: `https://media.fake.test/${key}?expires=3600`,
       seconds: null,
+      expired: false,
     });
     expect(message).not.toHaveProperty('mediaKey');
     expect(stt.transcribe).not.toHaveBeenCalled();
@@ -111,6 +113,26 @@ describe('MediaSend : vocal', () => {
       expect.objectContaining({ kind: 'AUDIO', text: 'Hello there', mediaSeconds: 4 }),
     );
     expect(message.media).toMatchObject({ kind: 'AUDIO', seconds: 4 });
+  });
+
+  it('garde l’onde envoyée avec le vocal', async () => {
+    const { store, send } = setup();
+    const { message } = await send(voice, 4, [10, 80]);
+    expect(store.create).toHaveBeenCalledWith(
+      'u1',
+      CONV,
+      expect.objectContaining({ mediaPeaks: [10, 80] }),
+    );
+    expect(message.media?.peaks).toEqual([10, 80]);
+  });
+
+  it('enregistre un vocal sans onde, et ignore celle jointe à une photo', async () => {
+    const { store, send } = setup();
+    await send(voice, 4);
+    await send(photo, undefined, [10, 80]);
+    for (const [, , media] of vi.mocked(store.create).mock.calls) {
+      expect(media.mediaPeaks).toEqual([]);
+    }
   });
 
   it.each([undefined, 0, 121, 2.5, Number.NaN])('refuse la durée %s (400)', async (seconds) => {
@@ -311,6 +333,7 @@ describe('MediaSend.forward', () => {
     mediaKey: 'audio/u1/a.webm',
     mediaProvider: 'b2',
     mediaSeconds: 4,
+    mediaPeaks: [10, 80],
     storedAt: new Date(),
     deleted: false,
     ...patch,
@@ -337,6 +360,7 @@ describe('MediaSend.forward', () => {
       mediaKey: 'audio/u1/a.webm',
       mediaProvider: 'b2',
       mediaSeconds: 4,
+      mediaPeaks: [10, 80],
       forwarded: true,
       mediaStoredAt: from.storedAt,
     });

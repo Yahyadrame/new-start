@@ -18,6 +18,7 @@ const voice: NewMediaMessage = {
   mediaKey: 'audio/u1/a.webm',
   mediaProvider: 'b2',
   mediaSeconds: 4,
+  mediaPeaks: [10, 80],
 };
 function setup(today: Record<string, number> | null = null) {
   const db = {
@@ -145,10 +146,17 @@ describe('PrismaMediaMessagesStore.findSource', () => {
     mediaKey: 'audio/u1/a.webm',
     mediaProvider: 'b2',
     mediaSeconds: 4,
+    mediaPeaks: [10, 80],
     mediaStoredAt: null,
     createdAt: new Date('2026-11-01T10:00:00Z'),
     deletedAt: null,
   };
+
+  it('lit l’onde avec le fichier, pour la reprendre au transfert', async () => {
+    const { db, store } = setup();
+    await store.findSource('u1', 'm1');
+    expect(db.message.findFirst.mock.calls[0]?.[0].select).toMatchObject({ mediaPeaks: true });
+  });
 
   it('cherche seulement parmi les messages de cette personne qui ont un fichier', async () => {
     const { db, store } = setup();
@@ -169,6 +177,7 @@ describe('PrismaMediaMessagesStore.findSource', () => {
       mediaKey: 'audio/u1/a.webm',
       mediaProvider: 'b2',
       mediaSeconds: 4,
+      mediaPeaks: [10, 80],
       storedAt: row.createdAt,
       deleted: false,
     });

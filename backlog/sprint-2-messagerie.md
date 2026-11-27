@@ -192,6 +192,9 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
   - [x] Envoi du vocal, refus expliqués.
   - [x] Raison affichée sur le micro quand le vocal est indisponible.
 - [ ] Partie 5 : lecture des vocaux dans la conversation.
+  - [x] 5a : l'API garde l'onde d'un vocal (`peaks`) et dit s'il a expiré (`expired`).
+  - [ ] 5b : l'onde calculée à l'enregistrement et envoyée avec le vocal.
+  - [ ] 5c : lecteur dans la conversation, « Vocal expiré » et « Vocal indisponible ».
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher. Fait pour la limite, la coupure et le service non configuré ; une panne passagère ne s'explique encore qu'à l'envoi.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
 - [ ] Plus tard : nouvel essai pour les fichiers que le stockage a refusé d'effacer (aujourd'hui, seul un avertissement est journalisé).

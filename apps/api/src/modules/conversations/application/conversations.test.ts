@@ -462,6 +462,7 @@ describe('ConversationsService et les médias', () => {
     mediaKey: 'image/u1/p.jpg',
     mediaProvider: 'r2',
     mediaSeconds: null,
+    mediaPeaks: [],
   };
 
   it('rend le lien de lecture avec le message, sans la clé ni le fournisseur', async () => {
@@ -474,8 +475,9 @@ describe('ConversationsService et les médias', () => {
       kind: 'IMAGE',
       url: 'https://media.fake.test/image/u1/p.jpg?expires=3600',
       seconds: null,
+      expired: false,
     });
-    for (const key of ['kind', 'mediaKey', 'mediaProvider', 'mediaSeconds']) {
+    for (const key of ['kind', 'mediaKey', 'mediaProvider', 'mediaSeconds', 'mediaPeaks']) {
       expect(item).not.toHaveProperty(key);
     }
   });

@@ -20,6 +20,8 @@ export interface MediaUpload {
   data: Uint8Array;
   /** Durée d'un vocal, annoncée par le client. */
   seconds?: number | undefined;
+  /** L'onde d'un vocal, calculée par le client. */
+  peaks?: number[] | undefined;
 }
 
 type CheckedUpload = {
@@ -27,6 +29,7 @@ type CheckedUpload = {
   data: Uint8Array;
   file: NonNullable<ReturnType<typeof sniffMedia>>;
   mediaSeconds: number | null;
+  mediaPeaks: number[];
 };
 
 const fail = (status: number, code: string, message: string) =>
@@ -67,16 +70,18 @@ export class MediaSend {
     private readonly replies?: ReplyScheduler,
   ) {}
 
-  async send(userId: string, conversationId: string, { clientId, data, seconds }: MediaUpload) {
+  async send(userId: string, conversationId: string, upload: MediaUpload) {
+    const { clientId, data, seconds, peaks } = upload;
     if (!UUID.test(conversationId)) throw notFound();
     if (!UUID.test(clientId)) throw invalid('Identifiant de message invalide.');
     const file = sniffMedia(data);
     if (!file) throw invalid('Envoie une photo (JPEG, PNG ou WebP) ou un vocal.');
     const mediaSeconds = file.kind === 'AUDIO' ? voiceLength(seconds) : null;
+    const mediaPeaks = file.kind === 'AUDIO' ? (peaks ?? []) : [];
     // Un envoi à la fois par personne et par type : la limite est lue avant la transcription et
     // comptée après, des envois simultanés passeraient donc tous.
     return this.inTurn(`${userId}:${file.kind}`, () =>
-      this.deliver(userId, conversationId, { clientId, data, file, mediaSeconds }),
+      this.deliver(userId, conversationId, { clientId, data, file, mediaSeconds, mediaPeaks }),
     );
   }
 
@@ -128,7 +133,7 @@ export class MediaSend {
     clientId: string,
     source: MediaSource,
   ) {
-    const { kind, text, mediaKey, mediaProvider, mediaSeconds, storedAt } = source;
+    const { kind, text, mediaKey, mediaProvider, mediaSeconds, mediaPeaks, storedAt } = source;
     const limit = this.limitFor(kind);
     const found = await this.store.check(userId, conversationId, clientId, kind, limit);
     if (!found) throw notFound();
@@ -144,6 +149,7 @@ export class MediaSend {
       mediaKey,
       mediaProvider,
       mediaSeconds,
+      mediaPeaks,
       forwarded: true,
       mediaStoredAt: storedAt,
     });
@@ -158,7 +164,7 @@ export class MediaSend {
   private async deliver(
     userId: string,
     conversationId: string,
-    { clientId, data, file, mediaSeconds }: CheckedUpload,
+    { clientId, data, file, mediaSeconds, mediaPeaks }: CheckedUpload,
   ) {
     const voice = file.kind === 'AUDIO';
     const limit = this.limitFor(file.kind);
@@ -185,6 +191,7 @@ export class MediaSend {
         mediaKey: key,
         mediaProvider: active,
         mediaSeconds,
+        mediaPeaks,
       });
     } catch (error) {
       // Pas de fichier sans message : personne ne pourrait plus l'effacer.

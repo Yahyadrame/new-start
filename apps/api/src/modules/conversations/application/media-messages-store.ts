@@ -8,6 +8,8 @@ export interface NewMediaMessage {
   mediaKey: string;
   mediaProvider: string;
   mediaSeconds: number | null;
+  /** L'onde d'un vocal ; vide pour une photo ou si elle n'a pas été envoyée. */
+  mediaPeaks: number[];
   forwarded?: boolean;
   /** Pour un fichier repris : quand il a été rangé. */
   mediaStoredAt?: Date;
@@ -16,7 +18,7 @@ export interface NewMediaMessage {
 /** Le vocal ou la photo d'un message qu'on veut transférer. */
 export type MediaSource = Pick<
   NewMediaMessage,
-  'kind' | 'text' | 'mediaKey' | 'mediaProvider' | 'mediaSeconds'
+  'kind' | 'text' | 'mediaKey' | 'mediaProvider' | 'mediaSeconds' | 'mediaPeaks'
 > & { storedAt: Date; deleted: boolean };
 
 export type SentMessage = { row: MessageRow; created: boolean };
