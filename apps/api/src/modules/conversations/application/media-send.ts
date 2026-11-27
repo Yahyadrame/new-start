@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { HttpException } from '@nestjs/common';
 import type { SttProvider } from '@newstart/ai';
+import { VOICE_MAX_SECONDS } from '@newstart/shared';
 import type { MediaStores } from '../../../shared/media/media-store.js';
 import { sniffMedia } from '../../../shared/media/sniff.js';
 import { notFound, presentMessage, UUID } from './conversations.js';
@@ -19,8 +20,6 @@ export interface MediaUpload {
   seconds?: number | undefined;
 }
 
-const MAX_VOICE_SECONDS = 120;
-
 const fail = (status: number, code: string, message: string) =>
   new HttpException({ code, message }, status);
 const invalid = (message: string) => fail(400, 'VALIDATION_FAILED', message);
@@ -29,8 +28,8 @@ const voiceUnavailable = (message = 'Les vocaux sont indisponibles pour le momen
 
 // ponytail: la durée annoncée n'est pas mesurée ; la taille (4 Mo) et la limite du jour bornent le coût
 function voiceLength(seconds: number | undefined): number {
-  if (!seconds || !Number.isInteger(seconds) || seconds < 1 || seconds > MAX_VOICE_SECONDS) {
-    throw invalid(`Un vocal dure de 1 à ${MAX_VOICE_SECONDS} secondes.`);
+  if (!seconds || !Number.isInteger(seconds) || seconds < 1 || seconds > VOICE_MAX_SECONDS) {
+    throw invalid(`Un vocal dure de 1 à ${VOICE_MAX_SECONDS} secondes.`);
   }
   return seconds;
 }

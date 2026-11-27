@@ -1,11 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MediaQuery,
   MESSAGES_PAGE_SIZE,
   MessagesQuery,
   REACTIONS,
   SendMessage,
   SetReaction,
 } from './messages.js';
+
+describe('MediaQuery', () => {
+  const clientId = '0198f0a0-0000-4000-8000-000000000002';
+
+  it('lit la durée d’un vocal en nombre ; une photo n’en a pas', () => {
+    expect(MediaQuery.parse({ clientId, seconds: '4' })).toEqual({ clientId, seconds: 4 });
+    expect(MediaQuery.parse({ clientId })).toEqual({ clientId });
+  });
+
+  it.each([
+    {},
+    { clientId: 'zzz' },
+    { clientId: [clientId, clientId] },
+    { clientId, seconds: '0' },
+    { clientId, seconds: '121' },
+    { clientId, seconds: '2.5' },
+    { clientId, seconds: 'abc' },
+  ])('refuse %o', (query) => {
+    expect(MediaQuery.safeParse(query).success).toBe(false);
+  });
+});
 
 describe('MessagesQuery', () => {
   it('accepte l’absence de curseur, refuse un curseur vide ou trop long', () => {

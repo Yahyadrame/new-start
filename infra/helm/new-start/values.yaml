@@ -51,6 +51,9 @@ config:
   MEDIA_R2_ENDPOINT: ''
   MEDIA_R2_REGION: ''
   MEDIA_R2_BUCKET: ''
+  VOICE_MESSAGES_ENABLED: 'true'
+  VOICE_MESSAGES_PER_DAY: '30'
+  PHOTOS_PER_DAY: '10'
 
 api:
   replicas: 3

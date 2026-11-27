@@ -10,17 +10,27 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { MessagesQuery, SearchQuery, SendMessage, StartConversation } from '@newstart/shared';
+import {
+  MediaQuery,
+  MessagesQuery,
+  SearchQuery,
+  SendMessage,
+  StartConversation,
+} from '@newstart/shared';
 import { AccessGuard, CurrentUserId } from '../../../shared/auth/access.guard.js';
 import { parseBody } from '../../../shared/http/validate.js';
 import { ConversationsService } from '../application/conversations.js';
+import { MediaSend } from '../application/media-send.js';
 
 type StatusResponse = { status(code: number): unknown };
 
 @Controller('conversations')
 @UseGuards(AccessGuard)
 export class ConversationsController {
-  constructor(@Inject(ConversationsService) private readonly conversations: ConversationsService) {}
+  constructor(
+    @Inject(ConversationsService) private readonly conversations: ConversationsService,
+    @Inject(MediaSend) private readonly media: MediaSend,
+  ) {}
 
   @Get()
   list(@CurrentUserId() userId: string) {
@@ -63,6 +73,23 @@ export class ConversationsController {
       id,
       parseBody(SendMessage, body),
     );
+    res.status(created ? 201 : 200);
+    return message;
+  }
+
+  /** Photo ou vocal en octets bruts. 201 pour un nouveau message, 200 pour un renvoi. */
+  @Post(':id/media')
+  async sendMedia(
+    @CurrentUserId() userId: string,
+    @Param('id') id: string,
+    @Query() query: unknown,
+    @Body() body: unknown,
+    @Res({ passthrough: true }) res: StatusResponse,
+  ) {
+    const { clientId, seconds } = parseBody(MediaQuery, query);
+    // Sans `Content-Type: audio/*` ou `image/*`, le corps n'est pas lu en octets : il sera refusé.
+    const data = Buffer.isBuffer(body) ? body : new Uint8Array(0);
+    const { message, created } = await this.media.send(userId, id, { clientId, data, seconds });
     res.status(created ? 201 : 200);
     return message;
   }

@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common';
 import type { AiProviders } from '@newstart/ai';
 import { ENV, type Env } from '../../config/env.js';
 import { AI } from '../../shared/ai/ai.module.js';
-import { createMediaStores } from '../../shared/media/media-store.js';
+import { createMediaStores, type MediaStores } from '../../shared/media/media-store.js';
 import {
   AGENT_REPLY_STORE,
   AgentReplyService,
   type AgentReplyStore,
 } from './application/agent-reply.js';
 import { PrismaAgentReplyStore } from './infrastructure/prisma-agent-reply.store.js';
+import { MediaSend } from './application/media-send.js';
+import { PrismaMediaMessagesStore } from './infrastructure/prisma-media-messages.store.js';
 import {
   CONVERSATIONS_STORE,
   ConversationsService,
@@ -23,6 +25,8 @@ import { PrismaTranslationStore } from './infrastructure/prisma-translation.stor
 import { MessagesController } from './interface/messages.controller.js';
 import { PrismaConversationsStore } from './infrastructure/prisma-conversations.store.js';
 import { ConversationsController } from './interface/conversations.controller.js';
+
+const MEDIA_STORES = Symbol('MEDIA_STORES');
 
 @Module({
   controllers: [ConversationsController, MessagesController],
@@ -41,18 +45,33 @@ import { ConversationsController } from './interface/conversations.controller.js
       useFactory: (store: TranslationStore, ai: AiProviders) =>
         new TranslationService(store, ai.llm),
     },
+    // Les variables MEDIA_* sont vérifiées par `createMediaStores`.
+    { provide: MEDIA_STORES, useFactory: () => createMediaStores(process.env) },
     {
       provide: ConversationsService,
-      inject: [CONVERSATIONS_STORE, AgentReplyService, ENV],
-      useFactory: (store: ConversationsStore, replies: AgentReplyService, env: Env) =>
-        new ConversationsService(
-          store,
-          undefined,
-          replies,
-          env.MESSAGES_PER_DAY,
-          // Les variables MEDIA_* sont vérifiées par `createMediaStores`.
-          createMediaStores(process.env),
-        ),
+      inject: [CONVERSATIONS_STORE, AgentReplyService, ENV, MEDIA_STORES],
+      useFactory: (
+        store: ConversationsStore,
+        replies: AgentReplyService,
+        env: Env,
+        media: MediaStores,
+      ) => new ConversationsService(store, undefined, replies, env.MESSAGES_PER_DAY, media),
+    },
+    PrismaMediaMessagesStore,
+    {
+      provide: MediaSend,
+      inject: [PrismaMediaMessagesStore, AI, MEDIA_STORES, ENV],
+      useFactory: (
+        store: PrismaMediaMessagesStore,
+        ai: AiProviders,
+        media: MediaStores,
+        env: Env,
+      ) =>
+        new MediaSend(store, ai.stt, media, {
+          voiceEnabled: env.VOICE_MESSAGES_ENABLED,
+          voicePerDay: env.VOICE_MESSAGES_PER_DAY,
+          photosPerDay: env.PHOTOS_PER_DAY,
+        }),
     },
   ],
 })

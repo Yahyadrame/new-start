@@ -1,19 +1,22 @@
-import type { INestApplication } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ACCESS_VERIFIER, AccessGuard } from '../../../shared/auth/access.guard.js';
+import { useMediaBody } from '../../../shared/http/media-body.js';
 import { ConversationsService } from '../application/conversations.js';
+import { MediaSend } from '../application/media-send.js';
 import { ConversationsController } from './conversations.controller.js';
 
 const list = vi.fn().mockResolvedValue([{ id: 'c1' }]);
 const start = vi.fn().mockResolvedValue({ id: 'c2' });
 const send = vi.fn();
+const sendMedia = vi.fn();
 const search = vi.fn().mockResolvedValue({ items: [] });
 const markRead = vi.fn();
 const messages = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
 const verifier = { verify: async (t: string) => (t.startsWith('tok-') ? t.slice(4) : null) };
-let app: INestApplication;
+let app: NestExpressApplication;
 beforeAll(async () => {
   const module = await Test.createTestingModule({
     controllers: [ConversationsController],
@@ -22,11 +25,13 @@ beforeAll(async () => {
         provide: ConversationsService,
         useValue: { list, start, messages, send, markRead, search },
       },
+      { provide: MediaSend, useValue: { send: sendMedia } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
   }).compile();
-  app = module.createNestApplication();
+  app = module.createNestApplication<NestExpressApplication>();
+  useMediaBody(app);
   await app.init();
 });
 afterAll(() => app.close());
@@ -184,5 +189,59 @@ describe('GET /conversations/search', () => {
       expect(res.status).toBe(400);
     }
     expect(search).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /conversations/:id/media', () => {
+  beforeEach(() => vi.clearAllMocks());
+  const clientId = '0198f0a0-0000-4000-8000-000000000002';
+  const bytes = Buffer.from([0x1a, 0x45, 0xdf, 0xa3, 1]);
+  const post = (query = `clientId=${clientId}&seconds=4`, type = 'audio/webm') =>
+    request(app.getHttpServer())
+      .post(`/conversations/c1/media?${query}`)
+      .set({ Authorization: 'Bearer tok-u1', 'Content-Type': type })
+      .send(bytes);
+
+  it('refuse sans jeton (401)', async () => {
+    const res = await request(app.getHttpServer()).post(
+      `/conversations/c1/media?clientId=${clientId}`,
+    );
+    expect(res.status).toBe(401);
+    expect(sendMedia).not.toHaveBeenCalled();
+  });
+
+  it('transmet les octets et répond 201 avec le nouveau message', async () => {
+    sendMedia.mockResolvedValue({ message: { id: 'm1' }, created: true });
+    const res = await post();
+    expect(res.status).toBe(201);
+    expect(res.body).toEqual({ id: 'm1' });
+    expect(sendMedia).toHaveBeenCalledWith('u1', 'c1', { clientId, data: bytes, seconds: 4 });
+  });
+
+  it('répond 200 quand le clientId est renvoyé', async () => {
+    sendMedia.mockResolvedValue({ message: { id: 'm1' }, created: false });
+    expect((await post()).status).toBe(200);
+  });
+
+  it('ne transmet aucun octet pour un autre type de contenu', async () => {
+    sendMedia.mockResolvedValue({ message: { id: 'm1' }, created: true });
+    await post(`clientId=${clientId}`, 'application/octet-stream');
+    expect(sendMedia.mock.calls[0]?.[2].data).toHaveLength(0);
+  });
+
+  it('refuse un fichier de plus de 4 Mo (413)', async () => {
+    const res = await request(app.getHttpServer())
+      .post(`/conversations/c1/media?clientId=${clientId}`)
+      .set({ Authorization: 'Bearer tok-u1', 'Content-Type': 'image/jpeg' })
+      .send(Buffer.alloc(4 * 1024 * 1024 + 1));
+    expect(res.status).toBe(413);
+    expect(sendMedia).not.toHaveBeenCalled();
+  });
+
+  it('répond 400 VALIDATION_FAILED sans clientId', async () => {
+    const res = await post('seconds=4');
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('VALIDATION_FAILED');
+    expect(sendMedia).not.toHaveBeenCalled();
   });
 });

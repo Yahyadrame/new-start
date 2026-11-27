@@ -30,4 +30,9 @@ describe('AppModule', () => {
     expect(res.status).toBe(401);
     expect(db.levelTestAnswer.upsert).not.toHaveBeenCalled();
   });
+
+  it('expose l’envoi des photos et des vocaux, protégé', async () => {
+    const res = await request(app.getHttpServer()).post('/conversations/c1/media');
+    expect(res.status).toBe(401);
+  });
 });

@@ -56,6 +56,16 @@ export const MESSAGES_PAGE_SIZE = 30;
 export const MessagesQuery = z.object({ cursor: z.string().min(1).max(100).optional() });
 export type MessagesQuery = z.infer<typeof MessagesQuery>;
 
+/** Durée la plus longue d'un vocal. */
+export const VOICE_MAX_SECONDS = 120;
+
+/** Paramètres de `POST /conversations/:id/media` ; `seconds` : la durée d'un vocal. */
+export const MediaQuery = z.object({
+  clientId: z.string().uuid(),
+  seconds: z.coerce.number().int().min(1).max(VOICE_MAX_SECONDS).optional(),
+});
+export type MediaQuery = z.infer<typeof MediaQuery>;
+
 /** Corps de `POST /conversations/:id/messages` : `clientId` rend le renvoi sans risque de doublon. */
 export const SendMessage = z.object({
   clientId: z.uuid(),
