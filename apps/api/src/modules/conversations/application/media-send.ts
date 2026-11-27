@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { HttpException } from '@nestjs/common';
 import type { SttProvider } from '@newstart/ai';
-import { VOICE_MAX_SECONDS } from '@newstart/shared';
+import { VOICE_MAX_SECONDS, type VoiceAvailability } from '@newstart/shared';
 import type { MediaStores } from '../../../shared/media/media-store.js';
 import { sniffMedia } from '../../../shared/media/sniff.js';
 import { notFound, presentMessage, UUID } from './conversations.js';
@@ -64,6 +64,18 @@ export class MediaSend {
     return this.inTurn(`${userId}:${file.kind}`, () =>
       this.deliver(userId, conversationId, { clientId, data, file, mediaSeconds }),
     );
+  }
+
+  /** L'état du micro avant d'enregistrer. Une panne du fournisseur ne se voit qu'à l'envoi. */
+  async voiceAvailability(userId: string): Promise<VoiceAvailability> {
+    if (!this.limits.voiceEnabled) return { available: false, reason: 'disabled' };
+    if (this.stt.name === 'fake' || !this.media.active) {
+      return { available: false, reason: 'unconfigured' };
+    }
+    const sent = await this.store.sentToday(userId, 'AUDIO');
+    return sent < this.limits.voicePerDay
+      ? { available: true }
+      : { available: false, reason: 'quota' };
   }
 
   private async inTurn<T>(key: string, task: () => Promise<T>): Promise<T> {

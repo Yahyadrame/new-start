@@ -43,6 +43,11 @@ export class ConversationsController {
     return this.conversations.search(userId, parseBody(SearchQuery, query).q);
   }
 
+  @Get('voice-availability')
+  voiceAvailability(@CurrentUserId() userId: string) {
+    return this.media.voiceAvailability(userId);
+  }
+
   @Post()
   start(@CurrentUserId() userId: string, @Body() body: unknown) {
     return this.conversations.start(userId, parseBody(StartConversation, body).agentSlug);
