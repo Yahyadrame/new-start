@@ -13,6 +13,7 @@ export function useVoiceRecorder(onClip: (clip: VoiceClip) => void) {
   const recorder = useRef<MediaRecorder | null>(null);
   const keep = useRef(true);
   const startedAt = useRef(0);
+  const closed = useRef(false);
 
   const release = useCallback(() => {
     recorder.current?.stream.getTracks().forEach((track) => track.stop());
@@ -31,6 +32,8 @@ export function useVoiceRecorder(onClip: (clip: VoiceClip) => void) {
     } catch {
       return setError('denied');
     }
+    // L'écran s'est fermé pendant la demande du navigateur : on referme le micro aussitôt.
+    if (closed.current) return stream.getTracks().forEach((track) => track.stop());
     const chunks: Blob[] = [];
     const rec = new MediaRecorder(stream);
     rec.ondataavailable = (e) => chunks.push(e.data);
@@ -71,13 +74,14 @@ export function useVoiceRecorder(onClip: (clip: VoiceClip) => void) {
   }, [recording, seconds, stop]);
 
   // Si l'écran se ferme en cours d'enregistrement, on coupe le micro sans rien garder.
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    closed.current = false;
+    return () => {
+      closed.current = true;
       keep.current = false;
       recorder.current?.stop();
-    },
-    [],
-  );
+    };
+  }, []);
 
   return { recording, seconds, error, start, stop, cancel };
 }

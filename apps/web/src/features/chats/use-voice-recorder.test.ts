@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { formatDuration, MAX_VOICE_SECONDS, useVoiceRecorder } from './use-voice-recorder';
 
@@ -64,6 +65,25 @@ describe('useVoiceRecorder', () => {
     act(() => void vi.advanceTimersByTime(MAX_VOICE_SECONDS * 1000));
     expect(onClip).toHaveBeenCalledTimes(1);
     expect(hook.result.current.recording).toBe(false);
+  });
+
+  it('referme le micro si l’écran s’est fermé pendant la demande du navigateur', async () => {
+    let allow!: (stream: unknown) => void;
+    getUserMedia.mockReturnValue(new Promise((resolve) => (allow = resolve)));
+    const hook = renderHook(() => useVoiceRecorder(vi.fn()));
+    const starting = hook.result.current.start();
+    hook.unmount();
+    await act(async () => {
+      allow({ getTracks: () => [{ stop: trackStop }] });
+      await starting;
+    });
+    expect(trackStop).toHaveBeenCalled();
+  });
+
+  it('démarre encore après un double montage (mode strict de React)', async () => {
+    const hook = renderHook(() => useVoiceRecorder(vi.fn()), { wrapper: StrictMode });
+    await act(async () => void (await hook.result.current.start()));
+    expect(hook.result.current.recording).toBe(true);
   });
 
   it('signale un micro refusé', async () => {

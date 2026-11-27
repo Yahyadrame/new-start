@@ -188,6 +188,9 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Partie 4a : photos affichées dans la conversation (sans la mention « parfait » dessous), nommées dans les aperçus, transférables.
 - [x] Partie 4b : envoi des photos compressées depuis la barre d'écriture ; « Fichier » retiré.
 - [ ] Partie 4c : envoi des vocaux depuis la barre d'écriture.
+  - [x] Le micro de la conversation demande l'accord aux enregistrements vocaux avant le premier vocal.
+  - [ ] Envoi du vocal, refus expliqués.
+  - [ ] Raison affichée sur le micro quand le vocal est indisponible.
 - [ ] Partie 5 : lecture des vocaux dans la conversation.
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
@@ -396,3 +399,18 @@ _Ajouté le 2026-11-27 à la demande du porteur du projet. Après NS-047._
 - [ ] Passé le délai, le texte et les fichiers sont réellement effacés et le contact ne les connaît plus.
 - [ ] Les corrections du carnet, les révisions et la progression restent.
 - [ ] Tests unitaires, deux thèmes, accessibilité.
+
+## NS-071 — Retirer son accord vocal depuis le profil · S
+
+_Ajouté le 2026-11-27 : le test de niveau dit « Tu peux retirer ton accord quand tu veux », mais aucun écran ne le permet (l'API accepte déjà `PUT /onboarding/voice-consent` avec `accepted: false`)._
+
+- [ ] Réglage dans le profil, compte ou confidentialité : voir et retirer l'accord aux enregistrements vocaux.
+- [ ] Après le retrait, le micro redemande l'accord.
+- [ ] Tests unitaires, deux thèmes, accessibilité.
+
+## NS-072 — API « base de données indisponible » juste après un déploiement · S
+
+_Ajouté le 2026-11-27 : vu trois fois sur staging. `/health/ready` répond 503 (`database: down`) à la première requête après le déploiement, puis 200 aux suivantes._
+
+- [ ] Cause trouvée (réveil de la base, délai de connexion, ordre de démarrage…) et notée dans le ticket.
+- [ ] Correctif, avec un test si c'est du code ; plus de 503 à la première requête après un déploiement.

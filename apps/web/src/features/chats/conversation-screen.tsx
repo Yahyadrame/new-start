@@ -41,6 +41,7 @@ import {
 import { Composer } from './composer';
 import { ForwardDialog } from './forward-dialog';
 import { useKeyboardInset } from './use-keyboard-inset';
+import { useVoiceConsent } from './use-voice-consent';
 import { MessageBubble } from './message-bubble';
 import { PendingBubble, type PendingMessage } from './pending-bubble';
 import { TypingBubble } from './typing-bubble';
@@ -101,6 +102,7 @@ export function ConversationScreen({
   const seekedPages = useRef(0);
   const skipBottom = useRef(false);
   const token = useRef('');
+  const consent = useVoiceConsent(() => token.current, item?.agent.name ?? '');
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
 
@@ -508,6 +510,7 @@ export function ConversationScreen({
           onSend={send}
           onSendSticker={sendSticker}
           onSendPhoto={(photo) => post({ text: '', photo })}
+          onMicRequest={consent.ensure}
           reply={
             replyTo && {
               name: replyTo.author === 'USER' ? fr.conversation.quoteYou : (item?.agent.name ?? ''),
@@ -522,6 +525,7 @@ export function ConversationScreen({
           }}
         />
       )}
+      {consent.dialog}
     </main>
   );
 }
