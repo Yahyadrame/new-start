@@ -1,6 +1,6 @@
 import type { MessageItem } from '@newstart/shared';
 import { describe, expect, it } from 'vitest';
-import { hasReplyAfter, isFresh, mergeLatest, POLL_LIMIT, POLL_MS } from './chats-merge';
+import { isAwaiting, isFresh, mergeLatest, POLL_LIMIT, POLL_MS, repliesAfter } from './chats-merge';
 
 const m = (id: string, author: MessageItem['author'], createdAt: string): MessageItem => ({
   id,
@@ -41,15 +41,43 @@ describe('mergeLatest', () => {
   });
 });
 
-describe('hasReplyAfter', () => {
+describe('isAwaiting', () => {
   const since = '2026-11-20T10:00:00.000Z';
-  it('reconnaît une réponse du contact ou du système après le message', () => {
-    expect(hasReplyAfter([m('r', 'AGENT', '2026-11-20T10:00:03.000Z')], since)).toBe(true);
-    expect(hasReplyAfter([m('s', 'SYSTEM', '2026-11-20T10:00:03.000Z')], since)).toBe(true);
+  const at = (s: number) => `2026-11-20T10:00:${String(s).padStart(2, '0')}.000Z`;
+  const answered = (id: string, s: number) => ({
+    ...m(id, 'USER', at(s)),
+    correction: { better: null, whyFr: null },
   });
-  it('ignore les messages de la personne et les réponses plus anciennes', () => {
-    expect(hasReplyAfter([m('u', 'USER', '2026-11-20T10:00:03.000Z')], since)).toBe(false);
-    expect(hasReplyAfter([m('r', 'AGENT', '2026-11-20T09:59:00.000Z')], since)).toBe(false);
+
+  it('attend tant qu’un message parti depuis n’a pas sa correction', () => {
+    const first = [answered('u1', 0), m('r1', 'AGENT', at(5))];
+    expect(isAwaiting([...first, m('u2', 'USER', at(2))], since)).toBe(true);
+    expect(isAwaiting([...first, answered('u2', 2)], since)).toBe(false);
+  });
+
+  it('compte un message d’échec pour un message sans réponse', () => {
+    const failed = m('s', 'SYSTEM', at(5));
+    expect(isAwaiting([m('u1', 'USER', at(0)), failed], since)).toBe(false);
+    expect(isAwaiting([m('u1', 'USER', at(0)), m('u2', 'USER', at(1)), failed], since)).toBe(true);
+  });
+
+  it('ignore les messages plus anciens et les messages supprimés', () => {
+    const old = m('u0', 'USER', '2026-11-20T09:59:00.000Z');
+    const deleted = { ...m('u1', 'USER', at(1)), deleted: true };
+    expect(isAwaiting([old, deleted], since)).toBe(false);
+  });
+});
+
+describe('repliesAfter', () => {
+  it('compte ce que le contact ou le système ont écrit depuis', () => {
+    const since = '2026-11-20T10:00:00.000Z';
+    const items = [
+      m('old', 'AGENT', '2026-11-20T09:59:00.000Z'),
+      m('u', 'USER', '2026-11-20T10:00:01.000Z'),
+      m('r', 'AGENT', '2026-11-20T10:00:03.000Z'),
+      m('s', 'SYSTEM', '2026-11-20T10:00:04.000Z'),
+    ];
+    expect(repliesAfter(items, since)).toBe(2);
   });
 });
 
