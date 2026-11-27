@@ -73,11 +73,11 @@ export class ConversationsController {
     @Body() body: unknown,
     @Res({ passthrough: true }) res: StatusResponse,
   ) {
-    const { message, created } = await this.conversations.send(
-      userId,
-      id,
-      parseBody(SendMessage, body),
-    );
+    const input = parseBody(SendMessage, body);
+    const { clientId, mediaFromId } = input;
+    const { message, created } = mediaFromId
+      ? await this.media.forward(userId, id, { clientId, mediaFromId })
+      : await this.conversations.send(userId, id, input);
     res.status(created ? 201 : 200);
     return message;
   }

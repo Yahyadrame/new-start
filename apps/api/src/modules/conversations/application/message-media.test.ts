@@ -49,3 +49,12 @@ describe('presentMedia', () => {
     expect(await presentMedia({ ...photo, deletedAt: now }, stores, now)).toBeUndefined();
   });
 });
+
+describe('presentMedia, fichier repris par un transfert', () => {
+  it('compte les 30 jours d’un vocal depuis son rangement, pas depuis le transfert', async () => {
+    const copy = { ...voice, createdAt: daysAgo(1), mediaStoredAt: daysAgo(31) };
+    expect((await presentMedia(copy, stores, now))?.url).toBeNull();
+    const recent = { ...copy, mediaStoredAt: daysAgo(29) };
+    expect((await presentMedia(recent, stores, now))?.url).not.toBeNull();
+  });
+});

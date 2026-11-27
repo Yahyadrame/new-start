@@ -8,6 +8,33 @@ import { findByClientId, recordMessage } from './record-message.js';
 export class PrismaMediaMessagesStore implements MediaMessagesStore {
   constructor(@Inject(PrismaService) private readonly db: PrismaService) {}
 
+  async findSource(userId: string, messageId: string) {
+    const row = await this.db.message.findFirst({
+      where: { id: messageId, conversation: { userId }, mediaKey: { not: null } },
+      select: {
+        kind: true,
+        text: true,
+        mediaKey: true,
+        mediaProvider: true,
+        mediaSeconds: true,
+        mediaStoredAt: true,
+        createdAt: true,
+        deletedAt: true,
+      },
+    });
+    if (!row || row.kind === 'TEXT' || !row.mediaKey || !row.mediaProvider) return null;
+    const { kind, text, mediaKey, mediaProvider, mediaSeconds } = row;
+    return {
+      kind,
+      text,
+      mediaKey,
+      mediaProvider,
+      mediaSeconds,
+      storedAt: row.mediaStoredAt ?? row.createdAt,
+      deleted: row.deletedAt !== null,
+    };
+  }
+
   async hasVoiceConsent(userId: string) {
     const user = await this.db.user.findUnique({
       where: { id: userId },

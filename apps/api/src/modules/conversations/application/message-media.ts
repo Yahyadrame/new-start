@@ -12,7 +12,13 @@ export interface MediaColumns {
   mediaKey?: string | null | undefined;
   mediaProvider?: string | null | undefined;
   mediaSeconds?: number | null | undefined;
+  /** Pour un fichier repris par un transfert : quand il a été rangé. */
+  mediaStoredAt?: Date | null | undefined;
 }
+
+/** Vrai quand le stockage a effacé ce vocal ; les photos n'expirent pas. */
+export const voiceExpired = (kind: 'AUDIO' | 'IMAGE', storedAt: Date, now: Date) =>
+  kind === 'AUDIO' && now.getTime() - storedAt.getTime() > VOICE_KEPT_MS;
 
 /** Le vocal ou la photo d'un message, avec son lien de lecture ; rien pour un texte ou un message supprimé. */
 export async function presentMedia(
@@ -23,7 +29,7 @@ export async function presentMedia(
   const { kind, mediaKey, mediaProvider, mediaSeconds, createdAt, deletedAt } = row;
   if (deletedAt || (kind !== 'AUDIO' && kind !== 'IMAGE')) return undefined;
   const store = stores[mediaProvider as MediaProvider];
-  const expired = kind === 'AUDIO' && now.getTime() - createdAt.getTime() > VOICE_KEPT_MS;
+  const expired = voiceExpired(kind, row.mediaStoredAt ?? createdAt, now);
   const url =
     store && mediaKey && !expired ? await store.signedUrl(mediaKey, LINK_TTL_SECONDS) : null;
   return { kind, url, seconds: mediaSeconds ?? null };

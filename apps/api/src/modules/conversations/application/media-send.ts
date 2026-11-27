@@ -2,11 +2,12 @@ import { randomUUID } from 'node:crypto';
 import { HttpException } from '@nestjs/common';
 import type { SttProvider } from '@newstart/ai';
 import { VOICE_MAX_SECONDS, type VoiceAvailability } from '@newstart/shared';
-import type { MediaStores } from '../../../shared/media/media-store.js';
+import type { MediaProvider, MediaStores } from '../../../shared/media/media-store.js';
 import { sniffMedia } from '../../../shared/media/sniff.js';
 import type { ReplyScheduler } from './agent-reply.js';
 import { notFound, presentMessage, UUID } from './conversations.js';
-import type { MediaMessagesStore, SentMessage } from './media-messages-store.js';
+import type { MediaMessagesStore, MediaSource, SentMessage } from './media-messages-store.js';
+import { voiceExpired } from './message-media.js';
 
 export interface MediaLimits {
   voiceEnabled: boolean;
@@ -31,8 +32,19 @@ type CheckedUpload = {
 const fail = (status: number, code: string, message: string) =>
   new HttpException({ code, message }, status);
 const invalid = (message: string) => fail(400, 'VALIDATION_FAILED', message);
+const originalGone = () => fail(404, 'NOT_FOUND', "Ce vocal ou cette photo n'est plus disponible.");
 const voiceUnavailable = (message = 'Les vocaux sont indisponibles pour le moment.') =>
   fail(503, 'VOICE_UNAVAILABLE', `${message} Écris ton message.`);
+const mediaUnavailable = () =>
+  fail(503, 'MEDIA_UNAVAILABLE', "L'envoi de photos et de vocaux est indisponible pour le moment.");
+const limitReached = (kind: MediaSource['kind'], limit: number) =>
+  fail(
+    429,
+    'USAGE_LIMIT',
+    kind === 'AUDIO'
+      ? `Tu as envoyé tes ${limit} vocaux du jour. Tu peux encore écrire, et les vocaux reviennent demain.`
+      : `Tu as envoyé tes ${limit} photos du jour. Elles reviennent demain.`,
+  );
 
 // ponytail: la durée annoncée n'est pas mesurée ; la taille (4 Mo) et la limite du jour bornent le coût
 function voiceLength(seconds: number | undefined): number {
@@ -68,6 +80,23 @@ export class MediaSend {
     );
   }
 
+  /**
+   * Transfère le vocal ou la photo d'un autre message : le même fichier, sans le ranger ni le
+   * transcrire à nouveau. Il compte dans la limite du jour de son type.
+   */
+  async forward(
+    userId: string,
+    conversationId: string,
+    { clientId, mediaFromId }: { clientId: string; mediaFromId: string },
+  ) {
+    if (!UUID.test(conversationId)) throw notFound();
+    const source = await this.store.findSource(userId, mediaFromId);
+    if (!source) throw originalGone();
+    return this.inTurn(`${userId}:${source.kind}`, () =>
+      this.copy(userId, conversationId, clientId, source),
+    );
+  }
+
   /** L'état du micro avant d'enregistrer. Une panne du fournisseur ne se voit qu'à l'envoi. */
   async voiceAvailability(userId: string): Promise<VoiceAvailability> {
     if (!this.limits.voiceEnabled) return { available: false, reason: 'disabled' };
@@ -91,13 +120,48 @@ export class MediaSend {
     }
   }
 
+  // ponytail: l'original supprimé pendant le transfert laisse une copie sans fichier ; passer la
+  // suppression dans la même file si ça arrive
+  private async copy(
+    userId: string,
+    conversationId: string,
+    clientId: string,
+    source: MediaSource,
+  ) {
+    const { kind, text, mediaKey, mediaProvider, mediaSeconds, storedAt } = source;
+    const limit = this.limitFor(kind);
+    const found = await this.store.check(userId, conversationId, clientId, kind, limit);
+    if (!found) throw notFound();
+    if ('row' in found) return this.result(found);
+    if (source.deleted || voiceExpired(kind, storedAt, new Date())) throw originalGone();
+    if (!this.media.stores[mediaProvider as MediaProvider]) throw mediaUnavailable();
+    if (kind === 'AUDIO') await this.allowVoice(userId);
+    if ('limited' in found) throw limitReached(kind, limit);
+    const sent = await this.store.create(userId, conversationId, {
+      clientId,
+      kind,
+      text,
+      mediaKey,
+      mediaProvider,
+      mediaSeconds,
+      forwarded: true,
+      mediaStoredAt: storedAt,
+    });
+    if (sent.created) this.replies?.schedule(conversationId, sent.row.id);
+    return this.result(sent);
+  }
+
+  private limitFor(kind: MediaSource['kind']) {
+    return kind === 'AUDIO' ? this.limits.voicePerDay : this.limits.photosPerDay;
+  }
+
   private async deliver(
     userId: string,
     conversationId: string,
     { clientId, data, file, mediaSeconds }: CheckedUpload,
   ) {
     const voice = file.kind === 'AUDIO';
-    const limit = voice ? this.limits.voicePerDay : this.limits.photosPerDay;
+    const limit = this.limitFor(file.kind);
     const found = await this.store.check(userId, conversationId, clientId, file.kind, limit);
     if (!found) throw notFound();
     // Un renvoi passe toujours : le message est déjà là, quoi qu'il se soit passé depuis.
@@ -105,23 +169,9 @@ export class MediaSend {
 
     const { active } = this.media;
     const target = active && this.media.stores[active];
-    if (!target) {
-      throw fail(
-        503,
-        'MEDIA_UNAVAILABLE',
-        "L'envoi de photos et de vocaux est indisponible pour le moment.",
-      );
-    }
+    if (!target) throw mediaUnavailable();
     if (voice) await this.allowVoice(userId);
-    if ('limited' in found) {
-      throw fail(
-        429,
-        'USAGE_LIMIT',
-        voice
-          ? `Tu as envoyé tes ${limit} vocaux du jour. Tu peux encore écrire, et les vocaux reviennent demain.`
-          : `Tu as envoyé tes ${limit} photos du jour. Elles reviennent demain.`,
-      );
-    }
+    if ('limited' in found) throw limitReached(file.kind, limit);
     // La transcription d'abord : si elle échoue, rien n'est rangé ni compté.
     const text = voice ? await this.transcribe(data, file.contentType) : '';
     const key = `${voice ? 'audio' : 'image'}/${userId}/${randomUUID()}.${file.ext}`;

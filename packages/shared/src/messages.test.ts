@@ -101,3 +101,16 @@ describe('VoiceAvailability', () => {
     expect(VoiceAvailability.safeParse({ available: false, reason: 'autre' }).success).toBe(false);
   });
 });
+
+describe('SendMessage, transfert d’un vocal ou d’une photo', () => {
+  const clientId = '0198f0a0-0000-4000-8000-000000000001';
+  const mediaFromId = '0198f0a0-0000-7000-8000-000000000003';
+
+  it('accepte un texte vide quand le message reprend un fichier', () => {
+    expect(SendMessage.parse({ clientId, text: '', mediaFromId }).mediaFromId).toBe(mediaFromId);
+  });
+
+  it('refuse un identifiant de message mal formé', () => {
+    expect(SendMessage.safeParse({ clientId, text: '', mediaFromId: 'x' }).success).toBe(false);
+  });
+});

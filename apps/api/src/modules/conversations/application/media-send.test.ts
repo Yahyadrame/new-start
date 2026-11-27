@@ -2,7 +2,7 @@ import type { SttProvider } from '@newstart/ai';
 import { describe, expect, it, vi } from 'vitest';
 import { FakeMediaStore } from '../../../shared/media/media-store.js';
 import { MediaSend, type MediaLimits } from './media-send.js';
-import type { MediaMessagesStore, NewMediaMessage } from './media-messages-store.js';
+import type { MediaMessagesStore, MediaSource, NewMediaMessage } from './media-messages-store.js';
 
 const CONV = '0198f0a0-0000-7000-8000-000000000001';
 const CLIENT = '0198f0a0-0000-4000-8000-000000000002';
@@ -32,6 +32,7 @@ function setup(
     check: vi.fn().mockResolvedValue({ ready: true }),
     sentToday: vi.fn().mockResolvedValue(0),
     hasVoiceConsent: vi.fn().mockResolvedValue(true),
+    findSource: vi.fn().mockResolvedValue(null),
     create: vi.fn(async (_u: string, _c: string, media: NewMediaMessage) => ({
       row: rowOf(media),
       created: true,
@@ -298,6 +299,111 @@ describe('MediaSend : réponse du contact', () => {
     vi.mocked(store.check).mockResolvedValue({ ready: true });
     vi.mocked(store.create).mockResolvedValue({ row: rowOf({}), created: false });
     await send(photo);
+    expect(replies.schedule).not.toHaveBeenCalled();
+  });
+});
+
+describe('MediaSend.forward', () => {
+  const FROM = '0198f0a0-0000-7000-8000-000000000003';
+  const source = (patch: Partial<MediaSource> = {}): MediaSource => ({
+    kind: 'AUDIO',
+    text: 'Hello there',
+    mediaKey: 'audio/u1/a.webm',
+    mediaProvider: 'b2',
+    mediaSeconds: 4,
+    storedAt: new Date(),
+    deleted: false,
+    ...patch,
+  });
+  const photoSource = () =>
+    source({ kind: 'IMAGE', text: '', mediaKey: 'image/u1/p.jpg', mediaSeconds: null });
+  function forwarding(found: MediaSource | null, options: Parameters<typeof setup>[0] = {}) {
+    const ctx = setup(options);
+    vi.mocked(ctx.store.findSource).mockResolvedValue(found);
+    const forward = () => ctx.service.forward('u1', CONV, { clientId: CLIENT, mediaFromId: FROM });
+    return { ...ctx, forward };
+  }
+
+  it('reprend le même fichier avec la mention « transféré », sans rien ranger ni transcrire', async () => {
+    const from = source();
+    const { store, stt, files, replies, forward } = forwarding(from);
+    const { message, created } = await forward();
+    expect(store.findSource).toHaveBeenCalledWith('u1', FROM);
+    expect(store.check).toHaveBeenCalledWith('u1', CONV, CLIENT, 'AUDIO', 30);
+    expect(store.create).toHaveBeenCalledWith('u1', CONV, {
+      clientId: CLIENT,
+      kind: 'AUDIO',
+      text: 'Hello there',
+      mediaKey: 'audio/u1/a.webm',
+      mediaProvider: 'b2',
+      mediaSeconds: 4,
+      forwarded: true,
+      mediaStoredAt: from.storedAt,
+    });
+    expect(created).toBe(true);
+    expect(message.media?.url).toContain('audio/u1/a.webm');
+    expect(replies.schedule).toHaveBeenCalledWith(CONV, 'm1');
+    expect(stt.transcribe).not.toHaveBeenCalled();
+    expect(files.files.size).toBe(0);
+  });
+
+  it('compte une photo dans la limite des photos, vocaux éteints ou non', async () => {
+    const { store, forward } = forwarding(photoSource(), { limits: { voiceEnabled: false } });
+    expect((await forward()).created).toBe(true);
+    expect(store.check).toHaveBeenCalledWith('u1', CONV, CLIENT, 'IMAGE', 10);
+    expect(store.hasVoiceConsent).not.toHaveBeenCalled();
+  });
+
+  it('répond 429 à la limite du jour', async () => {
+    const { store, forward } = forwarding(photoSource());
+    vi.mocked(store.check).mockResolvedValue({ limited: true });
+    expect(await refusal(forward())).toMatchObject({ status: 429, code: 'USAGE_LIMIT' });
+    expect(store.create).not.toHaveBeenCalled();
+  });
+
+  it('refuse un vocal quand les vocaux sont éteints', async () => {
+    const { store, forward } = forwarding(source(), { limits: { voiceEnabled: false } });
+    expect(await refusal(forward())).toMatchObject({ status: 503, code: 'VOICE_UNAVAILABLE' });
+    expect(store.create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['introuvable', null],
+    ['supprimé', source({ deleted: true })],
+    ['vocal expiré', source({ storedAt: new Date(Date.now() - 31 * 86_400_000) })],
+  ])('répond 404 pour un message d’origine %s', async (_cas, found) => {
+    const { store, forward } = forwarding(found);
+    expect(await refusal(forward())).toMatchObject({ status: 404, code: 'NOT_FOUND' });
+    expect(store.create).not.toHaveBeenCalled();
+  });
+
+  it('répond 404 pour la conversation d’une autre personne ou mal formée', async () => {
+    const { store, service, forward } = forwarding(source());
+    vi.mocked(store.check).mockResolvedValue(null);
+    expect(await refusal(forward())).toMatchObject({ status: 404 });
+    const bad = service.forward('u1', 'zzz', { clientId: CLIENT, mediaFromId: FROM });
+    expect(await refusal(bad)).toMatchObject({ status: 404 });
+    expect(store.create).not.toHaveBeenCalled();
+  });
+
+  it('répond 503 quand le stockage qui détient le fichier n’est plus configuré', async () => {
+    const { store, forward } = forwarding(source({ mediaProvider: 'r2' }));
+    expect(await refusal(forward())).toMatchObject({ status: 503, code: 'MEDIA_UNAVAILABLE' });
+    expect(store.create).not.toHaveBeenCalled();
+  });
+
+  it('rend le message déjà transféré, même si l’original a été supprimé depuis', async () => {
+    const { store, replies, forward } = forwarding(source({ deleted: true }));
+    vi.mocked(store.check).mockResolvedValue({ row: rowOf({ text: 'Hi' }), created: false });
+    expect((await forward()).created).toBe(false);
+    expect(store.create).not.toHaveBeenCalled();
+    expect(replies.schedule).not.toHaveBeenCalled();
+  });
+
+  it('ne relance pas le contact quand un envoi simultané a gagné', async () => {
+    const { store, replies, forward } = forwarding(source());
+    vi.mocked(store.create).mockResolvedValue({ row: rowOf({}), created: false });
+    expect((await forward()).created).toBe(false);
     expect(replies.schedule).not.toHaveBeenCalled();
   });
 });
