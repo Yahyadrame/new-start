@@ -410,6 +410,13 @@
     "recording": "Enregistrement en cours",
     "recordingCancel": "Annuler l'enregistrement",
     "recordingStop": "Terminer l'enregistrement",
+    "voiceConsent": {
+      "title": "Envoyer des messages vocaux ?",
+      "body": "Ton vocal part à notre service de transcription, qui en tire le texte pour que {name} puisse te répondre. L'enregistrement est gardé 30 jours, puis seul le texte reste.",
+      "accept": "J'accepte, activer le micro",
+      "decline": "Écrire plutôt"
+    },
+    "voiceConsentFailed": "Ton accord n'a pas pu être vérifié. Réessaie.",
     "micDenied": "Le micro est bloqué. Autorise-le dans les réglages du navigateur.",
     "micUnavailable": "Ce navigateur ne peut pas enregistrer.",
     "draftVoice": "Message vocal, {duration}",

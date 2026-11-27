@@ -37,6 +37,7 @@ export function Composer({
   onSend,
   onSendPhoto,
   onSendSticker,
+  onMicRequest,
   reply = null,
   onCancelReply,
   edit = null,
@@ -53,6 +54,8 @@ export function Composer({
   onSendPhoto?: (photo: Blob) => void;
   /** Envoie le sticker choisi dans le panneau ; sans lui, la barre n'a pas de bouton stickers. */
   onSendSticker?: (stickerId: string) => void;
+  /** Dit si l'enregistrement peut commencer (accord aux vocaux) avant d'ouvrir le micro. */
+  onMicRequest?: () => Promise<boolean>;
 }) {
   const [text, setText] = useState('');
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -63,6 +66,7 @@ export function Composer({
   const bar = useRef<HTMLFormElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const photoInput = useRef<HTMLInputElement>(null);
+  const asking = useRef(false);
   const recorder = useVoiceRecorder((clip) => setDraft({ kind: 'voice', ...clip }));
   const empty = text.trim() === '';
   // Pendant une modification, la pièce jointe attend : « Envoyer » enregistre le texte.
@@ -141,6 +145,19 @@ export function Composer({
     if (e.key !== 'Enter' || e.shiftKey || e.nativeEvent.isComposing) return;
     e.preventDefault();
     send();
+  };
+
+  const record = async () => {
+    if (asking.current) return;
+    asking.current = true;
+    setNotice(null);
+    try {
+      if (!onMicRequest || (await onMicRequest())) await recorder.start();
+    } catch {
+      setNotice(c.voiceConsentFailed);
+    } finally {
+      asking.current = false;
+    }
   };
 
   const pick = async (file: File | undefined) => {
@@ -291,7 +308,7 @@ export function Composer({
           <button
             type="button"
             aria-label={c.record}
-            onClick={() => void recorder.start()}
+            onClick={() => void record()}
             className={`${round} bg-accent text-on-accent`}
           >
             <Mic aria-hidden="true" className="size-5" />

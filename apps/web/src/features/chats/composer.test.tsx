@@ -330,6 +330,41 @@ describe('Composer, fermeture du panneau', () => {
   });
 });
 
+describe('Composer, accord avant d’enregistrer', () => {
+  const tap = async () => {
+    await act(async () => void fireEvent.click(screen.getByRole('button', { name: c.record })));
+  };
+  beforeEach(() => recorder.start.mockClear());
+
+  it.each([
+    [true, 1],
+    [false, 0],
+  ])('n’enregistre que si l’accord est donné (%s)', async (granted, calls) => {
+    render(<Composer onSend={vi.fn()} onMicRequest={async () => granted} />);
+    await tap();
+    expect(recorder.start).toHaveBeenCalledTimes(calls);
+  });
+
+  it('ne demande qu’une fois quand le micro est touché deux fois', async () => {
+    const onMicRequest = vi.fn(() => new Promise<boolean>(() => undefined));
+    render(<Composer onSend={vi.fn()} onMicRequest={onMicRequest} />);
+    await tap();
+    await tap();
+    expect(onMicRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('le dit quand l’accord ne peut pas être vérifié, et laisse réessayer', async () => {
+    const onMicRequest = vi.fn().mockRejectedValueOnce(new Error('réseau')).mockResolvedValue(true);
+    render(<Composer onSend={vi.fn()} onMicRequest={onMicRequest} />);
+    await tap();
+    expect(screen.getByRole('status').textContent).toBe(c.voiceConsentFailed);
+    expect(recorder.start).not.toHaveBeenCalled();
+    await tap();
+    expect(recorder.start).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+});
+
 describe('Composer, clavier mobile', () => {
   it('se colle au-dessus du clavier grâce à --kb', () => {
     const { container } = render(<Composer onSend={vi.fn()} />);

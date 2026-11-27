@@ -15,6 +15,7 @@ const translateMessage = vi.fn();
 const reactToMessage = vi.fn();
 const getChatBackground = vi.fn();
 const scrollIntoView = vi.fn();
+const getVoiceConsent = vi.fn();
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
@@ -34,6 +35,10 @@ vi.mock('./chats-api', () => ({
 }));
 vi.mock('../../shared/chat-background/chat-background-api', () => ({ getChatBackground }));
 vi.mock('./compress-image', () => ({ compressImage }));
+vi.mock('../../shared/voice-consent/voice-consent-api', () => ({
+  getVoiceConsent,
+  setVoiceConsent: vi.fn(),
+}));
 const { ConversationScreen } = await import('./conversation-screen');
 const { CHATS_CHANGED } = await import('./chats-merge');
 
@@ -514,6 +519,19 @@ describe('ConversationScreen', () => {
       ).toBeTruthy();
       expect(screen.queryByRole('button', { name: fr.conversation.sendFailed })).toBeNull();
       expect(texts()).toEqual(['First', 'Second']);
+    });
+
+    it('demande l’accord vocal au micro, avec le nom du contact', async () => {
+      getVoiceConsent.mockResolvedValue(false);
+      render(<ConversationScreen agentSlug="jade" />);
+      await screen.findByText('First');
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: fr.conversation.record }));
+      });
+      const t = fr.conversation.voiceConsent;
+      expect(screen.getByRole('dialog', { name: t.title })).toBeTruthy();
+      expect(screen.getByText(t.body.replace('{name}', 'Jade'))).toBeTruthy();
+      expect(getVoiceConsent).toHaveBeenCalledWith('tok');
     });
 
     describe('photos', () => {
