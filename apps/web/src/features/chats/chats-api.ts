@@ -55,8 +55,12 @@ export async function sendMedia(
   conversationId: string,
   clientId: string,
   file: Blob,
+  /** La durée d'un vocal ; une photo n'en a pas. */
+  seconds?: number,
 ): Promise<MessageItem> {
-  const res = await fetch(`/api/conversations/${conversationId}/media?clientId=${clientId}`, {
+  const length = seconds ? `&seconds=${seconds}` : '';
+  const url = `/api/conversations/${conversationId}/media?clientId=${clientId}${length}`;
+  const res = await fetch(url, {
     method: 'POST',
     headers: { authorization: `Bearer ${token}`, 'content-type': file.type },
     body: file,

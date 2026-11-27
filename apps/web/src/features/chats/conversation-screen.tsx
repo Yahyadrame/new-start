@@ -55,11 +55,29 @@ const MAX_SEEK_PAGES = 20;
 const FLASH_MS = 3000;
 
 /** Un refus que réessayer ne changera pas : le texte à montrer à la place de la bulle. */
-function refusalOf(code: string | undefined, photo: boolean) {
+function refusalOf(code: string | undefined, { photo, voice }: PendingMessage) {
   const c = fr.conversation;
-  if (code === 'MEDIA_UNAVAILABLE') return c.photoSendUnavailable;
+  if (code === 'VOICE_UNAVAILABLE') return c.voiceSendUnavailable;
+  if (code === 'VOICE_CONSENT_REQUIRED') return c.voiceConsentRequired;
+  if (code === 'MEDIA_UNAVAILABLE') {
+    return voice ? c.voiceSendUnavailable : c.photoSendUnavailable;
+  }
   if (code !== 'USAGE_LIMIT') return null;
+  if (voice) return c.voiceLimit;
   return photo ? c.photoLimit : c.limitReached;
+}
+
+/** Envoie le message par la bonne route : un fichier (photo ou vocal) ou du texte. */
+function transmit(token: string, conversationId: string, message: PendingMessage) {
+  const { clientId, text, replyToId, sticker, photo, voice } = message;
+  if (photo) return sendMedia(token, conversationId, clientId, photo);
+  if (voice) return sendMedia(token, conversationId, clientId, voice.blob, voice.seconds);
+  return sendMessage(token, conversationId, {
+    clientId,
+    text,
+    ...(replyToId && { replyToId }),
+    ...(sticker && { sticker }),
+  });
 }
 
 /**
@@ -91,7 +109,7 @@ export function ConversationScreen({
   // Un nouvel objet à chaque envoi relance les 60 s de relecture.
   const [awaiting, setAwaiting] = useState<{ since: string } | null>(null);
   const [attempt, setAttempt] = useState(0);
-  // L'API a refusé le dernier envoi (limite du jour, photos indisponibles) : on dit pourquoi.
+  // L'API a refusé le dernier envoi (limite du jour, fichiers indisponibles) : on dit pourquoi.
   const [refusal, setRefusal] = useState<string | null>(null);
   const [background, setBackground] = useState<ChatBackground>('NONE');
   // `seeking` : on charge des pages plus anciennes jusqu'à trouver le message.
@@ -103,6 +121,7 @@ export function ConversationScreen({
   const skipBottom = useRef(false);
   const token = useRef('');
   const consent = useVoiceConsent(() => token.current, item?.agent.name ?? '');
+  const forgetConsent = consent.forget;
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
 
@@ -180,33 +199,33 @@ export function ConversationScreen({
   }, [item, nextCursor]);
 
   // Le clientId reste le même à chaque nouvel essai : l'API ne crée jamais deux fois le message.
-  const deliver = useCallback(async (conversationId: string, message: PendingMessage) => {
-    const { clientId, text, replyToId, sticker, photo } = message;
-    const mark = (status: PendingMessage['status']) =>
-      setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
-    mark('sending');
-    try {
-      const sent = photo
-        ? await sendMedia(token.current, conversationId, clientId, photo)
-        : await sendMessage(token.current, conversationId, {
-            clientId,
-            text,
-            ...(replyToId && { replyToId }),
-            ...(sticker && { sticker }),
-          });
-      setRefusal(null);
-      setMessages((prev) => [...(prev ?? []), sent]);
-      setPending((prev) => prev.filter((p) => p.clientId !== clientId));
-      setAwaiting((prev) => ({
-        since: prev && prev.since < sent.createdAt ? prev.since : sent.createdAt,
-      }));
-    } catch (e) {
-      const refused = refusalOf((e as { code?: string }).code, photo !== undefined);
-      if (!refused) return mark('failed');
-      setPending((prev) => prev.filter((p) => p.clientId !== clientId));
-      setRefusal(refused);
-    }
-  }, []);
+  const deliver = useCallback(
+    async (conversationId: string, message: PendingMessage) => {
+      const { clientId } = message;
+      const mark = (status: PendingMessage['status']) =>
+        setPending((prev) => prev.map((p) => (p.clientId === clientId ? { ...p, status } : p)));
+      mark('sending');
+      try {
+        const sent = await transmit(token.current, conversationId, message);
+        setRefusal(null);
+        setMessages((prev) => [...(prev ?? []), sent]);
+        setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+        setAwaiting((prev) => ({
+          since: prev && prev.since < sent.createdAt ? prev.since : sent.createdAt,
+        }));
+      } catch (e) {
+        const { code } = e as { code?: string };
+        if (code === 'VOICE_CONSENT_REQUIRED') forgetConsent();
+        const refused = refusalOf(code, message);
+        if (refused) setRefusal(refused);
+        // Un vocal coûte à refaire : quand un service manque, on le garde pour un nouvel essai.
+        const kept = message.voice && code?.endsWith('_UNAVAILABLE');
+        if (!refused || kept) return mark('failed');
+        setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+      }
+    },
+    [forgetConsent],
+  );
 
   /** Montre le message en cours d'envoi, puis le confie à `deliver`. */
   const post = (content: Omit<PendingMessage, 'clientId' | 'status'>) => {
@@ -510,6 +529,7 @@ export function ConversationScreen({
           onSend={send}
           onSendSticker={sendSticker}
           onSendPhoto={(photo) => post({ text: '', photo })}
+          onSendVoice={(blob, seconds) => post({ text: '', voice: { blob, seconds } })}
           onMicRequest={consent.ensure}
           reply={
             replyTo && {

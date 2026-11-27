@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import fr from '../../shared/i18n/fr.json';
 import { getVoiceConsent, setVoiceConsent } from '../../shared/voice-consent/voice-consent-api';
 import { VoiceConsentDialog } from '../../shared/voice-consent/voice-consent-dialog';
@@ -41,5 +41,10 @@ export function useVoiceConsent(token: () => string, name: string) {
     />
   );
 
-  return { ensure, dialog };
+  /** L'API dit que l'accord manque : la prochaine demande retournera le vérifier. */
+  const forget = useCallback(() => {
+    granted.current = false;
+  }, []);
+
+  return { ensure, forget, dialog };
 }

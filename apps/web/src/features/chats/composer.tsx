@@ -30,12 +30,12 @@ const round =
 
 /**
  * Barre d'écriture façon WhatsApp : une pilule (photo et champ) et un bouton rond qui est le micro quand le
- * champ est vide, l'envoi quand il y a du texte. Les photos et les vocaux se préparent ici ; l'envoi des
- * vocaux vient avec la partie suivante de NS-047, et la barre le dit en gardant l'enregistrement.
+ * champ est vide, l'envoi quand il y a du texte. Les photos et les vocaux se préparent ici avant de partir.
  */
 export function Composer({
   onSend,
   onSendPhoto,
+  onSendVoice,
   onSendSticker,
   onMicRequest,
   reply = null,
@@ -52,6 +52,8 @@ export function Composer({
   onCancelEdit?: () => void;
   /** Envoie la photo choisie ; sans lui, la barre n'a pas de bouton photo. */
   onSendPhoto?: (photo: Blob) => void;
+  /** Envoie le vocal enregistré, avec sa durée en secondes. */
+  onSendVoice?: (voice: Blob, seconds: number) => void;
   /** Envoie le sticker choisi dans le panneau ; sans lui, la barre n'a pas de bouton stickers. */
   onSendSticker?: (stickerId: string) => void;
   /** Dit si l'enregistrement peut commencer (accord aux vocaux) avant d'ouvrir le micro. */
@@ -131,8 +133,8 @@ export function Composer({
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (attachment) {
-      if (attachment.kind === 'voice') return setNotice(c.voiceSoon);
-      onSendPhoto?.(attachment.blob);
+      if (attachment.kind === 'voice') onSendVoice?.(attachment.blob, attachment.seconds);
+      else onSendPhoto?.(attachment.blob);
       setDraft(null);
       setNotice(null);
       return;
@@ -361,14 +363,12 @@ function DraftPreview({ draft, onRemove }: { draft: Draft; onRemove: () => void 
   return (
     <div className="flex min-h-11 min-w-0 flex-1 items-center gap-2 py-1 pl-3">
       {draft.kind === 'voice' ? (
-        <>
-          <audio
-            controls
-            src={draft.url}
-            aria-label={c.draftVoice.replace('{duration}', formatDuration(draft.seconds))}
-            className="h-9 min-w-0 flex-1"
-          />
-        </>
+        <audio
+          controls
+          src={draft.url}
+          aria-label={c.draftVoice.replace('{duration}', formatDuration(draft.seconds))}
+          className="h-9 min-w-0 flex-1"
+        />
       ) : (
         <>
           <LocalPhoto blob={draft.blob} alt="" className="size-11 shrink-0 rounded-xl" />

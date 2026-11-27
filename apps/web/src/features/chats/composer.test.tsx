@@ -132,17 +132,26 @@ describe('Composer', () => {
     expect(screen.getByRole('status').textContent).toBe(c.micUnavailable);
   });
 
-  it('prévisualise un vocal, le retire, et dit que son envoi arrive bientôt', () => {
+  it('envoie le vocal enregistré avec sa durée, puis vide la barre', () => {
+    const onSendVoice = vi.fn();
     const onSendPhoto = vi.fn();
-    render(<Composer onSend={vi.fn()} onSendPhoto={onSendPhoto} />);
-    act(() => recorder.onClip?.({ blob: new Blob(['x']), url: 'blob:voice', seconds: 4 }));
+    render(<Composer onSend={vi.fn()} onSendPhoto={onSendPhoto} onSendVoice={onSendVoice} />);
+    const blob = new Blob(['x']);
+    act(() => recorder.onClip?.({ blob, url: 'blob:voice', seconds: 4 }));
     expect(screen.getByLabelText('Message vocal, 0:04')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: c.send }));
-    expect(screen.getByRole('status').textContent).toBe(c.voiceSoon);
+    expect(onSendVoice).toHaveBeenCalledWith(blob, 4);
     expect(onSendPhoto).not.toHaveBeenCalled();
+    expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
+  });
+
+  it('retire un vocal avant l’envoi', () => {
+    const onSendVoice = vi.fn();
+    render(<Composer onSend={vi.fn()} onSendVoice={onSendVoice} />);
+    act(() => recorder.onClip?.({ blob: new Blob(['x']), url: 'blob:voice', seconds: 4 }));
     fireEvent.click(screen.getByRole('button', { name: c.draftRemove }));
     expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(onSendVoice).not.toHaveBeenCalled();
   });
 
   it('ouvre directement le choix d’image avec le bouton photo', () => {

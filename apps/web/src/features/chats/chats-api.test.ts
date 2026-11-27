@@ -241,6 +241,15 @@ describe('sendMedia', () => {
     });
   });
 
+  it('annonce la durée d’un vocal', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'm1' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    await sendMedia('tok', 'c1', 'id-1', new Blob(['x'], { type: 'audio/webm' }), 4);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/conversations/c1/media?clientId=id-1&seconds=4',
+    );
+  });
+
   it('garde le statut et le code d’erreur de l’API', async () => {
     vi.stubGlobal(
       'fetch',
