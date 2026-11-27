@@ -1,6 +1,7 @@
+import { VOICE_MAX_SECONDS } from '@newstart/shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const MAX_VOICE_SECONDS = 120;
+export const MAX_VOICE_SECONDS = VOICE_MAX_SECONDS;
 
 export type VoiceClip = { blob: Blob; url: string; seconds: number };
 export type RecorderError = 'denied' | 'unavailable' | null;
@@ -39,7 +40,9 @@ export function useVoiceRecorder(onClip: (clip: VoiceClip) => void) {
     rec.ondataavailable = (e) => chunks.push(e.data);
     rec.onstop = () => {
       const wanted = keep.current;
-      const length = Math.max(1, Math.round((Date.now() - startedAt.current) / 1000));
+      const elapsed = Math.round((Date.now() - startedAt.current) / 1000);
+      // Le compteur peut prendre du retard : l'API refuse une durée au-delà du maximum.
+      const length = Math.min(MAX_VOICE_SECONDS, Math.max(1, elapsed));
       release();
       if (!wanted || chunks.length === 0) return;
       const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });

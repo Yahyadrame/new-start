@@ -49,6 +49,24 @@ describe('PendingBubble', () => {
     expect(screen.getByRole('status').textContent).toBe(c.sending);
   });
 
+  it('montre le vocal en cours d’envoi avec sa durée', () => {
+    render(
+      <ol>
+        <PendingBubble
+          message={{
+            clientId: 'a',
+            text: '',
+            status: 'sending',
+            voice: { blob: new Blob(['x']), seconds: 64 },
+          }}
+          onRetry={vi.fn()}
+        />
+      </ol>,
+    );
+    expect(screen.getByText('Message vocal, 1:04')).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe(c.sending);
+  });
+
   it('propose de réessayer quand le message n’est pas parti', () => {
     const onRetry = vi.fn();
     render(

@@ -16,6 +16,7 @@ const reactToMessage = vi.fn();
 const getChatBackground = vi.fn();
 const scrollIntoView = vi.fn();
 const getVoiceConsent = vi.fn();
+const recorder = vi.hoisted(() => ({ onClip: null as null | ((clip: unknown) => void) }));
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
 vi.mock('../../shared/auth/session', () => ({ ensureSession }));
@@ -35,6 +36,15 @@ vi.mock('./chats-api', () => ({
 }));
 vi.mock('../../shared/chat-background/chat-background-api', () => ({ getChatBackground }));
 vi.mock('./compress-image', () => ({ compressImage }));
+// L'enregistreur a ses propres tests ; ici on lui fait rendre un vocal à la demande.
+vi.mock('./use-voice-recorder', async (original) => ({
+  ...(await original<typeof import('./use-voice-recorder')>()),
+  useVoiceRecorder: (onClip: (clip: unknown) => void) => {
+    recorder.onClip = onClip;
+    const idle = { recording: false, seconds: 0, error: null };
+    return { ...idle, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() };
+  },
+}));
 vi.mock('../../shared/voice-consent/voice-consent-api', () => ({
   getVoiceConsent,
   setVoiceConsent: vi.fn(),
@@ -594,6 +604,79 @@ describe('ConversationScreen', () => {
         fireEvent.click(await screen.findByRole('button', { name: fr.conversation.sendFailed }));
         await screen.findByText('Envoyée');
         expect(sendMedia).toHaveBeenCalledTimes(2);
+        expect(sendMedia.mock.calls[1]).toEqual(sendMedia.mock.calls[0]);
+      });
+    });
+
+    describe('vocaux', () => {
+      const clip = { blob: new Blob(['v'], { type: 'audio/webm' }), url: 'blob:vocal', seconds: 4 };
+      const refused = (code: string) => Object.assign(new Error(code), { code });
+      const sendVoice = async () => {
+        act(() => recorder.onClip?.(clip));
+        await act(async () => {
+          fireEvent.click(screen.getByRole('button', { name: fr.conversation.send }));
+        });
+      };
+      const tapMic = () =>
+        act(async () => {
+          fireEvent.click(screen.getByRole('button', { name: fr.conversation.record }));
+        });
+
+      beforeEach(async () => {
+        URL.revokeObjectURL = vi.fn();
+        getVoiceConsent.mockReset().mockResolvedValue(true);
+        render(<ConversationScreen agentSlug="jade" />);
+        await screen.findByText('First');
+      });
+
+      it('envoie le vocal avec sa durée et montre le message rendu par l’API', async () => {
+        sendMedia.mockResolvedValue(msg('m3', 'USER', 'I went to the beach'));
+        await sendVoice();
+        expect(await screen.findByText('I went to the beach')).toBeTruthy();
+        expect(sendMedia).toHaveBeenCalledWith('tok', 'c1', expect.any(String), clip.blob, 4);
+        expect(sendMessage).not.toHaveBeenCalled();
+      });
+
+      it.each([
+        ['USAGE_LIMIT', fr.conversation.voiceLimit],
+        ['VOICE_CONSENT_REQUIRED', fr.conversation.voiceConsentRequired],
+      ])('explique le refus %s, sans proposer de réessayer', async (code, text) => {
+        sendMedia.mockRejectedValue(refused(code));
+        await sendVoice();
+        expect(await screen.findByText(text)).toBeTruthy();
+        expect(screen.queryByRole('button', { name: fr.conversation.sendFailed })).toBeNull();
+      });
+
+      it.each(['VOICE_UNAVAILABLE', 'MEDIA_UNAVAILABLE'])(
+        'explique la panne %s et garde le vocal pour un nouvel essai',
+        async (code) => {
+          sendMedia.mockRejectedValueOnce(refused(code));
+          sendMedia.mockResolvedValueOnce(msg('m3', 'USER', 'Reparti'));
+          await sendVoice();
+          expect(await screen.findByText(fr.conversation.voiceSendUnavailable)).toBeTruthy();
+          fireEvent.click(screen.getByRole('button', { name: fr.conversation.sendFailed }));
+          await screen.findByText('Reparti');
+          expect(sendMedia.mock.calls[1]).toEqual(sendMedia.mock.calls[0]);
+          expect(screen.queryByText(fr.conversation.voiceSendUnavailable)).toBeNull();
+        },
+      );
+
+      it('revérifie l’accord au micro quand l’API dit qu’il manque', async () => {
+        await tapMic();
+        await tapMic();
+        expect(getVoiceConsent).toHaveBeenCalledTimes(1);
+        sendMedia.mockRejectedValue(refused('VOICE_CONSENT_REQUIRED'));
+        await sendVoice();
+        await tapMic();
+        expect(getVoiceConsent).toHaveBeenCalledTimes(2);
+      });
+
+      it('réessaie le même vocal avec le même clientId après un échec réseau', async () => {
+        sendMedia.mockRejectedValueOnce(new Error('réseau'));
+        sendMedia.mockResolvedValueOnce(msg('m3', 'USER', 'Envoyé'));
+        await sendVoice();
+        fireEvent.click(await screen.findByRole('button', { name: fr.conversation.sendFailed }));
+        await screen.findByText('Envoyé');
         expect(sendMedia.mock.calls[1]).toEqual(sendMedia.mock.calls[0]);
       });
     });

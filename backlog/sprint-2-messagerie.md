@@ -189,7 +189,7 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Partie 4b : envoi des photos compressées depuis la barre d'écriture ; « Fichier » retiré.
 - [ ] Partie 4c : envoi des vocaux depuis la barre d'écriture.
   - [x] Le micro de la conversation demande l'accord aux enregistrements vocaux avant le premier vocal.
-  - [ ] Envoi du vocal, refus expliqués.
+  - [x] Envoi du vocal, refus expliqués.
   - [ ] Raison affichée sur le micro quand le vocal est indisponible.
 - [ ] Partie 5 : lecture des vocaux dans la conversation.
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.

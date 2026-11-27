@@ -37,3 +37,45 @@ test('le micro demande l’accord avant d’enregistrer', async ({ page }, info)
   await expect(timer).toBeVisible();
   expect(saved).toEqual([{ accepted: true }]);
 });
+
+test('un vocal enregistré part avec sa durée', async ({ page }, info) => {
+  await signedIn(page);
+  await page.route('**/api/onboarding/voice-consent', (r) =>
+    r.fulfill({ json: { accepted: true } }),
+  );
+  let upload: { url: string; type: string | undefined; size: number } | undefined;
+  await page.route('**/api/conversations/c1/media*', (r) => {
+    const sent = r.request();
+    upload = {
+      url: sent.url(),
+      type: sent.headers()['content-type'],
+      size: sent.postDataBuffer()?.length ?? 0,
+    };
+    return r.fulfill({
+      status: 201,
+      json: {
+        id: 'm9',
+        author: 'USER',
+        text: 'I went to the beach yesterday',
+        translationFr: null,
+        deleted: false,
+        createdAt: new Date().toISOString(),
+        correction: null,
+        media: { kind: 'AUDIO', url: null, seconds: 1 },
+      },
+    });
+  });
+  await page.goto('/chats/jade');
+
+  await page.getByRole('button', { name: 'Enregistrer un message vocal' }).click();
+  await expect(page.getByRole('timer', { name: 'Enregistrement en cours' })).toContainText('0:01');
+  await page.getByRole('button', { name: "Terminer l'enregistrement" }).click();
+  await expect(page.getByLabel(/^Message vocal, 0:0\d$/)).toBeVisible();
+  await page.screenshot({ path: info.outputPath('vocal-pret.png') });
+  await page.getByRole('button', { name: 'Envoyer', exact: true }).click();
+  await expect(page.getByText('I went to the beach yesterday')).toBeVisible();
+
+  expect(upload?.url).toMatch(/clientId=[0-9a-f-]{36}&seconds=\d$/);
+  expect(upload?.type).toMatch(/^audio\//);
+  expect(upload?.size).toBeGreaterThan(0);
+});

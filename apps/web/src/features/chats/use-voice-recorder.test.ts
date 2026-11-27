@@ -67,6 +67,13 @@ describe('useVoiceRecorder', () => {
     expect(hook.result.current.recording).toBe(false);
   });
 
+  it('n’annonce jamais plus de 2 minutes, même si le compteur a pris du retard', async () => {
+    const { hook, onClip } = await begin();
+    vi.setSystemTime(Date.now() + (MAX_VOICE_SECONDS + 5) * 1000);
+    act(() => hook.result.current.stop());
+    expect(onClip).toHaveBeenCalledWith(expect.objectContaining({ seconds: MAX_VOICE_SECONDS }));
+  });
+
   it('referme le micro si l’écran s’est fermé pendant la demande du navigateur', async () => {
     let allow!: (stream: unknown) => void;
     getUserMedia.mockReturnValue(new Promise((resolve) => (allow = resolve)));

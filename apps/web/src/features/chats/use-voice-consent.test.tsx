@@ -14,9 +14,11 @@ afterEach(cleanup);
 const t = fr.conversation.voiceConsent;
 
 let ask: () => Promise<boolean>;
+let forget: () => void;
 function Host() {
   const consent = useVoiceConsent(() => 'tok', 'Jade');
   ask = consent.ensure;
+  forget = consent.forget;
   return <>{consent.dialog}</>;
 }
 /** Demande l'accord et rend la promesse, une fois les appels en cours passés. */
@@ -48,6 +50,15 @@ describe('useVoiceConsent', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(await begin()).toBe(true);
     expect(api.getVoiceConsent).toHaveBeenCalledTimes(1);
+  });
+
+  it('revérifie l’accord après l’avoir oublié', async () => {
+    api.getVoiceConsent.mockResolvedValue(true);
+    render(<Host />);
+    await begin();
+    forget();
+    await begin();
+    expect(api.getVoiceConsent).toHaveBeenCalledTimes(2);
   });
 
   it('explique l’usage avec le nom du contact, puis enregistre l’accord', async () => {
