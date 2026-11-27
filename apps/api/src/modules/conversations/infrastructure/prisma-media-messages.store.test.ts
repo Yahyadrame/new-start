@@ -19,8 +19,6 @@ const voice: NewMediaMessage = {
   mediaProvider: 'b2',
   mediaSeconds: 4,
 };
-const limits = { messages: 60, media: 30 };
-
 function setup(today: Record<string, number> | null = null) {
   const db = {
     conversation: { findFirst: vi.fn().mockResolvedValue({ id: 'c1' }), update: vi.fn() },
@@ -34,7 +32,7 @@ function setup(today: Record<string, number> | null = null) {
 
 describe('PrismaMediaMessagesStore.check', () => {
   const check = (store: PrismaMediaMessagesStore, kind: 'AUDIO' | 'IMAGE' = 'AUDIO') =>
-    store.check('u1', 'c1', clientId, kind, limits);
+    store.check('u1', 'c1', clientId, kind, 30);
 
   it('ne rend rien pour une conversation qui n’est pas à cette personne', async () => {
     const { db, store } = setup();
@@ -57,21 +55,21 @@ describe('PrismaMediaMessagesStore.check', () => {
 
   it('laisse passer sous les limites, y compris au premier envoi du jour', async () => {
     expect(await check(setup().store)).toEqual({ ready: true });
-    const last = setup({ messagesSent: 59, voiceSent: 29, photosSent: 30 });
+    const last = setup({ voiceSent: 29, photosSent: 30 });
     expect(await check(last.store)).toEqual({ ready: true });
   });
 
   it('compte les vocaux et les photos chacun de leur côté', async () => {
-    const { store } = setup({ messagesSent: 40, voiceSent: 30, photosSent: 2 });
-    expect(await check(store, 'AUDIO')).toEqual({ limited: 'media' });
+    const { store } = setup({ voiceSent: 30, photosSent: 2 });
+    expect(await check(store, 'AUDIO')).toEqual({ limited: true });
     expect(await check(store, 'IMAGE')).toEqual({ ready: true });
-    const photos = setup({ messagesSent: 40, voiceSent: 0, photosSent: 30 });
-    expect(await check(photos.store, 'IMAGE')).toEqual({ limited: 'media' });
+    const photos = setup({ voiceSent: 0, photosSent: 30 });
+    expect(await check(photos.store, 'IMAGE')).toEqual({ limited: true });
   });
 
-  it('applique aussi la limite des messages du jour', async () => {
+  it('ne dépend pas de la limite des messages écrits', async () => {
     const { store } = setup({ messagesSent: 60, voiceSent: 0, photosSent: 0 });
-    expect(await check(store)).toEqual({ limited: 'messages' });
+    expect(await check(store)).toEqual({ ready: true });
   });
 });
 
@@ -85,12 +83,10 @@ describe('PrismaMediaMessagesStore.create', () => {
       ...voice,
     });
     expect(db.user.update.mock.calls[0]?.[0].data).toMatchObject({ xp: { increment: 10 } });
-    expect(db.dailyActivity.upsert.mock.calls[0]?.[0].create).toMatchObject({
-      messagesSent: 1,
-      voiceSent: 1,
-      xpEarned: 10,
-    });
-    expect(db.dailyActivity.upsert.mock.calls[0]?.[0].create).not.toHaveProperty('photosSent');
+    const counters = db.dailyActivity.upsert.mock.calls[0]?.[0].create;
+    expect(counters).toMatchObject({ voiceSent: 1, xpEarned: 10 });
+    expect(counters).not.toHaveProperty('photosSent');
+    expect(counters).not.toHaveProperty('messagesSent');
     expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(4);
   });
 
