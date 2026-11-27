@@ -3,7 +3,12 @@ import type { ConversationItem, SendMessage } from '@newstart/shared';
 import type { MessageCursor } from '../application/message-cursor.js';
 import { streakUpdate } from '../../../shared/progress/streak.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
-import type { ConversationsStore, MessageRow, SearchRow } from '../application/conversations.js';
+import {
+  mediaKindOf,
+  type ConversationsStore,
+  type MessageRow,
+  type SearchRow,
+} from '../application/conversations.js';
 import { findByClientId, messageSelect, recordMessage } from './record-message.js';
 
 const select = {
@@ -25,7 +30,7 @@ const select = {
   },
   messages: {
     where: { deletedAt: null },
-    select: { author: true, text: true },
+    select: { author: true, text: true, kind: true },
     orderBy: { createdAt: 'desc' },
     take: 1,
   },
@@ -33,12 +38,16 @@ const select = {
 
 type Row = Omit<ConversationItem, 'lastMessage' | 'lastMessageAt'> & {
   lastMessageAt: Date;
-  messages: { author: 'USER' | 'AGENT' | 'SYSTEM'; text: string }[];
+  messages: {
+    author: 'USER' | 'AGENT' | 'SYSTEM';
+    text: string;
+    kind: 'TEXT' | 'AUDIO' | 'IMAGE';
+  }[];
 };
 
-const toItem = ({ messages, lastMessageAt, ...row }: Row): ConversationItem => ({
+const toItem = ({ messages: [last], lastMessageAt, ...row }: Row): ConversationItem => ({
   ...row,
-  lastMessage: messages[0] ?? null,
+  lastMessage: last ? { author: last.author, text: last.text, ...mediaKindOf(last.kind) } : null,
   lastMessageAt: lastMessageAt.toISOString(),
 });
 

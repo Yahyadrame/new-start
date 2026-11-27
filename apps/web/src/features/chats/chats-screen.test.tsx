@@ -91,6 +91,14 @@ describe('ChatsScreen', () => {
     expect(listConversations).toHaveBeenCalledWith('tok');
   });
 
+  it('nomme la photo dans l’aperçu', async () => {
+    listConversations.mockResolvedValue([
+      { ...items[1], lastMessage: { author: 'USER', text: '', mediaKind: 'IMAGE' } },
+    ]);
+    render(<ChatsScreen />);
+    expect(await screen.findByText(`${t.you}${fr.conversation.photo}`)).toBeTruthy();
+  });
+
   it('cherche par prénom ou par message, sans tenir compte des accents', async () => {
     render(<ChatsScreen />);
     await screen.findByText('Heyyy!');

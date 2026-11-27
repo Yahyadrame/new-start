@@ -27,7 +27,7 @@ import {
   reactToMessage,
   sendMessage,
 } from './chats-api';
-import { dayLabel } from './chats-format';
+import { dayLabel, previewText } from './chats-format';
 import {
   CHATS_CHANGED,
   isAwaiting,
@@ -482,16 +482,20 @@ export function ConversationScreen({
       </div>
       {forwarding && (
         <ForwardDialog
-          text={forwarding.text}
+          text={previewText(forwarding.text, forwarding.media?.kind)}
+          media={forwarding.media?.kind}
           targets={targets}
           onClose={() => setForwarding(null)}
           onPick={async (target, clientId) => {
-            await sendMessage(token.current, target.id, {
-              clientId,
-              text: forwarding.text,
-              forwarded: true,
-              ...(forwarding.sticker ? { sticker: forwarding.sticker } : {}),
-            });
+            // Un vocal ou une photo : l'API reprend le fichier et le texte du message d'origine.
+            const copy = forwarding.media
+              ? { text: '', mediaFromId: forwarding.id }
+              : {
+                  text: forwarding.text,
+                  forwarded: true,
+                  ...(forwarding.sticker ? { sticker: forwarding.sticker } : {}),
+                };
+            await sendMessage(token.current, target.id, { clientId, ...copy });
           }}
         />
       )}
@@ -502,7 +506,7 @@ export function ConversationScreen({
           reply={
             replyTo && {
               name: replyTo.author === 'USER' ? fr.conversation.quoteYou : (item?.agent.name ?? ''),
-              text: replyTo.text,
+              text: previewText(replyTo.text, replyTo.media?.kind),
             }
           }
           onCancelReply={() => setReplyTo(null)}

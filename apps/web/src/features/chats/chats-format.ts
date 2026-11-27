@@ -1,4 +1,11 @@
 import type { ConversationItem } from '@newstart/shared';
+import fr from '../../shared/i18n/fr.json';
+
+const MEDIA_NAMES = { IMAGE: fr.conversation.photo, AUDIO: fr.conversation.voiceMessage };
+
+/** Le texte d'un message en aperçu ; un vocal ou une photo sans texte est nommé. */
+export const previewText = (text: string, media?: keyof typeof MEDIA_NAMES) =>
+  text || (media ? MEDIA_NAMES[media] : '');
 
 /** Les trois filtres toujours visibles dans la rangée. */
 export const MAIN_FILTERS = ['all', 'unread', 'Quotidien'] as const;

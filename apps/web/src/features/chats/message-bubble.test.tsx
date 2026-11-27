@@ -384,3 +384,80 @@ describe('MessageBubble', () => {
     ).toBe(false);
   });
 });
+
+describe('MessageBubble, vocal et photo', () => {
+  const c = fr.conversation;
+  const photo = (url: string | null) =>
+    message({ author: 'USER', text: '', media: { kind: 'IMAGE', url, seconds: null } });
+  const openMenu = (m: MessageItem) => {
+    render(
+      <ol>
+        <MessageBubble message={m} onEdit={vi.fn()} onForward={vi.fn()} onReply={vi.fn()} />
+      </ol>,
+    );
+    const trigger = screen.getByRole('button', { name: c.messageActions });
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+  };
+  const offered = (name: string) => screen.queryByRole('button', { name }) !== null;
+
+  it('montre la photo, sans « parfait » dessous', () => {
+    show({ ...photo('https://files.test/a.jpg'), correction: { better: null, whyFr: null } });
+    expect(screen.getByRole('img', { name: c.photoSent }).getAttribute('src')).toBe(
+      'https://files.test/a.jpg',
+    );
+    expect(screen.queryByText(c.perfect)).toBeNull();
+  });
+
+  it('garde l’image chargée quand le lien change, et prend le nouveau si elle échoue', () => {
+    const view = (url: string) => (
+      <ol>
+        <MessageBubble message={photo(url)} />
+      </ol>
+    );
+    const { rerender } = render(view('https://files.test/a.jpg'));
+    rerender(view('https://files.test/b.jpg'));
+    const image = screen.getByRole('img', { name: c.photoSent });
+    expect(image.getAttribute('src')).toBe('https://files.test/a.jpg');
+    // La photo en grand s'ouvre avec le lien le plus récent : les anciens expirent.
+    expect(image.closest('a')?.getAttribute('href')).toBe('https://files.test/b.jpg');
+    fireEvent.error(image);
+    expect(image.getAttribute('src')).toBe('https://files.test/b.jpg');
+  });
+
+  it('transfère une photo, sans proposer de la copier ni de la modifier', () => {
+    openMenu(photo('https://files.test/a.jpg'));
+    expect(offered(c.forwardAction)).toBe(true);
+    expect(offered(c.copy)).toBe(false);
+    expect(offered(c.edit)).toBe(false);
+  });
+
+  it('dit quand la photo n’est plus lisible, et ne la transfère pas', () => {
+    openMenu(photo(null));
+    expect(screen.getByText(c.photoUnavailable)).toBeTruthy();
+    expect(screen.queryByRole('img', { name: c.photoSent })).toBeNull();
+    expect(offered(c.forwardAction)).toBe(false);
+    expect(offered(c.reply)).toBe(true);
+  });
+
+  it('nomme un vocal sans paroles et ne propose pas de le modifier', () => {
+    openMenu(
+      message({
+        author: 'USER',
+        text: '',
+        media: { kind: 'AUDIO', url: 'https://files.test/a.webm', seconds: 3 },
+      }),
+    );
+    expect(screen.getByText(c.voiceMessage)).toBeTruthy();
+    expect(offered(c.edit)).toBe(false);
+  });
+
+  it('nomme la photo citée', () => {
+    show(
+      message({
+        replyTo: { id: 'm0', author: 'USER', text: '', deleted: false, mediaKind: 'IMAGE' },
+      }),
+    );
+    expect(screen.getByText(c.photo)).toBeTruthy();
+  });
+});

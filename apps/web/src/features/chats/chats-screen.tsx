@@ -30,6 +30,7 @@ import {
   matchesQuery,
   MORE_FILTERS,
   type Filter,
+  previewText,
 } from './chats-format';
 
 const t = fr.chats;
@@ -215,7 +216,7 @@ export function ChatsScreen() {
                 </span>
                 <span className="truncate text-sm text-text-muted">
                   {c.lastMessage
-                    ? `${c.lastMessage.author === 'USER' ? t.you : ''}${c.lastMessage.text}`
+                    ? `${c.lastMessage.author === 'USER' ? t.you : ''}${previewText(c.lastMessage.text, c.lastMessage.mediaKind)}`
                     : t.noMessage}
                 </span>
               </span>
