@@ -2,6 +2,8 @@ import type { PrismaService } from '../prisma/prisma.service.js';
 
 export interface ActivityDelta {
   messagesSent?: number;
+  voiceSent?: number;
+  photosSent?: number;
   gamesPlayed?: number;
   xpEarned?: number;
   spokenSeconds?: number;

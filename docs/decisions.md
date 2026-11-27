@@ -185,3 +185,4 @@ Choix du porteur du projet.
 - La barre d'écriture ne propose plus « Fichier » (écart assumé avec les maquettes).
 - Limites par jour au lancement, pour tous : 30 vocaux et 10 photos. À l'activation du paiement : Gratuit 5 et 3, Plus et Pass 30 et 20, Pro 60 et 40. Le Gratuit garde donc quelques vocaux, que `docs/14` réservait à Plus.
 - Messages éphémères façon WhatsApp, gratuits pour tous, après NS-047 (NS-070).
+- Les vocaux et les photos ne comptent pas dans les 60 messages écrits du jour : chacun a sa limite.
