@@ -7,8 +7,9 @@ import {
   FAILURE_TEXT,
   HISTORY_SIZE,
   type AgentReplyStore,
-  type ReplyOptions,
+  type ContextOptions,
   type ReplyContext,
+  type ReplyOptions,
 } from '../application/agent-reply.js';
 import { applyVariant } from '../application/agent-variant.js';
 
@@ -25,9 +26,14 @@ const parseVariant = (row: { tone: string | null; difficulty: string | null } | 
 export class PrismaAgentReplyStore implements AgentReplyStore {
   constructor(@Inject(PrismaService) private readonly db: PrismaService) {}
 
-  async context(conversationId: string, messageId: string): Promise<ReplyContext | null> {
+  async context(
+    conversationId: string,
+    messageId: string,
+    { withLaterReplies = false }: ContextOptions = {},
+  ): Promise<ReplyContext | null> {
     const message = await this.db.message.findFirst({
-      where: { id: messageId, conversationId, author: 'USER', correction: null },
+      // Un message supprimé avant son tour ne reçoit pas de réponse.
+      where: { id: messageId, conversationId, author: 'USER', correction: null, deletedAt: null },
       select: {
         createdAt: true,
         conversation: {
@@ -44,21 +50,28 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
     const rows = await this.db.message.findMany({
       where: {
         conversationId,
-        author: { in: ['USER', 'AGENT'] },
-        createdAt: { lte: message.createdAt },
+        deletedAt: null,
+        OR: [
+          { author: { in: ['USER', 'AGENT'] }, createdAt: { lte: message.createdAt } },
+          ...(withLaterReplies
+            ? [{ author: 'AGENT' as const, createdAt: { gt: message.createdAt } }]
+            : []),
+        ],
       },
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       take: HISTORY_SIZE,
-      select: { author: true, text: true, sticker: true },
+      select: { id: true, author: true, text: true, sticker: true },
     });
+    rows.reverse();
+    // Les réponses arrivées depuis passent avant le message auquel on répond.
+    const target = rows.findIndex((row) => row.id === messageId);
+    if (target >= 0) rows.push(...rows.splice(target, 1));
     // Les stickers du contact ne sont pas rejoués : le modèle imiterait la marque « [sticker] ».
-    const history = rows
-      .reverse()
-      .flatMap(({ author, text, sticker }) =>
-        author === 'SYSTEM' || (author === 'AGENT' && sticker)
-          ? []
-          : [{ author, text: sticker ? `[sticker] ${text}` : text }],
-      );
+    const history = rows.flatMap(({ author, text, sticker }) =>
+      author === 'SYSTEM' || (author === 'AGENT' && sticker)
+        ? []
+        : [{ author, text: sticker ? `[sticker] ${text}` : text }],
+    );
     const stickerReceived = Boolean(rows.at(-1)?.sticker);
     const { agent, user, userId, agentId } = message.conversation;
     const variant = await this.db.contactVariant.findUnique({
@@ -120,6 +133,10 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') return;
       throw e;
     }
+  }
+
+  async clearCorrection(messageId: string) {
+    await this.db.correction.deleteMany({ where: { messageId } });
   }
 
   async saveFailure(conversationId: string) {
