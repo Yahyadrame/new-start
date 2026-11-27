@@ -40,3 +40,60 @@ test('les photos s’affichent dans la conversation, ou disent qu’elles manque
   await expect(page.getByText('Rien à corriger')).toBeHidden();
   await page.screenshot({ path: info.outputPath('photos.png') });
 });
+
+test('une photo choisie est réduite en JPEG puis envoyée', async ({ page }, info) => {
+  await signedIn(page);
+  let upload: { type: string | undefined; body: Buffer | null } | undefined;
+  await page.route('**/api/conversations/c1/media*', (r) => {
+    upload = { type: r.request().headers()['content-type'], body: r.request().postDataBuffer() };
+    return r.fulfill({
+      status: 201,
+      json: {
+        id: 'm9',
+        author: 'USER',
+        text: '',
+        translationFr: null,
+        deleted: false,
+        createdAt: new Date().toISOString(),
+        correction: null,
+        media: { kind: 'IMAGE', url: 'https://files.test/photo.svg', seconds: null },
+      },
+    });
+  });
+  await page.route('https://files.test/photo.svg', (r) =>
+    r.fulfill({ contentType: 'image/svg+xml', body: picture }),
+  );
+  await page.goto('/chats/jade');
+  await expect(page.getByRole('button', { name: 'Envoyer une photo' })).toBeVisible();
+
+  // Une grande image, comme celle d'un téléphone.
+  const large = await page.evaluate(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 3200;
+    canvas.height = 2400;
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+    context.fillStyle = '#3d6b4f';
+    context.fillRect(0, 0, 3200, 2400);
+    return canvas.toDataURL('image/png').split(',')[1] as string;
+  });
+  const choosing = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: 'Envoyer une photo' }).click();
+  await (
+    await choosing
+  ).setFiles({ name: 'plage.png', mimeType: 'image/png', buffer: Buffer.from(large, 'base64') });
+  await expect(page.getByText('Photo prête à envoyer')).toBeVisible();
+  await page.screenshot({ path: info.outputPath('photo-prete.png') });
+  await page.getByRole('button', { name: 'Envoyer', exact: true }).click();
+  await expect(page.getByRole('img', { name: 'Photo envoyée' })).toBeVisible();
+
+  expect(upload?.type).toBe('image/jpeg');
+  const size = await page.evaluate(
+    async (base64) => {
+      const blob = await (await fetch(`data:image/jpeg;base64,${base64}`)).blob();
+      const image = await createImageBitmap(blob);
+      return [image.width, image.height];
+    },
+    upload?.body?.toString('base64') ?? '',
+  );
+  expect(size).toEqual([1600, 1200]);
+});

@@ -7,6 +7,8 @@ const ensureSession = vi.fn();
 const listConversations = vi.fn();
 const listMessages = vi.fn();
 const sendMessage = vi.fn();
+const sendMedia = vi.fn();
+const compressImage = vi.fn();
 const markConversationRead = vi.fn();
 const addToNotebook = vi.fn();
 const translateMessage = vi.fn();
@@ -23,6 +25,7 @@ vi.mock('./chats-api', () => ({
   editMessage,
   listConversations,
   listMessages,
+  sendMedia,
   sendMessage,
   markConversationRead,
   addToNotebook,
@@ -30,6 +33,7 @@ vi.mock('./chats-api', () => ({
   reactToMessage,
 }));
 vi.mock('../../shared/chat-background/chat-background-api', () => ({ getChatBackground }));
+vi.mock('./compress-image', () => ({ compressImage }));
 const { ConversationScreen } = await import('./conversation-screen');
 const { CHATS_CHANGED } = await import('./chats-merge');
 
@@ -512,6 +516,70 @@ describe('ConversationScreen', () => {
       expect(texts()).toEqual(['First', 'Second']);
     });
 
+    describe('photos', () => {
+      const small = new Blob(['j'], { type: 'image/jpeg' });
+      const refused = (code: string) => Object.assign(new Error(code), { code });
+      const sendPhoto = async () => {
+        await act(async () => {
+          fireEvent.change(screen.getByTestId('photo-input'), {
+            target: { files: [new File(['x'], 'plage.png', { type: 'image/png' })] },
+          });
+        });
+        fireEvent.click(screen.getByRole('button', { name: fr.conversation.send }));
+      };
+
+      beforeEach(async () => {
+        URL.createObjectURL = vi.fn(() => 'blob:photo');
+        URL.revokeObjectURL = vi.fn();
+        compressImage.mockResolvedValue(small);
+        render(<ConversationScreen agentSlug="jade" />);
+        await screen.findByText('First');
+      });
+
+      it('envoie la photo réduite et montre le message rendu par l’API', async () => {
+        sendMedia.mockResolvedValue({
+          ...msg('m3', 'USER', ''),
+          media: { kind: 'IMAGE', url: 'https://files.test/p.jpg', seconds: null },
+        });
+        await sendPhoto();
+        const shown = await screen.findByRole('img', { name: fr.conversation.photoSent });
+        expect(shown.getAttribute('src')).toBe('https://files.test/p.jpg');
+        expect(sendMedia).toHaveBeenCalledWith('tok', 'c1', expect.any(String), small);
+        expect(sendMessage).not.toHaveBeenCalled();
+        expect(screen.queryByRole('img', { name: fr.conversation.photo })).toBeNull();
+      });
+
+      it.each([
+        ['USAGE_LIMIT', fr.conversation.photoLimit],
+        ['MEDIA_UNAVAILABLE', fr.conversation.photoSendUnavailable],
+      ])('explique le refus %s, sans proposer de réessayer', async (code, text) => {
+        sendMedia.mockRejectedValue(refused(code));
+        await sendPhoto();
+        expect(await screen.findByText(text)).toBeTruthy();
+        expect(screen.queryByRole('button', { name: fr.conversation.sendFailed })).toBeNull();
+        expect(screen.queryByRole('img', { name: fr.conversation.photo })).toBeNull();
+      });
+
+      it('retire l’explication dès qu’un message repart', async () => {
+        sendMedia.mockRejectedValue(refused('USAGE_LIMIT'));
+        sendMessage.mockResolvedValue(msg('m3', 'USER', 'Hello'));
+        await sendPhoto();
+        await screen.findByText(fr.conversation.photoLimit);
+        await write('Hello');
+        await waitFor(() => expect(screen.queryByText(fr.conversation.photoLimit)).toBeNull());
+      });
+
+      it('réessaie la même photo avec le même clientId après un échec réseau', async () => {
+        sendMedia.mockRejectedValueOnce(new Error('réseau'));
+        sendMedia.mockResolvedValueOnce(msg('m3', 'USER', 'Envoyée'));
+        await sendPhoto();
+        fireEvent.click(await screen.findByRole('button', { name: fr.conversation.sendFailed }));
+        await screen.findByText('Envoyée');
+        expect(sendMedia).toHaveBeenCalledTimes(2);
+        expect(sendMedia.mock.calls[1]).toEqual(sendMedia.mock.calls[0]);
+      });
+    });
+
     it('propose de réessayer, sans « reviens demain », quand la limite de débit joue (429 RATE_LIMITED)', async () => {
       sendMessage.mockRejectedValue(
         Object.assign(new Error('débit'), { status: 429, code: 'RATE_LIMITED' }),
@@ -785,7 +853,7 @@ describe('ConversationScreen depuis la recherche', () => {
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'center' }));
     scrollIntoView.mockClear();
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'New one' } });
-    fireEvent.click(screen.getByRole('button', { name: /envoyer/i }));
+    fireEvent.click(screen.getByRole('button', { name: fr.conversation.send }));
     await screen.findByText('New one');
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'end' }));
   });

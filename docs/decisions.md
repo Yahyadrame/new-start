@@ -182,7 +182,7 @@ Choix du porteur du projet.
 - Le vocal peut être indisponible : quota de l'abonnement, coupure par réglage, panne ou service non configuré.
 - Choix technique : les fichiers passent par l'API (taille et type vérifiés, pas de réglage CORS sur le bucket), signés avec `aws4fetch`.
 - Le contact écoute les vocaux mais ne voit pas les photos : il demande de les décrire en anglais.
-- La barre d'écriture ne propose plus « Fichier » (écart assumé avec les maquettes).
+- La barre d'écriture ne propose plus « Fichier » (écart assumé avec les maquettes). Il ne restait qu'un choix dans le menu : le bouton « + » devient « Envoyer une photo » et ouvre directement les images.
 - Limites par jour au lancement, pour tous : 30 vocaux et 10 photos. À l'activation du paiement : Gratuit 5 et 3, Plus et Pass 30 et 20, Pro 60 et 40. Le Gratuit garde donc quelques vocaux, que `docs/14` réservait à Plus.
 - Messages éphémères façon WhatsApp, gratuits pour tous, après NS-047 (NS-070).
 - Les vocaux et les photos ne comptent pas dans les 60 messages écrits du jour : chacun a sa limite.

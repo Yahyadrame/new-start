@@ -186,16 +186,17 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Partie 3b : fichiers effacés avec le message (s'il n'est repris nulle part) et avec le compte.
 - [x] Partie 3c : transfert d'un vocal ou d'une photo par l'API.
 - [x] Partie 4a : photos affichées dans la conversation (sans la mention « parfait » dessous), nommées dans les aperçus, transférables.
-- [ ] Partie 4b : envoi des photos compressées depuis la barre d'écriture ; « Fichier » retiré.
+- [x] Partie 4b : envoi des photos compressées depuis la barre d'écriture ; « Fichier » retiré.
 - [ ] Partie 4c : envoi des vocaux depuis la barre d'écriture.
 - [ ] Partie 5 : lecture des vocaux dans la conversation.
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
 - [ ] Plus tard : nouvel essai pour les fichiers que le stockage a refusé d'effacer (aujourd'hui, seul un avertissement est journalisé).
+- [ ] Plus tard : répondre à un message avec une photo ou un vocal. L'envoi de fichiers n'accepte pas encore `replyToId` (changement du contrat de l'API à faire valider) ; en attendant, la citation reste en place pour le prochain message écrit.
 - [ ] Plus tard : retirer la colonne inutilisée `Message.audioKey` (étendre puis contracter).
 - [ ] Le contact écoute le vocal (transcription) mais ne voit pas la photo : il demande de la décrire en anglais.
 - [ ] Au lancement, par personne et par jour : 30 vocaux et 10 photos.
-- [ ] La barre d'écriture ne propose plus « Fichier ».
+- [x] La barre d'écriture ne propose plus « Fichier ».
 
 ## NS-048 — Se déconnecter · S
 
