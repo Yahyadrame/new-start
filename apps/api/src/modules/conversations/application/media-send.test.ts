@@ -204,6 +204,36 @@ describe('MediaSend : refus et renvois', () => {
     expect(store.check).not.toHaveBeenCalled();
   });
 
+  it('tient la limite du jour quand les envois partent en même temps', async () => {
+    const { store, stt, service } = setup({ limits: { voicePerDay: 1 } });
+    let recorded = 0;
+    vi.mocked(store.check).mockImplementation(async (_u, _c, _id, _kind, limit) =>
+      recorded >= limit ? { limited: true } : { ready: true },
+    );
+    vi.mocked(store.create).mockImplementation(async (_u, _c, media) => {
+      recorded += 1;
+      return { row: rowOf(media), created: true };
+    });
+    const send = (n: number) =>
+      service.send('u1', CONV, {
+        clientId: `0198f0a0-0000-4000-8000-00000000001${n}`,
+        data: voice,
+        seconds: 4,
+      });
+    const [first, second] = await Promise.allSettled([send(1), send(2)]);
+    expect(first.status).toBe('fulfilled');
+    expect(second).toMatchObject({ status: 'rejected', reason: { status: 429 } });
+    expect(stt.transcribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('laisse passer l’envoi suivant après un envoi en échec', async () => {
+    const { store, send } = setup();
+    vi.mocked(store.create).mockRejectedValueOnce(new Error('base indisponible'));
+    const [first, second] = await Promise.allSettled([send(photo), send(photo)]);
+    expect(first.status).toBe('rejected');
+    expect(second.status).toBe('fulfilled');
+  });
+
   it('efface le fichier en trop quand un envoi simultané a gagné', async () => {
     const { store, files, send } = setup();
     vi.mocked(store.create).mockResolvedValue({ row: rowOf({}), created: false });

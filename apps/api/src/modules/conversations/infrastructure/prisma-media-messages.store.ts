@@ -36,7 +36,7 @@ export class PrismaMediaMessagesStore implements MediaMessagesStore {
         where: { userId_day: { userId, day } },
         select: { voiceSent: true, photosSent: true },
       });
-      // ponytail: lecture puis écriture, des envois simultanés peuvent dépasser la limite ; un verrou si ça compte
+      // Lecture puis écriture : `MediaSend` fait passer les envois d'une personne un par un.
       const sent = kind === 'AUDIO' ? today?.voiceSent : today?.photosSent;
       if ((sent ?? 0) >= dailyLimit) return { limited: true as const };
     }
