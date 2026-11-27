@@ -187,12 +187,12 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Partie 3c : transfert d'un vocal ou d'une photo par l'API.
 - [x] Partie 4a : photos affichées dans la conversation (sans la mention « parfait » dessous), nommées dans les aperçus, transférables.
 - [x] Partie 4b : envoi des photos compressées depuis la barre d'écriture ; « Fichier » retiré.
-- [ ] Partie 4c : envoi des vocaux depuis la barre d'écriture.
+- [x] Partie 4c : envoi des vocaux depuis la barre d'écriture.
   - [x] Le micro de la conversation demande l'accord aux enregistrements vocaux avant le premier vocal.
   - [x] Envoi du vocal, refus expliqués.
-  - [ ] Raison affichée sur le micro quand le vocal est indisponible.
+  - [x] Raison affichée sur le micro quand le vocal est indisponible.
 - [ ] Partie 5 : lecture des vocaux dans la conversation.
-- [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.
+- [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher. Fait pour la limite, la coupure et le service non configuré ; une panne passagère ne s'explique encore qu'à l'envoi.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
 - [ ] Plus tard : nouvel essai pour les fichiers que le stockage a refusé d'effacer (aujourd'hui, seul un avertissement est journalisé).
 - [ ] Plus tard : répondre à un message avec une photo ou un vocal. L'envoi de fichiers n'accepte pas encore `replyToId` (changement du contrat de l'API à faire valider) ; en attendant, la citation reste en place pour le prochain message écrit.

@@ -409,3 +409,51 @@ describe('Composer, modification', () => {
     expect(screen.queryByText(c.editing)).toBeNull();
   });
 });
+
+describe('Composer, micro indisponible', () => {
+  beforeEach(() => recorder.start.mockClear());
+  const reason = 'Les vocaux sont coupés.';
+
+  it('garde le micro touchable, le dit indisponible et explique pourquoi au toucher', async () => {
+    const onMicRequest = vi.fn();
+    render(<Composer onSend={vi.fn()} micBlocked={reason} onMicRequest={onMicRequest} />);
+    const mic = screen.getByRole('button', { name: c.record });
+    expect(mic.getAttribute('aria-disabled')).toBe('true');
+    expect(mic.hasAttribute('disabled')).toBe(false);
+    expect(screen.queryByText(reason)).toBeNull();
+    await act(async () => void fireEvent.click(mic));
+    expect(screen.getByRole('status').textContent).toBe(reason);
+    expect(onMicRequest).not.toHaveBeenCalled();
+    expect(recorder.start).not.toHaveBeenCalled();
+  });
+
+  it('laisse les photos marcher', () => {
+    render(<Composer onSend={vi.fn()} micBlocked={reason} onSendPhoto={vi.fn()} />);
+    expect(screen.getByRole('button', { name: c.attachPhoto })).toBeTruthy();
+  });
+
+  it('laisse la place au message d’une photo refusée', async () => {
+    compressImage.mockResolvedValue(null);
+    render(<Composer onSend={vi.fn()} micBlocked={reason} onSendPhoto={vi.fn()} />);
+    await act(async () => void fireEvent.click(screen.getByRole('button', { name: c.record })));
+    await choose(picked);
+    expect(screen.getByRole('status').textContent).toBe(c.photoUnreadable);
+  });
+
+  it('retire l’explication dès qu’on écrit, et ne la ramène pas après l’envoi', async () => {
+    render(<Composer onSend={vi.fn()} micBlocked={reason} />);
+    await act(async () => void fireEvent.click(screen.getByRole('button', { name: c.record })));
+    fireEvent.change(field(), { target: { value: 'Hi' } });
+    expect(screen.queryByText(reason)).toBeNull();
+    fireEvent.submit(form());
+    expect(screen.queryByText(reason)).toBeNull();
+  });
+
+  it('retire l’explication quand le micro revient', async () => {
+    const { rerender } = render(<Composer onSend={vi.fn()} micBlocked={reason} />);
+    await act(async () => void fireEvent.click(screen.getByRole('button', { name: c.record })));
+    rerender(<Composer onSend={vi.fn()} micBlocked={null} />);
+    expect(screen.queryByText(reason)).toBeNull();
+    expect(screen.getByRole('button', { name: c.record }).getAttribute('aria-disabled')).toBeNull();
+  });
+});

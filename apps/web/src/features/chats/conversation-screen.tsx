@@ -41,6 +41,7 @@ import {
 import { Composer } from './composer';
 import { ForwardDialog } from './forward-dialog';
 import { useKeyboardInset } from './use-keyboard-inset';
+import { useVoiceAvailability } from './use-voice-availability';
 import { useVoiceConsent } from './use-voice-consent';
 import { MessageBubble } from './message-bubble';
 import { PendingBubble, type PendingMessage } from './pending-bubble';
@@ -122,6 +123,7 @@ export function ConversationScreen({
   const token = useRef('');
   const consent = useVoiceConsent(() => token.current, item?.agent.name ?? '');
   const forgetConsent = consent.forget;
+  const { blocked: micBlocked, refresh: refreshMic } = useVoiceAvailability(token, Boolean(item));
   const end = useRef<HTMLDivElement>(null);
   const loaded = messages !== undefined;
 
@@ -222,9 +224,12 @@ export function ConversationScreen({
         const kept = message.voice && code?.endsWith('_UNAVAILABLE');
         if (!refused || kept) return mark('failed');
         setPending((prev) => prev.filter((p) => p.clientId !== clientId));
+      } finally {
+        // Un vocal peut avoir épuisé la limite du jour : le micro le montre tout de suite.
+        if (message.voice) void refreshMic();
       }
     },
-    [forgetConsent],
+    [forgetConsent, refreshMic],
   );
 
   /** Montre le message en cours d'envoi, puis le confie à `deliver`. */
@@ -521,6 +526,7 @@ export function ConversationScreen({
                   ...(forwarding.sticker ? { sticker: forwarding.sticker } : {}),
                 };
             await sendMessage(token.current, target.id, { clientId, ...copy });
+            if (forwarding.media?.kind === 'AUDIO') void refreshMic();
           }}
         />
       )}
@@ -531,6 +537,7 @@ export function ConversationScreen({
           onSendPhoto={(photo) => post({ text: '', photo })}
           onSendVoice={(blob, seconds) => post({ text: '', voice: { blob, seconds } })}
           onMicRequest={consent.ensure}
+          micBlocked={micBlocked}
           reply={
             replyTo && {
               name: replyTo.author === 'USER' ? fr.conversation.quoteYou : (item?.agent.name ?? ''),

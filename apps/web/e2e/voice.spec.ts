@@ -79,3 +79,20 @@ test('un vocal enregistré part avec sa durée', async ({ page }, info) => {
   expect(upload?.type).toMatch(/^audio\//);
   expect(upload?.size).toBeGreaterThan(0);
 });
+
+test('un micro indisponible dit pourquoi, et les photos restent', async ({ page }, info) => {
+  await signedIn(page);
+  await page.route('**/api/conversations/voice-availability', (r) =>
+    r.fulfill({ json: { available: false, reason: 'quota' } }),
+  );
+  await page.goto('/chats/jade');
+  const mic = page.getByRole('button', { name: 'Enregistrer un message vocal' });
+
+  await expect(mic).toHaveAttribute('aria-disabled', 'true');
+  // `force` : Playwright refuse sinon de toucher un bouton annoncé indisponible.
+  await mic.click({ force: true });
+  await expect(page.getByRole('status')).toContainText('Tu as envoyé tes vocaux du jour.');
+  await expect(page.getByRole('timer')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Envoyer une photo' })).toBeVisible();
+  await page.screenshot({ path: info.outputPath('micro-indisponible.png') });
+});

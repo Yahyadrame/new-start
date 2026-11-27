@@ -82,6 +82,9 @@ export async function signedIn(page: Page) {
     ),
   );
   await page.route('**/api/conversations/c1/read', (r) => r.fulfill({ status: 204 }));
+  await page.route('**/api/conversations/voice-availability', (r) =>
+    r.fulfill(json({ available: true })),
+  );
   await page.route('**/api/topics', (r) =>
     r.fulfill(json([{ slug: 'travel', nameFr: 'Voyage', agentCount: 1 }])),
   );
