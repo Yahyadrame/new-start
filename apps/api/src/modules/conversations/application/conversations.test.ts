@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { FakeMediaStore } from '../../../shared/media/media-store.js';
 import { encodeCursor } from './message-cursor.js';
 import { ConversationsService, type ConversationsStore } from './conversations.js';
 
@@ -424,5 +425,55 @@ describe('ConversationsService.search', () => {
     ]);
     const page = await service.messages('u1', ID);
     expect(page.items[0]).toMatchObject({ deleted: true, text: '' });
+  });
+});
+
+describe('ConversationsService et les médias', () => {
+  const ID = '0198f0a0-0000-7000-8000-000000000001';
+  const photo = {
+    id: 'm1',
+    author: 'USER' as const,
+    text: '',
+    translationFr: null,
+    createdAt: new Date(),
+    correction: null,
+    replyTo: null,
+    editedAt: null,
+    forwarded: false,
+    reaction: null,
+    sticker: null,
+    deletedAt: null,
+    kind: 'IMAGE' as const,
+    mediaKey: 'image/u1/p.jpg',
+    mediaProvider: 'r2',
+    mediaSeconds: null,
+  };
+
+  it('rend le lien de lecture avec le message, sans la clé ni le fournisseur', async () => {
+    const { store } = setup(null);
+    vi.mocked(store.messages).mockResolvedValue([photo]);
+    const media = { active: null, stores: { r2: new FakeMediaStore() } };
+    const service = new ConversationsService(store, undefined, undefined, 60, media);
+    const [item] = (await service.messages('u1', ID)).items;
+    expect(item?.media).toEqual({
+      kind: 'IMAGE',
+      url: 'https://media.fake.test/image/u1/p.jpg?expires=3600',
+      seconds: null,
+    });
+    for (const key of ['kind', 'mediaKey', 'mediaProvider', 'mediaSeconds']) {
+      expect(item).not.toHaveProperty(key);
+    }
+  });
+
+  it('répond 400 à la modification d’un vocal ou d’une photo, sans relancer de correction', async () => {
+    const { store } = setup(null);
+    const schedule = vi.fn();
+    const service = new ConversationsService(store, undefined, { schedule });
+    vi.mocked(store.editMessage).mockResolvedValue({ media: true });
+    await expect(service.edit('u1', ID, 'Hello')).rejects.toMatchObject({
+      status: 400,
+      response: { code: 'VALIDATION_FAILED' },
+    });
+    expect(schedule).not.toHaveBeenCalled();
   });
 });

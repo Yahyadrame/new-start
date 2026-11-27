@@ -151,6 +151,12 @@ describe('PrismaConversationsStore', () => {
     db.conversation.findFirst.mockResolvedValue({ id: 'c1' });
     db.message.findMany.mockResolvedValue([]);
     await store.messages('u1', 'c1', null, 31);
+    expect(db.message.findMany.mock.calls.at(-1)?.[0].select).toMatchObject({
+      kind: true,
+      mediaKey: true,
+      mediaProvider: true,
+      mediaSeconds: true,
+    });
     expect(db.message.findMany.mock.calls[0]?.[0].where).toEqual({ conversationId: 'c1' });
   });
 
@@ -223,9 +229,16 @@ describe('PrismaConversationsStore', () => {
       expect(db.$transaction).not.toHaveBeenCalled();
     });
 
+    it('refuse de modifier un vocal ou une photo', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue({ text: '', conversationId: 'c1', kind: 'AUDIO' });
+      expect(await store.editMessage('u1', 'm1', 'Hello')).toEqual({ media: true });
+      expect(db.$transaction).not.toHaveBeenCalled();
+    });
+
     it('ne change rien quand le texte est le même', async () => {
       const { db, store } = fake([]);
-      db.message.findFirst.mockResolvedValue({ text: 'Hi', conversationId: 'c1' });
+      db.message.findFirst.mockResolvedValue({ text: 'Hi', conversationId: 'c1', kind: 'TEXT' });
       db.message.findUniqueOrThrow.mockResolvedValue({ id: 'm1' });
       expect(await store.editMessage('u1', 'm1', 'Hi')).toEqual({
         row: { id: 'm1' },
@@ -237,7 +250,7 @@ describe('PrismaConversationsStore', () => {
 
     it('remplace le texte, date la modification et efface la correction', async () => {
       const { db, store } = fake([]);
-      db.message.findFirst.mockResolvedValue({ text: 'Hi', conversationId: 'c1' });
+      db.message.findFirst.mockResolvedValue({ text: 'Hi', conversationId: 'c1', kind: 'TEXT' });
       db.$transaction.mockResolvedValue([{ count: 1 }, { id: 'm1' }]);
       expect(await store.editMessage('u1', 'm1', 'Hello')).toEqual({
         row: { id: 'm1' },

@@ -43,6 +43,10 @@ const messageSelect = {
   forwarded: true,
   sticker: true,
   reaction: true,
+  kind: true,
+  mediaKey: true,
+  mediaProvider: true,
+  mediaSeconds: true,
   correction: { select: { better: true, whyFr: true } },
   replyTo: { select: { id: true, author: true, text: true, deletedAt: true } },
 } as const;
@@ -171,9 +175,10 @@ export class PrismaConversationsStore implements ConversationsStore {
   async editMessage(userId: string, messageId: string, text: string) {
     const found = await this.db.message.findFirst({
       where: { id: messageId, author: 'USER', deletedAt: null, conversation: { userId } },
-      select: { text: true, conversationId: true },
+      select: { text: true, conversationId: true, kind: true },
     });
     if (!found) return null;
+    if (found.kind !== 'TEXT') return { media: true as const };
     if (found.text === text) {
       const row = await this.db.message.findUniqueOrThrow({
         where: { id: messageId },

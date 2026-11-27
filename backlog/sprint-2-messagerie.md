@@ -176,8 +176,9 @@ _Ajouté le 2026-11-25. Dépend de NS-046 et d'une décision sur le stockage de 
 Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare R2 d'abord, Cloudinary ensuite, un seul fournisseur actif. Découpage :
 
 - [x] Partie 1 : port de stockage, adaptateur compatible S3 (B2, R2), choix par `MEDIA_PROVIDER`.
-- [ ] Partie 2a : 4 Mo au plus, type vérifié sur le contenu, colonnes des médias.
-- [ ] Partie 2b : envoi par l'API, URL signées d'une heure, vocal transcrit.
+- [x] Partie 2a : 4 Mo au plus, type vérifié sur le contenu, colonnes des médias.
+- [ ] Partie 2b : liens de lecture d'une heure dans les messages ; un vocal ou une photo ne se modifient pas.
+- [ ] Partie 2c : envoi par l'API, vocal transcrit, limites du jour.
 - [ ] Partie 3 : ce que voit le contact, suppression avec le message et le compte, transfert.
 - [ ] Partie 4 : barre d'écriture (photos compressées, vocaux).
 - [ ] Partie 5 : lecture des vocaux et affichage des photos dans la conversation.

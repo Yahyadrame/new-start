@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import type { AiProviders } from '@newstart/ai';
 import { ENV, type Env } from '../../config/env.js';
 import { AI } from '../../shared/ai/ai.module.js';
+import { createMediaStores } from '../../shared/media/media-store.js';
 import {
   AGENT_REPLY_STORE,
   AgentReplyService,
@@ -44,7 +45,14 @@ import { ConversationsController } from './interface/conversations.controller.js
       provide: ConversationsService,
       inject: [CONVERSATIONS_STORE, AgentReplyService, ENV],
       useFactory: (store: ConversationsStore, replies: AgentReplyService, env: Env) =>
-        new ConversationsService(store, undefined, replies, env.MESSAGES_PER_DAY),
+        new ConversationsService(
+          store,
+          undefined,
+          replies,
+          env.MESSAGES_PER_DAY,
+          // Les variables MEDIA_* sont vérifiées par `createMediaStores`.
+          createMediaStores(process.env),
+        ),
     },
   ],
 })
