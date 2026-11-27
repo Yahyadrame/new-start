@@ -16,6 +16,16 @@ export class PrismaMediaMessagesStore implements MediaMessagesStore {
     return user?.voiceConsentAt != null;
   }
 
+  async sentToday(userId: string, kind: NewMediaMessage['kind']) {
+    const { lastActiveDay: day } = await streakUpdate(this.db, userId);
+    if (!day) return 0;
+    const today = await this.db.dailyActivity.findUnique({
+      where: { userId_day: { userId, day } },
+      select: { voiceSent: true, photosSent: true },
+    });
+    return (kind === 'AUDIO' ? today?.voiceSent : today?.photosSent) ?? 0;
+  }
+
   async check(
     userId: string,
     conversationId: string,
@@ -30,16 +40,8 @@ export class PrismaMediaMessagesStore implements MediaMessagesStore {
     if (!owned) return null;
     const known = await findByClientId(this.db, conversationId, clientId);
     if (known) return { row: known, created: false };
-    const { lastActiveDay: day } = await streakUpdate(this.db, userId);
-    if (day) {
-      const today = await this.db.dailyActivity.findUnique({
-        where: { userId_day: { userId, day } },
-        select: { voiceSent: true, photosSent: true },
-      });
-      // Lecture puis écriture : `MediaSend` fait passer les envois d'une personne un par un.
-      const sent = kind === 'AUDIO' ? today?.voiceSent : today?.photosSent;
-      if ((sent ?? 0) >= dailyLimit) return { limited: true as const };
-    }
+    // Lecture puis écriture : `MediaSend` fait passer les envois d'une personne un par un.
+    if ((await this.sentToday(userId, kind)) >= dailyLimit) return { limited: true as const };
     return { ready: true as const };
   }
 

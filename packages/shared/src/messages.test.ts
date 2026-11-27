@@ -6,6 +6,7 @@ import {
   REACTIONS,
   SendMessage,
   SetReaction,
+  VoiceAvailability,
 } from './messages.js';
 
 describe('MediaQuery', () => {
@@ -87,5 +88,16 @@ describe('SetReaction', () => {
     expect(SetReaction.parse({ emoji: null }).emoji).toBeNull();
     expect(SetReaction.safeParse({ emoji: '🦄' }).success).toBe(false);
     expect(SetReaction.safeParse({}).success).toBe(false);
+  });
+});
+
+describe('VoiceAvailability', () => {
+  it('accepte le vocal disponible, ou une des trois raisons du refus', () => {
+    expect(VoiceAvailability.parse({ available: true })).toEqual({ available: true });
+    for (const reason of ['disabled', 'unconfigured', 'quota']) {
+      expect(VoiceAvailability.safeParse({ available: false, reason }).success).toBe(true);
+    }
+    expect(VoiceAvailability.safeParse({ available: false }).success).toBe(false);
+    expect(VoiceAvailability.safeParse({ available: false, reason: 'autre' }).success).toBe(false);
   });
 });

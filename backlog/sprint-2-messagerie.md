@@ -181,6 +181,7 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Partie 2c : enregistrement d'un fichier envoyé et compteurs du jour (vocaux, photos).
 - [x] Progrès : « Messages » et les jours actifs comptent aussi les vocaux et les photos.
 - [x] Partie 2d : envoi par l'API, vocal transcrit, limites du jour.
+- [x] L'API dit pourquoi le vocal est indisponible (`GET /conversations/voice-availability`) ; l'affichage sur le micro vient avec la partie 4.
 - [ ] Partie 3 : ce que voit le contact, suppression avec le message et le compte, transfert.
 - [ ] Partie 4 : barre d'écriture (photos compressées, vocaux).
 - [ ] Partie 5 : lecture des vocaux et affichage des photos dans la conversation.

@@ -120,3 +120,16 @@ describe('PrismaMediaMessagesStore.create', () => {
     expect(await store.create('u1', 'c1', voice)).toEqual({ row: { id: 'm0' }, created: false });
   });
 });
+
+describe('PrismaMediaMessagesStore.sentToday', () => {
+  it('lit le compteur du jour de la personne, vocaux et photos à part', async () => {
+    const { db, store } = setup({ voiceSent: 3, photosSent: 7 });
+    expect(await store.sentToday('u1', 'AUDIO')).toBe(3);
+    expect(await store.sentToday('u1', 'IMAGE')).toBe(7);
+    expect(db.dailyActivity.findUnique.mock.calls[0]?.[0].where.userId_day.userId).toBe('u1');
+  });
+
+  it('vaut zéro avant le premier envoi du jour', async () => {
+    expect(await setup().store.sentToday('u1', 'AUDIO')).toBe(0);
+  });
+});

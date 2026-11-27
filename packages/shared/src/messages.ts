@@ -66,6 +66,13 @@ export const MediaQuery = z.object({
 });
 export type MediaQuery = z.infer<typeof MediaQuery>;
 
+/** Réponse de `GET /conversations/voice-availability` : le micro, et pourquoi il est indisponible. */
+export const VoiceAvailability = z.discriminatedUnion('available', [
+  z.object({ available: z.literal(true) }),
+  z.object({ available: z.literal(false), reason: z.enum(['disabled', 'unconfigured', 'quota']) }),
+]);
+export type VoiceAvailability = z.infer<typeof VoiceAvailability>;
+
 /** Corps de `POST /conversations/:id/messages` : `clientId` rend le renvoi sans risque de doublon. */
 export const SendMessage = z.object({
   clientId: z.uuid(),

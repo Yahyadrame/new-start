@@ -12,6 +12,7 @@ const list = vi.fn().mockResolvedValue([{ id: 'c1' }]);
 const start = vi.fn().mockResolvedValue({ id: 'c2' });
 const send = vi.fn();
 const sendMedia = vi.fn();
+const voiceAvailability = vi.fn().mockResolvedValue({ available: false, reason: 'quota' });
 const search = vi.fn().mockResolvedValue({ items: [] });
 const markRead = vi.fn();
 const messages = vi.fn().mockResolvedValue({ items: [], nextCursor: null });
@@ -25,7 +26,7 @@ beforeAll(async () => {
         provide: ConversationsService,
         useValue: { list, start, messages, send, markRead, search },
       },
-      { provide: MediaSend, useValue: { send: sendMedia } },
+      { provide: MediaSend, useValue: { send: sendMedia, voiceAvailability } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -243,5 +244,22 @@ describe('POST /conversations/:id/media', () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VALIDATION_FAILED');
     expect(sendMedia).not.toHaveBeenCalled();
+  });
+});
+
+describe('GET /conversations/voice-availability', () => {
+  beforeEach(() => vi.clearAllMocks());
+  const get = () => request(app.getHttpServer()).get('/conversations/voice-availability');
+
+  it('refuse sans jeton (401)', async () => {
+    expect((await get()).status).toBe(401);
+    expect(voiceAvailability).not.toHaveBeenCalled();
+  });
+
+  it('dit pourquoi le vocal est indisponible pour le compte du jeton', async () => {
+    const res = await get().set({ Authorization: 'Bearer tok-u1' });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ available: false, reason: 'quota' });
+    expect(voiceAvailability).toHaveBeenCalledWith('u1');
   });
 });

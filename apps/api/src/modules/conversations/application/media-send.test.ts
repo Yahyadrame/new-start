@@ -30,6 +30,7 @@ function setup(
 ) {
   const store: MediaMessagesStore = {
     check: vi.fn().mockResolvedValue({ ready: true }),
+    sentToday: vi.fn().mockResolvedValue(0),
     hasVoiceConsent: vi.fn().mockResolvedValue(true),
     create: vi.fn(async (_u: string, _c: string, media: NewMediaMessage) => ({
       row: rowOf(media),
@@ -246,5 +247,35 @@ describe('MediaSend : refus et renvois', () => {
     vi.mocked(store.create).mockRejectedValue(new Error('base indisponible'));
     await expect(send(photo)).rejects.toThrow('base indisponible');
     expect(files.files.size).toBe(0);
+  });
+});
+
+describe('MediaSend.voiceAvailability', () => {
+  it('annonce le vocal disponible sous la limite du jour', async () => {
+    const { store, service } = setup();
+    vi.mocked(store.sentToday).mockResolvedValue(29);
+    expect(await service.voiceAvailability('u1')).toEqual({ available: true });
+    expect(store.sentToday).toHaveBeenCalledWith('u1', 'AUDIO');
+  });
+
+  it.each([
+    ['disabled', 'quand le réglage coupe les vocaux', { limits: { voiceEnabled: false } }],
+    ['unconfigured', 'sans transcription branchée', { stt: { name: 'fake' } }],
+    ['unconfigured', 'sans stockage', { storage: false }],
+    [
+      'disabled',
+      'd’abord le réglage, quand tout manque',
+      { limits: { voiceEnabled: false }, stt: { name: 'fake' }, storage: false },
+    ],
+  ])('donne la raison %s %s', async (reason, _cas, options) => {
+    const { store, service } = setup(options);
+    vi.mocked(store.sentToday).mockResolvedValue(30);
+    expect(await service.voiceAvailability('u1')).toEqual({ available: false, reason });
+  });
+
+  it('donne la raison quota à la limite du jour', async () => {
+    const { store, service } = setup();
+    vi.mocked(store.sentToday).mockResolvedValue(30);
+    expect(await service.voiceAvailability('u1')).toEqual({ available: false, reason: 'quota' });
   });
 });

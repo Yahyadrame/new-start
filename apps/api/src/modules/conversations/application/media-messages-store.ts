@@ -15,6 +15,8 @@ export type SentMessage = { row: MessageRow; created: boolean };
 export interface MediaMessagesStore {
   /** Vrai si la personne a accepté les enregistrements vocaux. */
   hasVoiceConsent(userId: string): Promise<boolean>;
+  /** Le nombre de vocaux (ou de photos) que la personne a envoyés aujourd'hui, à son heure. */
+  sentToday(userId: string, kind: NewMediaMessage['kind']): Promise<number>;
   /**
    * À appeler avant de transcrire et de ranger le fichier. Null si la conversation n'est pas à la
    * personne ; le message existant si ce `clientId` est déjà envoyé ; `limited` quand la limite du
