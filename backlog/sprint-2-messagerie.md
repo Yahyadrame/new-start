@@ -179,6 +179,7 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Partie 2a : 4 Mo au plus, type vérifié sur le contenu, colonnes des médias.
 - [x] Partie 2b : liens de lecture d'une heure dans les messages ; un vocal ou une photo ne se modifient pas.
 - [x] Partie 2c : enregistrement d'un fichier envoyé et compteurs du jour (vocaux, photos).
+- [x] Progrès : « Messages » et les jours actifs comptent aussi les vocaux et les photos.
 - [ ] Partie 2d : envoi par l'API, vocal transcrit, limites du jour.
 - [ ] Partie 3 : ce que voit le contact, suppression avec le message et le compte, transfert.
 - [ ] Partie 4 : barre d'écriture (photos compressées, vocaux).

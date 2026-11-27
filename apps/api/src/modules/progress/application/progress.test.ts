@@ -8,7 +8,15 @@ describe('ProgressService.summary', () => {
       streakDays: 6,
       today: '2026-11-21',
       activity: [
-        { day: '2026-11-21', spokenSeconds: 120, messagesSent: 5, gamesPlayed: 1, xpEarned: 55 },
+        {
+          day: '2026-11-21',
+          spokenSeconds: 120,
+          messagesSent: 5,
+          voiceSent: 0,
+          photosSent: 0,
+          gamesPlayed: 1,
+          xpEarned: 55,
+        },
       ],
     });
     const summary = await new ProgressService({ stats }).summary('u1');

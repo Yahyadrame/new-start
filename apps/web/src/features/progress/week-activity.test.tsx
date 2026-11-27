@@ -11,6 +11,8 @@ const row = (day: string, over: Partial<DayActivity>): DayActivity => ({
   day,
   spokenSeconds: 0,
   messagesSent: 0,
+  voiceSent: 0,
+  photosSent: 0,
   gamesPlayed: 0,
   xpEarned: 0,
   ...over,

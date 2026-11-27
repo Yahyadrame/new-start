@@ -31,6 +31,8 @@ describe('summarize', () => {
       day,
       spokenSeconds: 0,
       messagesSent: 0,
+      voiceSent: 0,
+      photosSent: 0,
       gamesPlayed: 0,
       xpEarned: 0,
       ...over,
@@ -65,6 +67,18 @@ describe('summarize', () => {
         games: 1,
         weekXp: 65,
         activeDays: 2,
+      });
+    });
+
+    it('compte les vocaux et les photos comme des messages envoyés', () => {
+      const activity = [
+        row('2026-11-21', { messagesSent: 4, voiceSent: 2, photosSent: 1 }),
+        row('2026-11-20', { voiceSent: 1 }),
+        row('2026-11-19', { photosSent: 1 }),
+      ];
+      expect(summarize(0, 0, activity, '2026-11-21').figures).toMatchObject({
+        messages: 9,
+        activeDays: 3,
       });
     });
 

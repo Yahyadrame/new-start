@@ -41,12 +41,18 @@ describe('PrismaProgressStore.stats', () => {
       day: new Date('2026-11-20T00:00:00Z'),
       spokenSeconds: 0,
       messagesSent: 3,
+      voiceSent: 2,
+      photosSent: 1,
       gamesPlayed: 1,
       xpEarned: 35,
     };
     const s = store(user(), [row]);
     const out = await s.store.stats('u1', now);
     expect(out?.activity).toEqual([{ ...row, day: '2026-11-20' }]);
+    expect(s.findMany.mock.calls[0]?.[0].select).toMatchObject({
+      voiceSent: true,
+      photosSent: true,
+    });
     expect(s.findMany.mock.calls[0]?.[0].where).toEqual({
       userId: 'u1',
       day: { gte: new Date('2026-11-15T00:00:00Z') },

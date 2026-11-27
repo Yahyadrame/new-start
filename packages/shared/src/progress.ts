@@ -9,7 +9,10 @@ export interface DayActivity {
   /** Jour local, `AAAA-MM-JJ`. */
   day: string;
   spokenSeconds: number;
+  /** Messages écrits ; les vocaux et les photos ont leur compteur. */
   messagesSent: number;
+  voiceSent: number;
+  photosSent: number;
   gamesPlayed: number;
   xpEarned: number;
 }
@@ -58,6 +61,7 @@ export function summarize(
   const days = lastSevenDays(today).map((day) => ({ day, row: byDay.get(day) }));
   const sum = (pick: (a: DayActivity) => number) =>
     days.reduce((total, { row }) => total + (row ? pick(row) : 0), 0);
+  const sent = (a: DayActivity) => a.messagesSent + a.voiceSent + a.photosSent;
   return {
     xp,
     level: Math.floor(xp / XP_PER_LEVEL) + 1,
@@ -69,10 +73,10 @@ export function summarize(
       minutes: Math.round((row?.spokenSeconds ?? 0) / 60),
     })),
     figures: {
-      messages: sum((a) => a.messagesSent),
+      messages: sum(sent),
       games: sum((a) => a.gamesPlayed),
       weekXp: sum((a) => a.xpEarned),
-      activeDays: days.filter(({ row }) => row && row.messagesSent + row.gamesPlayed > 0).length,
+      activeDays: days.filter(({ row }) => row && sent(row) + row.gamesPlayed > 0).length,
     },
   };
 }
