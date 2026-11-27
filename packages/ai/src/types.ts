@@ -44,6 +44,8 @@ export interface SttWord {
 export interface SttResponse {
   text: string;
   words?: SttWord[];
+  /** Vrai quand la réponse vient de l'adaptateur factice : ce ne sont pas les paroles entendues. */
+  fake?: true;
 }
 
 export interface SttProvider {

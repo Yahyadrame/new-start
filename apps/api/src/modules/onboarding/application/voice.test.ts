@@ -48,6 +48,12 @@ describe('Voice', () => {
     ]);
   });
 
+  it('refuse la transcription du repli factice (plafond atteint, quota du fournisseur)', async () => {
+    const transcribe = vi.fn().mockResolvedValue({ text: 'audio of 3 bytes', fake: true });
+    const { voice } = setup({ stt: { transcribe } });
+    expect(await code(voice.transcribe('u', audio, 'audio/webm'))).toEqual([503, 'AI_UNAVAILABLE']);
+  });
+
   it("répond 503 quand le fournisseur échoue ou n'est pas branché", async () => {
     const failing = setup({ stt: { transcribe: vi.fn().mockRejectedValue(new Error('x')) } });
     expect(await code(failing.voice.transcribe('u', audio, 'audio/webm'))).toEqual([

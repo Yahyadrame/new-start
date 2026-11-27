@@ -38,6 +38,8 @@ describe('FakeStt', () => {
       mimeType: 'audio/webm',
     });
     expect(res.text).toBe('audio of 12 bytes');
+    // Marquée factice : l'appelant ne doit pas la prendre pour les paroles de la personne.
+    expect(res.fake).toBe(true);
     expect(res.words).toEqual([
       { word: 'audio', start: 0, end: 0.5 },
       { word: 'of', start: 0.5, end: 1 },
