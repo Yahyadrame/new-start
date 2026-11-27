@@ -24,6 +24,7 @@
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
     "@sentry/nestjs": "^11.12.0",
+    "aws4fetch": "^1.0.20",
     "ioredis": "^6.0.0",
     "jose": "^6.2.17",
     "nestjs-pino": "^5.3.1",

@@ -14,8 +14,8 @@ Je ne suis pas juriste : les points de conformité ci-dessous sont à faire vali
 - Validation Zod de toutes les entrées ; requêtes Prisma paramétrées (pas de SQL brut non contrôlé).
 - En-têtes : HSTS, CSP stricte, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` (micro et caméra seulement sur les écrans qui en ont besoin).
 - CORS limité aux domaines de l'appli.
-- Téléversements : signatures Cloudinary de courte durée, type et taille vérifiés (audio ≤ 10 Mo, ≤ 2 minutes), dossiers privés pour l'audio des utilisateurs.
-- Sous-traitants à déclarer dans la politique de confidentialité : Brevo (e-mails, SMS), Cloudinary (médias), fournisseurs d'IA, hébergeur, Sentry.
+- Téléversements : photos et vocaux passent par l'API, type vérifié sur le contenu, 4 Mo au plus et 2 minutes pour un vocal, bucket privé lu par URL signées d'une heure.
+- Sous-traitants à déclarer dans la politique de confidentialité : Brevo (e-mails, SMS), Backblaze ou Cloudflare, puis Cloudinary (médias), fournisseurs d'IA, hébergeur, Sentry.
 - Webhooks de paiement : signature vérifiée, horodatage contrôlé, traitement idempotent.
 - Dépendances : Renovate + `pnpm audit` en CI ; images scannées par Trivy.
 - Tests d'intrusion légers avant le lancement public (OWASP ZAP en CI sur staging).

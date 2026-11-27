@@ -173,9 +173,18 @@ _Ajouté le 2026-11-25 : tout dans un seul endroit, comme WhatsApp. Suite de NS-
 
 _Ajouté le 2026-11-25. Dépend de NS-046 et d'une décision sur le stockage de fichiers (dépense)._
 
-- [ ] Stockage, taille et types limités, URL signées, suppression avec le compte. Piste proposée par le porteur du projet : Cloudinary (images et audio). Comparer avec un bucket compatible S3, vérifier les tarifs, puis demander.
-- [ ] Lecture des vocaux et affichage des images dans la conversation.
-- [ ] Ce que les contacts IA font d'un vocal (transcription, prononciation) : à décider avant.
+Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare R2 d'abord, Cloudinary ensuite, un seul fournisseur actif. Découpage :
+
+- [x] Partie 1 : port de stockage, adaptateur compatible S3 (B2, R2), choix par `MEDIA_PROVIDER`.
+- [ ] Partie 2 : envoi par l'API, 4 Mo au plus, type vérifié sur le contenu, URL signées d'une heure, vocal transcrit.
+- [ ] Partie 3 : ce que voit le contact, suppression avec le message et le compte, transfert.
+- [ ] Partie 4 : barre d'écriture (photos compressées, vocaux).
+- [ ] Partie 5 : lecture des vocaux et affichage des photos dans la conversation.
+- [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.
+- [ ] Adaptateur Cloudinary, après B2 et R2.
+- [ ] Le contact écoute le vocal (transcription) mais ne voit pas la photo : il demande de la décrire en anglais.
+- [ ] Au lancement, par personne et par jour : 30 vocaux et 10 photos.
+- [ ] La barre d'écriture ne propose plus « Fichier ».
 
 ## NS-048 — Se déconnecter · S
 
@@ -367,3 +376,11 @@ _Ajouté le 2026-11-26 à la demande du porteur du projet. Complète NS-054._
 - [x] À la limite de messages du jour, les envois s'arrêtent et la fenêtre le dit.
 - [x] Tests unitaires et e2e, deux thèmes.
 
+## NS-070 — Messages éphémères · M
+
+_Ajouté le 2026-11-27 à la demande du porteur du projet. Après NS-047._
+
+- [ ] Réglage par conversation : désactivé (au départ), 24 h, 7 jours ou 90 jours. Gratuit pour tous.
+- [ ] Passé le délai, le texte et les fichiers sont réellement effacés et le contact ne les connaît plus.
+- [ ] Les corrections du carnet, les révisions et la progression restent.
+- [ ] Tests unitaires, deux thèmes, accessibilité.

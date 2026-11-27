@@ -154,7 +154,7 @@ apps/api/src/modules/conversations/
 | `progress`      | XP, niveau, séries de jours, statistiques                                                  |
 | `notifications` | Rappel quotidien, messages spontanés (≤ 1/jour), Web Push                                  |
 | `billing`       | Offres, abonnements, quotas, webhooks de paiement                                          |
-| `media`         | Téléversements signés vers Cloudinary (images, audio), transformations                     |
+| `media`         | Photos et vocaux : stockage compatible S3 (B2, R2) puis Cloudinary, URL signées           |
 | `admin`         | Gestion du contenu et des agents (accès réservé)                                           |
 | `health`        | `/health/live`, `/health/ready` pour Kubernetes                                            |
 
@@ -209,7 +209,7 @@ sequenceDiagram
 | Appels                 | LiveKit (V2)                                                                                     | Open source, SDK web et mobile                                      | Agora           |
 | Mobile                 | Expo (V2)                                                                                        | Partage de code TypeScript                                          | Flutter         |
 | Recherche              | PostgreSQL (trigram)                                                                             | Suffisant au MVP                                                    | Meilisearch     |
-| Médias (images, audio) | **Cloudinary** (derrière l'interface `MediaStorage`)                                             | Transformations d'images, CDN, offre gratuite                       | Stockage S3     |
+| Médias (images, audio) | **Backblaze B2 ou Cloudflare R2** (port `MediaStore`), Cloudinary ensuite | Bucket privé, URL qui expirent, 10 Go gratuits | AWS S3 |
 | E-mails et SMS         | **Brevo** (derrière les interfaces `Mailer` et `SmsSender`)                                      | E-mails transactionnels et SMS OTP, offre gratuite pour les e-mails | Resend, Twilio  |
 
 ## Budget de performance
