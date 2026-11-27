@@ -182,9 +182,11 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
 - [x] Progrès : « Messages » et les jours actifs comptent aussi les vocaux et les photos.
 - [x] Partie 2d : envoi par l'API, vocal transcrit, limites du jour.
 - [x] L'API dit pourquoi le vocal est indisponible (`GET /conversations/voice-availability`) ; l'affichage sur le micro vient avec la partie 4.
-- [ ] Partie 3 : ce que voit le contact, suppression avec le message et le compte, transfert.
+- [x] Partie 3a : le contact répond aux vocaux (il lit la transcription) et aux photos (il ne les voit pas et demande de les décrire en anglais).
+- [ ] Partie 3b : fichiers effacés avec le message (s'il n'est repris nulle part) et avec le compte.
+- [ ] Partie 3c : transfert d'un vocal ou d'une photo.
 - [ ] Partie 4 : barre d'écriture (photos compressées, vocaux).
-- [ ] Partie 5 : lecture des vocaux et affichage des photos dans la conversation.
+- [ ] Partie 5 : lecture des vocaux et affichage des photos dans la conversation (sans la mention « parfait » sous une photo).
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
 - [ ] Plus tard : retirer la colonne inutilisée `Message.audioKey` (étendre puis contracter).

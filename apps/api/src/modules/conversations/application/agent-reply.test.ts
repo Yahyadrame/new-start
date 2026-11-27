@@ -331,3 +331,22 @@ describe('AgentReplyService.schedule, messages envoyés coup sur coup', () => {
     await vi.waitFor(() => expect(events).toContain('m2 correction'));
   });
 });
+
+describe('AgentReplyService.reply, photo', () => {
+  it('ne corrige rien, même si l’IA propose une correction', async () => {
+    const photo: ReplyContext = {
+      ...context,
+      history: [{ author: 'USER', text: '[photo]' }],
+      photoReceived: true,
+    };
+    const fix = { better: 'A photo.', why: 'Article.' };
+    const { store, service } = setup(async () => json('What is on it?', fix), photo);
+    await service.reply('c1', 'm1');
+    expect(store.saveReply).toHaveBeenCalledWith(
+      'c1',
+      'm1',
+      { reply: 'What is on it?', fix: null },
+      {},
+    );
+  });
+});

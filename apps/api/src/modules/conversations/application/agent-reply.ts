@@ -37,6 +37,8 @@ export interface ReplyContext {
   history: { author: 'USER' | 'AGENT'; text: string }[];
   /** La personne vient d'envoyer un sticker : le contact peut en renvoyer un. */
   stickerReceived?: boolean;
+  /** Le message à traiter est une photo : il n'a rien à corriger. */
+  photoReceived?: boolean;
 }
 
 export interface AgentReplyStore {
@@ -153,7 +155,11 @@ export class AgentReplyService implements ReplyScheduler {
           const blocked = checkAgentReply(reply);
           if (blocked) throw new BlockedReplyError(blocked);
           // Seul un identifiant proposé est gardé : jamais une invention du modèle.
-          return { reply, fix, ...(sticker && stickers.includes(sticker) && { sticker }) };
+          return {
+            reply,
+            fix: context.photoReceived ? null : fix,
+            ...(sticker && stickers.includes(sticker) && { sticker }),
+          };
         },
         {
           retries: 2,

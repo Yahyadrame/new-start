@@ -216,3 +216,35 @@ describe('PrismaAgentReplyStore.saveFailure', () => {
     });
   });
 });
+
+describe('PrismaAgentReplyStore.context, vocaux et photos', () => {
+  const read = async (rows: object[]) => {
+    const { db, store } = fake();
+    db.message.findFirst.mockResolvedValue(found);
+    db.message.findMany.mockResolvedValue(rows);
+    return { db, context: await store.context('c1', 'm1') };
+  };
+
+  it('marque la transcription d’un vocal et remplace une photo par sa marque', async () => {
+    const { db, context } = await read([
+      { id: 'm1', author: 'USER', kind: 'AUDIO', text: 'I am agree' },
+      { id: 'm0', author: 'USER', kind: 'IMAGE', text: '' },
+    ]);
+    expect(db.message.findMany.mock.calls[0]?.[0].select.kind).toBe(true);
+    expect(context?.history).toEqual([
+      { author: 'USER', text: '[photo]' },
+      { author: 'USER', text: '[voice message] I am agree' },
+    ]);
+    expect(context).not.toHaveProperty('photoReceived');
+  });
+
+  it('garde la marque seule pour un vocal sans paroles', async () => {
+    const { context } = await read([{ id: 'm1', author: 'USER', kind: 'AUDIO', text: '' }]);
+    expect(context?.history).toEqual([{ author: 'USER', text: '[voice message]' }]);
+  });
+
+  it('signale que le message à traiter est une photo', async () => {
+    const { context } = await read([{ id: 'm1', author: 'USER', kind: 'IMAGE', text: '' }]);
+    expect(context?.photoReceived).toBe(true);
+  });
+});

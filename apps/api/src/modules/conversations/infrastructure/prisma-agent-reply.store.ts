@@ -22,6 +22,13 @@ const parseVariant = (row: { tone: string | null; difficulty: string | null } | 
   return parsed.success ? parsed.data : null;
 };
 
+/** Ce que le contact lit d'un message : les marques sont expliquées dans le prompt `agent.v1`. */
+const promptText = (row: { text: string; sticker?: string | null; kind?: string }) => {
+  if (row.kind === 'IMAGE') return '[photo]';
+  if (row.kind === 'AUDIO') return `[voice message] ${row.text}`.trim();
+  return row.sticker ? `[sticker] ${row.text}` : row.text;
+};
+
 @Injectable()
 export class PrismaAgentReplyStore implements AgentReplyStore {
   constructor(@Inject(PrismaService) private readonly db: PrismaService) {}
@@ -60,26 +67,33 @@ export class PrismaAgentReplyStore implements AgentReplyStore {
       },
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       take: HISTORY_SIZE,
-      select: { id: true, author: true, text: true, sticker: true },
+      select: { id: true, author: true, text: true, sticker: true, kind: true },
     });
     rows.reverse();
     // Les réponses arrivées depuis passent avant le message auquel on répond.
     const target = rows.findIndex((row) => row.id === messageId);
     if (target >= 0) rows.push(...rows.splice(target, 1));
     // Les stickers du contact ne sont pas rejoués : le modèle imiterait la marque « [sticker] ».
-    const history = rows.flatMap(({ author, text, sticker }) =>
-      author === 'SYSTEM' || (author === 'AGENT' && sticker)
+    const history = rows.flatMap((row) =>
+      row.author === 'SYSTEM' || (row.author === 'AGENT' && row.sticker)
         ? []
-        : [{ author, text: sticker ? `[sticker] ${text}` : text }],
+        : [{ author: row.author, text: promptText(row) }],
     );
     const stickerReceived = Boolean(rows.at(-1)?.sticker);
+    const photoReceived = rows.at(-1)?.kind === 'IMAGE';
     const { agent, user, userId, agentId } = message.conversation;
     const variant = await this.db.contactVariant.findUnique({
       where: { userId_agentId: { userId, agentId } },
       select: { tone: true, difficulty: true },
     });
     return applyVariant(
-      { agent, learner: user, history, ...(stickerReceived && { stickerReceived }) },
+      {
+        agent,
+        learner: user,
+        history,
+        ...(stickerReceived && { stickerReceived }),
+        ...(photoReceived && { photoReceived }),
+      },
       parseVariant(variant),
     );
   }
