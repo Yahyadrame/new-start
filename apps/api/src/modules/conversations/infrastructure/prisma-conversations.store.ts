@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ConversationItem, SendMessage } from '@newstart/shared';
-import { Prisma } from '../../../generated/prisma/client.js';
 import type { MessageCursor } from '../application/message-cursor.js';
-import { recordActivity } from '../../../shared/progress/daily-activity.js';
 import { streakUpdate } from '../../../shared/progress/streak.js';
 import { PrismaService } from '../../../shared/prisma/prisma.service.js';
 import type { ConversationsStore, MessageRow, SearchRow } from '../application/conversations.js';
+import { findByClientId, messageSelect, recordMessage } from './record-message.js';
 
 const select = {
   id: true,
@@ -32,25 +31,6 @@ const select = {
   },
 } as const;
 
-const messageSelect = {
-  id: true,
-  author: true,
-  text: true,
-  translationFr: true,
-  createdAt: true,
-  deletedAt: true,
-  editedAt: true,
-  forwarded: true,
-  sticker: true,
-  reaction: true,
-  kind: true,
-  mediaKey: true,
-  mediaProvider: true,
-  mediaSeconds: true,
-  correction: { select: { better: true, whyFr: true } },
-  replyTo: { select: { id: true, author: true, text: true, deletedAt: true } },
-} as const;
-
 type Row = Omit<ConversationItem, 'lastMessage' | 'lastMessageAt'> & {
   lastMessageAt: Date;
   messages: { author: 'USER' | 'AGENT' | 'SYSTEM'; text: string }[];
@@ -61,9 +41,6 @@ const toItem = ({ messages, lastMessageAt, ...row }: Row): ConversationItem => (
   lastMessage: messages[0] ?? null,
   lastMessageAt: lastMessageAt.toISOString(),
 });
-
-/** XP gagnés pour chaque message envoyé. */
-const XP_PER_MESSAGE = 10;
 
 @Injectable()
 export class PrismaConversationsStore implements ConversationsStore {
@@ -253,12 +230,7 @@ export class PrismaConversationsStore implements ConversationsStore {
       select: { id: true },
     });
     if (!owned) return null;
-    const find = () =>
-      this.db.message.findUnique({
-        where: { conversationId_clientId: { conversationId, clientId } },
-        select: messageSelect,
-      });
-    const known = await find();
+    const known = await findByClientId(this.db, conversationId, clientId);
     if (known) return { row: known, created: false };
     // Un message cité d'une autre conversation (ou inconnu) est ignoré : la réponse part sans citation.
     const quoted = replyToId
@@ -276,46 +248,20 @@ export class PrismaConversationsStore implements ConversationsStore {
       // ponytail: lecture puis écriture, deux envois simultanés peuvent dépasser la limite de 1 ; un verrou si ça compte
       if ((today?.messagesSent ?? 0) >= dailyLimit) return { limited: true as const };
     }
-    try {
-      const [row] = await this.db.$transaction([
-        this.db.message.create({
-          data: {
-            conversationId,
-            clientId,
-            author: 'USER',
-            text,
-            replyToId: quoted?.id ?? null,
-            forwarded: forwarded === true,
-            sticker: sticker ?? null,
-          },
-          select: messageSelect,
-        }),
-        this.db.conversation.update({
-          where: { id: conversationId },
-          data: { lastMessageAt: new Date() },
-        }),
-        // +10 XP par message (règle de NS-501), seulement pour un message créé
-        this.db.user.update({
-          where: { id: userId },
-          data: { xp: { increment: XP_PER_MESSAGE }, ...streak },
-        }),
-        ...(streak.lastActiveDay
-          ? [
-              recordActivity(this.db, userId, streak.lastActiveDay, {
-                messagesSent: 1,
-                xpEarned: XP_PER_MESSAGE,
-              }),
-            ]
-          : []),
-      ]);
-      return { row, created: true };
-    } catch (e) {
-      // Deux envois du même clientId en même temps : le second retrouve le premier.
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-        const row = await find();
-        if (row) return { row, created: false };
-      }
-      throw e;
-    }
+    return recordMessage(
+      this.db,
+      userId,
+      {
+        conversationId,
+        clientId,
+        author: 'USER',
+        text,
+        replyToId: quoted?.id ?? null,
+        forwarded: forwarded === true,
+        sticker: sticker ?? null,
+      },
+      streak,
+      { messagesSent: 1 },
+    );
   }
 }

@@ -1,0 +1,113 @@
+import { describe, expect, it, vi } from 'vitest';
+import { Prisma } from '../../../generated/prisma/client.js';
+import type { PrismaService } from '../../../shared/prisma/prisma.service.js';
+import type { NewMediaMessage } from '../application/media-messages-store.js';
+import { PrismaMediaMessagesStore } from './prisma-media-messages.store.js';
+
+const clientId = '0198f0a0-0000-4000-8000-000000000002';
+const user = {
+  streakDays: 1,
+  lastActiveDay: new Date('2026-11-26T00:00:00Z'),
+  timezone: 'Africa/Dakar',
+  pausedUntil: null,
+};
+const voice: NewMediaMessage = {
+  clientId,
+  kind: 'AUDIO',
+  text: 'Hello there',
+  mediaKey: 'audio/u1/a.webm',
+  mediaProvider: 'b2',
+  mediaSeconds: 4,
+};
+const limits = { messages: 60, media: 30 };
+
+function setup(today: Record<string, number> | null = null) {
+  const db = {
+    conversation: { findFirst: vi.fn().mockResolvedValue({ id: 'c1' }), update: vi.fn() },
+    message: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn() },
+    user: { findUnique: vi.fn().mockResolvedValue(user), update: vi.fn() },
+    dailyActivity: { findUnique: vi.fn().mockResolvedValue(today), upsert: vi.fn() },
+    $transaction: vi.fn().mockResolvedValue([{ id: 'm1' }]),
+  };
+  return { db, store: new PrismaMediaMessagesStore(db as unknown as PrismaService) };
+}
+
+describe('PrismaMediaMessagesStore.check', () => {
+  const check = (store: PrismaMediaMessagesStore, kind: 'AUDIO' | 'IMAGE' = 'AUDIO') =>
+    store.check('u1', 'c1', clientId, kind, limits);
+
+  it('ne rend rien pour une conversation qui n’est pas à cette personne', async () => {
+    const { db, store } = setup();
+    db.conversation.findFirst.mockResolvedValue(null);
+    expect(await check(store)).toBeNull();
+    expect(db.conversation.findFirst.mock.calls[0]?.[0].where).toEqual({
+      id: 'c1',
+      userId: 'u1',
+    });
+  });
+
+  it('rend le message déjà envoyé, même à la limite', async () => {
+    const { db, store } = setup({ messagesSent: 60, voiceSent: 30 });
+    db.message.findUnique.mockResolvedValue({ id: 'm0' });
+    expect(await check(store)).toEqual({ row: { id: 'm0' }, created: false });
+    expect(db.message.findUnique.mock.calls[0]?.[0].where).toEqual({
+      conversationId_clientId: { conversationId: 'c1', clientId },
+    });
+  });
+
+  it('laisse passer sous les limites, y compris au premier envoi du jour', async () => {
+    expect(await check(setup().store)).toEqual({ ready: true });
+    const last = setup({ messagesSent: 59, voiceSent: 29, photosSent: 30 });
+    expect(await check(last.store)).toEqual({ ready: true });
+  });
+
+  it('compte les vocaux et les photos chacun de leur côté', async () => {
+    const { store } = setup({ messagesSent: 40, voiceSent: 30, photosSent: 2 });
+    expect(await check(store, 'AUDIO')).toEqual({ limited: 'media' });
+    expect(await check(store, 'IMAGE')).toEqual({ ready: true });
+    const photos = setup({ messagesSent: 40, voiceSent: 0, photosSent: 30 });
+    expect(await check(photos.store, 'IMAGE')).toEqual({ limited: 'media' });
+  });
+
+  it('applique aussi la limite des messages du jour', async () => {
+    const { store } = setup({ messagesSent: 60, voiceSent: 0, photosSent: 0 });
+    expect(await check(store)).toEqual({ limited: 'messages' });
+  });
+});
+
+describe('PrismaMediaMessagesStore.create', () => {
+  it('enregistre le fichier, compte un vocal et ajoute les XP dans la même transaction', async () => {
+    const { db, store } = setup();
+    expect(await store.create('u1', 'c1', voice)).toEqual({ row: { id: 'm1' }, created: true });
+    expect(db.message.create.mock.calls[0]?.[0].data).toEqual({
+      conversationId: 'c1',
+      author: 'USER',
+      ...voice,
+    });
+    expect(db.user.update.mock.calls[0]?.[0].data).toMatchObject({ xp: { increment: 10 } });
+    expect(db.dailyActivity.upsert.mock.calls[0]?.[0].create).toMatchObject({
+      messagesSent: 1,
+      voiceSent: 1,
+      xpEarned: 10,
+    });
+    expect(db.dailyActivity.upsert.mock.calls[0]?.[0].create).not.toHaveProperty('photosSent');
+    expect(db.$transaction.mock.calls[0]?.[0]).toHaveLength(4);
+  });
+
+  it('compte une photo à part', async () => {
+    const { db, store } = setup();
+    await store.create('u1', 'c1', { ...voice, kind: 'IMAGE', text: '', mediaSeconds: null });
+    const counters = db.dailyActivity.upsert.mock.calls[0]?.[0].create;
+    expect(counters).toMatchObject({ photosSent: 1 });
+    expect(counters).not.toHaveProperty('voiceSent');
+  });
+
+  it('retrouve le message quand un envoi simultané du même clientId a gagné', async () => {
+    const { db, store } = setup();
+    db.message.findUnique.mockResolvedValue({ id: 'm0' });
+    db.$transaction.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('dup', { code: 'P2002', clientVersion: 'x' }),
+    );
+    expect(await store.create('u1', 'c1', voice)).toEqual({ row: { id: 'm0' }, created: false });
+  });
+});

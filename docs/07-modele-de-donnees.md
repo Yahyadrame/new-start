@@ -205,6 +205,8 @@ model DailyActivity {
   day           DateTime @db.Date
   spokenSeconds Int      @default(0)
   messagesSent  Int      @default(0)
+  voiceSent     Int      @default(0) // vocaux envoyés (limite du jour)
+  photosSent    Int      @default(0) // photos envoyées (limite du jour)
   gamesPlayed   Int      @default(0)
   xpEarned      Int      @default(0)
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
