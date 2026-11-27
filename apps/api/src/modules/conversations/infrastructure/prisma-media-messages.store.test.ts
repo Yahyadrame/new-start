@@ -73,6 +73,19 @@ describe('PrismaMediaMessagesStore.check', () => {
   });
 });
 
+describe('PrismaMediaMessagesStore.hasVoiceConsent', () => {
+  it.each([
+    [{ voiceConsentAt: new Date() }, true],
+    [{ voiceConsentAt: null }, false],
+    [null, false],
+  ])('lit la date de l’accord (%o)', async (found, expected) => {
+    const { db, store } = setup();
+    db.user.findUnique.mockResolvedValue(found);
+    expect(await store.hasVoiceConsent('u1')).toBe(expected);
+    expect(db.user.findUnique.mock.calls[0]?.[0].where).toEqual({ id: 'u1' });
+  });
+});
+
 describe('PrismaMediaMessagesStore.create', () => {
   it('enregistre le fichier, compte un vocal et ajoute les XP dans la même transaction', async () => {
     const { db, store } = setup();

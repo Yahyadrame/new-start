@@ -108,7 +108,17 @@ const toItem = ({
   deleted: deletedAt !== null,
 });
 
-const notFound = () =>
+/** Le message tel que l'API le rend, avec le lien de lecture de son vocal ou de sa photo. */
+export async function presentMessage(
+  { kind, mediaKey, mediaProvider, mediaSeconds, ...row }: MessageRow,
+  stores: MediaStores,
+): Promise<MessageItem> {
+  const columns = { kind, mediaKey, mediaProvider, mediaSeconds };
+  const media = await presentMedia({ ...row, ...columns }, stores, new Date());
+  return { ...toItem(row), ...(media && { media }) };
+}
+
+export const notFound = () =>
   new HttpException({ code: 'NOT_FOUND', message: "Cette conversation n'existe pas." }, 404);
 
 const limitReached = () =>
@@ -120,7 +130,7 @@ const limitReached = () =>
     429,
   );
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export class ConversationsService {
   constructor(
@@ -130,19 +140,6 @@ export class ConversationsService {
     private readonly messagesPerDay = 60,
     private readonly media: MediaStores = { active: null, stores: {} },
   ) {}
-
-  /** Le message tel que l'API le rend, avec le lien de lecture de son vocal ou de sa photo. */
-  private async present({
-    kind,
-    mediaKey,
-    mediaProvider,
-    mediaSeconds,
-    ...row
-  }: MessageRow): Promise<MessageItem> {
-    const columns = { kind, mediaKey, mediaProvider, mediaSeconds };
-    const media = await presentMedia({ ...row, ...columns }, this.media, new Date());
-    return { ...toItem(row), ...(media && { media }) };
-  }
 
   list(userId: string) {
     return this.store.list(userId);
@@ -189,7 +186,7 @@ export class ConversationsService {
     if (!row) {
       throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
     }
-    return this.present(row);
+    return presentMessage(row, this.media);
   }
 
   /** Modifie le texte d'un message de la personne ; sa correction est refaite, sans nouvelle réponse du contact. */
@@ -208,7 +205,7 @@ export class ConversationsService {
     }
     if (done.changed)
       this.replies?.schedule(done.conversationId, done.row.id, { correctionOnly: true });
-    return this.present(done.row);
+    return presentMessage(done.row, this.media);
   }
 
   async messages(userId: string, conversationId: string, cursor?: string): Promise<MessagesPage> {
@@ -228,7 +225,7 @@ export class ConversationsService {
     const page = rows.slice(0, MESSAGES_PAGE_SIZE);
     const last = page.at(-1);
     return {
-      items: await Promise.all(page.map((row) => this.present(row))),
+      items: await Promise.all(page.map((row) => presentMessage(row, this.media))),
       nextCursor:
         rows.length > MESSAGES_PAGE_SIZE && last
           ? encodeCursor({ createdAt: last.createdAt, id: last.id })
@@ -253,6 +250,6 @@ export class ConversationsService {
     if ('limited' in sent) throw limitReached();
     // Un renvoi (`created: false`) ne relance pas l'agent : il a déjà répondu ou répond encore.
     if (sent.created) this.replies?.schedule(conversationId, sent.row.id);
-    return { message: await this.present(sent.row), created: sent.created };
+    return { message: await presentMessage(sent.row, this.media), created: sent.created };
   }
 }
