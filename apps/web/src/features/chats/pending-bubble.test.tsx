@@ -33,6 +33,22 @@ describe('PendingBubble', () => {
     expect(screen.getByRole('img', { name: 'Hello!' })).toBeTruthy();
   });
 
+  it('montre la photo en cours d’envoi', () => {
+    URL.createObjectURL = vi.fn(() => 'blob:photo');
+    URL.revokeObjectURL = vi.fn();
+    const photo = new Blob(['x'], { type: 'image/jpeg' });
+    render(
+      <ol>
+        <PendingBubble
+          message={{ clientId: 'a', text: '', status: 'sending', photo }}
+          onRetry={vi.fn()}
+        />
+      </ol>,
+    );
+    expect(screen.getByRole('img', { name: c.photo }).getAttribute('src')).toBe('blob:photo');
+    expect(screen.getByRole('status').textContent).toBe(c.sending);
+  });
+
   it('propose de réessayer quand le message n’est pas parti', () => {
     const onRetry = vi.fn();
     render(
