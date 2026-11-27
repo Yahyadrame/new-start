@@ -8,6 +8,14 @@ import { findByClientId, recordMessage } from './record-message.js';
 export class PrismaMediaMessagesStore implements MediaMessagesStore {
   constructor(@Inject(PrismaService) private readonly db: PrismaService) {}
 
+  async hasVoiceConsent(userId: string) {
+    const user = await this.db.user.findUnique({
+      where: { id: userId },
+      select: { voiceConsentAt: true },
+    });
+    return user?.voiceConsentAt != null;
+  }
+
   async check(
     userId: string,
     conversationId: string,

@@ -13,6 +13,8 @@ export interface NewMediaMessage {
 export type SentMessage = { row: MessageRow; created: boolean };
 
 export interface MediaMessagesStore {
+  /** Vrai si la personne a accepté les enregistrements vocaux. */
+  hasVoiceConsent(userId: string): Promise<boolean>;
   /**
    * À appeler avant de transcrire et de ranger le fichier. Null si la conversation n'est pas à la
    * personne ; le message existant si ce `clientId` est déjà envoyé ; `limited` quand la limite du
