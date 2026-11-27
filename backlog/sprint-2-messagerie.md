@@ -262,6 +262,19 @@ _Ajouté le 2026-11-26, défaut signalé par le porteur._
 - [x] Une réponse reçue après avoir quitté la conversation reste non lue.
 - [x] Tests unitaires et e2e.
 
+## NS-069 — Les contacts répondent au rythme d'une personne · M
+
+_Ajouté le 2026-11-26, demande du porteur._
+**Besoin** : les réponses arrivent trop vite. Le contact doit paraître écrire quelques secondes avant d'envoyer, comme sur WhatsApp.
+
+- [ ] La réponse arrive 4 à 15 s après le message, selon sa longueur, temps de l'IA compris. « En train d'écrire… » reste affiché pendant ce temps.
+- [ ] Plusieurs messages d'affilée : une réponse à chacun, dans l'ordre, qui tient compte de la précédente.
+- [ ] Un message de détresse reçoit sa réponse sans attente ; les réponses légères encore en attente ne partent pas.
+- [ ] Un message modifié pendant l'attente garde sa réponse et reçoit une nouvelle correction ; un message supprimé avant son tour n'en reçoit pas.
+- [x] Partie 1 (écran) : l'attente dure tant qu'un message n'a pas eu sa réponse.
+- [ ] Partie 2 (serveur) : délai et réponses dans l'ordre.
+- [ ] Tests unitaires.
+
 ## NS-058 — Domaines élargis et contacts IA selon les centres d'intérêt · L
 **Besoin** : le catalogue ne couvre pas les 16 centres d'intérêt de l'inscription.
 - [x] Partie 1 : 8 thèmes et 11 contacts ajoutés (17 thèmes, 23 contacts), statuts et tests à jour.
