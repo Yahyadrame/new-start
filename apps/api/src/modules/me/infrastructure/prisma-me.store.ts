@@ -99,9 +99,17 @@ export class PrismaMeStore implements MeStore {
       // Les codes à usage unique sont rattachés à l'adresse, pas au compte : on les efface aussi.
       const destinations = identities.filter((i) => i.provider !== 'google').map((i) => i.subject);
       await tx.otpCode.deleteMany({ where: { destination: { in: destinations } } });
+      // Les clés des fichiers sont lues avant : elles disparaissent avec les messages.
+      const media = await tx.message.findMany({
+        where: { conversation: { userId }, mediaKey: { not: null } },
+        select: { mediaKey: true, mediaProvider: true },
+      });
       // Le reste (identités, jetons, réponses du test, conversations, messages) part en cascade.
       const { count } = await tx.user.deleteMany({ where: { id: userId } });
-      return count > 0;
+      if (!count) return null;
+      return media.flatMap(({ mediaKey: key, mediaProvider: provider }) =>
+        key && provider ? [{ key, provider }] : [],
+      );
     });
   }
 }

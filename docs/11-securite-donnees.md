@@ -29,6 +29,7 @@ Je ne suis pas juriste : les points de conformité ci-dessous sont à faire vali
 | Prénom, objectif, niveau, année de naissance | Personnalisation, restriction des thèmes adultes                                                                            | Durée du compte                                                                        |
 | Messages et corrections                      | Conversation, progrès                                                                                                       | Durée du compte (supprimables)                                                         |
 | Enregistrements vocaux                       | Transcription, prononciation                                                                                                | 30 jours, puis seule la transcription reste                                            |
+| Photos envoyées                              | Conversation                                                                                                                | Jusqu'à la suppression du message ou du compte                                         |
 | Paiements                                    | Facturation                                                                                                                 | Durée légale de conservation comptable, sans numéro de carte (géré par le prestataire) |
 
 Principes :

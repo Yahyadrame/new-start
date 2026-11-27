@@ -190,9 +190,9 @@ export class PrismaConversationsStore implements ConversationsStore {
   async deleteMessage(userId: string, messageId: string) {
     const found = await this.db.message.findFirst({
       where: { id: messageId, deletedAt: null, conversation: { userId } },
-      select: { id: true },
+      select: { id: true, mediaKey: true, mediaProvider: true },
     });
-    if (!found) return false;
+    if (!found) return null;
     await this.db.$transaction([
       this.db.correction.deleteMany({ where: { messageId } }),
       this.db.message.update({
@@ -200,7 +200,13 @@ export class PrismaConversationsStore implements ConversationsStore {
         data: { text: '', translationFr: null, deletedAt: new Date() },
       }),
     ]);
-    return true;
+    const { mediaKey: key, mediaProvider: provider } = found;
+    if (!key || !provider) return { unusedFile: null };
+    // La colonne reste remplie : l'effacement du compte reprend un fichier que le stockage aurait gardé.
+    const others = await this.db.message.count({
+      where: { mediaKey: key, deletedAt: null, conversation: { userId } },
+    });
+    return { unusedFile: others ? null : { key, provider } };
   }
 
   async markRead(userId: string, conversationId: string) {

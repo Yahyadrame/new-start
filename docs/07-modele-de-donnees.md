@@ -253,5 +253,5 @@ model UsageCounter {
 
 - Les compteurs chauds (quotas, « en train d'écrire ») vivent dans **Redis** ; `UsageCounter` est la copie durable, consolidée toutes les 5 minutes.
 - Les messages sont **paginés par curseur** (`createdAt`, `id`), 30 par page.
-- Rétention : audio brut des notes vocales supprimé après 30 jours (la transcription reste) ; journaux d'IA anonymisés après 90 jours.
+- Rétention : audio brut des notes vocales supprimé après 30 jours (la transcription reste) ; vocaux et photos effacés avec leur message ou leur compte ; journaux d'IA anonymisés après 90 jours.
 - Index revus à chaque nouvelle requête lente (seuil : 100 ms, suivi par `pg_stat_statements`).

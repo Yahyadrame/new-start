@@ -35,6 +35,7 @@ function fake(rows: unknown[]) {
       create: vi.fn(),
       update: vi.fn(),
       updateMany: vi.fn(),
+      count: vi.fn(),
     },
     correction: { deleteMany: vi.fn() },
     agent: { findFirst: vi.fn(), findUniqueOrThrow: vi.fn() },
@@ -193,7 +194,7 @@ describe('PrismaConversationsStore', () => {
     it('ne touche à rien quand le message n’est pas à cette personne ou est déjà supprimé', async () => {
       const { db, store } = fake([]);
       db.message.findFirst.mockResolvedValue(null);
-      expect(await store.deleteMessage('u1', 'm9')).toBe(false);
+      expect(await store.deleteMessage('u1', 'm9')).toBeNull();
       expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
         id: 'm9',
         deletedAt: null,
@@ -205,13 +206,41 @@ describe('PrismaConversationsStore', () => {
     it('efface le texte, la traduction et la correction, et date la suppression', async () => {
       const { db, store } = fake([]);
       db.message.findFirst.mockResolvedValue({ id: 'm1' });
-      expect(await store.deleteMessage('u1', 'm1')).toBe(true);
+      expect(await store.deleteMessage('u1', 'm1')).toEqual({ unusedFile: null });
+      expect(db.message.count).not.toHaveBeenCalled();
       expect(db.correction.deleteMany).toHaveBeenCalledWith({ where: { messageId: 'm1' } });
       expect(db.message.update.mock.calls[0]?.[0]).toMatchObject({
         where: { id: 'm1' },
         data: { text: '', translationFr: null, deletedAt: expect.any(Date) },
       });
       expect(db.$transaction).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('deleteMessage, vocaux et photos', () => {
+    const media = { id: 'm1', mediaKey: 'image/u1/p.jpg', mediaProvider: 'r2' };
+
+    it('rend le fichier à effacer quand aucun autre message de la personne ne le reprend', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue(media);
+      db.message.count.mockResolvedValue(0);
+      expect(await store.deleteMessage('u1', 'm1')).toEqual({
+        unusedFile: { key: 'image/u1/p.jpg', provider: 'r2' },
+      });
+      expect(db.message.count).toHaveBeenCalledWith({
+        where: { mediaKey: 'image/u1/p.jpg', deletedAt: null, conversation: { userId: 'u1' } },
+      });
+      // Compté après la suppression, sinon le message supprimé se retiendrait lui-même.
+      expect(db.$transaction.mock.invocationCallOrder[0]).toBeLessThan(
+        db.message.count.mock.invocationCallOrder[0] ?? 0,
+      );
+    });
+
+    it('garde le fichier tant qu’un autre message le reprend', async () => {
+      const { db, store } = fake([]);
+      db.message.findFirst.mockResolvedValue(media);
+      db.message.count.mockResolvedValue(1);
+      expect(await store.deleteMessage('u1', 'm1')).toEqual({ unusedFile: null });
     });
   });
 

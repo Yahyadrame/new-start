@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { AwsClient } from 'aws4fetch';
 
 /** Port de stockage des photos et des vocaux. Les fichiers sont privés : on les lit par URL signée. */
@@ -106,4 +107,28 @@ export function createMediaStores(env: Record<string, string | undefined>): Medi
   }
   const active = PROVIDERS.find((p) => p === env.MEDIA_PROVIDER && stores[p]) ?? null;
   return { active, stores };
+}
+
+/** Un fichier rangé : sa clé et le fournisseur qui le détient. */
+export type StoredFile = { key: string; provider: string };
+
+const DELETE_BATCH = 20;
+const log = new Logger('MediaStore');
+
+/** Efface des fichiers devenus inutiles. Ne lève jamais : leur message ou leur compte est déjà effacé. */
+export async function deleteFiles({ stores }: MediaStores, files: StoredFile[]): Promise<void> {
+  const unique = [...new Map(files.map((file) => [file.key, file])).values()];
+  let failed = 0;
+  // ponytail: aucun nouvel essai ; un fichier refusé reste chez le stockage jusqu'à une tâche de reprise
+  for (let start = 0; start < unique.length; start += DELETE_BATCH) {
+    const results = await Promise.allSettled(
+      unique.slice(start, start + DELETE_BATCH).map(async ({ key, provider }) => {
+        const store = stores[provider as MediaProvider];
+        if (!store) throw new Error('Stockage des médias : fournisseur non configuré');
+        await store.delete(key);
+      }),
+    );
+    failed += results.filter((result) => result.status === 'rejected').length;
+  }
+  if (failed) log.warn(`Stockage des médias : ${failed} fichier(s) non effacé(s).`);
 }

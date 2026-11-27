@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { FakeMediaStore } from '../../../shared/media/media-store.js';
 import { MeService, type MeStore } from './me.js';
 
 const me = {
@@ -22,9 +23,10 @@ function setup(found: typeof me | null = me) {
     find: vi.fn().mockResolvedValue(found),
     update: vi.fn().mockResolvedValue(found && { ...found, theme: 'DARK' }),
     exportData: vi.fn().mockResolvedValue(found && { firstName: 'Awa' }),
-    remove: vi.fn().mockResolvedValue(found !== null),
+    remove: vi.fn().mockResolvedValue(found && []),
   };
-  return { store, service: new MeService(store) };
+  const r2 = new FakeMediaStore();
+  return { store, r2, service: new MeService(store, { active: 'r2', stores: { r2 } }) };
 }
 
 describe('MeService', () => {
@@ -50,6 +52,21 @@ describe('MeService', () => {
     const out = await service.export('u');
     expect(out).toMatchObject({ firstName: 'Awa' });
     expect(Number.isNaN(Date.parse(String(out.exportedAt)))).toBe(false);
+  });
+
+  it('efface les photos et les vocaux du compte supprimé', async () => {
+    const { store, r2, service } = setup();
+    await r2.put({ key: 'image/u/a.jpg', data: new Uint8Array([1]) });
+    vi.mocked(store.remove).mockResolvedValue([{ key: 'image/u/a.jpg', provider: 'r2' }]);
+    await service.remove('u');
+    await vi.waitFor(() => expect(r2.files.size).toBe(0));
+  });
+
+  it('répond sans attendre le stockage', async () => {
+    const { store, r2, service } = setup();
+    vi.spyOn(r2, 'delete').mockReturnValue(new Promise<void>(() => undefined));
+    vi.mocked(store.remove).mockResolvedValue([{ key: 'image/u/a.jpg', provider: 'r2' }]);
+    await expect(service.remove('u')).resolves.toBeUndefined();
   });
 
   it('supprime le compte, et répond 404 quand il a déjà disparu', async () => {

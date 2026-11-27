@@ -10,7 +10,11 @@ import {
   stickerText,
 } from '@newstart/shared';
 import { isAdult } from '../../../shared/age.js';
-import type { MediaStores } from '../../../shared/media/media-store.js';
+import {
+  deleteFiles,
+  type MediaStores,
+  type StoredFile,
+} from '../../../shared/media/media-store.js';
 import { escapeLike, makeExcerpt } from './excerpt.js';
 import type { ReplyScheduler } from './agent-reply.js';
 import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor.js';
@@ -62,7 +66,14 @@ export interface ConversationsStore {
   ): Promise<MessageRow[] | null>;
   /** Remet `unreadCount` à 0 et date la lecture des messages du contact. Faux si la conversation n'est pas à elle. */
   markRead(userId: string, conversationId: string): Promise<boolean>;
-  deleteMessage(userId: string, messageId: string): Promise<boolean>;
+  /**
+   * Efface le contenu d'un message de ses conversations. Null s'il n'existe pas ou est déjà supprimé ;
+   * `unusedFile` : son vocal ou sa photo, quand aucun autre message ne le reprend.
+   */
+  deleteMessage(
+    userId: string,
+    messageId: string,
+  ): Promise<{ unusedFile: StoredFile | null } | null>;
   /** Pose (ou retire, avec null) la réaction de la personne sur un message vivant de ses conversations. Null s'il n'existe pas. */
   setReaction(userId: string, messageId: string, emoji: string | null): Promise<MessageRow | null>;
   /**
@@ -170,12 +181,13 @@ export class ConversationsService {
     };
   }
 
-  /** Efface le texte d'un message de la personne (le sien ou celui d'un contact) ; la bulle reste, vide. */
+  /** Efface un message de la personne (le sien ou celui d'un contact) et son fichier ; la bulle reste, vide. */
   async remove(userId: string, messageId: string): Promise<void> {
-    const done = UUID.test(messageId) && (await this.store.deleteMessage(userId, messageId));
+    const done = UUID.test(messageId) ? await this.store.deleteMessage(userId, messageId) : null;
     if (!done) {
       throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
     }
+    if (done.unusedFile) await deleteFiles(this.media, [done.unusedFile]);
   }
 
   /** Pose ou retire la réaction de la personne sur un message. */

@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { createMediaStores, FakeMediaStore, S3MediaStore } from './media-store.js';
+import { Logger } from '@nestjs/common';
+import { describe, expect, it, vi } from 'vitest';
+import { createMediaStores, deleteFiles, FakeMediaStore, S3MediaStore } from './media-store.js';
 
 const config = {
   endpoint: 'https://s3.example.test',
@@ -106,5 +107,50 @@ describe('createMediaStores', () => {
     expect(createMediaStores({ MEDIA_PROVIDER: 'autre', ...vars('B2') }).active).toBeNull();
     const partial = { MEDIA_PROVIDER: 'b2', ...vars('B2'), MEDIA_B2_SECRET: '' };
     expect(createMediaStores(partial)).toEqual({ active: null, stores: {} });
+  });
+});
+
+describe('deleteFiles', () => {
+  const file = (key: string, provider = 'r2') => ({ key, provider });
+
+  it('efface chaque fichier une fois, chez le fournisseur qui le détient', async () => {
+    const [b2, r2] = [new FakeMediaStore(), new FakeMediaStore()];
+    const removed = [vi.spyOn(b2, 'delete'), vi.spyOn(r2, 'delete')];
+    await deleteFiles({ active: 'r2', stores: { b2, r2 } }, [
+      file('image/u1/a.jpg', 'b2'),
+      file('image/u1/b.jpg'),
+      file('image/u1/b.jpg'),
+    ]);
+    expect(removed[0]?.mock.calls).toEqual([['image/u1/a.jpg']]);
+    expect(removed[1]?.mock.calls).toEqual([['image/u1/b.jpg']]);
+  });
+
+  it('efface aussi au-delà d’un lot', async () => {
+    const r2 = new FakeMediaStore();
+    const removed = vi.spyOn(r2, 'delete');
+    const files = Array.from({ length: 45 }, (_, i) => file(`image/u1/${i}.jpg`));
+    await deleteFiles({ active: 'r2', stores: { r2 } }, files);
+    expect(removed).toHaveBeenCalledTimes(45);
+  });
+
+  it('ne lève rien quand un fichier résiste, continue, et journalise sans le nommer', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const r2 = new FakeMediaStore();
+    const removed = vi.spyOn(r2, 'delete').mockRejectedValueOnce(new Error('panne'));
+    await deleteFiles({ active: 'r2', stores: { r2 } }, [
+      file('image/u1/a.jpg'),
+      file('image/u1/b.jpg'),
+      file('image/u1/c.jpg', 'b2'),
+    ]);
+    expect(removed).toHaveBeenCalledTimes(2);
+    expect(warn.mock.calls).toEqual([['Stockage des médias : 2 fichier(s) non effacé(s).']]);
+    warn.mockRestore();
+  });
+
+  it('ne journalise rien quand tout est effacé', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    await deleteFiles({ active: null, stores: {} }, []);
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
   });
 });
