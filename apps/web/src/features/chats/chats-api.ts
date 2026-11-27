@@ -4,6 +4,7 @@ import type {
   MessagesPage,
   SearchHit,
   SendMessage,
+  VoiceAvailability,
 } from '@newstart/shared';
 
 export class ChatsError extends Error {
@@ -76,6 +77,15 @@ async function sentMessage(res: Response): Promise<MessageItem> {
     throw new ChatsError(res.status, err?.code);
   }
   return (await res.json()) as MessageItem;
+}
+
+/** Dit si le micro peut servir aux vocaux, et sinon pourquoi. */
+export async function getVoiceAvailability(token: string): Promise<VoiceAvailability> {
+  const res = await fetch('/api/conversations/voice-availability', {
+    headers: { authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new ChatsError(res.status);
+  return (await res.json()) as VoiceAvailability;
 }
 
 /** Marque la conversation lue (remet le badge de la liste à zéro). */

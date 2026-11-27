@@ -4,6 +4,7 @@ import {
   translateMessage,
   deleteMessage,
   editMessage,
+  getVoiceAvailability,
   ChatsError,
   listConversations,
   listMessages,
@@ -263,5 +264,22 @@ describe('sendMedia', () => {
       status: 503,
       code: 'MEDIA_UNAVAILABLE',
     });
+  });
+});
+
+describe('getVoiceAvailability', () => {
+  it('demande avec le jeton si le micro est disponible', async () => {
+    const body = { available: false, reason: 'quota' };
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => body });
+    vi.stubGlobal('fetch', fetchMock);
+    expect(await getVoiceAvailability('tok')).toEqual(body);
+    expect(fetchMock).toHaveBeenCalledWith('/api/conversations/voice-availability', {
+      headers: { authorization: 'Bearer tok' },
+    });
+  });
+
+  it('lève ChatsError avec le statut quand l’API refuse', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }));
+    await expect(getVoiceAvailability('tok')).rejects.toThrow(ChatsError);
   });
 });

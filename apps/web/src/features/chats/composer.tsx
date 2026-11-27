@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@newstart/ui';
 import {
   Image as ImageIcon,
   Mic,
+  MicOff,
   Keyboard,
   Sticker as StickerIcon,
   SendHorizontal,
@@ -38,6 +39,7 @@ export function Composer({
   onSendVoice,
   onSendSticker,
   onMicRequest,
+  micBlocked = null,
   reply = null,
   onCancelReply,
   edit = null,
@@ -58,12 +60,16 @@ export function Composer({
   onSendSticker?: (stickerId: string) => void;
   /** Dit si l'enregistrement peut commencer (accord aux vocaux) avant d'ouvrir le micro. */
   onMicRequest?: () => Promise<boolean>;
+  /** Pourquoi le micro est indisponible : il reste touchable et l'explique au lieu d'enregistrer. */
+  micBlocked?: string | null;
 }) {
   const [text, setText] = useState('');
   const [draft, setDraft] = useState<Draft | null>(null);
   const [stickers, setStickers] = useState(false);
   const desktop = useFinePointer();
   const [notice, setNotice] = useState<string | null>(null);
+  // L'explication du micro, montrée après un toucher, jusqu'à ce qu'on écrive ou que le micro revienne.
+  const [explain, setExplain] = useState(false);
   const field = useRef<HTMLTextAreaElement>(null);
   const bar = useRef<HTMLFormElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
@@ -150,6 +156,7 @@ export function Composer({
   };
 
   const record = async () => {
+    if (micBlocked) return setExplain(true);
     if (asking.current) return;
     asking.current = true;
     setNotice(null);
@@ -174,7 +181,10 @@ export function Composer({
     'sticky bottom-[var(--kb,0px)] w-full min-w-0 bg-surface-1 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:px-4';
   const note =
     notice ??
+    (explain ? micBlocked : null) ??
     (recorder.error ? (recorder.error === 'denied' ? c.micDenied : c.micUnavailable) : null);
+
+  const MicIcon = micBlocked ? MicOff : Mic;
 
   if (recorder.recording) {
     return (
@@ -297,7 +307,10 @@ export function Composer({
                 autoComplete="off"
                 enterKeyHint="send"
                 placeholder={c.composerPlaceholder}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  setExplain(false);
+                }}
                 onKeyDown={onKeyDown}
                 // Sur téléphone, le clavier qui s'ouvre prend la place du panneau.
                 onFocus={() => !desktop && setStickers(false)}
@@ -310,10 +323,11 @@ export function Composer({
           <button
             type="button"
             aria-label={c.record}
+            aria-disabled={micBlocked ? true : undefined}
             onClick={() => void record()}
-            className={`${round} bg-accent text-on-accent`}
+            className={`${round} ${micBlocked ? 'border border-line bg-bg text-text-muted' : 'bg-accent text-on-accent'}`}
           >
-            <Mic aria-hidden="true" className="size-5" />
+            <MicIcon aria-hidden="true" className="size-5" />
           </button>
         ) : (
           <button type="submit" aria-label={c.send} className={`${round} bg-accent text-on-accent`}>

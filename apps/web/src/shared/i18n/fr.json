@@ -417,6 +417,11 @@
       "decline": "Écrire plutôt"
     },
     "voiceConsentFailed": "Ton accord n'a pas pu être vérifié. Réessaie.",
+    "micBlocked": {
+      "disabled": "Les vocaux sont coupés pour le moment. Tu peux écrire.",
+      "unconfigured": "Les vocaux ne sont pas encore disponibles. Tu peux écrire.",
+      "quota": "Tu as envoyé tes vocaux du jour. Ils reviennent demain."
+    },
     "micDenied": "Le micro est bloqué. Autorise-le dans les réglages du navigateur.",
     "micUnavailable": "Ce navigateur ne peut pas enregistrer.",
     "draftVoice": "Message vocal, {duration}",

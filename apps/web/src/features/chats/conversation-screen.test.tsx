@@ -16,6 +16,7 @@ const reactToMessage = vi.fn();
 const getChatBackground = vi.fn();
 const scrollIntoView = vi.fn();
 const getVoiceConsent = vi.fn();
+const getVoiceAvailability = vi.fn();
 const recorder = vi.hoisted(() => ({ onClip: null as null | ((clip: unknown) => void) }));
 const router = { replace };
 vi.mock('next/navigation', () => ({ useRouter: () => router }));
@@ -25,6 +26,7 @@ const editMessage = vi.fn();
 vi.mock('./chats-api', () => ({
   deleteMessage,
   editMessage,
+  getVoiceAvailability,
   listConversations,
   listMessages,
   sendMedia,
@@ -93,6 +95,7 @@ beforeEach(() => {
   });
   markConversationRead.mockResolvedValue(undefined);
   getChatBackground.mockResolvedValue('NONE');
+  getVoiceAvailability.mockReset().mockResolvedValue({ available: true });
   Element.prototype.scrollIntoView = scrollIntoView;
 });
 
@@ -356,6 +359,25 @@ describe('ConversationScreen', () => {
         text: '',
         mediaFromId: 'm1',
       });
+    });
+
+    it('relit l’état du micro après le transfert d’un vocal, qui compte dans la limite', async () => {
+      const lea = { ...jade, id: 'c2', agent: { ...jade.agent, slug: 'lea', name: 'Léa' } };
+      listConversations.mockResolvedValue([jade, lea]);
+      const media = { kind: 'AUDIO', url: 'https://files.test/a.webm', seconds: 4 };
+      listMessages.mockResolvedValue({
+        items: [{ ...msg('m1', 'USER', 'Hi'), media }],
+        nextCursor: null,
+      });
+      sendMessage.mockResolvedValue(msg('x', 'USER', 'Hi'));
+      render(<ConversationScreen agentSlug="jade" />);
+      const trigger = await screen.findByRole('button', { name: fr.conversation.messageActions });
+      fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+      fireEvent.click(trigger);
+      fireEvent.click(await screen.findByRole('button', { name: fr.conversation.forwardAction }));
+      fireEvent.click(await screen.findByRole('checkbox', { name: /Léa/ }));
+      fireEvent.click(screen.getByRole('button', { name: /^Transférer/ }));
+      await waitFor(() => expect(getVoiceAvailability).toHaveBeenCalledTimes(2));
     });
 
     it('transfère un sticker comme sticker', async () => {
@@ -660,6 +682,29 @@ describe('ConversationScreen', () => {
           expect(screen.queryByText(fr.conversation.voiceSendUnavailable)).toBeNull();
         },
       );
+
+      it('grise le micro quand l’API le dit indisponible après un vocal', async () => {
+        expect(getVoiceAvailability).toHaveBeenCalledTimes(1);
+        getVoiceAvailability.mockResolvedValue({ available: false, reason: 'quota' });
+        sendMedia.mockResolvedValue(msg('m3', 'USER', 'Le dernier du jour'));
+        await sendVoice();
+        await tapMic();
+        expect(screen.getByText(fr.conversation.micBlocked.quota)).toBeTruthy();
+      });
+
+      it('relit l’état du micro après un vocal refusé, pas après un texte', async () => {
+        sendMessage.mockResolvedValue(msg('m3', 'USER', 'Hi'));
+        fireEvent.change(screen.getByLabelText(fr.conversation.composerLabel), {
+          target: { value: 'Hi' },
+        });
+        await act(async () => {
+          fireEvent.click(screen.getByRole('button', { name: fr.conversation.send }));
+        });
+        expect(getVoiceAvailability).toHaveBeenCalledTimes(1);
+        sendMedia.mockRejectedValue(refused('USAGE_LIMIT'));
+        await sendVoice();
+        expect(getVoiceAvailability).toHaveBeenCalledTimes(2);
+      });
 
       it('revérifie l’accord au micro quand l’API dit qu’il manque', async () => {
         await tapMic();
