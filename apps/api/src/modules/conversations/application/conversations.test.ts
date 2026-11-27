@@ -463,6 +463,7 @@ describe('ConversationsService et les médias', () => {
     mediaProvider: 'r2',
     mediaSeconds: null,
     mediaPeaks: [],
+    mediaStoredAt: new Date('2026-11-01T10:00:00Z'),
   };
 
   it('rend le lien de lecture avec le message, sans la clé ni le fournisseur', async () => {
@@ -477,9 +478,8 @@ describe('ConversationsService et les médias', () => {
       seconds: null,
       expired: false,
     });
-    for (const key of ['kind', 'mediaKey', 'mediaProvider', 'mediaSeconds', 'mediaPeaks']) {
-      expect(item).not.toHaveProperty(key);
-    }
+    const columns = Object.keys(item ?? {}).filter((key) => /^(kind|media[A-Z])/.test(key));
+    expect(columns).toEqual([]);
   });
 
   it('efface le fichier d’un message supprimé quand plus rien ne le reprend', async () => {
