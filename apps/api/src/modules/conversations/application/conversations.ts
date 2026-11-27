@@ -10,20 +10,26 @@ import {
   stickerText,
 } from '@newstart/shared';
 import { isAdult } from '../../../shared/age.js';
+import type { MediaStores } from '../../../shared/media/media-store.js';
 import { escapeLike, makeExcerpt } from './excerpt.js';
 import type { ReplyScheduler } from './agent-reply.js';
 import { decodeCursor, encodeCursor, type MessageCursor } from './message-cursor.js';
+import { presentMedia, type MediaColumns } from './message-media.js';
 
 export const CONVERSATIONS_STORE = Symbol('CONVERSATIONS_STORE');
 
 /** Un message tel que le stockage le rend : la date n'est pas encore mise en texte. */
-export type MessageRow = Omit<MessageItem, 'createdAt' | 'deleted' | 'edited' | 'replyTo'> & {
-  createdAt: Date;
-  deletedAt: Date | null;
-  editedAt: Date | null;
-  replyTo:
-    (Omit<NonNullable<MessageItem['replyTo']>, 'deleted'> & { deletedAt: Date | null }) | null;
-};
+export type MessageRow = Omit<
+  MessageItem,
+  'createdAt' | 'deleted' | 'edited' | 'replyTo' | 'media'
+> &
+  MediaColumns & {
+    createdAt: Date;
+    deletedAt: Date | null;
+    editedAt: Date | null;
+    replyTo:
+      (Omit<NonNullable<MessageItem['replyTo']>, 'deleted'> & { deletedAt: Date | null }) | null;
+  };
 
 /** Un message trouvé tel que le stockage le rend : le texte entier, la date pas encore en texte. */
 export type SearchRow = Omit<SearchHit, 'excerpt' | 'createdAt'> & {
@@ -56,24 +62,26 @@ export interface ConversationsStore {
   ): Promise<MessageRow[] | null>;
   /** Remet `unreadCount` à 0 et date la lecture des messages du contact. Faux si la conversation n'est pas à elle. */
   markRead(userId: string, conversationId: string): Promise<boolean>;
+  deleteMessage(userId: string, messageId: string): Promise<boolean>;
+  /** Pose (ou retire, avec null) la réaction de la personne sur un message vivant de ses conversations. Null s'il n'existe pas. */
+  setReaction(userId: string, messageId: string, emoji: string | null): Promise<MessageRow | null>;
+  /**
+   * Remplace le texte d'un message de la personne (pas supprimé), date la modification et efface sa
+   * correction pour qu'elle soit refaite. Null s'il n'existe pas ou n'est pas à elle ; `changed: false`
+   * si le texte est le même ; `{ media: true }` pour un vocal ou une photo, qui ne se modifient pas.
+   */
+  editMessage(
+    userId: string,
+    messageId: string,
+    text: string,
+  ): Promise<
+    { row: MessageRow; conversationId: string; changed: boolean } | { media: true } | null
+  >;
   /**
    * Ajoute le message de la personne. Si ce `clientId` est déjà enregistré dans la conversation,
    * rend le message existant (`created: false`) sans rien ajouter. Null si la conversation n'est pas à elle.
    * Un nouveau message au-delà de `dailyLimit` messages aujourd'hui n'est pas créé : `{ limited: true }`.
    */
-  deleteMessage(userId: string, messageId: string): Promise<boolean>;
-  /**
-   * Remplace le texte d'un message de la personne (pas supprimé), date la modification et efface sa
-   * correction pour qu'elle soit refaite. Null s'il n'existe pas ou n'est pas à elle ; `changed: false` si le texte est le même.
-   */
-  /** Pose (ou retire, avec null) la réaction de la personne sur un message vivant de ses conversations. Null s'il n'existe pas. */
-  setReaction(userId: string, messageId: string, emoji: string | null): Promise<MessageRow | null>;
-  editMessage(
-    userId: string,
-    messageId: string,
-    text: string,
-  ): Promise<{ row: MessageRow; conversationId: string; changed: boolean } | null>;
-
   send(
     userId: string,
     conversationId: string,
@@ -82,7 +90,12 @@ export interface ConversationsStore {
   ): Promise<{ row: MessageRow; created: boolean } | { limited: true } | null>;
 }
 
-const toItem = ({ deletedAt, editedAt, replyTo, ...row }: MessageRow): MessageItem => ({
+const toItem = ({
+  deletedAt,
+  editedAt,
+  replyTo,
+  ...row
+}: Omit<MessageRow, keyof MediaColumns>): MessageItem => ({
   ...row,
   edited: editedAt !== null,
   replyTo: replyTo && {
@@ -115,7 +128,21 @@ export class ConversationsService {
     private readonly currentYear: () => number = () => new Date().getFullYear(),
     private readonly replies?: ReplyScheduler,
     private readonly messagesPerDay = 60,
+    private readonly media: MediaStores = { active: null, stores: {} },
   ) {}
+
+  /** Le message tel que l'API le rend, avec le lien de lecture de son vocal ou de sa photo. */
+  private async present({
+    kind,
+    mediaKey,
+    mediaProvider,
+    mediaSeconds,
+    ...row
+  }: MessageRow): Promise<MessageItem> {
+    const columns = { kind, mediaKey, mediaProvider, mediaSeconds };
+    const media = await presentMedia({ ...row, ...columns }, this.media, new Date());
+    return { ...toItem(row), ...(media && { media }) };
+  }
 
   list(userId: string) {
     return this.store.list(userId);
@@ -162,7 +189,7 @@ export class ConversationsService {
     if (!row) {
       throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
     }
-    return toItem(row);
+    return this.present(row);
   }
 
   /** Modifie le texte d'un message de la personne ; sa correction est refaite, sans nouvelle réponse du contact. */
@@ -173,9 +200,15 @@ export class ConversationsService {
     if (!done) {
       throw new HttpException({ code: 'NOT_FOUND', message: "Ce message n'existe pas." }, 404);
     }
+    if ('media' in done) {
+      throw new HttpException(
+        { code: 'VALIDATION_FAILED', message: 'Un vocal ou une photo ne se modifie pas.' },
+        400,
+      );
+    }
     if (done.changed)
       this.replies?.schedule(done.conversationId, done.row.id, { correctionOnly: true });
-    return toItem(done.row);
+    return this.present(done.row);
   }
 
   async messages(userId: string, conversationId: string, cursor?: string): Promise<MessagesPage> {
@@ -195,7 +228,7 @@ export class ConversationsService {
     const page = rows.slice(0, MESSAGES_PAGE_SIZE);
     const last = page.at(-1);
     return {
-      items: page.map(toItem),
+      items: await Promise.all(page.map((row) => this.present(row))),
       nextCursor:
         rows.length > MESSAGES_PAGE_SIZE && last
           ? encodeCursor({ createdAt: last.createdAt, id: last.id })
@@ -220,6 +253,6 @@ export class ConversationsService {
     if ('limited' in sent) throw limitReached();
     // Un renvoi (`created: false`) ne relance pas l'agent : il a déjà répondu ou répond encore.
     if (sent.created) this.replies?.schedule(conversationId, sent.row.id);
-    return { message: toItem(sent.row), created: sent.created };
+    return { message: await this.present(sent.row), created: sent.created };
   }
 }

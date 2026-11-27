@@ -29,6 +29,17 @@ export const MessageItem = z.object({
     .nullable(),
   /** La correction « Plus naturel » d'un message de la personne, ou null. */
   correction: z.object({ better: z.string().nullable(), whyFr: z.string().nullable() }).nullable(),
+  /**
+   * Le vocal ou la photo du message (absent pour un texte) ; `text` porte alors la transcription ou la
+   * légende. `url` expire au bout d'une heure, et vaut null si le fichier n'est plus lisible.
+   */
+  media: z
+    .object({
+      kind: z.enum(['AUDIO', 'IMAGE']),
+      url: z.string().nullable(),
+      seconds: z.number().nullable(),
+    })
+    .optional(),
 });
 export type MessageItem = z.infer<typeof MessageItem>;
 
