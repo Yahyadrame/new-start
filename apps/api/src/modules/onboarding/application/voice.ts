@@ -38,7 +38,9 @@ export class Voice {
     // L'adaptateur factice renverrait un faux texte : mieux vaut proposer d'écrire.
     if (this.stt.name === 'fake') throw this.unavailable();
     try {
-      const { text } = await this.stt.transcribe({ audio, mimeType });
+      const { text, fake } = await this.stt.transcribe({ audio, mimeType });
+      // Repli factice en cours de route : plafond du mois atteint ou quota du fournisseur épuisé.
+      if (fake) throw this.unavailable();
       return { text: text.trim() };
     } catch {
       throw this.unavailable();

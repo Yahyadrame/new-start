@@ -27,7 +27,7 @@ export class FakeStt implements SttProvider {
   async transcribe(request: SttRequest): Promise<SttResponse> {
     const text = `audio of ${request.audio.byteLength} bytes`;
     const words = text.split(' ').map((word, i) => ({ word, start: i * 0.5, end: i * 0.5 + 0.5 }));
-    return { text, words };
+    return { text, words, fake: true };
   }
 }
 
