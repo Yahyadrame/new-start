@@ -43,6 +43,7 @@ enum Author {
 enum MessageKind {
   TEXT
   AUDIO
+  IMAGE
 }
 
 model User {
@@ -221,7 +222,10 @@ model Message {
   author         Author
   kind           MessageKind  @default(TEXT)
   text           String
-  audioKey       String? // identifiant Cloudinary (public_id)
+  audioKey       String? // inutilisée, à retirer (NS-047 : voir mediaKey)
+  mediaKey       String? // fichier rangé dans le stockage privé (photo ou vocal)
+  mediaProvider  String? // stockage qui le détient : b2, r2
+  mediaSeconds   Int? // durée d'un vocal
   translationFr  String?
   readAt         DateTime?
   deletedAt      DateTime? // message supprimé : le texte est effacé, la bulle reste
