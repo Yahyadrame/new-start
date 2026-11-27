@@ -62,6 +62,16 @@ describe('Voice', () => {
     expect(fake.stt.transcribe).not.toHaveBeenCalled();
   });
 
+  it('refuse un enregistrement de plus de 1 Mo (413) sans appeler le fournisseur', async () => {
+    const { voice, stt } = setup();
+    const big = new Uint8Array(1024 * 1024 + 1);
+    expect(await code(voice.transcribe('u', big, 'audio/webm'))).toEqual([
+      413,
+      'VALIDATION_FAILED',
+    ]);
+    expect(stt.transcribe).not.toHaveBeenCalled();
+  });
+
   it('lit et écrit le consentement', async () => {
     const { voice, store } = setup({ consent: false });
     expect(await voice.consent('u')).toEqual({ accepted: false });

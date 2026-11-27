@@ -11,6 +11,9 @@ export interface VoiceStore {
 const fail = (status: number, code: string, message: string) =>
   new HttpException({ code, message }, status);
 
+/** Une réponse du test tient dans 1 Mo (environ 60 s), moins que la limite des vocaux envoyés. */
+const MAX_ANSWER_BYTES = 1024 * 1024;
+
 /** Consentement aux enregistrements vocaux, et transcription d'une réponse du test. L'audio n'est jamais gardé. */
 export class Voice {
   constructor(
@@ -30,6 +33,8 @@ export class Voice {
     if (!(await this.store.hasConsent(userId)))
       throw fail(403, 'VOICE_CONSENT_REQUIRED', "Accepte d'abord les enregistrements vocaux.");
     if (audio.byteLength === 0) throw fail(400, 'VALIDATION_FAILED', "Aucun son n'a été reçu.");
+    if (audio.byteLength > MAX_ANSWER_BYTES)
+      throw fail(413, 'VALIDATION_FAILED', 'Cet enregistrement est trop long.');
     // L'adaptateur factice renverrait un faux texte : mieux vaut proposer d'écrire.
     if (this.stt.name === 'fake') throw this.unavailable();
     try {

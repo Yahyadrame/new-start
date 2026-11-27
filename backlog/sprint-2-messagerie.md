@@ -176,12 +176,14 @@ _Ajouté le 2026-11-25. Dépend de NS-046 et d'une décision sur le stockage de 
 Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare R2 d'abord, Cloudinary ensuite, un seul fournisseur actif. Découpage :
 
 - [x] Partie 1 : port de stockage, adaptateur compatible S3 (B2, R2), choix par `MEDIA_PROVIDER`.
-- [ ] Partie 2 : envoi par l'API, 4 Mo au plus, type vérifié sur le contenu, URL signées d'une heure, vocal transcrit.
+- [ ] Partie 2a : 4 Mo au plus, type vérifié sur le contenu, colonnes des médias.
+- [ ] Partie 2b : envoi par l'API, URL signées d'une heure, vocal transcrit.
 - [ ] Partie 3 : ce que voit le contact, suppression avec le message et le compte, transfert.
 - [ ] Partie 4 : barre d'écriture (photos compressées, vocaux).
 - [ ] Partie 5 : lecture des vocaux et affichage des photos dans la conversation.
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
+- [ ] Plus tard : retirer la colonne inutilisée `Message.audioKey` (étendre puis contracter).
 - [ ] Le contact écoute le vocal (transcription) mais ne voit pas la photo : il demande de la décrire en anglais.
 - [ ] Au lancement, par personne et par jour : 30 vocaux et 10 photos.
 - [ ] La barre d'écriture ne propose plus « Fichier ».

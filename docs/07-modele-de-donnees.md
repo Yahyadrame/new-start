@@ -42,7 +42,7 @@ enum Goal { SCHOLARSHIP WORK TRAVEL FRIENDS }
 enum Cefr { A1 A2 B1 B2 C1 C2 }
 enum ThemePref { SYSTEM LIGHT DARK }
 enum Author { USER AGENT SYSTEM }
-enum MessageKind { TEXT AUDIO }
+enum MessageKind { TEXT AUDIO IMAGE }
 enum PlanCode { FREE WEEK_PASS PLUS_MONTHLY PLUS_YEARLY PRO_MONTHLY }
 enum SubStatus { ACTIVE PAST_DUE CANCELED EXPIRED }
 enum PayProvider { WAVE ORANGE_MONEY STRIPE }
@@ -144,7 +144,10 @@ model Message {
   author         Author
   kind           MessageKind @default(TEXT)
   text           String
-  audioKey       String?     // identifiant Cloudinary (public_id)
+  audioKey       String?     // inutilisée, à retirer
+  mediaKey       String?     // fichier rangé dans le stockage privé (photo ou vocal)
+  mediaProvider  String?     // stockage qui le détient : b2, r2
+  mediaSeconds   Int?        // durée d'un vocal
   translationFr  String?
   createdAt      DateTime    @default(now())
   readAt         DateTime?

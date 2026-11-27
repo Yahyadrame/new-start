@@ -5,13 +5,13 @@ import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module.js';
 import { originMatchers } from './config/cors.js';
 import { ENV, type Env } from './config/env.js';
-import { useAudioBody } from './shared/http/audio-body.js';
+import { useMediaBody } from './shared/http/media-body.js';
 import { useRateLimit } from './shared/http/rate-limit.js';
 import { useSecurityHeaders } from './shared/http/security-headers.js';
 
 export async function createApp() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
-  useAudioBody(app);
+  useMediaBody(app);
   useSecurityHeaders(app);
   app.useLogger(app.get(Logger));
   const { CORS_ORIGINS, RATE_LIMIT_PER_MINUTE, TRUST_PROXY_HOPS } = app.get<Env>(ENV);
