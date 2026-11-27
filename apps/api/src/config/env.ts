@@ -61,6 +61,15 @@ const schema = z.object({
   GEMINI_API_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
   // Limite d'usage du lancement : messages envoyés par personne et par jour (docs/02-fonctionnalites.md).
   MESSAGES_PER_DAY: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).default(60)),
+  // Photos et vocaux par personne et par jour. `false` coupe les vocaux ; les photos continuent.
+  VOICE_MESSAGES_ENABLED: z
+    .preprocess(emptyToUndefined, z.enum(['true', 'false']).default('true'))
+    .transform((v) => v === 'true'),
+  VOICE_MESSAGES_PER_DAY: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().min(1).default(30),
+  ),
+  PHOTOS_PER_DAY: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).default(10)),
   // Limite de débit générale par adresse IP (requêtes par minute). 0 = éteinte (défaut) : à régler après TRUST_PROXY_HOPS.
   RATE_LIMIT_PER_MINUTE: z.preprocess(emptyToUndefined, z.coerce.number().int().min(0).default(0)),
   // Nombre de proxys entre le navigateur et l'API (1 sur Render) : sans lui, toutes les requêtes semblent venir du proxy.

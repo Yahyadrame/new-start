@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { HttpException } from '@nestjs/common';
 import type { SttProvider } from '@newstart/ai';
+import { VOICE_MAX_SECONDS } from '@newstart/shared';
 import type { MediaStores } from '../../../shared/media/media-store.js';
 import { sniffMedia } from '../../../shared/media/sniff.js';
 import { notFound, presentMessage, UUID } from './conversations.js';
@@ -19,7 +20,12 @@ export interface MediaUpload {
   seconds?: number | undefined;
 }
 
-const MAX_VOICE_SECONDS = 120;
+type CheckedUpload = {
+  clientId: string;
+  data: Uint8Array;
+  file: NonNullable<ReturnType<typeof sniffMedia>>;
+  mediaSeconds: number | null;
+};
 
 const fail = (status: number, code: string, message: string) =>
   new HttpException({ code, message }, status);
@@ -29,14 +35,17 @@ const voiceUnavailable = (message = 'Les vocaux sont indisponibles pour le momen
 
 // ponytail: la durée annoncée n'est pas mesurée ; la taille (4 Mo) et la limite du jour bornent le coût
 function voiceLength(seconds: number | undefined): number {
-  if (!seconds || !Number.isInteger(seconds) || seconds < 1 || seconds > MAX_VOICE_SECONDS) {
-    throw invalid(`Un vocal dure de 1 à ${MAX_VOICE_SECONDS} secondes.`);
+  if (!seconds || !Number.isInteger(seconds) || seconds < 1 || seconds > VOICE_MAX_SECONDS) {
+    throw invalid(`Un vocal dure de 1 à ${VOICE_MAX_SECONDS} secondes.`);
   }
   return seconds;
 }
 
 /** Envoi d'une photo ou d'un vocal : contrôle, transcription, rangement du fichier puis message. */
 export class MediaSend {
+  // ponytail: file en mémoire, donc une par instance de l'API ; avec plusieurs instances, réserver le compteur en base
+  private readonly queue = new Map<string, Promise<unknown>>();
+
   constructor(
     private readonly store: MediaMessagesStore,
     private readonly stt: SttProvider,
@@ -49,8 +58,31 @@ export class MediaSend {
     if (!UUID.test(clientId)) throw invalid('Identifiant de message invalide.');
     const file = sniffMedia(data);
     if (!file) throw invalid('Envoie une photo (JPEG, PNG ou WebP) ou un vocal.');
+    const mediaSeconds = file.kind === 'AUDIO' ? voiceLength(seconds) : null;
+    // Un envoi à la fois par personne et par type : la limite est lue avant la transcription et
+    // comptée après, des envois simultanés passeraient donc tous.
+    return this.inTurn(`${userId}:${file.kind}`, () =>
+      this.deliver(userId, conversationId, { clientId, data, file, mediaSeconds }),
+    );
+  }
+
+  private async inTurn<T>(key: string, task: () => Promise<T>): Promise<T> {
+    const previous = this.queue.get(key) ?? Promise.resolve();
+    const next = previous.catch(() => undefined).then(task);
+    this.queue.set(key, next);
+    try {
+      return await next;
+    } finally {
+      if (this.queue.get(key) === next) this.queue.delete(key);
+    }
+  }
+
+  private async deliver(
+    userId: string,
+    conversationId: string,
+    { clientId, data, file, mediaSeconds }: CheckedUpload,
+  ) {
     const voice = file.kind === 'AUDIO';
-    const mediaSeconds = voice ? voiceLength(seconds) : null;
     const limit = voice ? this.limits.voicePerDay : this.limits.photosPerDay;
     const found = await this.store.check(userId, conversationId, clientId, file.kind, limit);
     if (!found) throw notFound();

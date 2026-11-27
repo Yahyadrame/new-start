@@ -18,6 +18,27 @@ describe('parseEnv', () => {
     expect(parseEnv({ ...base, MESSAGES_PER_DAY: '25' }).MESSAGES_PER_DAY).toBe(25);
     expect(() => parseEnv({ ...base, MESSAGES_PER_DAY: '0' })).toThrow();
   });
+  it('ouvre les vocaux, 30 par jour et 10 photos, réglables', () => {
+    expect(parseEnv(base)).toMatchObject({
+      VOICE_MESSAGES_ENABLED: true,
+      VOICE_MESSAGES_PER_DAY: 30,
+      PHOTOS_PER_DAY: 10,
+    });
+    expect(
+      parseEnv({
+        ...base,
+        VOICE_MESSAGES_ENABLED: 'false',
+        VOICE_MESSAGES_PER_DAY: '5',
+        PHOTOS_PER_DAY: '3',
+      }),
+    ).toMatchObject({
+      VOICE_MESSAGES_ENABLED: false,
+      VOICE_MESSAGES_PER_DAY: 5,
+      PHOTOS_PER_DAY: 3,
+    });
+    expect(() => parseEnv({ ...base, VOICE_MESSAGES_ENABLED: 'oui' })).toThrow();
+    expect(() => parseEnv({ ...base, PHOTOS_PER_DAY: '0' })).toThrow();
+  });
   it('éteint la limite de débit par défaut et ne prend aucun proxy', () => {
     expect(parseEnv(base).RATE_LIMIT_PER_MINUTE).toBe(0);
     expect(parseEnv(base).TRUST_PROXY_HOPS).toBe(0);
