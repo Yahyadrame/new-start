@@ -18,11 +18,11 @@ vi.mock('./use-recorder', () => ({
   canRecord: () => mocks.canRecord,
   useRecorder: () => ({ recording: mocks.recording, start: mocks.start, stop: mocks.stop }),
 }));
-vi.mock('./voice-api', () => ({
+vi.mock('../../shared/voice-consent/voice-consent-api', () => ({
   getVoiceConsent: mocks.getVoiceConsent,
   setVoiceConsent: mocks.setVoiceConsent,
-  transcribeAnswer: mocks.transcribeAnswer,
 }));
+vi.mock('./voice-api', () => ({ transcribeAnswer: mocks.transcribeAnswer }));
 const { LevelTest } = await import('./level-test');
 
 beforeEach(() => {

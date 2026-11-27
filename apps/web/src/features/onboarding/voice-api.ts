@@ -8,23 +8,6 @@ async function check(res: Response) {
   throw new LevelAnswerError(res.status, body?.code);
 }
 
-export async function getVoiceConsent(token: string): Promise<boolean> {
-  const res = await check(
-    await fetch('/api/onboarding/voice-consent', { headers: headers(token) }),
-  );
-  return ((await res.json()) as { accepted: boolean }).accepted;
-}
-
-export async function setVoiceConsent(token: string, accepted: boolean): Promise<void> {
-  await check(
-    await fetch('/api/onboarding/voice-consent', {
-      method: 'PUT',
-      headers: { ...headers(token), 'content-type': 'application/json' },
-      body: JSON.stringify({ accepted }),
-    }),
-  );
-}
-
 /** Envoie l'enregistrement brut ; l'API renvoie le texte transcrit. */
 export async function transcribeAnswer(token: string, audio: Blob): Promise<string> {
   const res = await check(
