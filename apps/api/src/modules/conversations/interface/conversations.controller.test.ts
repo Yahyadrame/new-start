@@ -12,6 +12,7 @@ const list = vi.fn().mockResolvedValue([{ id: 'c1' }]);
 const start = vi.fn().mockResolvedValue({ id: 'c2' });
 const send = vi.fn();
 const sendMedia = vi.fn();
+const forward = vi.fn();
 const voiceAvailability = vi.fn().mockResolvedValue({ available: false, reason: 'quota' });
 const search = vi.fn().mockResolvedValue({ items: [] });
 const markRead = vi.fn();
@@ -26,7 +27,7 @@ beforeAll(async () => {
         provide: ConversationsService,
         useValue: { list, start, messages, send, markRead, search },
       },
-      { provide: MediaSend, useValue: { send: sendMedia, voiceAvailability } },
+      { provide: MediaSend, useValue: { send: sendMedia, forward, voiceAvailability } },
       { provide: ACCESS_VERIFIER, useValue: verifier },
       AccessGuard,
     ],
@@ -135,6 +136,16 @@ describe('POST /conversations/:id/messages', () => {
     const res = await post({ clientId, text: 'Hi' });
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ id: 'm1' });
+  });
+
+  it('transfère un vocal ou une photo quand `mediaFromId` désigne un message', async () => {
+    forward.mockResolvedValue({ message: { id: 'm2' }, created: true });
+    const mediaFromId = '0198f0a0-0000-7000-8000-000000000003';
+    const res = await post({ clientId, text: '', mediaFromId });
+    expect(res.status).toBe(201);
+    expect(res.body).toEqual({ id: 'm2' });
+    expect(forward).toHaveBeenCalledWith('u1', 'c1', { clientId, mediaFromId });
+    expect(send).not.toHaveBeenCalled();
   });
 
   it('répond 400 VALIDATION_FAILED pour un texte vide ou un clientId invalide', async () => {

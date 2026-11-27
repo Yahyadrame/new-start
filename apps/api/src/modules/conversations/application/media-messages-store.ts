@@ -8,11 +8,22 @@ export interface NewMediaMessage {
   mediaKey: string;
   mediaProvider: string;
   mediaSeconds: number | null;
+  forwarded?: boolean;
+  /** Pour un fichier repris : quand il a été rangé. */
+  mediaStoredAt?: Date;
 }
+
+/** Le vocal ou la photo d'un message qu'on veut transférer. */
+export type MediaSource = Pick<
+  NewMediaMessage,
+  'kind' | 'text' | 'mediaKey' | 'mediaProvider' | 'mediaSeconds'
+> & { storedAt: Date; deleted: boolean };
 
 export type SentMessage = { row: MessageRow; created: boolean };
 
 export interface MediaMessagesStore {
+  /** Null si le message n'est pas à la personne ou n'a pas de fichier. */
+  findSource(userId: string, messageId: string): Promise<MediaSource | null>;
   /** Vrai si la personne a accepté les enregistrements vocaux. */
   hasVoiceConsent(userId: string): Promise<boolean>;
   /** Le nombre de vocaux (ou de photos) que la personne a envoyés aujourd'hui, à son heure. */

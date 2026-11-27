@@ -186,3 +186,4 @@ Choix du porteur du projet.
 - Limites par jour au lancement, pour tous : 30 vocaux et 10 photos. À l'activation du paiement : Gratuit 5 et 3, Plus et Pass 30 et 20, Pro 60 et 40. Le Gratuit garde donc quelques vocaux, que `docs/14` réservait à Plus.
 - Messages éphémères façon WhatsApp, gratuits pour tous, après NS-047 (NS-070).
 - Les vocaux et les photos ne comptent pas dans les 60 messages écrits du jour : chacun a sa limite.
+- Transférer un vocal ou une photo compte dans la limite du jour de son type (suite de cette ligne et de NS-066) et le contact répond. Le fichier n'est ni rangé ni transcrit à nouveau, et un vocal expire toujours 30 jours après son premier envoi.

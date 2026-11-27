@@ -74,16 +74,26 @@ export const VoiceAvailability = z.discriminatedUnion('available', [
 export type VoiceAvailability = z.infer<typeof VoiceAvailability>;
 
 /** Corps de `POST /conversations/:id/messages` : `clientId` rend le renvoi sans risque de doublon. */
-export const SendMessage = z.object({
-  clientId: z.uuid(),
-  text: z.string().trim().min(1).max(2000),
-  /** Le message auquel on répond, dans la même conversation. */
-  replyToId: z.uuid().optional(),
-  /** Le texte vient d'un message transféré depuis une autre conversation. */
-  forwarded: z.boolean().optional(),
-  /** Envoie ce sticker : l'API remplace `text` par sa légende. */
-  sticker: StickerId.optional(),
-});
+export const SendMessage = z
+  .object({
+    clientId: z.uuid(),
+    text: z.string().trim().max(2000),
+    /** Le message auquel on répond, dans la même conversation. */
+    replyToId: z.uuid().optional(),
+    /** Le texte vient d'un message transféré depuis une autre conversation. */
+    forwarded: z.boolean().optional(),
+    /** Envoie ce sticker : l'API remplace `text` par sa légende. */
+    sticker: StickerId.optional(),
+    /**
+     * Transfère le vocal ou la photo de ce message : le fichier et son texte viennent de lui, les autres
+     * champs sont ignorés.
+     */
+    mediaFromId: z.uuid().optional(),
+  })
+  .refine((message) => message.mediaFromId !== undefined || message.text.length > 0, {
+    path: ['text'],
+    message: 'Le message est vide.',
+  });
 export type SendMessage = z.infer<typeof SendMessage>;
 
 /** Corps de `PATCH /messages/:id` : le nouveau texte d'un message de la personne. */

@@ -22,7 +22,11 @@ const voice: NewMediaMessage = {
 function setup(today: Record<string, number> | null = null) {
   const db = {
     conversation: { findFirst: vi.fn().mockResolvedValue({ id: 'c1' }), update: vi.fn() },
-    message: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn() },
+    message: {
+      findUnique: vi.fn().mockResolvedValue(null),
+      findFirst: vi.fn().mockResolvedValue(null),
+      create: vi.fn(),
+    },
     user: { findUnique: vi.fn().mockResolvedValue(user), update: vi.fn() },
     dailyActivity: { findUnique: vi.fn().mockResolvedValue(today), upsert: vi.fn() },
     $transaction: vi.fn().mockResolvedValue([{ id: 'm1' }]),
@@ -131,5 +135,55 @@ describe('PrismaMediaMessagesStore.sentToday', () => {
 
   it('vaut zéro avant le premier envoi du jour', async () => {
     expect(await setup().store.sentToday('u1', 'AUDIO')).toBe(0);
+  });
+});
+
+describe('PrismaMediaMessagesStore.findSource', () => {
+  const row = {
+    kind: 'AUDIO',
+    text: 'Hello there',
+    mediaKey: 'audio/u1/a.webm',
+    mediaProvider: 'b2',
+    mediaSeconds: 4,
+    mediaStoredAt: null,
+    createdAt: new Date('2026-11-01T10:00:00Z'),
+    deletedAt: null,
+  };
+
+  it('cherche seulement parmi les messages de cette personne qui ont un fichier', async () => {
+    const { db, store } = setup();
+    expect(await store.findSource('u1', 'm1')).toBeNull();
+    expect(db.message.findFirst.mock.calls[0]?.[0].where).toEqual({
+      id: 'm1',
+      conversation: { userId: 'u1' },
+      mediaKey: { not: null },
+    });
+  });
+
+  it('date le fichier du premier envoi et signale un message supprimé', async () => {
+    const { db, store } = setup();
+    db.message.findFirst.mockResolvedValue(row);
+    expect(await store.findSource('u1', 'm1')).toEqual({
+      kind: 'AUDIO',
+      text: 'Hello there',
+      mediaKey: 'audio/u1/a.webm',
+      mediaProvider: 'b2',
+      mediaSeconds: 4,
+      storedAt: row.createdAt,
+      deleted: false,
+    });
+    const storedAt = new Date('2026-10-20T10:00:00Z');
+    db.message.findFirst.mockResolvedValue({
+      ...row,
+      mediaStoredAt: storedAt,
+      deletedAt: new Date(),
+    });
+    expect(await store.findSource('u1', 'm1')).toMatchObject({ storedAt, deleted: true });
+  });
+
+  it('ignore un message sans fichier lisible', async () => {
+    const { db, store } = setup();
+    db.message.findFirst.mockResolvedValue({ ...row, mediaProvider: null });
+    expect(await store.findSource('u1', 'm1')).toBeNull();
   });
 });
