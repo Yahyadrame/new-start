@@ -7,11 +7,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { ensureSession, getSession, setSession } from '../../shared/auth/session';
 import fr from '../../shared/i18n/fr.json';
+import { getVoiceConsent, setVoiceConsent } from '../../shared/voice-consent/voice-consent-api';
+import { VoiceConsentDialog } from '../../shared/voice-consent/voice-consent-dialog';
 import { LevelResult } from './level-result';
 import { LevelAnswerError, sendLevelAnswer } from './send-level-answer';
 import { canRecord, useRecorder } from './use-recorder';
-import { VoiceConsentDialog } from './voice-consent-dialog';
-import { getVoiceConsent, setVoiceConsent, transcribeAnswer } from './voice-api';
+import { transcribeAnswer } from './voice-api';
 
 const t = fr.level;
 type Turn = { from: 'jade' | 'me'; text: string };
@@ -229,6 +230,7 @@ export function LevelTest() {
         )}
       </form>
       <VoiceConsentDialog
+        texts={t.voice.consent}
         open={asking}
         onAccept={() => onConsent(true)}
         onDecline={() => onConsent(false)}
