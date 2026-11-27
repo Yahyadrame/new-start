@@ -28,6 +28,10 @@ externalSecrets:
     - GOOGLE_CLIENT_SECRET
     - BREVO_API_KEY
     - CLOUDINARY_URL
+    - MEDIA_B2_KEY_ID
+    - MEDIA_B2_SECRET
+    - MEDIA_R2_KEY_ID
+    - MEDIA_R2_SECRET
     - SENTRY_DSN
 
 # Variables non secrètes de l'API et du worker.
@@ -40,6 +44,13 @@ config:
   STT_PROVIDER: groq
   TTS_PROVIDER: gemini
   AI_MAX_CALLS_PER_MONTH: '2000'
+  MEDIA_PROVIDER: ''
+  MEDIA_B2_ENDPOINT: ''
+  MEDIA_B2_REGION: ''
+  MEDIA_B2_BUCKET: ''
+  MEDIA_R2_ENDPOINT: ''
+  MEDIA_R2_REGION: ''
+  MEDIA_R2_BUCKET: ''
 
 api:
   replicas: 3
