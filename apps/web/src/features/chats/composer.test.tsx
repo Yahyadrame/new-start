@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fr from '../../shared/i18n/fr.json';
-import { Composer, MAX_FILE_BYTES } from './composer';
+import { Composer } from './composer';
 
 const recorder = vi.hoisted(() => ({
   recording: false,
@@ -19,6 +19,8 @@ vi.mock('./use-voice-recorder', () => ({
     return recorder;
   },
 }));
+const compressImage = vi.hoisted(() => vi.fn());
+vi.mock('./compress-image', () => ({ compressImage }));
 // La liste d'émojis a ses propres tests ; ici un seul bouton suffit.
 vi.mock('./emoji-panel', () => ({
   EmojiPanel: ({ onPick }: { onPick: (emoji: string) => void }) => (
@@ -30,14 +32,20 @@ vi.mock('./emoji-panel', () => ({
 
 beforeEach(() => {
   Object.assign(recorder, { recording: false, seconds: 0, error: null });
+  URL.createObjectURL = vi.fn(() => 'blob:photo');
   URL.revokeObjectURL = vi.fn();
+  compressImage.mockReset();
 });
 afterEach(cleanup);
 const c = fr.conversation;
 const field = () => screen.getByLabelText(c.composerLabel) as HTMLTextAreaElement;
 const form = () => field().closest('form') as HTMLFormElement;
-const choose = (testId: string, file: File) =>
-  fireEvent.change(screen.getByTestId(testId), { target: { files: [file] } });
+const choose = async (file: File) => {
+  await act(async () => {
+    fireEvent.change(screen.getByTestId('photo-input'), { target: { files: [file] } });
+  });
+};
+const picked = new File(['x'], 'plage.png', { type: 'image/png' });
 
 describe('Composer', () => {
   it('montre le micro quand le champ est vide ou ne contient que des espaces, et l’envoi quand il y a du texte', () => {
@@ -124,54 +132,82 @@ describe('Composer', () => {
     expect(screen.getByRole('status').textContent).toBe(c.micUnavailable);
   });
 
-  it('prévisualise un vocal, le retire, et dit que l’envoi arrive bientôt sans onSendMedia', () => {
-    render(<Composer onSend={vi.fn()} />);
+  it('prévisualise un vocal, le retire, et dit que son envoi arrive bientôt', () => {
+    const onSendPhoto = vi.fn();
+    render(<Composer onSend={vi.fn()} onSendPhoto={onSendPhoto} />);
     act(() => recorder.onClip?.({ blob: new Blob(['x']), url: 'blob:voice', seconds: 4 }));
     expect(screen.getByLabelText('Message vocal, 0:04')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: c.send }));
-    expect(screen.getByRole('status').textContent).toBe(c.mediaSoon);
+    expect(screen.getByRole('status').textContent).toBe(c.voiceSoon);
+    expect(onSendPhoto).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: c.draftRemove }));
     expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
     expect(screen.queryByRole('status')).toBeNull();
   });
 
-  it('prévisualise une photo choisie puis l’envoie quand l’envoi est branché', () => {
-    const onSendMedia = vi.fn();
-    render(<Composer onSend={vi.fn()} onSendMedia={onSendMedia} />);
-    const photo = new File(['x'], 'plage.png', { type: 'image/png' });
-    choose('photo-input', photo);
-    expect(screen.getByText('plage.png')).toBeTruthy();
+  it('ouvre directement le choix d’image avec le bouton photo', () => {
+    const open = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    render(<Composer onSend={vi.fn()} onSendPhoto={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: c.attachPhoto }));
+    expect(open).toHaveBeenCalledOnce();
+    expect(screen.getByTestId('photo-input').getAttribute('accept')).toBe('image/*');
+    open.mockRestore();
+  });
+
+  it('prévisualise la photo réduite puis l’envoie', async () => {
+    const small = new Blob(['j'], { type: 'image/jpeg' });
+    compressImage.mockResolvedValue(small);
+    const onSendPhoto = vi.fn();
+    render(<Composer onSend={vi.fn()} onSendPhoto={onSendPhoto} />);
+    await choose(picked);
+    expect(compressImage).toHaveBeenCalledWith(picked);
+    expect(screen.getByText(c.draftPhoto)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: c.send }));
-    expect(onSendMedia).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: 'file', file: photo }),
+    expect(onSendPhoto).toHaveBeenCalledWith(small);
+    expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
+  });
+
+  it('dit quand l’image est illisible', async () => {
+    compressImage.mockResolvedValue(null);
+    render(<Composer onSend={vi.fn()} onSendPhoto={vi.fn()} />);
+    await choose(picked);
+    expect(screen.getByRole('status').textContent).toBe(c.photoUnreadable);
+    expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
+  });
+
+  it('cache la réponse en cours pendant l’envoi d’une photo, qui ne la citerait pas', async () => {
+    compressImage.mockResolvedValue(new Blob(['j']));
+    render(
+      <Composer onSend={vi.fn()} onSendPhoto={vi.fn()} reply={{ name: 'Jade', text: 'See you' }} />,
     );
-    expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
+    await choose(picked);
+    expect(screen.queryByText('See you')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: c.send }));
+    expect(screen.getByText('See you')).toBeTruthy();
   });
 
-  it('prévisualise un document par son nom', () => {
-    render(<Composer onSend={vi.fn()} />);
-    choose('file-input', new File(['x'], 'cv.pdf', { type: 'application/pdf' }));
-    expect(screen.getByText('cv.pdf')).toBeTruthy();
+  it('met la photo de côté pendant une modification, que « Envoyer » enregistre', async () => {
+    compressImage.mockResolvedValue(new Blob(['j']));
+    const onSend = vi.fn();
+    const onSendPhoto = vi.fn();
+    const { rerender } = render(<Composer onSend={onSend} onSendPhoto={onSendPhoto} />);
+    await choose(picked);
+    rerender(
+      <Composer onSend={onSend} onSendPhoto={onSendPhoto} edit={{ id: 'm1', text: 'I go' }} />,
+    );
+    expect(screen.queryByText(c.draftPhoto)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: c.send }));
+    expect(onSend).toHaveBeenCalledWith('I go');
+    expect(onSendPhoto).not.toHaveBeenCalled();
+    rerender(<Composer onSend={onSend} onSendPhoto={onSendPhoto} />);
+    expect(screen.getByText(c.draftPhoto)).toBeTruthy();
   });
 
-  it('refuse un fichier de plus de 10 Mo', () => {
-    render(<Composer onSend={vi.fn()} />);
-    const big = new File(['x'], 'gros.pdf');
-    Object.defineProperty(big, 'size', { value: MAX_FILE_BYTES + 1 });
-    choose('file-input', big);
-    expect(screen.getByRole('status').textContent).toBe(c.fileTooBig);
-    expect(screen.getByLabelText(c.composerLabel)).toBeTruthy();
-  });
-
-  it('propose photo et document depuis le bouton +', async () => {
-    render(<Composer onSend={vi.fn()} />);
-    fireEvent.pointerDown(screen.getByRole('button', { name: c.attach }), {
-      button: 0,
-      ctrlKey: false,
-    });
-    fireEvent.click(screen.getByRole('button', { name: c.attach }));
-    expect(await screen.findByRole('button', { name: c.attachPhoto })).toBeTruthy();
-    expect(screen.getByRole('button', { name: c.attachFile })).toBeTruthy();
+  it('n’a pas de bouton photo sans onSendPhoto, ni pendant une modification', () => {
+    const { rerender } = render(<Composer onSend={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: c.attachPhoto })).toBeNull();
+    rerender(<Composer onSend={vi.fn()} onSendPhoto={vi.fn()} edit={{ id: 'm1', text: 'I go' }} />);
+    expect(screen.queryByRole('button', { name: c.attachPhoto })).toBeNull();
   });
 
   it('sur téléphone, pas d’onglet émojis : le clavier les propose', () => {
