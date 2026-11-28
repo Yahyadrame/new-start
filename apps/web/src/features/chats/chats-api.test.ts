@@ -14,6 +14,9 @@ import {
   sendMedia,
   sendMessage,
 } from './chats-api';
+import { voicePeaks } from './voice-peaks';
+
+vi.mock('./voice-peaks', () => ({ voicePeaks: vi.fn() }));
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -249,6 +252,19 @@ describe('sendMedia', () => {
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
       '/api/conversations/c1/media?clientId=id-1&seconds=4',
     );
+  });
+
+  it('joint l’onde calculée sur l’appareil à un vocal, jamais à une photo', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'm1' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    vi.mocked(voicePeaks).mockResolvedValueOnce([10, 100]);
+    await sendMedia('tok', 'c1', 'id-1', new Blob(['x'], { type: 'audio/webm' }), 4);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      '/api/conversations/c1/media?clientId=id-1&seconds=4&peaks=10,100',
+    );
+    vi.mocked(voicePeaks).mockClear();
+    await sendMedia('tok', 'c1', 'id-2', photo);
+    expect(voicePeaks).not.toHaveBeenCalled();
   });
 
   it('garde le statut et le code d’erreur de l’API', async () => {

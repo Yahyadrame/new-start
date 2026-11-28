@@ -6,6 +6,7 @@ import type {
   SendMessage,
   VoiceAvailability,
 } from '@newstart/shared';
+import { voicePeaks } from './voice-peaks';
 
 export class ChatsError extends Error {
   constructor(
@@ -50,7 +51,10 @@ export async function sendMessage(
   return sentMessage(res);
 }
 
-/** Envoie une photo en octets bruts. Renvoyer le même `clientId` ne crée pas un second message. */
+/**
+ * Envoie une photo ou un vocal en octets bruts, un vocal avec son onde.
+ * Renvoyer le même `clientId` ne crée pas un second message.
+ */
 export async function sendMedia(
   token: string,
   conversationId: string,
@@ -60,7 +64,9 @@ export async function sendMedia(
   seconds?: number,
 ): Promise<MessageItem> {
   const length = seconds ? `&seconds=${seconds}` : '';
-  const url = `/api/conversations/${conversationId}/media?clientId=${clientId}${length}`;
+  const peaks = seconds ? await voicePeaks(file) : undefined;
+  const wave = peaks ? `&peaks=${peaks.join(',')}` : '';
+  const url = `/api/conversations/${conversationId}/media?clientId=${clientId}${length}${wave}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { authorization: `Bearer ${token}`, 'content-type': file.type },
