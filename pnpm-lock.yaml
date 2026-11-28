@@ -567,6 +567,9 @@ importers:
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.1.10(react@19.1.10))(react@19.1.10)
+      wavesurfer.js:
+        specifier: 8.1.1
+        version: 8.1.1
     devDependencies:
       '@newstart/config':
         specifier: workspace:*
@@ -5410,6 +5413,9 @@ packages:
     engines: {node: ^22.13||^24||>=26}
     hasBin: true
 
+  wavesurfer.js@8.1.1:
+    resolution: {integrity: sha512-Bcs4PqL9FKO6UfKBYW2VdDA0uK14TIYMZ2qEouyGKJNRQq4f0Xk9gMHZVyvCTRFtm0lDa16s54C21sAHmZTk+g==}
+
   web-push@4.0.0:
     resolution: {integrity: sha512-iKzGK/q3k+kjoPK+fkbs8ymYvEqu5RJNAypEskW+UAYsC44upqb0f+T8QSYW4naowl9bzjlHRe8CI0NFCBzZeQ==}
     engines: {node: '>= 16'}
@@ -10020,6 +10026,8 @@ snapshots:
       xml-name-validator: 5.0.0
 
   watskeburt@6.0.0: {}
+
+  wavesurfer.js@8.1.1: {}
 
   web-push@4.0.0(supports-color@7.2.0):
     dependencies:
