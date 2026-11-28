@@ -206,7 +206,7 @@ export class PrismaConversationsStore implements ConversationsStore {
       this.db.correction.deleteMany({ where: { messageId } }),
       this.db.message.update({
         where: { id: messageId },
-        data: { text: '', translationFr: null, deletedAt: new Date() },
+        data: { text: '', translationFr: null, mediaPeaks: [], deletedAt: new Date() },
       }),
     ]);
     const { mediaKey: key, mediaProvider: provider } = found;

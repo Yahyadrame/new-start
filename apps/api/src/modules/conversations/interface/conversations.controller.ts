@@ -91,10 +91,10 @@ export class ConversationsController {
     @Body() body: unknown,
     @Res({ passthrough: true }) res: StatusResponse,
   ) {
-    const { clientId, seconds } = parseBody(MediaQuery, query);
+    const upload = parseBody(MediaQuery, query);
     // Sans `Content-Type: audio/*` ou `image/*`, le corps n'est pas lu en octets : il sera refusé.
     const data = Buffer.isBuffer(body) ? body : new Uint8Array(0);
-    const { message, created } = await this.media.send(userId, id, { clientId, data, seconds });
+    const { message, created } = await this.media.send(userId, id, { ...upload, data });
     res.status(created ? 201 : 200);
     return message;
   }

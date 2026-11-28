@@ -40,6 +40,10 @@ export const MessageItem = z.object({
       kind: z.enum(['AUDIO', 'IMAGE']),
       url: z.string().nullable(),
       seconds: z.number().nullable(),
+      /** Vrai pour un vocal de plus de 30 jours, effacé par le stockage. */
+      expired: z.boolean().optional(),
+      /** L'onde d'un vocal, en barres de 0 à 100 ; absente si elle n'a pas été envoyée. */
+      peaks: z.array(z.number()).optional(),
     })
     .optional(),
 });
@@ -61,10 +65,25 @@ export type MessagesQuery = z.infer<typeof MessagesQuery>;
 /** Durée la plus longue d'un vocal. */
 export const VOICE_MAX_SECONDS = 120;
 
-/** Paramètres de `POST /conversations/:id/media` ; `seconds` : la durée d'un vocal. */
+/** Nombre de barres au plus dans l'onde d'un vocal. */
+export const VOICE_PEAKS_MAX = 64;
+
+/** Une barre de l'onde, de 0 à 100, telle qu'elle est écrite dans l'adresse. */
+const Peak = z
+  .string()
+  .regex(/^\d{1,3}$/)
+  .transform(Number)
+  .pipe(z.number().max(100));
+
+/** Paramètres de `POST /conversations/:id/media` ; `seconds` : la durée d'un vocal, `peaks` : son onde. */
 export const MediaQuery = z.object({
   clientId: z.string().uuid(),
   seconds: z.coerce.number().int().min(1).max(VOICE_MAX_SECONDS).optional(),
+  peaks: z
+    .string()
+    .transform((peaks) => peaks.split(','))
+    .pipe(z.array(Peak).max(VOICE_PEAKS_MAX))
+    .optional(),
 });
 export type MediaQuery = z.infer<typeof MediaQuery>;
 

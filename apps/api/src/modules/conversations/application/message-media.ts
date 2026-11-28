@@ -12,6 +12,7 @@ export interface MediaColumns {
   mediaKey?: string | null | undefined;
   mediaProvider?: string | null | undefined;
   mediaSeconds?: number | null | undefined;
+  mediaPeaks?: number[] | null | undefined;
   /** Pour un fichier repris par un transfert : quand il a été rangé. */
   mediaStoredAt?: Date | null | undefined;
 }
@@ -32,5 +33,6 @@ export async function presentMedia(
   const expired = voiceExpired(kind, row.mediaStoredAt ?? createdAt, now);
   const url =
     store && mediaKey && !expired ? await store.signedUrl(mediaKey, LINK_TTL_SECONDS) : null;
-  return { kind, url, seconds: mediaSeconds ?? null };
+  const peaks = kind === 'AUDIO' && row.mediaPeaks?.length ? { peaks: row.mediaPeaks } : {};
+  return { kind, url, seconds: mediaSeconds ?? null, expired, ...peaks };
 }

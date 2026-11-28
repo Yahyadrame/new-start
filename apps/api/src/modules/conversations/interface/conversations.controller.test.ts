@@ -230,6 +230,15 @@ describe('POST /conversations/:id/media', () => {
     expect(sendMedia).toHaveBeenCalledWith('u1', 'c1', { clientId, data: bytes, seconds: 4 });
   });
 
+  it('transmet l’onde du vocal, et refuse une onde mal écrite (400)', async () => {
+    sendMedia.mockResolvedValue({ message: { id: 'm1' }, created: true });
+    await post(`clientId=${clientId}&seconds=4&peaks=3,90`);
+    expect(sendMedia.mock.calls[0]?.[2]).toMatchObject({ peaks: [3, 90] });
+    const bad = await post(`clientId=${clientId}&seconds=4&peaks=300`);
+    expect(bad.status).toBe(400);
+    expect(sendMedia).toHaveBeenCalledTimes(1);
+  });
+
   it('répond 200 quand le clientId est renvoyé', async () => {
     sendMedia.mockResolvedValue({ message: { id: 'm1' }, created: false });
     expect((await post()).status).toBe(200);

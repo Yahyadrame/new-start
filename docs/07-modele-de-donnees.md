@@ -148,6 +148,7 @@ model Message {
   mediaKey       String?     // fichier rangé dans le stockage privé (photo ou vocal)
   mediaProvider  String?     // stockage qui le détient : b2, r2
   mediaSeconds   Int?        // durée d'un vocal
+  mediaPeaks     Int[]       // onde d'un vocal, barres de 0 à 100
   mediaStoredAt  DateTime?   // fichier repris par un transfert : quand il a été rangé
   translationFr  String?
   createdAt      DateTime    @default(now())

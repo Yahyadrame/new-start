@@ -26,23 +26,40 @@ describe('presentMedia', () => {
       kind: 'AUDIO',
       url: 'https://media.fake.test/audio/u1/a.webm?expires=3600',
       seconds: 12,
+      expired: false,
     });
     expect(await presentMedia(photo, stores, now)).toEqual({
       kind: 'IMAGE',
       url: 'https://media.fake.test/image/u1/p.jpg?expires=3600',
       seconds: null,
+      expired: false,
     });
   });
 
   it('ne donne plus d’URL pour un vocal de plus de 30 jours, mais garde les photos', async () => {
     const old = { createdAt: daysAgo(31) };
-    expect((await presentMedia({ ...voice, ...old }, stores, now))?.url).toBeNull();
-    expect((await presentMedia({ ...photo, ...old }, stores, now))?.url).not.toBeNull();
+    expect(await presentMedia({ ...voice, ...old }, stores, now)).toMatchObject({
+      url: null,
+      expired: true,
+    });
+    const kept = await presentMedia({ ...photo, ...old }, stores, now);
+    expect(kept).toMatchObject({ expired: false });
+    expect(kept?.url).not.toBeNull();
   });
 
   it('rend une URL vide si le fournisseur du fichier n’est plus configuré', async () => {
     const media = await presentMedia({ ...photo, mediaProvider: 'r2' }, stores, now);
-    expect(media).toEqual({ kind: 'IMAGE', url: null, seconds: null });
+    expect(media).toEqual({ kind: 'IMAGE', url: null, seconds: null, expired: false });
+  });
+
+  it('rend l’onde d’un vocal qui en a une, jamais celle d’une photo', async () => {
+    const mediaPeaks = [0, 40, 100];
+    const media = await presentMedia({ ...voice, mediaPeaks }, stores, now);
+    expect(media?.peaks).toEqual(mediaPeaks);
+    expect(await presentMedia({ ...voice, mediaPeaks: [] }, stores, now)).not.toHaveProperty(
+      'peaks',
+    );
+    expect(await presentMedia({ ...photo, mediaPeaks }, stores, now)).not.toHaveProperty('peaks');
   });
 
   it('ne montre rien d’un message supprimé', async () => {

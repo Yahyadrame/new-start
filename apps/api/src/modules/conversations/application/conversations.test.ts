@@ -462,6 +462,8 @@ describe('ConversationsService et les médias', () => {
     mediaKey: 'image/u1/p.jpg',
     mediaProvider: 'r2',
     mediaSeconds: null,
+    mediaPeaks: [],
+    mediaStoredAt: new Date('2026-11-01T10:00:00Z'),
   };
 
   it('rend le lien de lecture avec le message, sans la clé ni le fournisseur', async () => {
@@ -474,10 +476,10 @@ describe('ConversationsService et les médias', () => {
       kind: 'IMAGE',
       url: 'https://media.fake.test/image/u1/p.jpg?expires=3600',
       seconds: null,
+      expired: false,
     });
-    for (const key of ['kind', 'mediaKey', 'mediaProvider', 'mediaSeconds']) {
-      expect(item).not.toHaveProperty(key);
-    }
+    const columns = Object.keys(item ?? {}).filter((key) => /^(kind|media[A-Z])/.test(key));
+    expect(columns).toEqual([]);
   });
 
   it('efface le fichier d’un message supprimé quand plus rien ne le reprend', async () => {

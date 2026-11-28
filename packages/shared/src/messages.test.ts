@@ -17,9 +17,20 @@ describe('MediaQuery', () => {
     expect(MediaQuery.parse({ clientId })).toEqual({ clientId });
   });
 
+  it('lit l’onde d’un vocal : des barres de 0 à 100 séparées par des virgules', () => {
+    expect(MediaQuery.parse({ clientId, peaks: '0,12,100' }).peaks).toEqual([0, 12, 100]);
+  });
+
   it.each([
     {},
     { clientId: 'zzz' },
+    { clientId, peaks: '' },
+    { clientId, peaks: '1,,2' },
+    { clientId, peaks: '101' },
+    { clientId, peaks: '-1' },
+    { clientId, peaks: '1.5' },
+    { clientId, peaks: ['1', '2'] },
+    { clientId, peaks: Array(65).fill('1').join(',') },
     { clientId: [clientId, clientId] },
     { clientId, seconds: '0' },
     { clientId, seconds: '121' },

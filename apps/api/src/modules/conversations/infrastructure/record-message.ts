@@ -18,6 +18,7 @@ export const messageSelect = {
   mediaKey: true,
   mediaProvider: true,
   mediaSeconds: true,
+  mediaPeaks: true,
   mediaStoredAt: true,
   correction: { select: { better: true, whyFr: true } },
   replyTo: { select: { id: true, author: true, text: true, deletedAt: true, kind: true } },

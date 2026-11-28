@@ -220,7 +220,7 @@ describe('PrismaConversationsStore', () => {
       expect(db.$transaction).not.toHaveBeenCalled();
     });
 
-    it('efface le texte, la traduction et la correction, et date la suppression', async () => {
+    it('efface le texte, la traduction, la correction et l’onde, et date la suppression', async () => {
       const { db, store } = fake([]);
       db.message.findFirst.mockResolvedValue({ id: 'm1' });
       expect(await store.deleteMessage('u1', 'm1')).toEqual({ unusedFile: null });
@@ -228,7 +228,7 @@ describe('PrismaConversationsStore', () => {
       expect(db.correction.deleteMany).toHaveBeenCalledWith({ where: { messageId: 'm1' } });
       expect(db.message.update.mock.calls[0]?.[0]).toMatchObject({
         where: { id: 'm1' },
-        data: { text: '', translationFr: null, deletedAt: expect.any(Date) },
+        data: { text: '', translationFr: null, mediaPeaks: [], deletedAt: expect.any(Date) },
       });
       expect(db.$transaction).toHaveBeenCalledTimes(1);
     });

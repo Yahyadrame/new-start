@@ -130,10 +130,10 @@ const toItem = ({
 
 /** Le message tel que l'API le rend, avec le lien de lecture de son vocal ou de sa photo. */
 export async function presentMessage(
-  { kind, mediaKey, mediaProvider, mediaSeconds, ...row }: MessageRow,
+  { kind, mediaKey, mediaProvider, mediaSeconds, mediaPeaks, mediaStoredAt, ...row }: MessageRow,
   stores: MediaStores,
 ): Promise<MessageItem> {
-  const columns = { kind, mediaKey, mediaProvider, mediaSeconds };
+  const columns = { kind, mediaKey, mediaProvider, mediaSeconds, mediaPeaks, mediaStoredAt };
   const media = await presentMedia({ ...row, ...columns }, stores, new Date());
   return { ...toItem(row), ...(media && { media }) };
 }

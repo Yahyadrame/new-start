@@ -17,19 +17,21 @@ export class PrismaMediaMessagesStore implements MediaMessagesStore {
         mediaKey: true,
         mediaProvider: true,
         mediaSeconds: true,
+        mediaPeaks: true,
         mediaStoredAt: true,
         createdAt: true,
         deletedAt: true,
       },
     });
     if (!row || row.kind === 'TEXT' || !row.mediaKey || !row.mediaProvider) return null;
-    const { kind, text, mediaKey, mediaProvider, mediaSeconds } = row;
+    const { kind, text, mediaKey, mediaProvider, mediaSeconds, mediaPeaks } = row;
     return {
       kind,
       text,
       mediaKey,
       mediaProvider,
       mediaSeconds,
+      mediaPeaks,
       storedAt: row.mediaStoredAt ?? row.createdAt,
       deleted: row.deletedAt !== null,
     };
