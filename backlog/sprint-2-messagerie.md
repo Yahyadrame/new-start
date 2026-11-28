@@ -437,3 +437,27 @@ _Ajouté le 2026-11-28, mesuré en préparant le lecteur vocal : des pages charg
 
 - [ ] `sideEffects` déclaré, poids des pages mesuré avant et après et noté dans la PR.
 - [ ] Styles, thèmes et animations inchangés : e2e verts, clair et sombre.
+
+## NS-075 — Le contact répond aux vocaux · XS
+
+_Ajouté le 2026-11-28, vu au test sur staging : le vocal « Hello Nina how are you? » était bien transcrit, mais la réponse demandait de le répéter parce que le contact « n'entendait pas ». Rejoué sur Groq `openai/gpt-oss-20b` avec des données inventées : l'ancienne consigne fait répéter 5 vocaux sur 5, la nouvelle répond aux 5._
+
+- [x] Le contact répond aux paroles du vocal et ne dit jamais qu'il ne peut pas l'entendre.
+- [x] Il ne fait répéter qu'un vocal sans paroles.
+- [x] Test unitaire de la consigne.
+
+## NS-076 — Réponse perdue quand le modèle tente d'appeler un outil · S
+
+_Ajouté le 2026-11-28 : pendant le test de NS-075, Groq a refusé un appel (HTTP 400 `tool_use_failed`, « Tool choice is none, but model called a tool »). Ce code 400 n'est pas réessayé : dans l'appli, la personne verrait « Le message n'est pas passé. »_
+
+- [ ] Fréquence mesurée sur le modèle réel, notée dans le ticket.
+- [ ] Ce refus est réessayé, avec un test unitaire ; les autres erreurs 400 ne le sont pas.
+
+## NS-077 — Choisir les outils de la version finale · M
+
+_Ajouté le 2026-11-28 à la demande du porteur du projet : à présenter plus tard, avant l'ouverture au public. Aucune dépense ni changement sans son accord._
+
+- [ ] Pour l'IA des contacts (dont Claude), la transcription, la voix et la lecture des photos : 2 à 4 options, avec recommandation et coûts relevés à la date du choix.
+- [ ] Même chose pour l'hébergement, la base, le stockage des fichiers, les files de tâches et la supervision, pour une appli fluide et rapide avec des milliers de personnes.
+- [ ] Coût mensuel estimé pour 1 000 et 10 000 personnes actives ; choix notés dans `docs/decisions.md`.
+

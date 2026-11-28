@@ -87,8 +87,18 @@ describe('buildAgentSystem, stickers et émojis', () => {
 describe('buildAgentSystem, vocaux et photos', () => {
   const system = buildAgentSystem({ agent, learner });
 
-  it('présente un vocal comme écouté, sans corriger la ponctuation de sa transcription', () => {
-    expect(system).toContain('"[voice message]" starts the transcript');
+  it('dit au contact qu’il a entendu le vocal et qu’il répond à ses paroles', () => {
+    expect(system).toContain('is what the learner just said aloud. You heard it perfectly');
+    expect(system).toContain('never say you cannot hear or listen');
+  });
+
+  it('ne fait répéter qu’un vocal sans paroles', () => {
+    expect(system).toContain(
+      'Only when nothing follows "[voice message]", ask them to say it again',
+    );
+  });
+
+  it('ne corrige pas la ponctuation d’une transcription', () => {
     expect(system).toContain('ignore spelling, punctuation and capital letters');
   });
 
