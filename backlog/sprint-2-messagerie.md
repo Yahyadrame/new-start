@@ -193,7 +193,7 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
   - [x] Raison affichée sur le micro quand le vocal est indisponible.
 - [ ] Partie 5 : lecture des vocaux dans la conversation.
   - [x] 5a : l'API garde l'onde d'un vocal (`peaks`) et dit s'il a expiré (`expired`).
-  - [ ] 5b : l'onde calculée à l'enregistrement et envoyée avec le vocal.
+  - [x] 5b : l'onde calculée sur l'appareil à partir de l'enregistrement et envoyée avec le vocal.
   - [ ] 5c : lecteur dans la conversation, « Vocal expiré » et « Vocal indisponible ».
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher. Fait pour la limite, la coupure et le service non configuré ; une panne passagère ne s'explique encore qu'à l'envoi.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
@@ -417,3 +417,10 @@ _Ajouté le 2026-11-27 : vu trois fois sur staging. `/health/ready` répond 503 
 
 - [ ] Cause trouvée (réveil de la base, délai de connexion, ordre de démarrage…) et notée dans le ticket.
 - [ ] Correctif, avec un test si c'est du code ; plus de 503 à la première requête après un déploiement.
+
+## NS-073 — Tests de l'inscription trop lents dans la suite complète · S
+
+_Ajouté le 2026-11-28 : `signup-form.test.tsx` dépasse la limite de 5 s dans `pnpm test` en local (3 tests, puis 6), alors qu'il passe seul (12/12). La CI était verte sur #385._
+
+- [ ] Cause mesurée (durée de chaque test, charge de la machine) et notée dans le ticket.
+- [ ] Correctif sans désactiver ni sauter de test ; `pnpm test` vert en local.

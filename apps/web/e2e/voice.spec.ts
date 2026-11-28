@@ -75,7 +75,13 @@ test('un vocal enregistré part avec sa durée', async ({ page }, info) => {
   await page.getByRole('button', { name: 'Envoyer', exact: true }).click();
   await expect(page.getByText('I went to the beach yesterday')).toBeVisible();
 
-  expect(upload?.url).toMatch(/clientId=[0-9a-f-]{36}&seconds=\d$/);
+  const query = new URL(upload?.url ?? '').searchParams;
+  expect(query.get('clientId')).toMatch(/^[0-9a-f-]{36}$/);
+  expect(query.get('seconds')).toMatch(/^\d$/);
+  // L'onde est calculée par le vrai décodeur du navigateur, à partir du vrai enregistrement.
+  const peaks = query.get('peaks')?.split(',').map(Number) ?? [];
+  expect(peaks).toHaveLength(40);
+  expect(peaks.every((p) => Number.isInteger(p) && p >= 0 && p <= 100)).toBe(true);
   expect(upload?.type).toMatch(/^audio\//);
   expect(upload?.size).toBeGreaterThan(0);
 });
