@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { REACTIONS, STICKERS, type MessageItem } from '@newstart/shared';
-import { cn, Popover, PopoverContent, PopoverTrigger, Sticker } from '@newstart/ui';
+import { cn, Popover, PopoverContent, PopoverTrigger, Sticker, VoiceNote } from '@newstart/ui';
 import fr from '../../shared/i18n/fr.json';
 import {
   Ban,
@@ -14,7 +14,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { QuotedMessage } from './quoted-message';
-import { formatHour, previewText } from './chats-format';
+import { formatHour } from './chats-format';
 
 const c = fr.conversation;
 
@@ -238,6 +238,40 @@ function Photo({ url }: Readonly<{ url: string | null }>) {
   );
 }
 
+/** Un vocal : le lecteur, puis ses paroles (la transcription) à déplier. */
+function Voice({
+  media,
+  text,
+  mine,
+}: Readonly<{ media: NonNullable<MessageItem['media']>; text: string; mine: boolean }>) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <VoiceNote
+        src={media.url}
+        seconds={media.seconds}
+        peaks={media.peaks}
+        tone={mine ? 'mine' : 'theirs'}
+        labels={{ play: c.voicePlay, pause: c.voicePause }}
+        unavailableLabel={media.expired ? c.voiceExpired : c.voiceUnavailable}
+      />
+      {text && (
+        <>
+          <button
+            type="button"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+            className="block min-h-11 rounded-full text-[13px] font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-current"
+          >
+            {open ? c.hideTranscript : c.showTranscript}
+          </button>
+          {open && <p>{text}</p>}
+        </>
+      )}
+    </>
+  );
+}
+
 /** Sous un message du contact : « Traduire » puis la traduction ; un échec laisse le bouton actif. */
 function Translation({
   initial,
@@ -325,8 +359,6 @@ export function MessageBubble({
   const mine = message.author === 'USER';
   const { media } = message;
   const isPhoto = media?.kind === 'IMAGE';
-  // La légende d'une photo, ou les paroles d'un vocal (nommé quand il n'y en a pas).
-  const text = isPhoto ? message.text : previewText(message.text, media?.kind);
   const sticker = message.sticker ? STICKERS.find((s) => s.id === message.sticker) : undefined;
   if (message.deleted) {
     return (
@@ -366,13 +398,18 @@ export function MessageBubble({
             mine ? 'rounded-br-[6px] bg-accent text-on-accent' : 'rounded-bl-[6px] bg-bg',
             highlighted && 'ring-2 ring-accent-text ring-offset-2 ring-offset-surface-1',
             isPhoto && 'p-1.5',
+            media?.kind === 'AUDIO' && 'w-[250px] max-w-full px-3',
           )}
         >
           {message.replyTo && (
             <QuotedMessage quote={message.replyTo} agentName={agentName} onDark={mine} />
           )}
           {isPhoto && <Photo url={media.url} />}
-          {text && <p className={cn(isPhoto && 'px-2.5 py-1')}>{text}</p>}
+          {media?.kind === 'AUDIO' ? (
+            <Voice media={media} text={message.text} mine={mine} />
+          ) : (
+            message.text && <p className={cn(isPhoto && 'px-2.5 py-1')}>{message.text}</p>
+          )}
         </div>
       )}
       {message.reaction && (

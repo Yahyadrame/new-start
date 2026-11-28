@@ -60,6 +60,12 @@ describe('VoiceNote', () => {
     expect(options.url).toBeUndefined();
   });
 
+  it('ne laisse pas les blancs conservés par une bulle déplacer l’onde', async () => {
+    render(note());
+    const options = await drawn();
+    expect((options.container as HTMLElement).className).toContain('whitespace-normal');
+  });
+
   it('dessine des barres égales quand le vocal n’a pas d’onde', async () => {
     render(note({ peaks: undefined, seconds: null }));
     const options = await drawn();
