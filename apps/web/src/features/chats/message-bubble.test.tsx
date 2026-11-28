@@ -440,16 +440,52 @@ describe('MessageBubble, vocal et photo', () => {
     expect(offered(c.reply)).toBe(true);
   });
 
-  it('nomme un vocal sans paroles et ne propose pas de le modifier', () => {
-    openMenu(
-      message({
-        author: 'USER',
-        text: '',
-        media: { kind: 'AUDIO', url: 'https://files.test/a.webm', seconds: 3 },
-      }),
-    );
-    expect(screen.getByText(c.voiceMessage)).toBeTruthy();
+  const voice = (over: Partial<NonNullable<MessageItem['media']>> = {}, text = '') =>
+    message({
+      author: 'USER',
+      text,
+      media: { kind: 'AUDIO', url: 'https://files.test/a.webm', seconds: 3, ...over },
+    });
+  const button = (name: string) => screen.queryByRole('button', { name });
+
+  it('lit un vocal dans la bulle, sans proposer de le copier ni de le modifier', () => {
+    openMenu(voice());
+    expect(screen.getByText('0:03')).toBeTruthy();
+    expect(offered(c.forwardAction)).toBe(true);
+    expect(offered(c.copy)).toBe(false);
     expect(offered(c.edit)).toBe(false);
+  });
+
+  it('ne propose pas de texte pour un vocal sans paroles', () => {
+    show(voice());
+    expect(button(c.voicePlay)).toBeTruthy();
+    expect(button(c.showTranscript)).toBeNull();
+  });
+
+  it('garde les paroles repliées, puis les montre et les cache à la demande', () => {
+    show(voice({}, 'I am home'));
+    expect(screen.queryByText('I am home')).toBeNull();
+    const toggle = screen.getByRole('button', { name: c.showTranscript });
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(toggle);
+    expect(screen.getByText('I am home')).toBeTruthy();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: c.hideTranscript }));
+    expect(screen.queryByText('I am home')).toBeNull();
+  });
+
+  it('dit qu’un vocal a expiré, garde ses paroles et ne le transfère pas', () => {
+    openMenu(voice({ url: null, expired: true }, 'I am home'));
+    expect(screen.getByText(c.voiceExpired)).toBeTruthy();
+    expect(button(c.voicePlay)).toBeNull();
+    expect(offered(c.forwardAction)).toBe(false);
+    expect(screen.getByText(c.showTranscript)).toBeTruthy();
+  });
+
+  it('dit « indisponible » quand le fichier manque sans avoir expiré', () => {
+    show(voice({ url: null }));
+    expect(screen.getByText(c.voiceUnavailable)).toBeTruthy();
+    expect(screen.queryByText(c.voiceExpired)).toBeNull();
   });
 
   it('nomme la photo citée', () => {

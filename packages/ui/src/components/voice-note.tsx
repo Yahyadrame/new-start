@@ -160,7 +160,12 @@ function Player({
           <Play aria-hidden="true" className="size-4 fill-current" />
         )}
       </button>
-      <span ref={setWave} aria-hidden="true" className={cn('h-6 min-w-0 flex-1', look.wave)} />
+      {/* `whitespace-normal` : les blancs du dessin de wavesurfer ne doivent pas être conservés. */}
+      <span
+        ref={setWave}
+        aria-hidden="true"
+        className={cn('h-6 min-w-0 flex-1 whitespace-normal', look.wave)}
+      />
       <span className={cn('text-xs tabular-nums', look.time)}>
         {clock(position || (seconds ?? 0))}
       </span>

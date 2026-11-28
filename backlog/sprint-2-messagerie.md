@@ -191,12 +191,13 @@ Décidé le 2026-11-27 : photos et vocaux seulement, Backblaze B2 et Cloudflare 
   - [x] Le micro de la conversation demande l'accord aux enregistrements vocaux avant le premier vocal.
   - [x] Envoi du vocal, refus expliqués.
   - [x] Raison affichée sur le micro quand le vocal est indisponible.
-- [ ] Partie 5 : lecture des vocaux dans la conversation.
+- [x] Partie 5 : lecture des vocaux dans la conversation.
   - [x] 5a : l'API garde l'onde d'un vocal (`peaks`) et dit s'il a expiré (`expired`).
   - [x] 5b : l'onde calculée sur l'appareil à partir de l'enregistrement et envoyée avec le vocal.
-  - [ ] 5c : lecteur dans la conversation, « Vocal expiré » et « Vocal indisponible ».
+  - [x] 5c : lecteur dans la conversation, « Vocal expiré » et « Vocal indisponible ».
     - [x] Composant `VoiceNote` (`packages/ui`) : lecture, onde, durée, sans rien télécharger avant la lecture.
-    - [ ] Le composant dans les bulles de la conversation, vérifié de bout en bout.
+    - [x] Le composant dans les bulles de la conversation, vérifié de bout en bout.
+    - [x] Le texte transcrit se déplie avec « Voir le texte ».
     - [ ] Plus tard : se déplacer dans l'onde, avec une commande au clavier.
 - [ ] Vocal indisponible dans trois cas, avec la raison affichée sur le micro : quota de l'abonnement atteint, coupure par réglage, service en panne ou pas configuré. Les photos continuent de marcher. Fait pour la limite, la coupure et le service non configuré ; une panne passagère ne s'explique encore qu'à l'envoi.
 - [ ] Adaptateur Cloudinary, après B2 et R2.
@@ -425,5 +426,14 @@ _Ajouté le 2026-11-27 : vu trois fois sur staging. `/health/ready` répond 503 
 
 _Ajouté le 2026-11-28 : `signup-form.test.tsx` dépasse la limite de 5 s dans `pnpm test` en local (3 tests, puis 6), alors qu'il passe seul (12/12). La CI était verte sur #385._
 
+_`sticker-panel.test.tsx` (1 test) a dépassé la même limite le 2026-11-28, pendant qu'un autre programme chargeait la machine. Les deux fichiers passent seuls (23/23)._
+
 - [ ] Cause mesurée (durée de chaque test, charge de la machine) et notée dans le ticket.
 - [ ] Correctif sans désactiver ni sauter de test ; `pnpm test` vert en local.
+
+## NS-074 — Alléger les pages : ne charger que les composants utilisés · S
+
+_Ajouté le 2026-11-28, mesuré en préparant le lecteur vocal : des pages chargent aussi des composants de `packages/ui` qu'elles n'affichent pas. Essai avec `"sideEffects": ["**/*.css"]` dans `packages/ui/package.json` (JavaScript compressé) : connexion de 217 à 159 ko, liste des discussions de 211 à 153 ko, conversation de 318 à 300 ko, profil de 306 à 269 ko._
+
+- [ ] `sideEffects` déclaré, poids des pages mesuré avant et après et noté dans la PR.
+- [ ] Styles, thèmes et animations inchangés : e2e verts, clair et sombre.
